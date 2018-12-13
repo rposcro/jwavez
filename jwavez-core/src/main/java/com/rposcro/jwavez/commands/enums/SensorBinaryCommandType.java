@@ -1,0 +1,20 @@
+package com.rposcro.jwavez.commands.enums;
+
+import com.rposcro.jwavez.enums.CommandClass;
+
+@CommandConstant(commandClass = CommandClass.CMD_CLASS_SENSOR_BINARY)
+public enum SensorBinaryCommandType implements CommandTypeEnum {
+
+  // v1
+  SENSOR_BINARY_GET(0x02),
+  SENSOR_BINARY_REPORT(0x03),
+
+  // v2
+  SENSOR_BINARY_SUPPORTED_GET_SENSOR(0x01),
+  SENSOR_BINARY_SUPPORTED_SENSOR_REPORT(0x04),
+  ;
+
+  private SensorBinaryCommandType(int code) {
+    CommandConstantsRegistry.registerConstant(this, code);
+  }
+}

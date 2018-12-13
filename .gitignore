@@ -1,0 +1,8 @@
+/target/
+/logs/
+/.idea/
+/*.iml
+
+/jwavez-core/target/
+/jwavez-core/*.iml
+
