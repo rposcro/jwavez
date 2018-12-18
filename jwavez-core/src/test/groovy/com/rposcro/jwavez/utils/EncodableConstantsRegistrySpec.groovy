@@ -3,10 +3,10 @@ package com.rposcro.jwavez.utils
 import com.rposcro.jwavez.enums.BasicDeviceClass
 import com.rposcro.jwavez.enums.CommandClass
 import com.rposcro.jwavez.enums.GenericDeviceClass
-import com.rposcro.jwavez.serial.frame.contants.AddNodeToNeworkStatus
-import com.rposcro.jwavez.serial.frame.contants.FrameCategory
-import com.rposcro.jwavez.serial.frame.contants.FrameType
-import com.rposcro.jwavez.serial.frame.contants.SerialCommand
+import AddNodeToNeworkStatus
+import FrameCategory
+import FrameType
+import SerialCommand
 import spock.lang.Specification
 import spock.lang.Unroll
 
