@@ -3,21 +3,17 @@ package com.rposcro.jwavez.commands.controlled;
 import com.rposcro.jwavez.commands.enums.AssociationCommandType;
 import com.rposcro.jwavez.enums.CommandClass;
 
-public class AssociationControlledCommand extends ControlledZWaveCommand {
+public class AssociationCommandBuilder {
 
-  private AssociationControlledCommand(byte... commandPayload) {
-    super(commandPayload);
-  }
-
-  public static AssociationControlledCommand buildGetCommand(int groupNumber) {
-    return new AssociationControlledCommand(
+  public ZWaveControlledCommand buildGetCommand(int groupNumber) {
+    return new ZWaveControlledCommand(
         CommandClass.CMD_CLASS_ASSOCIATION.getCode(),
         AssociationCommandType.ASSOCIATION_GET.getCode(),
         (byte) groupNumber
     );
   }
 
-  public static AssociationControlledCommand buildSetCommand(int groupNumber, int... nodeIds) {
+  public ZWaveControlledCommand buildSetCommand(int groupNumber, int... nodeIds) {
     byte[] buffer = new byte[3 + nodeIds.length];
     buffer[0] = CommandClass.CMD_CLASS_ASSOCIATION.getCode();
     buffer[1] = AssociationCommandType.ASSOCIATION_SET.getCode();
@@ -25,18 +21,18 @@ public class AssociationControlledCommand extends ControlledZWaveCommand {
     for (int i = 0; i < nodeIds.length; i++) {
       buffer[3 + i] = (byte) nodeIds[i];
     }
-    return new AssociationControlledCommand(buffer);
+    return new ZWaveControlledCommand(buffer);
   }
 
-  public static AssociationControlledCommand buildGetSupportedGroupingsCommand() {
-    return new AssociationControlledCommand(
+  public static ZWaveControlledCommand buildGetSupportedGroupingsCommand() {
+    return new ZWaveControlledCommand(
         CommandClass.CMD_CLASS_ASSOCIATION.getCode(),
         AssociationCommandType.ASSOCIATION_GROUPINGS_GET.getCode()
     );
   }
 
-  public static AssociationControlledCommand buildGetSpecificGroupCommand(int groupNumber) {
-    return new AssociationControlledCommand(
+  public static ZWaveControlledCommand buildGetSpecificGroupCommand(int groupNumber) {
+    return new ZWaveControlledCommand(
         CommandClass.CMD_CLASS_ASSOCIATION.getCode(),
         AssociationCommandType.ASSOCIATION_SPECIFIC_GROUP_GET.getCode(),
         (byte) groupNumber

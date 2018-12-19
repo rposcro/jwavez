@@ -3,21 +3,17 @@ package com.rposcro.jwavez.commands.controlled;
 import com.rposcro.jwavez.enums.CommandClass;
 import com.rposcro.jwavez.commands.enums.ConfigurationCommandType;
 
-public class ConfigurationControlledCommand extends ControlledZWaveCommand {
+public class ConfigurationCommandBuilder {
 
-  private ConfigurationControlledCommand(byte... commandPayload) {
-    super(commandPayload);
-  }
-
-  public static ConfigurationControlledCommand buildGetParameterCommand(int parameterNumber) {
-    return new ConfigurationControlledCommand(
+  public ZWaveControlledCommand buildGetParameterCommand(int parameterNumber) {
+    return new ZWaveControlledCommand(
         CommandClass.CMD_CLASS_CONFIGURATION.getCode(),
         ConfigurationCommandType.CONFIGURATION_GET.getCode(),
         (byte) parameterNumber);
   }
 
-  public static ConfigurationControlledCommand buildSetParameterCommand(int parameterNumber, byte value) {
-    return new ConfigurationControlledCommand(
+  public ZWaveControlledCommand buildSetParameterCommand(int parameterNumber, byte value) {
+    return new ZWaveControlledCommand(
         CommandClass.CMD_CLASS_CONFIGURATION.getCode(),
         ConfigurationCommandType.CONFIGURATION_SET.getCode(),
         (byte) parameterNumber,
@@ -26,8 +22,8 @@ public class ConfigurationControlledCommand extends ControlledZWaveCommand {
     );
   }
 
-  public static ConfigurationControlledCommand buildBulkGetParameterCommand(int parameterOffset, int parametersCount) {
-    return new ConfigurationControlledCommand(
+  public ZWaveControlledCommand buildBulkGetParameterCommand(int parameterOffset, int parametersCount) {
+    return new ZWaveControlledCommand(
         CommandClass.CMD_CLASS_CONFIGURATION.getCode(),
         ConfigurationCommandType.CONFIGURATION_BULK_GET.getCode(),
         (byte) (parameterOffset >> 8),

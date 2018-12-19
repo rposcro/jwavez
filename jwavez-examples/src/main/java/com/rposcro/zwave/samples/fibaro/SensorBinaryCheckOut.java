@@ -1,6 +1,6 @@
 package com.rposcro.zwave.samples.fibaro;
 
-import com.rposcro.jwavez.commands.controlled.AssociationControlledCommand;
+import com.rposcro.jwavez.commands.controlled.AssociationCommandBuilder;
 import com.rposcro.jwavez.model.NodeId;
 import com.rposcro.jwavez.serial.SerialChannel;
 import com.rposcro.jwavez.serial.SerialManager;
@@ -48,10 +48,10 @@ public class SensorBinaryCheckOut {
   }
 
   private void learnAssociations() throws Exception {
-    send("Get supported groupings", new SendDataTransaction(nodeId, AssociationControlledCommand.buildGetSupportedGroupingsCommand()));
-    send("Get group 1", new SendDataTransaction(nodeId, AssociationControlledCommand.buildGetCommand(1)));
-    send("Get group 2", new SendDataTransaction(nodeId, AssociationControlledCommand.buildGetCommand(2)));
-    send("Get group 3", new SendDataTransaction(nodeId, AssociationControlledCommand.buildGetCommand(3)));
+    send("Get supported groupings", new SendDataTransaction(nodeId, AssociationCommandBuilder.buildGetSupportedGroupingsCommand()));
+    send("Get group 1", new SendDataTransaction(nodeId, AssociationCommandBuilder.buildGetCommand(1)));
+    send("Get group 2", new SendDataTransaction(nodeId, AssociationCommandBuilder.buildGetCommand(2)));
+    send("Get group 3", new SendDataTransaction(nodeId, AssociationCommandBuilder.buildGetCommand(3)));
   }
 
   public static void main(String[] args) throws Exception {

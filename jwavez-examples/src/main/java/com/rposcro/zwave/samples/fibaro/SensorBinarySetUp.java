@@ -1,7 +1,7 @@
 package com.rposcro.zwave.samples.fibaro;
 
-import com.rposcro.jwavez.commands.controlled.AssociationControlledCommand;
-import com.rposcro.jwavez.commands.controlled.ConfigurationControlledCommand;
+import com.rposcro.jwavez.commands.controlled.AssociationCommandBuilder;
+import com.rposcro.jwavez.commands.controlled.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.model.NodeId;
 import com.rposcro.jwavez.serial.SerialChannel;
 import com.rposcro.jwavez.serial.SerialManager;
@@ -50,58 +50,58 @@ public class SensorBinarySetUp {
 
   private void setMonostableModeForBothInputs() throws Exception {
     send("Set input 1 as monostable",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildSetParameterCommand(PARAM_NUM_IN_TYPE_1, INPUT_TYPE_MONOSTABLE)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildSetParameterCommand(PARAM_NUM_IN_TYPE_1, INPUT_TYPE_MONOSTABLE)));
     send("Check input 1 type",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildGetParameterCommand(PARAM_NUM_IN_TYPE_1)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildGetParameterCommand(PARAM_NUM_IN_TYPE_1)));
     send("Set input 2 as monostable",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildSetParameterCommand(PARAM_NUM_IN_TYPE_2, INPUT_TYPE_MONOSTABLE)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildSetParameterCommand(PARAM_NUM_IN_TYPE_2, INPUT_TYPE_MONOSTABLE)));
     send("Check input 2 type",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildGetParameterCommand(PARAM_NUM_IN_TYPE_2)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildGetParameterCommand(PARAM_NUM_IN_TYPE_2)));
   }
 
   private void setNOModeForBothInputs() throws Exception {
     send("Set input 1 as NO",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildSetParameterCommand(PARAM_NUM_IN_TYPE_1, INPUT_TYPE_NO)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildSetParameterCommand(PARAM_NUM_IN_TYPE_1, INPUT_TYPE_NO)));
     send("Check input 1 type",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildGetParameterCommand(PARAM_NUM_IN_TYPE_1)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildGetParameterCommand(PARAM_NUM_IN_TYPE_1)));
     send("Set input 2 as NO",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildSetParameterCommand(PARAM_NUM_IN_TYPE_2, INPUT_TYPE_NO)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildSetParameterCommand(PARAM_NUM_IN_TYPE_2, INPUT_TYPE_NO)));
     send("Check input 2 type",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildGetParameterCommand(PARAM_NUM_IN_TYPE_2)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildGetParameterCommand(PARAM_NUM_IN_TYPE_2)));
   }
 
   private void setFrameGenericForBothInputs() throws Exception {
     send("Set input 1 as generic alarm",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildSetParameterCommand(PARAM_NUM_CTRL_FRM_1, CTRL_FRM_GENERIC)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildSetParameterCommand(PARAM_NUM_CTRL_FRM_1, CTRL_FRM_GENERIC)));
     send("Check alarm 1 type",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildGetParameterCommand(PARAM_NUM_CTRL_FRM_1)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildGetParameterCommand(PARAM_NUM_CTRL_FRM_1)));
     send("Set input 2 as generic alarm",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildSetParameterCommand(PARAM_NUM_CTRL_FRM_2, CTRL_FRM_GENERIC)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildSetParameterCommand(PARAM_NUM_CTRL_FRM_2, CTRL_FRM_GENERIC)));
     send("Check alarm 2 type",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildGetParameterCommand(PARAM_NUM_CTRL_FRM_2)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildGetParameterCommand(PARAM_NUM_CTRL_FRM_2)));
   }
 
   private void setFrameBasicSetForBothInputs() throws Exception {
     send("Set input 1 as basic set alarm",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildSetParameterCommand(PARAM_NUM_CTRL_FRM_1, CTRL_FRM_BASIC_SET)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildSetParameterCommand(PARAM_NUM_CTRL_FRM_1, CTRL_FRM_BASIC_SET)));
     send("Check alarm 1 type",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildGetParameterCommand(PARAM_NUM_CTRL_FRM_1)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildGetParameterCommand(PARAM_NUM_CTRL_FRM_1)));
     send("Set input 2 as basic set alarm",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildSetParameterCommand(PARAM_NUM_CTRL_FRM_2, CTRL_FRM_BASIC_SET)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildSetParameterCommand(PARAM_NUM_CTRL_FRM_2, CTRL_FRM_BASIC_SET)));
     send("Check alarm 2 type",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildGetParameterCommand(PARAM_NUM_CTRL_FRM_2)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildGetParameterCommand(PARAM_NUM_CTRL_FRM_2)));
   }
 
   private void enableSceneActivationCommand() throws Exception {
     send("Enable scene activation",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildSetParameterCommand(PARAM_NUM_SCENE_ACTIVATION, SCENE_ACTIVATION_ENABLED)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildSetParameterCommand(PARAM_NUM_SCENE_ACTIVATION, SCENE_ACTIVATION_ENABLED)));
     send("Check scene activation",
-        new SendDataTransaction(nodeId, ConfigurationControlledCommand.buildGetParameterCommand(PARAM_NUM_SCENE_ACTIVATION)));
+        new SendDataTransaction(nodeId, ConfigurationCommandBuilder.buildGetParameterCommand(PARAM_NUM_SCENE_ACTIVATION)));
   }
 
   private void associateMainController() throws Exception {
     send("Associate main controller (1)",
-        new SendDataTransaction(nodeId, AssociationControlledCommand.buildSetCommand(3, 1)));
+        new SendDataTransaction(nodeId, AssociationCommandBuilder.buildSetCommand(3, 1)));
   }
 
   public static void main(String[] args) throws Exception {

@@ -1,8 +1,8 @@
 package com.rposcro.zwave.samples;
 
-import com.rposcro.jwavez.commands.controlled.ConfigurationControlledCommand;
+import com.rposcro.jwavez.commands.controlled.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.commands.controlled.ZWaveControlledCommand;
-import com.rposcro.jwavez.commands.controlled.MultiChannelControlledCommand;
+import com.rposcro.jwavez.commands.controlled.MultiChannelCommandBuilder;
 import com.rposcro.jwavez.commands.controlled.SensorBinaryControlledCommand;
 import com.rposcro.jwavez.model.NodeId;
 import com.rposcro.jwavez.serial.SerialChannel;
@@ -55,17 +55,17 @@ public class SendDataTest {
   private static void testSensorClass() throws Exception {
     SendDataTest test = new SendDataTest();
     test.runSend(4, SensorBinaryControlledCommand::buildGetCommand);
-    test.runSend(4, MultiChannelControlledCommand::buildGet);
-    test.runSend(4, MultiChannelControlledCommand::buildEndPointGetCommand);
-    //test.runSend(4, MultiChannelControlledCommand::buildCapabilityGet);
-    //test.runSend(4, MultiChannelControlledCommand::buildAggregatedMembersGet);
-    //test.runSend(4, MultiChannelControlledCommand::buildEndPointFind);
+    test.runSend(4, MultiChannelCommandBuilder::buildGet);
+    test.runSend(4, MultiChannelCommandBuilder::buildEndPointGetCommand);
+    //test.runSend(4, MultiChannelCommandBuilder::buildCapabilityGet);
+    //test.runSend(4, MultiChannelCommandBuilder::buildAggregatedMembersGet);
+    //test.runSend(4, MultiChannelCommandBuilder::buildEndPointFind);
   }
 
   private static void testConfigurationClass() throws Exception {
     SendDataTest test = new SendDataTest();
-    test.runSend(4, () -> ConfigurationControlledCommand.buildGetParameterCommand(3));
-    test.runSend(4, () -> ConfigurationControlledCommand.buildBulkGetParameterCommand(0, 14));
+    test.runSend(4, () -> ConfigurationCommandBuilder.buildGetParameterCommand(3));
+    test.runSend(4, () -> ConfigurationCommandBuilder.buildBulkGetParameterCommand(0, 14));
   }
 
   public static void main(String[] args) throws Exception {

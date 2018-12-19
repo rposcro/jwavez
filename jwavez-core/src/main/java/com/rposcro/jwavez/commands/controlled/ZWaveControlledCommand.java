@@ -1,7 +1,22 @@
 package com.rposcro.jwavez.commands.controlled;
 
-public interface ZWaveControlledCommand {
+import com.rposcro.jwavez.utils.ImmutableBuffer;
+import lombok.Getter;
 
-  byte[] getPayloadBuffer();
-  int getPayloadLength();
+public final class ZWaveControlledCommand {
+
+  @Getter
+  private ImmutableBuffer payloadBuffer;
+
+  ZWaveControlledCommand(byte... commnadPayload) {
+    this.payloadBuffer = ImmutableBuffer.overBuffer(commnadPayload, 0, commnadPayload.length);
+  }
+
+  public int getPayloadLength() {
+    return this.payloadBuffer.getLength();
+  }
+
+  public ImmutableBuffer getPayload() {
+    return this.payloadBuffer;
+  }
 }
