@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.commands.supported;
 
 import com.rposcro.jwavez.enums.CommandClass;
-import com.rposcro.jwavez.commands.enums.CommandTypeEnum;
+import com.rposcro.jwavez.commands.enums.CommandType;
 
-public abstract class ZWaveSupportedCommand<C extends CommandTypeEnum> {
+public abstract class ZWaveSupportedCommand<C extends CommandType> {
 
   protected static final int OFFSET_COMMAND_CLASS = 0;
   protected static final int OFFSET_COMMAND = 1;
@@ -16,13 +16,5 @@ public abstract class ZWaveSupportedCommand<C extends CommandTypeEnum> {
 
   public CommandClass commandClass() {
     return this.commandType.getCommandClass();
-  }
-
-  public byte commandCode() {
-    return this.commandType.getCode();
-  }
-
-  public <T> T command() {
-    return (T) commandType;
   }
 }

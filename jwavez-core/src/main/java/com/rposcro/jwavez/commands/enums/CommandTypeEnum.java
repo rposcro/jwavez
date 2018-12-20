@@ -1,14 +1,14 @@
 package com.rposcro.jwavez.commands.enums;
 
 import com.rposcro.jwavez.enums.CommandClass;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface CommandTypeEnum {
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
+public @interface CommandTypeEnum {
 
-  default CommandClass getCommandClass() {
-    return this.getClass().getAnnotation(CommandConstant.class).commandClass();
-  }
-
-  default byte getCode() {
-    return CommandConstantsRegistry.codeOfConstant(this);
-  }
+  CommandClass commandClass();
 }

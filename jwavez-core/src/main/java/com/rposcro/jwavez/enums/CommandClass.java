@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.enums;
 
+import com.rposcro.jwavez.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.utils.EncodableConstantsRegistry;
 import com.rposcro.jwavez.utils.EncodableConstant;
 
@@ -97,6 +98,7 @@ public enum CommandClass implements EncodableConstant {
   }
 
   public static CommandClass ofCode(byte code) {
-    return EncodableConstantsRegistry.constantOfCode(CommandClass.class, code);
+    return EncodableConstantsRegistry.optionalConstantOfCode(CommandClass.class, code)
+        .orElseThrow(() -> new CommandNotSupportedException("CommandClass of code " + code + " unknown!"));
   }
 }

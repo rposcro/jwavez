@@ -1,7 +1,6 @@
 package com.rposcro.jwavez.commands.supported;
 
 import com.rposcro.jwavez.exceptions.CommandNotSupportedException;
-import com.rposcro.jwavez.commands.enums.CommandTypeResolver;
 import com.rposcro.jwavez.commands.enums.ConfigurationCommandType;
 import com.rposcro.jwavez.commands.supported.configuration.ConfigurationReport;
 import com.rposcro.jwavez.enums.CommandClass;
@@ -27,7 +26,7 @@ public class ConfigurationCommandResolver extends AbstractCommandResolver<Config
 
   @Override
   public ZWaveSupportedCommand resolve(ImmutableBuffer payloadBuffer) {
-    ConfigurationCommandType commandType = CommandTypeResolver.constantOfCode(ConfigurationCommandType.class, payloadBuffer.getByte(1));
+    ConfigurationCommandType commandType = commandTypesRegistry.decodeCommandType(supportedCommandClass(), payloadBuffer.getByte(1));
     Function<ImmutableBuffer, ZWaveSupportedCommand> producer = Optional.ofNullable(suppliersPerCommandType.get(commandType))
         .orElseThrow(() -> new CommandNotSupportedException("Command " + commandType + " has no resolver implemented!"));
     return producer.apply(payloadBuffer);

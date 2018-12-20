@@ -2,8 +2,8 @@ package com.rposcro.jwavez.commands.enums;
 
 import com.rposcro.jwavez.enums.CommandClass;
 
-@CommandConstant(commandClass = CommandClass.CMD_CLASS_CONFIGURATION)
-public enum ConfigurationCommandType implements CommandTypeEnum {
+@CommandTypeEnum(commandClass = CommandClass.CMD_CLASS_CONFIGURATION)
+public enum ConfigurationCommandType implements CommandType {
 
   // v1
   CONFIGURATION_SET(0x04),
@@ -28,6 +28,6 @@ public enum ConfigurationCommandType implements CommandTypeEnum {
   ;
 
   private ConfigurationCommandType(int code) {
-    CommandConstantsRegistry.registerConstant(this, code);
+    CommandTypesRegistry.registerConstant(this, code);
   }
 }

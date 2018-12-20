@@ -2,8 +2,8 @@ package com.rposcro.jwavez.commands.enums;
 
 import com.rposcro.jwavez.enums.CommandClass;
 
-@CommandConstant(commandClass = CommandClass.CMD_CLASS_MULTI_CHANNEL)
-public enum MultiChannelCommandType implements CommandTypeEnum {
+@CommandTypeEnum(commandClass = CommandClass.CMD_CLASS_MULTI_CHANNEL)
+public enum MultiChannelCommandType implements CommandType {
 
   // v1
   MULTI_INSTANCE_GET(0x04),
@@ -23,6 +23,6 @@ public enum MultiChannelCommandType implements CommandTypeEnum {
   ;
 
   private MultiChannelCommandType(int code) {
-    CommandConstantsRegistry.registerConstant(this, code);
+    CommandTypesRegistry.registerConstant(this, code);
   }
 }

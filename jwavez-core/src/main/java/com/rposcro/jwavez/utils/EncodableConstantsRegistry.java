@@ -2,6 +2,7 @@ package com.rposcro.jwavez.utils;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public final class EncodableConstantsRegistry {
 
@@ -16,11 +17,12 @@ public final class EncodableConstantsRegistry {
   }
 
   public static <T extends EncodableConstant> T constantOfCode(Class<T> clazz, byte code) {
-    T constant = (T) constantsPerCode.get(clazz).get(code);
-    if (constant == null) {
-      throw new IllegalArgumentException("No constant of class " + clazz + " registered for code " + code);
-    }
-    return constant;
+    return optionalConstantOfCode(clazz, code)
+        .orElseThrow(() -> new IllegalArgumentException("No constant of class " + clazz + " registered for code " + code));
+  }
+
+  public static <T extends EncodableConstant> Optional<T> optionalConstantOfCode(Class<T> clazz, byte code) {
+    return Optional.ofNullable((T) constantsPerCode.get(clazz).get(code));
   }
 
   public static byte codeOfConstant(EncodableConstant constant) {
