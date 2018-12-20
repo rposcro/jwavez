@@ -1,6 +1,6 @@
 package com.rposcro.zwave.samples;
 
-import com.rposcro.jwavez.model.NodeInfo;
+import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.SerialChannel;
 import com.rposcro.jwavez.serial.SerialManager;
 import com.rposcro.jwavez.serial.transactions.AddNodeToNetworkTransaction;

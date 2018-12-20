@@ -3,7 +3,7 @@ package com.rposcro.jwavez.serial.transactions;
 import static com.rposcro.jwavez.serial.frame.SOFFrame.*;
 import static com.rposcro.jwavez.serial.frame.contants.AddNodeToNeworkStatus.*;
 
-import com.rposcro.jwavez.model.NodeInfo;
+import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.exceptions.TransactionException;
 import com.rposcro.jwavez.serial.frame.contants.FrameType;
 import com.rposcro.jwavez.serial.frame.contants.SerialCommand;

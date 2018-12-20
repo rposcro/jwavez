@@ -2,12 +2,12 @@ package com.rposcro.jwavez.serial.utils;
 
 import static com.rposcro.jwavez.serial.utils.FieldUtil.*;
 
-import com.rposcro.jwavez.enums.BasicDeviceClass;
-import com.rposcro.jwavez.enums.CommandClass;
-import com.rposcro.jwavez.enums.GenericDeviceClass;
-import com.rposcro.jwavez.enums.SpecificDeviceClass;
-import com.rposcro.jwavez.model.NodeId;
-import com.rposcro.jwavez.model.NodeInfo;
+import com.rposcro.jwavez.core.enums.BasicDeviceClass;
+import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.enums.GenericDeviceClass;
+import com.rposcro.jwavez.core.enums.SpecificDeviceClass;
+import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.core.model.NodeInfo;
 
 public class NodeUtil {
 

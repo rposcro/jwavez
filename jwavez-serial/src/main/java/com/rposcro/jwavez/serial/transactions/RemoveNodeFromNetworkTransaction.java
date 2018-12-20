@@ -3,7 +3,7 @@ package com.rposcro.jwavez.serial.transactions;
 import static com.rposcro.jwavez.serial.frame.SOFFrame.OFFSET_PAYLOAD;
 import static com.rposcro.jwavez.serial.frame.contants.RemoveNodeFromNeworkStatus.*;
 
-import com.rposcro.jwavez.model.NodeInfo;
+import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.exceptions.TransactionException;
 import com.rposcro.jwavez.serial.frame.contants.FrameType;
 import com.rposcro.jwavez.serial.frame.contants.SerialCommand;

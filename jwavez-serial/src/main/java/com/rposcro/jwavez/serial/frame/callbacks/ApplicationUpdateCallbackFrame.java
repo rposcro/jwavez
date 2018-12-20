@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.frame.callbacks;
 
-import com.rposcro.jwavez.model.NodeInfo;
+import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.frame.CallbackFrameModel;
 import com.rposcro.jwavez.serial.frame.contants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.SOFCallbackFrame;

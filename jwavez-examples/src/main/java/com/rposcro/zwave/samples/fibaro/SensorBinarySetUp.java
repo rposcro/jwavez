@@ -1,8 +1,8 @@
 package com.rposcro.zwave.samples.fibaro;
 
-import com.rposcro.jwavez.commands.controlled.AssociationCommandBuilder;
-import com.rposcro.jwavez.commands.controlled.ConfigurationCommandBuilder;
-import com.rposcro.jwavez.model.NodeId;
+import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.ConfigurationCommandBuilder;
+import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.SerialChannel;
 import com.rposcro.jwavez.serial.SerialManager;
 import com.rposcro.jwavez.serial.debug.ApplicationCommandHandlerCatcher;

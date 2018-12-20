@@ -1,10 +1,10 @@
 package com.rposcro.zwave.samples;
 
-import com.rposcro.jwavez.commands.controlled.ConfigurationCommandBuilder;
-import com.rposcro.jwavez.commands.controlled.ZWaveControlledCommand;
-import com.rposcro.jwavez.commands.controlled.MultiChannelCommandBuilder;
-import com.rposcro.jwavez.commands.controlled.SensorBinaryControlledCommand;
-import com.rposcro.jwavez.model.NodeId;
+import com.rposcro.jwavez.core.commands.controlled.ConfigurationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
+import com.rposcro.jwavez.core.commands.controlled.MultiChannelCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.SensorBinaryControlledCommand;
+import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.SerialChannel;
 import com.rposcro.jwavez.serial.SerialManager;
 import com.rposcro.jwavez.serial.debug.ApplicationCommandHandlerCatcher;

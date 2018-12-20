@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.serial.frame.requests;
 
-import com.rposcro.jwavez.commands.controlled.ZWaveControlledCommand;
-import com.rposcro.jwavez.model.NodeId;
+import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
+import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.frame.contants.FrameType;
 import com.rposcro.jwavez.serial.frame.contants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.RequestFrameModel;

@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.serial.frame.contants;
 
-import com.rposcro.jwavez.utils.EncodableConstantsRegistry;
-import com.rposcro.jwavez.utils.EncodableConstant;
+import com.rposcro.jwavez.core.utils.EncodableConstantsRegistry;
+import com.rposcro.jwavez.core.utils.EncodableConstant;
 
 public enum TransmitCompletionStatus implements EncodableConstant {
 

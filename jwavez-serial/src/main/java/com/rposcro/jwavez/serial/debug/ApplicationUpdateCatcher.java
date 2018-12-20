@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.debug;
 
-import com.rposcro.jwavez.model.NodeInfo;
+import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.callbacks.ApplicationUpdateCallbackFrame;
 import com.rposcro.jwavez.serial.frame.contants.ApplicationUpdateStatus;

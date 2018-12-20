@@ -2,8 +2,8 @@ package com.rposcro.jwavez.serial.transactions;
 
 import static com.rposcro.jwavez.serial.frame.SOFFrame.OFFSET_PAYLOAD;
 
-import com.rposcro.jwavez.commands.controlled.ZWaveControlledCommand;
-import com.rposcro.jwavez.model.NodeId;
+import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
+import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.exceptions.TransactionException;
 import com.rposcro.jwavez.serial.frame.contants.FrameType;
 import com.rposcro.jwavez.serial.frame.contants.SerialCommand;
