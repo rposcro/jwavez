@@ -2,7 +2,7 @@ package com.rposcro.jwavez.serial.frame.responses;
 
 import static com.rposcro.jwavez.serial.utils.FieldUtil.*;
 
-import com.rposcro.jwavez.serial.frame.contants.SerialCommand;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.ResponseFrameModel;
 import com.rposcro.jwavez.serial.frame.SOFResponseFrame;
 import lombok.Getter;

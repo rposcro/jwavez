@@ -2,7 +2,7 @@ package com.rposcro.jwavez.serial.frame;
 
 import static com.rposcro.jwavez.serial.frame.SOFFrame.*;
 
-import com.rposcro.jwavez.serial.frame.contants.FrameCategory;
+import com.rposcro.jwavez.serial.frame.constants.FrameCategory;
 import com.rposcro.jwavez.serial.utils.ByteBuffer;
 import com.rposcro.jwavez.serial.utils.FrameUtil;
 import lombok.extern.slf4j.Slf4j;

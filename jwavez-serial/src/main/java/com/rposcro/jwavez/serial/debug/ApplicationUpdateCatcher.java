@@ -3,7 +3,7 @@ package com.rposcro.jwavez.serial.debug;
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.callbacks.ApplicationUpdateCallbackFrame;
-import com.rposcro.jwavez.serial.frame.contants.ApplicationUpdateStatus;
+import com.rposcro.jwavez.serial.frame.constants.ApplicationUpdateStatus;
 import com.rposcro.jwavez.serial.rxtx.InboundFrameInterceptor;
 import com.rposcro.jwavez.serial.rxtx.InboundFrameInterceptorContext;
 import java.util.Arrays;

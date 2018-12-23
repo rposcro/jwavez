@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.utils;
 
-import static com.rposcro.jwavez.serial.utils.FieldUtil.*;
+import static com.rposcro.jwavez.serial.utils.FieldUtil.asInt;
 
 import com.rposcro.jwavez.core.enums.BasicDeviceClass;
 import com.rposcro.jwavez.core.enums.CommandClass;

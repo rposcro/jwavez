@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.serial.transactions;
 
 import com.rposcro.jwavez.serial.exceptions.TransactionException;
-import com.rposcro.jwavez.serial.frame.contants.FrameType;
+import com.rposcro.jwavez.serial.frame.constants.FrameType;
 import com.rposcro.jwavez.serial.frame.SOFCallbackFrame;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.SOFRequestFrame;

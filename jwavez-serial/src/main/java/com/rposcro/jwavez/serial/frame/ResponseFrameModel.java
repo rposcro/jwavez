@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.frame;
 
-import com.rposcro.jwavez.serial.frame.contants.SerialCommand;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

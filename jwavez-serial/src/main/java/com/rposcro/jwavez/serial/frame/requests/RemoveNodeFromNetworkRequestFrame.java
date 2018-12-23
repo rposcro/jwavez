@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.serial.frame.requests;
 
-import com.rposcro.jwavez.serial.frame.contants.SerialCommand;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.RequestFrameModel;
 import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
-import com.rposcro.jwavez.serial.frame.contants.RemoveNodeFromNeworkMode;
+import com.rposcro.jwavez.serial.frame.constants.RemoveNodeFromNeworkMode;
 
 @RequestFrameModel(function = SerialCommand.REMOVE_NODE_FROM_NETWORK)
 public class RemoveNodeFromNetworkRequestFrame extends SOFRequestFrame {

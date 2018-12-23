@@ -2,9 +2,9 @@ package com.rposcro.jwavez.serial.frame.callbacks;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.frame.CallbackFrameModel;
-import com.rposcro.jwavez.serial.frame.contants.SerialCommand;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.SOFCallbackFrame;
-import com.rposcro.jwavez.serial.frame.contants.AddNodeToNeworkStatus;
+import com.rposcro.jwavez.serial.frame.constants.AddNodeToNeworkStatus;
 import com.rposcro.jwavez.serial.utils.NodeUtil;
 import java.util.Optional;
 import lombok.Getter;

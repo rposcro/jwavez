@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.serial.frame.contants;
+package com.rposcro.jwavez.serial.frame.constants;
 
 import com.rposcro.jwavez.core.utils.EncodableConstant;
 import com.rposcro.jwavez.core.utils.EncodableConstantsRegistry;

@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.rxtx;
 
-import static com.rposcro.jwavez.serial.frame.contants.FrameCategory.*;
+import static com.rposcro.jwavez.serial.frame.constants.FrameCategory.*;
 
 import com.rposcro.jwavez.serial.utils.ByteBuffer;
 import com.rposcro.jwavez.serial.utils.FrameUtil;

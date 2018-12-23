@@ -2,7 +2,7 @@ package com.rposcro.jwavez.serial.rxtx;
 
 import com.rposcro.jwavez.serial.exceptions.CommunicationException;
 import com.rposcro.jwavez.serial.frame.CANFrame;
-import com.rposcro.jwavez.serial.frame.contants.FrameCategory;
+import com.rposcro.jwavez.serial.frame.constants.FrameCategory;
 import com.rposcro.jwavez.serial.utils.ByteBuffer;
 import java.io.IOException;
 import java.util.function.Consumer;

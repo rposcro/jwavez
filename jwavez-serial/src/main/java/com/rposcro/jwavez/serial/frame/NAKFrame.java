@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.frame;
 
-import com.rposcro.jwavez.serial.frame.contants.FrameCategory;
+import com.rposcro.jwavez.serial.frame.constants.FrameCategory;
 
 public class NAKFrame extends SerialFrame {
 

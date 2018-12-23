@@ -1,8 +1,8 @@
 package com.rposcro.jwavez.serial.frame;
 
-import com.rposcro.jwavez.serial.frame.contants.FrameCategory;
-import com.rposcro.jwavez.serial.frame.contants.FrameType;
-import com.rposcro.jwavez.serial.frame.contants.SerialCommand;
+import com.rposcro.jwavez.serial.frame.constants.FrameCategory;
+import com.rposcro.jwavez.serial.frame.constants.FrameType;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.utils.FrameUtil;
 
 public abstract class SOFFrame extends SerialFrame {

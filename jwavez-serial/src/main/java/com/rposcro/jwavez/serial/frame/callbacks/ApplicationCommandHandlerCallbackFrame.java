@@ -3,7 +3,7 @@ package com.rposcro.jwavez.serial.frame.callbacks;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.frame.CallbackFrameModel;
 import com.rposcro.jwavez.serial.frame.SOFCallbackFrame;
-import com.rposcro.jwavez.serial.frame.contants.SerialCommand;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import java.util.Arrays;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;

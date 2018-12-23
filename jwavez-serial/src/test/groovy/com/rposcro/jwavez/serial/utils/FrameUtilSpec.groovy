@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.core.utils
+package com.rposcro.jwavez.serial.utils
 
 import spock.lang.Specification
 

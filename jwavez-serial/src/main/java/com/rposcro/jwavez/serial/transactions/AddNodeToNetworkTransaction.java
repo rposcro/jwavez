@@ -1,17 +1,17 @@
 package com.rposcro.jwavez.serial.transactions;
 
 import static com.rposcro.jwavez.serial.frame.SOFFrame.*;
-import static com.rposcro.jwavez.serial.frame.contants.AddNodeToNeworkStatus.*;
+import static com.rposcro.jwavez.serial.frame.constants.AddNodeToNeworkStatus.*;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.exceptions.TransactionException;
-import com.rposcro.jwavez.serial.frame.contants.FrameType;
-import com.rposcro.jwavez.serial.frame.contants.SerialCommand;
+import com.rposcro.jwavez.serial.frame.constants.FrameType;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
 import com.rposcro.jwavez.serial.frame.callbacks.AddNodeToNetworkCallbackFrame;
-import com.rposcro.jwavez.serial.frame.contants.AddNodeToNeworkMode;
-import com.rposcro.jwavez.serial.frame.contants.AddNodeToNeworkStatus;
+import com.rposcro.jwavez.serial.frame.constants.AddNodeToNeworkMode;
+import com.rposcro.jwavez.serial.frame.constants.AddNodeToNeworkStatus;
 import com.rposcro.jwavez.serial.frame.requests.AddNodeToNetworkRequestFrame;
 import java.util.HashMap;
 import java.util.Map;

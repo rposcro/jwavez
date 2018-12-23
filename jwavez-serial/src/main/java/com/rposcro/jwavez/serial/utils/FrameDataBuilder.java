@@ -2,9 +2,9 @@ package com.rposcro.jwavez.serial.utils;
 
 import static com.rposcro.jwavez.serial.frame.SOFFrame.*;
 
-import com.rposcro.jwavez.serial.frame.contants.FrameCategory;
-import com.rposcro.jwavez.serial.frame.contants.FrameType;
-import com.rposcro.jwavez.serial.frame.contants.SerialCommand;
+import com.rposcro.jwavez.serial.frame.constants.FrameCategory;
+import com.rposcro.jwavez.serial.frame.constants.FrameType;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 
 public class FrameDataBuilder {
 

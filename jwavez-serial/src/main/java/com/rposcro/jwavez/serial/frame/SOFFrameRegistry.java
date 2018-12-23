@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.serial.frame;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.frame.contants.SerialCommand;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;

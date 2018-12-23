@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.serial.frame;
 
 import com.rposcro.jwavez.serial.exceptions.FrameException;
-import com.rposcro.jwavez.serial.frame.contants.FrameType;
+import com.rposcro.jwavez.serial.frame.constants.FrameType;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

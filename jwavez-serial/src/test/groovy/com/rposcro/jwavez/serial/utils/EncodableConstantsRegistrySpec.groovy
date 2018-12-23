@@ -1,31 +1,15 @@
-package com.rposcro.jwavez.core.utils
+package com.rposcro.jwavez.serial.utils
 
-import AddNodeToNeworkStatus
-import FrameCategory
-import FrameType
-import SerialCommand
-import com.rposcro.jwavez.core.enums.BasicDeviceClass
-import com.rposcro.jwavez.core.enums.CommandClass
-import com.rposcro.jwavez.core.enums.GenericDeviceClass
+import com.rposcro.jwavez.core.utils.EncodableConstantsRegistry
+import com.rposcro.jwavez.serial.frame.constants.AddNodeToNeworkStatus
+import com.rposcro.jwavez.serial.frame.constants.FrameCategory
+import com.rposcro.jwavez.serial.frame.constants.FrameType
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand
 import spock.lang.Specification
 import spock.lang.Unroll
 
 @Unroll
 class EncodableConstantsRegistrySpec extends Specification {
-
-    def "correct code is returned #constant, #expectedCode"() {
-        when:
-        byte code = EncodableConstantsRegistry.codeOfConstant(constant);
-
-        then:
-        code == expectedCode;
-
-        where:
-        constant                                  | expectedCode
-        BasicDeviceClass.BASIC_TYPE_ROUTING_SLAVE | 0x04
-        CommandClass.CMD_CLASS_APPLICATION_STATUS | 0x22
-        GenericDeviceClass.GENERIC_TYPE_METER     | 0x31
-    }
 
     def "correct cpnstants is returned #constantClass, #code, #expectedConstant"() {
 
