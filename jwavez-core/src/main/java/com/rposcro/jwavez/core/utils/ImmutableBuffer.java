@@ -47,6 +47,12 @@ public class ImmutableBuffer {
     return ((data[offset + index] & 0xFF) << 8) | (data[offset + index + 1] & 0xFF);
   }
 
+  public byte[] cloneBytes() {
+    byte[] cloned = new byte[length];
+    System.arraycopy(data, offset, cloned, 0, length);
+    return cloned;
+  }
+
   public boolean hasNext() {
     return position < length;
   }

@@ -6,3 +6,8 @@
 /jwavez-core/target/
 /jwavez-core/*.iml
 
+/jwavez-serial/target/
+/jwavez-serial/*.iml
+
+/jwavez-examples/target/
+/jwavez-examples/*.iml
