@@ -5,12 +5,14 @@ import static com.rposcro.jwavez.serial.utils.FieldUtil.booleanByte;
 import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.RequestFrameModel;
 import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
+import com.rposcro.jwavez.serial.transactions.SerialTransaction;
 
 @RequestFrameModel(function = SerialCommand.SERIAL_API_SETUP)
-public class SerilaAPISetupRequestFrame extends SOFRequestFrame {
+public class SerialAPISetupRequestFrame extends SOFRequestFrame {
 
-  public SerilaAPISetupRequestFrame(boolean txStatusReportEnabled) {
+  public SerialAPISetupRequestFrame(boolean txStatusReportEnabled) {
     super(SerialCommand.SERIAL_API_SETUP,
         booleanByte(txStatusReportEnabled));
   }
+
 }

@@ -8,18 +8,19 @@ import java.io.IOException;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Builder
 @AllArgsConstructor
-public class SerialInboundThread extends Thread {
+public class SerialInboundTracker implements Runnable {
 
   private static final long INPUT_POOLING_RATE_MS = 10;
 
+  @Getter
   private SerialReceiver serialReceiver;
-  private SerialTransmitter serialTransmitter;
 
   private Consumer<ByteBuffer> ackHandler = this::handleFrame;
   private Consumer<ByteBuffer> nakHandler = this::handleFrame;
@@ -42,36 +43,22 @@ public class SerialInboundThread extends Thread {
     this.sofHandler = handler;
   }
 
-  @Override
-  public void start() {
-    setDaemon(false);
-    super.start();
-  }
-
   public void run() {
     try {
-      serialTransmitter.transmitData(CANFrame.instance().getBuffer());
-    } catch(IOException e) {
-      throw new CommunicationException("Failed to reset communication!", e);
+      if (serialReceiver.dataAvailable()) {
+        log.debug("Incoming data detected");
+        ByteBuffer buffer = serialReceiver.receiveData();
+        fireHandler(buffer);
+      }
+    } catch (Exception e) {
+      log.error("Failed to receive frame from stream!", e);
+    } finally {
     }
 
-    while (!isInterrupted()) {
-      try {
-        if (serialReceiver.dataAvailable()) {
-          log.debug("Incoming data detected");
-          ByteBuffer buffer = serialReceiver.receiveData();
-          fireHandler(buffer);
-        }
-      } catch (Exception e) {
-        log.error("Failed to receive frame from stream!", e);
-      } finally {
-      }
-
-      try {
-        Thread.sleep(INPUT_POOLING_RATE_MS);
-      } catch(InterruptedException e) {
-        log.info("Inbound thread sleep interrupted! {}", e.getMessage());
-      }
+    try {
+      Thread.sleep(INPUT_POOLING_RATE_MS);
+    } catch(InterruptedException e) {
+      log.info("Inbound thread sleep interrupted! {}", e.getMessage());
     }
   }
 

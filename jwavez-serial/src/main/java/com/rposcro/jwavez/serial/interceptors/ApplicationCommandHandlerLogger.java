@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.serial.debug;
+package com.rposcro.jwavez.serial.interceptors;
 
 import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.callbacks.ApplicationCommandHandlerCallbackFrame;
@@ -8,7 +8,7 @@ import com.rposcro.jwavez.serial.utils.FrameUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ApplicationCommandHandlerCatcher implements InboundFrameInterceptor {
+public class ApplicationCommandHandlerLogger implements InboundFrameInterceptor {
 
   @Override
   public void intercept(InboundFrameInterceptorContext context) {

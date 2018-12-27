@@ -48,7 +48,7 @@ public class TransactionManager {
     startTransactionLaunchThread();
   }
 
-  public <T> Future<TransactionResult<T>> scheduleTransaction(SerialTransaction<T> transaction) throws TransactionException {
+  public <T> Future<TransactionResult<T>> scheduleTransaction(SerialTransaction transaction) throws TransactionException {
     TransactionId transactionId = callbackIdDispatcher.acquireId();
     TransactionContext transactionContext = transaction.init(transactionId);
     awaitingForLaunch.add(transactionContext);

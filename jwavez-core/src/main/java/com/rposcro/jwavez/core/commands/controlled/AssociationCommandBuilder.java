@@ -24,14 +24,14 @@ public class AssociationCommandBuilder {
     return new ZWaveControlledCommand(buffer);
   }
 
-  public static ZWaveControlledCommand buildGetSupportedGroupingsCommand() {
+  public ZWaveControlledCommand buildGetSupportedGroupingsCommand() {
     return new ZWaveControlledCommand(
         CommandClass.CMD_CLASS_ASSOCIATION.getCode(),
         AssociationCommandType.ASSOCIATION_GROUPINGS_GET.getCode()
     );
   }
 
-  public static ZWaveControlledCommand buildGetSpecificGroupCommand(int groupNumber) {
+  public ZWaveControlledCommand buildGetSpecificGroupCommand(int groupNumber) {
     return new ZWaveControlledCommand(
         CommandClass.CMD_CLASS_ASSOCIATION.getCode(),
         AssociationCommandType.ASSOCIATION_SPECIFIC_GROUP_GET.getCode(),

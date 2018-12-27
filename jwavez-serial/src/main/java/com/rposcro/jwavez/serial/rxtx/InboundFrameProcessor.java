@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class InboundFrameProcessor extends Thread {
+public class InboundFrameProcessor implements Runnable {
 
   private SerialCommunicationBroker communicationBroker;
   private List<InboundFrameInterceptor> interceptors;
@@ -15,7 +15,6 @@ public class InboundFrameProcessor extends Thread {
   @Builder
   public InboundFrameProcessor(SerialCommunicationBroker communicationBroker) {
     this.communicationBroker = communicationBroker;
-    this.setDaemon(false);
     this.interceptors = new LinkedList<>();
   }
 
@@ -27,25 +26,17 @@ public class InboundFrameProcessor extends Thread {
     interceptors.add(0, interceptor);
   }
 
-  @Override
-  public void start() {
-    setDaemon(false);
-    super.start();
-  }
-
   public void run() {
     try {
-      while (!isInterrupted()) {
-        SOFFrame inboundFrame = communicationBroker.takeInboundFrame();
-        InboundFrameInterceptorContext context = InboundFrameInterceptorContext.builder()
-            .frame(inboundFrame)
-            .stopProcessing(false)
-            .build();
-        for (InboundFrameInterceptor interceptor: interceptors) {
-          interceptor.intercept(context);
-          if (context.isStopProcessing()) {
-            break;
-          }
+      SOFFrame inboundFrame = communicationBroker.takeInboundFrame();
+      InboundFrameInterceptorContext context = InboundFrameInterceptorContext.builder()
+          .frame(inboundFrame)
+          .stopProcessing(false)
+          .build();
+      for (InboundFrameInterceptor interceptor: interceptors) {
+        interceptor.intercept(context);
+        if (context.isStopProcessing()) {
+          break;
         }
       }
     } catch(InterruptedException e) {

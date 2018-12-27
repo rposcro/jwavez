@@ -8,7 +8,6 @@ import com.rposcro.jwavez.serial.exceptions.TransactionException;
 import com.rposcro.jwavez.serial.frame.constants.FrameType;
 import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
-import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
 import com.rposcro.jwavez.serial.frame.callbacks.SendDataCallbackFrame;
 import com.rposcro.jwavez.serial.frame.constants.AddNodeToNeworkStatus;
 import com.rposcro.jwavez.serial.frame.constants.TransmitCompletionStatus;
@@ -54,7 +53,7 @@ public class SendDataTransaction extends AbstractSerialTransaction<Void> {
   }
 
   @Override
-  public SOFRequestFrame startUp() {
+  public SendDataRequestFrame startUp() {
     setPhase(Phase.PREPARING_SENDING_DATA);
     deliveryConfirmed = false;
     return startUpFrame();

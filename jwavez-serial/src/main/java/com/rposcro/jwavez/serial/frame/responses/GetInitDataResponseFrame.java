@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.serial.frame.responses;
 
+import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.ResponseFrameModel;
 import com.rposcro.jwavez.serial.frame.SOFResponseFrame;
@@ -24,7 +25,7 @@ public class GetInitDataResponseFrame extends SOFResponseFrame {
   private byte capabilities;
   private byte chipType;
   private byte chipVersion;
-  private List<Byte> nodes = new ArrayList<>();
+  private List<NodeId> nodes = new ArrayList<>();
 
   public GetInitDataResponseFrame(byte[] buffer) {
     super(buffer);
@@ -35,7 +36,7 @@ public class GetInitDataResponseFrame extends SOFResponseFrame {
     parseNodes(buffer);
   }
 
-  public List<Byte> getNodes() {
+  public List<NodeId> getNodeList() {
     return Collections.unmodifiableList(nodes);
   }
 
@@ -45,7 +46,7 @@ public class GetInitDataResponseFrame extends SOFResponseFrame {
       for (int bitIdx = 0; bitIdx < 8; bitIdx++) {
         byte nodeId = (byte)((byteIdx * 8) + bitIdx + 1);
         if ((maskByte & (0x01 << bitIdx)) > 0) {
-          nodes.add(nodeId);
+          nodes.add(new NodeId(nodeId));
         }
       }
     }

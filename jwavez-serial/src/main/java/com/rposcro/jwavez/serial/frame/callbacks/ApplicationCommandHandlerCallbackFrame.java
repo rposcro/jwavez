@@ -18,7 +18,6 @@ public class ApplicationCommandHandlerCallbackFrame extends SOFCallbackFrame {
   private static final int OFFSET_CMD_LENGTH = OFFSET_PAYLOAD + 2;
   private static final int OFFSET_CMD_DATA = OFFSET_PAYLOAD + 3;
 
-
   private NodeId sourceNodeId;
   private int commandLength;
   private byte[] commandPayload;

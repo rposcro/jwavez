@@ -3,6 +3,9 @@ package com.rposcro.jwavez.serial.transactions;
 import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @param <T> Transaction result type
+ */
 @Slf4j
 abstract class AbstractSerialTransaction<T> implements SerialTransaction<T> {
 

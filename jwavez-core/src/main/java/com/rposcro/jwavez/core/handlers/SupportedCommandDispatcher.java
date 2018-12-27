@@ -7,7 +7,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SupportedCommandDispatcher {
 
   private Map<CommandType, List<SupportedCommandHandler>> handlersPerCommandType = new HashMap<>();
@@ -20,6 +22,7 @@ public class SupportedCommandDispatcher {
   }
 
   public void dispatchCommand(ZWaveSupportedCommand command) {
+    log.info("Command to dispatch: {} {}", command.commandClass(), command.commandType());
     Optional.ofNullable(handlersPerCommandType.get(command.commandType()))
         .ifPresent(handlers -> handlers.stream().forEach(handler -> handler.handleCommand(command)));
   }

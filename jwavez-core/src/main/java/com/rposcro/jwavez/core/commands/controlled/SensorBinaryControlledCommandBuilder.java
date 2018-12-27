@@ -3,7 +3,7 @@ package com.rposcro.jwavez.core.commands.controlled;
 import com.rposcro.jwavez.core.enums.CommandClass;
 import com.rposcro.jwavez.core.commands.enums.SensorBinaryCommandType;
 
-public class SensorBinaryControlledCommand {
+public class SensorBinaryControlledCommandBuilder {
 
   public ZWaveControlledCommand buildGetCommand() {
     return new ZWaveControlledCommand(CommandClass.CMD_CLASS_SENSOR_BINARY.getCode(), SensorBinaryCommandType.SENSOR_BINARY_GET.getCode());

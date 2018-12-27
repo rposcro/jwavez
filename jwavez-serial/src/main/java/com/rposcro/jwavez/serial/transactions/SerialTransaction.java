@@ -10,7 +10,7 @@ public interface SerialTransaction<T> {
   boolean expectsCallbacks();
   boolean expectsResponse();
 
-  TransactionContext init(TransactionId transactionId);
+  TransactionContext<T> init(TransactionId transactionId);
   SOFRequestFrame startUp();
   Optional<SOFFrame> acceptInboundFrame(SOFFrame inboundFrame);
   void deliverySuccessful();

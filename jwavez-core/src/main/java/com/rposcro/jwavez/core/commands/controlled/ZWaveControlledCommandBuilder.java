@@ -19,7 +19,7 @@ public class ZWaveControlledCommandBuilder {
     return (MultiChannelCommandBuilder) builders.computeIfAbsent(CommandClass.CMD_CLASS_MULTI_CHANNEL, cmdClass -> new MultiChannelCommandBuilder());
   }
 
-  public SensorBinaryControlledCommand sensorBinaryControlledCommand() {
-    return (SensorBinaryControlledCommand) builders.computeIfAbsent(CommandClass.CMD_CLASS_SENSOR_BINARY, cmdClass -> new SensorBinaryControlledCommand());
+  public SensorBinaryControlledCommandBuilder sensorBinaryControlledCommand() {
+    return (SensorBinaryControlledCommandBuilder) builders.computeIfAbsent(CommandClass.CMD_CLASS_SENSOR_BINARY, cmdClass -> new SensorBinaryControlledCommandBuilder());
   }
 }

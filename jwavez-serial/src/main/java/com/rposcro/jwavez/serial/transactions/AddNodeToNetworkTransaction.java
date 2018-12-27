@@ -8,7 +8,6 @@ import com.rposcro.jwavez.serial.exceptions.TransactionException;
 import com.rposcro.jwavez.serial.frame.constants.FrameType;
 import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
-import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
 import com.rposcro.jwavez.serial.frame.callbacks.AddNodeToNetworkCallbackFrame;
 import com.rposcro.jwavez.serial.frame.constants.AddNodeToNeworkMode;
 import com.rposcro.jwavez.serial.frame.constants.AddNodeToNeworkStatus;
@@ -54,7 +53,7 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
   }
 
   @Override
-  public SOFRequestFrame startUp() {
+  public AddNodeToNetworkRequestFrame startUp() {
     setPhase(Phase.WAITING_FOR_PROTOCOL);
     deliveryConfirmed = false;
     return new AddNodeToNetworkRequestFrame(AddNodeToNeworkMode.ADD_NODE_ANY, callbackId, true, true);

@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.serial.debug;
+package com.rposcro.jwavez.serial.interceptors;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.frame.SOFFrame;

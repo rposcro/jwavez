@@ -17,4 +17,5 @@ public class SetSUCNodeIdRequestFrame extends SOFRequestFrame {
   private byte toByte(boolean flag) {
     return (byte) (flag ? 1 : 0);
   }
+
 }

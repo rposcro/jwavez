@@ -54,7 +54,7 @@ public class RemoveNodeFromNetworkTransaction extends AbstractSerialTransaction<
   }
 
   @Override
-  public SOFRequestFrame startUp() {
+  public RemoveNodeFromNetworkRequestFrame startUp() {
     setPhase(Phase.WAITING_FOR_PROTOCOL);
     deliveryConfirmed = false;
     return startUpFrame();
@@ -233,7 +233,7 @@ public class RemoveNodeFromNetworkTransaction extends AbstractSerialTransaction<
     }
   }
 
-  private SOFRequestFrame startUpFrame() {
+  private RemoveNodeFromNetworkRequestFrame startUpFrame() {
     return new RemoveNodeFromNetworkRequestFrame(RemoveNodeFromNeworkMode.REMOVE_NODE_ANY, callbackId, true);
   }
 

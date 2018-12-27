@@ -6,16 +6,19 @@ import com.rposcro.jwavez.serial.frame.SOFResponseFrame;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * @param <T> Transaction result type
+ */
 @Slf4j
-public class SimpleRequestResponseTransaction<T extends SOFResponseFrame> extends AbstractSerialTransaction<T> {
+public class SimpleRequestResponseTransaction<T> extends AbstractSerialTransaction<T> {
 
   private SOFRequestFrame requestFrame;
-  private Class<T> expectedResponseFrameClass;
+  private Class<? extends SOFResponseFrame> expectedResponseFrameClass;
 
   private Phase phase;
   private boolean deliveryConfirmed;
 
-  public SimpleRequestResponseTransaction(SOFRequestFrame requestFrame, Class<T> expectedResponseFrameClass) {
+  public SimpleRequestResponseTransaction(SOFRequestFrame requestFrame, Class<? extends  SOFResponseFrame> expectedResponseFrameClass) {
     super(false, true);
     this.requestFrame = requestFrame;
     this.expectedResponseFrameClass = expectedResponseFrameClass;

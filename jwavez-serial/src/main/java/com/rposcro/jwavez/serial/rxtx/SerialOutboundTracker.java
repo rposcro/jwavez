@@ -7,13 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @AllArgsConstructor
-public class SerialOutboundThread extends Thread {
+public class SerialOutboundTracker implements Runnable {
 
   private SerialCommunicationBroker communicationBroker;
   private Consumer<OutboundOrder> orderHandler = this::handleOrder;
 
   @Builder
-  public SerialOutboundThread(SerialCommunicationBroker communicationBroker) {
+  public SerialOutboundTracker(SerialCommunicationBroker communicationBroker) {
     this.communicationBroker = communicationBroker;
   }
 
@@ -21,20 +21,12 @@ public class SerialOutboundThread extends Thread {
     this.orderHandler = orderHandler;
   }
 
-  @Override
-  public void start() {
-    setDaemon(false);
-    super.start();
-  }
-
   public void run() {
-    while (!isInterrupted()) {
-      try {
-        OutboundOrder outboundOrder = communicationBroker.takeOutboundOrder();
-        orderHandler.accept(outboundOrder);
-      } catch(Exception e) {
-        log.error("Failed sending outbound frame!", e);
-      }
+    try {
+      OutboundOrder outboundOrder = communicationBroker.takeOutboundOrder();
+      orderHandler.accept(outboundOrder);
+    } catch(InterruptedException e) {
+      log.error("Outbound tracker interrupted!", e);
     }
   }
 

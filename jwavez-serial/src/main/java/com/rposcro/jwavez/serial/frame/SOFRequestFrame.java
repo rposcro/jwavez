@@ -2,8 +2,9 @@ package com.rposcro.jwavez.serial.frame;
 
 import com.rposcro.jwavez.serial.frame.constants.FrameType;
 import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
+import com.rposcro.jwavez.serial.transactions.SerialTransaction;
 
-public class SOFRequestFrame extends SOFFrame {
+public abstract class SOFRequestFrame extends SOFFrame {
 
   protected SOFRequestFrame(SerialCommand serialCommand) {
     super(FrameType.REQ, serialCommand);
@@ -20,5 +21,4 @@ public class SOFRequestFrame extends SOFFrame {
   protected SOFRequestFrame(byte[] buffer) {
     super(buffer);
   }
-
 }

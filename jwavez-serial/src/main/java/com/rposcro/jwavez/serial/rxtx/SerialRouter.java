@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Semaphore;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -19,42 +20,33 @@ public class SerialRouter {
 
   private static final long TIMEOUT_ACK = 1600;
 
+  @Getter
   private SerialCommunicationBroker communicationBroker;
-  private SerialOutboundThread outboundThread;
-  private SerialInboundThread inboundThread;
+  @Getter
   private SerialTransmitter transmitter;
+  @Getter
   private SOFFrameParser frameParser;
+  @Getter
+  private SOFFrameValidator frameValidator;
 
   private CompletableFuture<Boolean> transmissionResult;
   private TimeoutKeeper timeoutKeeper;
 
   private final Semaphore controlLock = new Semaphore(1);
-  private final SOFFrameValidator validator = new SOFFrameValidator();
 
   @Builder
   private SerialRouter(
-      SerialInboundThread inboundThread,
-      SerialOutboundThread outboundThread,
       SerialTransmitter transmitter,
       SOFFrameParser frameParser,
+      SOFFrameValidator frameValidator,
       SerialCommunicationBroker communicationBroker) {
     this.transmitter = transmitter;
-    this.inboundThread = inboundThread;
-    this.outboundThread = outboundThread;
     this.frameParser = frameParser;
+    this.frameValidator = frameValidator;
     this.communicationBroker = communicationBroker;
-    bindToThreads(inboundThread, outboundThread);
   }
 
-  private void bindToThreads(SerialInboundThread inboundThread, SerialOutboundThread outboundThread) {
-    inboundThread.bindAckHandler(this::handleInboundACK);
-    inboundThread.bindNakHandler(this::handleInboundNAK);
-    inboundThread.bindCanHandler(this::handleInboundCAN);
-    inboundThread.bindSofHandler(this::handleInboundSOF);
-    outboundThread.bindOrderHandler(this::handleOutboundOrder);
-  }
-
-  private void handleOutboundOrder(OutboundOrder order) {
+  public void handleOutboundOrder(OutboundOrder order) {
     boolean result = false;
     controlLock.acquireUninterruptibly();
     try {
@@ -69,24 +61,24 @@ public class SerialRouter {
     }
   }
 
-  private void handleInboundACK(ByteBuffer buffer) {
+  public void handleInboundACK(ByteBuffer buffer) {
     cancelACKTracking(true);
   }
 
-  private void handleInboundNAK(ByteBuffer buffer) {
+  public void handleInboundNAK(ByteBuffer buffer) {
     cancelACKTracking(false);
     log.warn("Frame denied by NAK");
   }
 
-  private void handleInboundCAN(ByteBuffer buffer) {
+  public void handleInboundCAN(ByteBuffer buffer) {
     cancelACKTracking(false);
     log.warn("Frame denied by CAN");
   }
 
-  private void handleInboundSOF(ByteBuffer buffer) {
+  public void handleInboundSOF(ByteBuffer buffer) {
     controlLock.acquireUninterruptibly();
     try {
-      if (!validator.validate(buffer)) {
+      if (!frameValidator.validate(buffer)) {
         throw new FrameException("Frame validation error");
       } else {
         transmitter.transmitData(ACK_FRAME.getBuffer());

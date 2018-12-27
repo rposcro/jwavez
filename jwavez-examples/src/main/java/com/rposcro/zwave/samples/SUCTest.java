@@ -1,7 +1,5 @@
 package com.rposcro.zwave.samples;
 
-import com.rposcro.jwavez.serial.SerialChannel;
-import com.rposcro.jwavez.serial.SerialManager;
 import com.rposcro.jwavez.serial.frame.requests.EnableSUCRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetSUCNodeIdRequestFrame;
 import com.rposcro.jwavez.serial.frame.responses.EnableSUCResponseFrame;
@@ -10,14 +8,13 @@ import com.rposcro.jwavez.serial.transactions.SerialTransaction;
 import com.rposcro.jwavez.serial.transactions.SimpleRequestResponseTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 
-public class SUCTest {
-
-  private SerialManager manager;
-  private SerialChannel channel;
+/**
+ * Checks SUC mode on controller stick.
+ */
+public class SUCTest extends AbstractExample {
 
   public SUCTest() {
-    this.manager = new SerialManager("/dev/cu.usbmodem1411");
-    this.channel = manager.connect();
+    super("/dev/cu.usbmodem1411");
   }
 
   private void checkSUCNode() throws Exception {
@@ -33,7 +30,6 @@ public class SUCTest {
         new EnableSUCRequestFrame(), EnableSUCResponseFrame.class);
     TransactionResult<EnableSUCResponseFrame> result = channel.executeTransaction(transaction).get();
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
-//    System.out.println(String.format("SUC Node Id: %s", result.getResult()));
   }
 
   public static void main(String[] args) throws Exception {
@@ -41,9 +37,5 @@ public class SUCTest {
     test.checkSUCNode();
   //  test.enableSUCMode();
     System.exit(0);
-  }
-
-  private static String orNull(byte[] array) {
-    return array == null ? "null" : "" + array[0];
   }
 }
