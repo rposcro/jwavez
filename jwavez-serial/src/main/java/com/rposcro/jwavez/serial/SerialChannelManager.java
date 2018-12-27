@@ -1,7 +1,10 @@
-package com.rposcro.jwavez.serial.factory;
+package com.rposcro.jwavez.serial;
 
-import com.rposcro.jwavez.serial.SerialChannel;
 import com.rposcro.jwavez.serial.exceptions.CommunicationException;
+import com.rposcro.jwavez.serial.factory.FramesServicesFactory;
+import com.rposcro.jwavez.serial.factory.RoutingServicesFactory;
+import com.rposcro.jwavez.serial.factory.RxTxServicesFactory;
+import com.rposcro.jwavez.serial.factory.TransactionServicesFactory;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.SOFFrameParser;
 import com.rposcro.jwavez.serial.frame.SOFFrameValidator;

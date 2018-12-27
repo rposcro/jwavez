@@ -6,8 +6,6 @@ import com.rposcro.jwavez.serial.frame.requests.GetInitDataRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.RequestNodeInfoRequestFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetInitDataResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.RequestNodeInfoResponseFrame;
-import com.rposcro.jwavez.serial.transactions.SerialTransaction;
-import com.rposcro.jwavez.serial.transactions.SimpleRequestResponseTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
 import java.util.List;
@@ -30,9 +28,7 @@ public class IncludedNodesInfoTest  extends AbstractExample {
 
   private List<NodeId> findIncludedNodes() throws Exception {
     log.info("Learning included nodes ...");
-    SerialTransaction<GetInitDataResponseFrame> transaction = new SimpleRequestResponseTransaction<>(
-        new GetInitDataRequestFrame(), GetInitDataResponseFrame.class);
-    TransactionResult<GetInitDataResponseFrame> result = channel.executeTransaction(transaction).get();
+    TransactionResult<GetInitDataResponseFrame> result = channel.sendFrameWithResponseAndWait(new GetInitDataRequestFrame());
 
     if (result.getStatus() != TransactionStatus.Completed) {
         log.error("Failed to obtain nodes list!");
@@ -51,11 +47,8 @@ public class IncludedNodesInfoTest  extends AbstractExample {
 
   private void requestNodeInfo(NodeId nodeId) throws Exception {
     log.info("Learning about node {} ...", nodeId);
-
-    SerialTransaction<RequestNodeInfoResponseFrame> transaction = new SimpleRequestResponseTransaction<>(
-      new RequestNodeInfoRequestFrame(nodeId), RequestNodeInfoResponseFrame.class);
-    TransactionResult<RequestNodeInfoResponseFrame> result = channel.executeTransaction(transaction).get();
-    log.info("Transaction status: {}", transaction.status());
+    TransactionResult<RequestNodeInfoResponseFrame> result = channel.sendFrameWithResponseAndWait(new RequestNodeInfoRequestFrame(nodeId));
+    log.info("Transaction status: {}", result.getStatus());
 
     if (result.getStatus() == TransactionStatus.Completed) {
       log.info("Request accepted, awaiting callback");

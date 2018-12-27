@@ -5,7 +5,7 @@ import com.rposcro.jwavez.serial.frame.SOFFrameRegistry;
 import com.rposcro.jwavez.serial.frame.SOFFrameValidator;
 import java.util.concurrent.Semaphore;
 
-class FramesServicesFactory {
+public class FramesServicesFactory {
 
   private SOFFrameParser frameParser;
   private SOFFrameRegistry frameRegistry;
@@ -20,19 +20,19 @@ class FramesServicesFactory {
     this.frameParser = new SOFFrameParser(frameRegistry);
   }
 
-  SOFFrameParser createFrameParser() {
+  public SOFFrameParser createFrameParser() {
     return frameParser;
   }
 
-  SOFFrameRegistry createFrameRegistry() {
+  public SOFFrameRegistry createFrameRegistry() {
     return frameRegistry;
   }
 
-  SOFFrameValidator createFrameValidator() {
+  public SOFFrameValidator createFrameValidator() {
     return frameValidator;
   }
 
-  static FramesServicesFactory custom() {
+  public static FramesServicesFactory custom() {
     semaphore.acquireUninterruptibly();
     try {
       if (singleton == null) {

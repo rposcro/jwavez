@@ -1,9 +1,6 @@
 package com.rposcro.zwave.samples;
 
 import com.rposcro.jwavez.serial.frame.requests.ZStickSetConfigRequestFrame;
-import com.rposcro.jwavez.serial.frame.responses.ZStickSetConfigResponseFrame;
-import com.rposcro.jwavez.serial.transactions.SerialTransaction;
-import com.rposcro.jwavez.serial.transactions.SimpleRequestResponseTransaction;
 
 public class ZStickLightOnOff extends AbstractExample {
 
@@ -15,20 +12,14 @@ public class ZStickLightOnOff extends AbstractExample {
    * Turns ZStick led off
    */
   private void turnLedOff() throws Exception {
-    SerialTransaction<ZStickSetConfigResponseFrame> transaction = new SimpleRequestResponseTransaction<>(
-        ZStickSetConfigRequestFrame.builder().ledIndicator(false).build(),
-        ZStickSetConfigResponseFrame.class);
-    channel.executeTransaction(transaction).get();
+    channel.sendFrameWithResponseAndWait(ZStickSetConfigRequestFrame.builder().ledIndicator(false).build());
   }
 
   /**
    * Turns ZStick led on
    */
   private void turnLedOn() throws Exception {
-    SerialTransaction<ZStickSetConfigResponseFrame> transaction = new SimpleRequestResponseTransaction(
-        ZStickSetConfigRequestFrame.builder().ledIndicator(true).build(),
-        ZStickSetConfigResponseFrame.class);
-    channel.executeTransaction(transaction).get();
+    channel.sendFrameWithResponseAndWait(ZStickSetConfigRequestFrame.builder().ledIndicator(true).build());
   }
 
   public static void main(String[] args) throws Exception {

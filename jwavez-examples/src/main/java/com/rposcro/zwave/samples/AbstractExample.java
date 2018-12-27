@@ -1,7 +1,7 @@
 package com.rposcro.zwave.samples;
 
 import com.rposcro.jwavez.serial.SerialChannel;
-import com.rposcro.jwavez.serial.factory.SerialChannelManager;
+import com.rposcro.jwavez.serial.SerialChannelManager;
 
 public abstract class AbstractExample {
 

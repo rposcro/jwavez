@@ -6,14 +6,14 @@ import com.rposcro.jwavez.serial.transactions.TransactionIdDispatcher;
 import com.rposcro.jwavez.serial.transactions.TransactionManager;
 import java.util.concurrent.Semaphore;
 
-class TransactionServicesFactory {
+public class TransactionServicesFactory {
 
   private static final Semaphore semaphore = new Semaphore(1);
   private static TransactionServicesFactory singleton;
 
   private TransactionIdDispatcher transactionIdDispatcher;
 
-  TransactionManager createTransactionManager(InboundFrameProcessor frameProcessor, SerialCommunicationBroker communicationBroker) {
+  public TransactionManager createTransactionManager(InboundFrameProcessor frameProcessor, SerialCommunicationBroker communicationBroker) {
     return TransactionManager.builder()
         .callbackIdDispatcher(transactionIdDispatcher)
         .frameProcessor(frameProcessor)
@@ -21,7 +21,7 @@ class TransactionServicesFactory {
         .build();
   }
 
-  static TransactionServicesFactory custom() {
+  public static TransactionServicesFactory custom() {
     semaphore.acquireUninterruptibly();
     try {
       if (singleton == null) {

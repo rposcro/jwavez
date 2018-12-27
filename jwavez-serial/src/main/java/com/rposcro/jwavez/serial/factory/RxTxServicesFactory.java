@@ -5,13 +5,13 @@ import com.rposcro.jwavez.serial.rxtx.SerialTransmitter;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-class RxTxServicesFactory {
+public class RxTxServicesFactory {
 
-  SerialReceiver createSerialReceiver(InputStream inputStream) {
+  public SerialReceiver createSerialReceiver(InputStream inputStream) {
     return new SerialReceiver(inputStream);
   }
 
-  SerialTransmitter createSerialTransmitter(OutputStream outputStream) {
+  public SerialTransmitter createSerialTransmitter(OutputStream outputStream) {
     return new SerialTransmitter(outputStream);
   }
 }

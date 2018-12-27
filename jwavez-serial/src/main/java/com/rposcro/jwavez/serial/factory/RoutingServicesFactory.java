@@ -10,7 +10,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialReceiver;
 import com.rposcro.jwavez.serial.rxtx.SerialRouter;
 import com.rposcro.jwavez.serial.rxtx.SerialTransmitter;
 
-class RoutingServicesFactory {
+public class RoutingServicesFactory {
 
   public SerialInboundTracker createInboundTracker(SerialReceiver serialReceiver) {
     return SerialInboundTracker.builder()

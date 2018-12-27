@@ -1,7 +1,5 @@
 package com.rposcro.zwave.samples;
 
-import com.rposcro.jwavez.serial.SerialChannel;
-import com.rposcro.jwavez.serial.factory.SerialChannelManager;
 import com.rposcro.jwavez.serial.frame.requests.GetCapabilitiesRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetInitDataRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetSUCNodeIdRequestFrame;
@@ -12,8 +10,6 @@ import com.rposcro.jwavez.serial.frame.responses.GetInitDataResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetSUCNodeIdResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetVersionResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.MemoryGetIdResponseFrame;
-import com.rposcro.jwavez.serial.transactions.SerialTransaction;
-import com.rposcro.jwavez.serial.transactions.SimpleRequestResponseTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 
 public class CheckOutController  extends AbstractExample {
@@ -23,9 +19,7 @@ public class CheckOutController  extends AbstractExample {
   }
 
   private void learnControllerCapabilities() throws Exception {
-    SerialTransaction<GetCapabilitiesResponseFrame> transaction = new SimpleRequestResponseTransaction<>(
-      new GetCapabilitiesRequestFrame(), GetCapabilitiesResponseFrame.class);
-    TransactionResult<GetCapabilitiesResponseFrame> result = channel.executeTransaction(transaction).get();
+    TransactionResult<GetCapabilitiesResponseFrame> result = channel.sendFrameWithResponseAndWait(new GetCapabilitiesRequestFrame());
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
     System.out.println(String.format("App version: %s", result.getResult().getSerialAppVersion()));
     System.out.println(String.format("App revision: %s", result.getResult().getSerialAppRevision()));
@@ -36,9 +30,7 @@ public class CheckOutController  extends AbstractExample {
   }
 
   private void learnInitData() throws Exception {
-    SerialTransaction<GetInitDataResponseFrame> transaction = new SimpleRequestResponseTransaction<>(
-      new GetInitDataRequestFrame(), GetInitDataResponseFrame.class);
-    TransactionResult<GetInitDataResponseFrame> result = channel.executeTransaction(transaction).get();
+    TransactionResult<GetInitDataResponseFrame> result = channel.sendFrameWithResponseAndWait(new GetInitDataRequestFrame());
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
     System.out.println(String.format("Version: %s", result.getResult().getVersion()));
     System.out.println(String.format("Capabilities: %s", result.getResult().getCapabilities()));
@@ -48,27 +40,21 @@ public class CheckOutController  extends AbstractExample {
   }
 
   private void learnIds() throws Exception {
-    SerialTransaction<MemoryGetIdResponseFrame> transaction = new SimpleRequestResponseTransaction<>(
-        new MemoryGetIdRequestFrame(), MemoryGetIdResponseFrame.class);
-    TransactionResult<MemoryGetIdResponseFrame> result = channel.executeTransaction(transaction).get();
+    TransactionResult<MemoryGetIdResponseFrame> result = channel.sendFrameWithResponseAndWait(new MemoryGetIdRequestFrame());
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
     System.out.println(String.format("HomeId: %02X", result.getResult().getHomeId()));
     System.out.println(String.format("Controller NodeId: %02X", result.getResult().getNodeId()));
   }
 
   private void learnVersion() throws Exception {
-    SerialTransaction<GetVersionResponseFrame> transaction = new SimpleRequestResponseTransaction<>(
-        new GetVersionRequestFrame(), GetVersionResponseFrame.class);
-    TransactionResult<GetVersionResponseFrame> result = channel.executeTransaction(transaction).get();
+    TransactionResult<GetVersionResponseFrame> result = channel.sendFrameWithResponseAndWait(new GetVersionRequestFrame());
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
     System.out.println(String.format("Version: %s", result.getResult().getVersion()));
     System.out.println(String.format("Response data: %s", result.getResult().getResponseData()));
   }
 
   private void learnSUCNode() throws Exception {
-    SerialTransaction<GetSUCNodeIdResponseFrame> transaction = new SimpleRequestResponseTransaction<>(
-        new GetSUCNodeIdRequestFrame(), GetSUCNodeIdResponseFrame.class);
-    TransactionResult<GetSUCNodeIdResponseFrame> result = channel.executeTransaction(transaction).get();
+    TransactionResult<GetSUCNodeIdResponseFrame> result = channel.sendFrameWithResponseAndWait(new GetSUCNodeIdRequestFrame());
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
     System.out.println(String.format("SUC node id: %02X", result.getResult().getSucNodeId()));
   }
@@ -79,6 +65,7 @@ public class CheckOutController  extends AbstractExample {
     test.learnInitData();
     test.learnIds();
     test.learnVersion();
+    test.learnSUCNode();
 
     Thread.sleep(10_000);
     System.exit(0);

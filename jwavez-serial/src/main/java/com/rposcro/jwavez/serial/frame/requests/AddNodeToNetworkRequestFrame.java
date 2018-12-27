@@ -4,6 +4,7 @@ import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.RequestFrameModel;
 import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
 import com.rposcro.jwavez.serial.frame.constants.AddNodeToNeworkMode;
+import com.rposcro.jwavez.serial.transactions.AddNodeToNetworkTransaction;
 
 @RequestFrameModel(function = SerialCommand.ADD_NODE_TO_NETWORK)
 public class AddNodeToNetworkRequestFrame extends SOFRequestFrame {
