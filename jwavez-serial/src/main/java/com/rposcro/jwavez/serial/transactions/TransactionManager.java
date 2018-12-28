@@ -6,8 +6,8 @@ import com.rposcro.jwavez.serial.frame.SOFCallbackFrame;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
 import com.rposcro.jwavez.serial.frame.SOFResponseFrame;
+import com.rposcro.jwavez.serial.rxtx.InboundFrameInterceptor;
 import com.rposcro.jwavez.serial.rxtx.InboundFrameInterceptorContext;
-import com.rposcro.jwavez.serial.rxtx.InboundFrameProcessor;
 import com.rposcro.jwavez.serial.rxtx.OutboundOrder;
 import com.rposcro.jwavez.serial.rxtx.OutboundResult;
 import com.rposcro.jwavez.serial.rxtx.SerialCommunicationBroker;
@@ -21,7 +21,7 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class TransactionManager {
+public class TransactionManager implements InboundFrameInterceptor {
 
   private static final long TIMEOUT_RESPONSE = 65000;
 
@@ -36,14 +36,12 @@ public class TransactionManager {
   @Builder
   public TransactionManager(
       TransactionIdDispatcher callbackIdDispatcher,
-      InboundFrameProcessor frameProcessor,
       SerialCommunicationBroker communicationBroker) {
     this.communicationBroker = communicationBroker;
     this.callbackIdDispatcher = callbackIdDispatcher;
     this.transactionsPerId = new ConcurrentHashMap<>();
     this.awaitingForLaunch = new LinkedBlockingQueue<>();
     this.awaitingResponse = Optional.empty();
-    frameProcessor.insertAsFirst(this::inboundFrameInterceptor);
     startOutboundResultThread();
     startTransactionLaunchThread();
   }
@@ -53,6 +51,16 @@ public class TransactionManager {
     TransactionContext transactionContext = transaction.init(transactionId);
     awaitingForLaunch.add(transactionContext);
     return transactionContext.getFutureResult();
+  }
+
+  @Override
+  public void intercept(InboundFrameInterceptorContext context) {
+    SOFFrame inboundFrame = context.getFrame();
+    if (inboundFrame.getFrameType() == FrameType.RES) {
+      acceptResponseFrame((SOFResponseFrame) inboundFrame);
+    } else if (inboundFrame.getFrameType() == FrameType.REQ) {
+      acceptCallbackFrame((SOFCallbackFrame) inboundFrame);
+    }
   }
 
   private void launchTransaction(TransactionContext<?> transactionContext) throws InterruptedException {
@@ -108,22 +116,13 @@ public class TransactionManager {
     }
   }
 
-  private void inboundFrameInterceptor(InboundFrameInterceptorContext context) {
-    SOFFrame inboundFrame = context.getFrame();
-    if (inboundFrame.getFrameType() == FrameType.RES) {
-      acceptResponseFrame((SOFResponseFrame) inboundFrame);
-    } else if (inboundFrame.getFrameType() == FrameType.REQ) {
-      acceptCallbackFrame((SOFCallbackFrame) inboundFrame);
-    }
-  }
-
   private void processNextStep(Optional<SOFFrame> nextFrame, TransactionContext<?> transactionContext) {
     nextFrame.ifPresent(frame -> enqueuOutboundOrder(frame, transactionContext.getTransactionId()));
     challengeCalledBackTransactionToClose(transactionContext);
   }
 
   private void startTransactionLaunchThread() {
-    new Thread() {
+    Thread thread = new Thread() {
       @Override
       public void run() {
         try {
@@ -135,7 +134,10 @@ public class TransactionManager {
           log.warn("Transaction launch thread interrupted", e);
         }
       }
-    }.start();
+    };
+
+    thread.setDaemon(true);
+    thread.start();
   }
 
   private void enqueuOutboundOrder(SOFFrame frame, TransactionId transactionId) {
@@ -144,7 +146,7 @@ public class TransactionManager {
   }
 
   private void startOutboundResultThread() {
-    new Thread() {
+    Thread thread = new Thread() {
       @Override
       public void run() {
         try {
@@ -168,7 +170,9 @@ public class TransactionManager {
           log.warn("Outbound result thread interrupted!");
         }
       }
-    }.start();
+    };
+    thread.setDaemon(true);
+    thread.start();
   }
 
   private void challengeCalledBackTransactionToClose(TransactionContext context) {

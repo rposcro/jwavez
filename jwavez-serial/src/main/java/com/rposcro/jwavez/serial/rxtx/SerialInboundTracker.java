@@ -1,10 +1,7 @@
 package com.rposcro.jwavez.serial.rxtx;
 
-import com.rposcro.jwavez.serial.exceptions.CommunicationException;
-import com.rposcro.jwavez.serial.frame.CANFrame;
 import com.rposcro.jwavez.serial.frame.constants.FrameCategory;
 import com.rposcro.jwavez.serial.utils.ByteBuffer;
-import java.io.IOException;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -44,19 +41,20 @@ public class SerialInboundTracker implements Runnable {
   }
 
   public void run() {
+    log.info("Serial inbound tracker started");
     try {
-      if (serialReceiver.dataAvailable()) {
-        log.debug("Incoming data detected");
-        ByteBuffer buffer = serialReceiver.receiveData();
-        fireHandler(buffer);
+      while (true) {
+        try {
+          if (serialReceiver.dataAvailable()) {
+            log.debug("Incoming data detected");
+            ByteBuffer buffer = serialReceiver.receiveData();
+            fireHandler(buffer);
+          }
+        } catch (Exception e) {
+          log.error("Failed to receive frame from stream!", e);
+        }
+        Thread.sleep(INPUT_POOLING_RATE_MS);
       }
-    } catch (Exception e) {
-      log.error("Failed to receive frame from stream!", e);
-    } finally {
-    }
-
-    try {
-      Thread.sleep(INPUT_POOLING_RATE_MS);
     } catch(InterruptedException e) {
       log.info("Inbound thread sleep interrupted! {}", e.getMessage());
     }

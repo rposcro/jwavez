@@ -7,7 +7,9 @@ import com.rposcro.jwavez.serial.factory.RxTxServicesFactory;
 import com.rposcro.jwavez.serial.factory.TransactionServicesFactory;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.SOFFrameParser;
+import com.rposcro.jwavez.serial.frame.SOFFrameRegistry;
 import com.rposcro.jwavez.serial.frame.SOFFrameValidator;
+import com.rposcro.jwavez.serial.rxtx.InboundFrameInterceptor;
 import com.rposcro.jwavez.serial.rxtx.InboundFrameProcessor;
 import com.rposcro.jwavez.serial.rxtx.SerialCommunicationBroker;
 import com.rposcro.jwavez.serial.rxtx.SerialInboundTracker;
@@ -16,11 +18,12 @@ import com.rposcro.jwavez.serial.rxtx.SerialReceiver;
 import com.rposcro.jwavez.serial.rxtx.SerialRouter;
 import com.rposcro.jwavez.serial.rxtx.SerialTransmitter;
 import com.rposcro.jwavez.serial.transactions.TransactionManager;
-import com.rposcro.jwavez.serial.utils.FrameUtil;
 import gnu.io.NRSerialPort;
+import java.util.List;
 import java.util.stream.Stream;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Singular;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -31,6 +34,7 @@ public class SerialChannelManager {
   @Getter private int baudRate;
   @Getter private String device;
   @Getter private boolean manageThreads;
+  @Getter private List<InboundFrameInterceptor> interceptors;
 
   @Getter private SerialChannel serialChannel;
   @Getter private Runnable[] runnables;
@@ -40,29 +44,36 @@ public class SerialChannelManager {
 
   private SerialReceiver serialReceiver;
   private SerialTransmitter serialTransmitter;
+  private InboundFrameProcessor frameProcessor;
+
+  public void addInboundFrameInterceptor(InboundFrameInterceptor interceptor) {
+    frameProcessor.addInterceptor(interceptor);
+  }
 
   public SerialChannel connect() {
-      if (port.connect()) {
-        try {
-          cancelOngoingCommunication();
-          if (manageThreads) {
-            launchThreads();
-          }
-          return serialChannel;
-        } catch(Exception e) {
-          throw new CommunicationException("Failed to initialize communication with device!", e);
+    this.port = new NRSerialPort(device, baudRate);
+
+    if (port.connect()) {
+      assemblyChannel();
+
+      try {
+        cancelOngoingCommunication();
+        if (manageThreads) {
+          launchThreads();
         }
-      } else {
-        throw new CommunicationException("Failed to connect to device!");
+        return serialChannel;
+      } catch(Exception e) {
+        throw new CommunicationException("Failed to initialize communication with device!", e);
       }
+    } else {
+      throw new CommunicationException("Failed to connect to device!");
+    }
   }
 
   private void cancelOngoingCommunication() throws Exception {
     serialTransmitter.transmitData(SOFFrame.CAN_FRAME.getBuffer());
     Thread.sleep(500);
-    while (serialReceiver.dataAvailable()) {
-      log.info("Skipping data: {}", FrameUtil.bufferToString(serialReceiver.receiveData()));
-    }
+    serialReceiver.purgeStream();
   }
 
   private void launchThreads() {
@@ -73,18 +84,20 @@ public class SerialChannelManager {
   }
 
   @Builder
-  private static SerialChannelManager build(String device, boolean manageThreads, int baudRate) {
+  private static SerialChannelManager build(
+      String device,
+      boolean manageThreads,
+      int baudRate,
+      @Singular("interceptor") List<InboundFrameInterceptor> interceptors) {
     SerialChannelManager manager = new SerialChannelManager();
     manager.device = device;
     manager.manageThreads = manageThreads;
     manager.baudRate = baudRate == 0 ? DEFAULT_BAUD_RATE : baudRate;
-    manager.assemblyChannel();
+    manager.interceptors = interceptors;
     return manager;
   }
 
   private void assemblyChannel() {
-    this.port = port();
-
     RxTxServicesFactory rxTxServicesFactory = new RxTxServicesFactory();
     this.serialReceiver = rxTxServicesFactory.createSerialReceiver(port.getInputStream());
     this.serialTransmitter = rxTxServicesFactory.createSerialTransmitter(port.getOutputStream());
@@ -92,23 +105,32 @@ public class SerialChannelManager {
     FramesServicesFactory framesServicesFactory = FramesServicesFactory.custom();
     SOFFrameParser frameParser = framesServicesFactory.createFrameParser();
     SOFFrameValidator frameValidator = framesServicesFactory.createFrameValidator();
+    SOFFrameRegistry frameRegistry = framesServicesFactory.createFrameRegistry();
 
     RoutingServicesFactory routingServicesFactory = new RoutingServicesFactory();
     SerialCommunicationBroker communicationBroker = routingServicesFactory.createCommunicationBroker();
     SerialInboundTracker inboundTracker = routingServicesFactory.createInboundTracker(serialReceiver);
     SerialOutboundTracker outboundTracker = routingServicesFactory.createOutboundTracker(communicationBroker);
     SerialRouter serialRouter = routingServicesFactory.createSerialRouter(serialTransmitter, communicationBroker, frameParser, frameValidator);
-    InboundFrameProcessor inboundFrameProcessor = routingServicesFactory.createFrameProcessor(communicationBroker);
+    this.frameProcessor = routingServicesFactory.createFrameProcessor(communicationBroker);
     bindRouter(serialRouter, inboundTracker, outboundTracker);
 
     TransactionServicesFactory transactionServicesFactory = TransactionServicesFactory.custom();
-    TransactionManager transactionManager = transactionServicesFactory.createTransactionManager(inboundFrameProcessor, communicationBroker);
+    TransactionManager transactionManager = transactionServicesFactory.createTransactionManager(communicationBroker);
 
-    this.runnables = new Runnable[] { inboundTracker, outboundTracker, inboundFrameProcessor };
+    frameProcessor.insertAsFirst(transactionManager);
+    setUpInterceptors(frameProcessor, interceptors);
+
+    this.runnables = new Runnable[] { inboundTracker, outboundTracker, frameProcessor };
     this.serialChannel = SerialChannel.builder()
-        .inboundFrameProcessor(inboundFrameProcessor)
+        .inboundFrameProcessor(frameProcessor)
         .transactionManager(transactionManager)
+        .frameRegistry(frameRegistry)
         .build();
+  }
+
+  private void setUpInterceptors(InboundFrameProcessor inboundFrameProcessor, List<InboundFrameInterceptor> interceptors) {
+    interceptors.stream().forEach(inboundFrameProcessor::addInterceptor);
   }
 
   private NRSerialPort port() {

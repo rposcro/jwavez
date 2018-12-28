@@ -46,8 +46,4 @@ public class SerialChannel {
   public <T> Future<TransactionResult<T>> executeTransaction(SerialTransaction<T> transaction) {
     return transactionManager.scheduleTransaction(transaction);
   }
-
-  public void addInboundFrameInterceptor(InboundFrameInterceptor interceptor) {
-    this.inboundFrameProcessor.addInterceptor(interceptor);
-  }
 }

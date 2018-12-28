@@ -1,5 +1,6 @@
 package com.rposcro.zwave.samples;
 
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.requests.GetCapabilitiesRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetInitDataRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetSUCNodeIdRequestFrame;
@@ -11,11 +12,12 @@ import com.rposcro.jwavez.serial.frame.responses.GetSUCNodeIdResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetVersionResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.MemoryGetIdResponseFrame;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
+import java.util.stream.Collectors;
 
 public class CheckOutController  extends AbstractExample {
 
   public CheckOutController() {
-    super("/dev/cu.usbmodem1411");
+    super("/dev/cu.usbmodem14211");
   }
 
   private void learnControllerCapabilities() throws Exception {
@@ -26,7 +28,14 @@ public class CheckOutController  extends AbstractExample {
     System.out.println(String.format("Manufacturer id: %s", result.getResult().getManufacturerId()));
     System.out.println(String.format("Product type: %s", result.getResult().getManufacturerProductType()));
     System.out.println(String.format("Product id: %s", result.getResult().getManufacturerProductId()));
-    System.out.println(String.format("Functions: %s", result.getResult().getFunctions()));
+    System.out.println(String.format("Functions: %s", result.getResult().getFunctions().stream()
+    .map(code -> {
+      try {
+        return SerialCommand.ofCode(code.byteValue());
+      } catch(IllegalArgumentException e) {
+        return String.format("UNKNOWN(%02x)", code.byteValue());
+      }})
+    .collect(Collectors.toList())));
   }
 
   private void learnInitData() throws Exception {

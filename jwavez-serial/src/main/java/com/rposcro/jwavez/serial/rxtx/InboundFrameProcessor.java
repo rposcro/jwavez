@@ -27,16 +27,19 @@ public class InboundFrameProcessor implements Runnable {
   }
 
   public void run() {
+    log.info("Inbound frame processor started");
     try {
-      SOFFrame inboundFrame = communicationBroker.takeInboundFrame();
-      InboundFrameInterceptorContext context = InboundFrameInterceptorContext.builder()
-          .frame(inboundFrame)
-          .stopProcessing(false)
-          .build();
-      for (InboundFrameInterceptor interceptor: interceptors) {
-        interceptor.intercept(context);
-        if (context.isStopProcessing()) {
-          break;
+      while(true) {
+        SOFFrame inboundFrame = communicationBroker.takeInboundFrame();
+        InboundFrameInterceptorContext context = InboundFrameInterceptorContext.builder()
+            .frame(inboundFrame)
+            .stopProcessing(false)
+            .build();
+        for (InboundFrameInterceptor interceptor : interceptors) {
+          interceptor.intercept(context);
+          if (context.isStopProcessing()) {
+            break;
+          }
         }
       }
     } catch(InterruptedException e) {

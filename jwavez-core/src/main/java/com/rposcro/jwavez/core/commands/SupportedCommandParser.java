@@ -20,4 +20,10 @@ public class SupportedCommandParser {
     ZWaveSupportedCommandResolver commandResolver = supportedCommandsRegistry.findResolver(commandClass);
     return (T) commandResolver.resolve(payload);
   }
+
+  public static SupportedCommandParser defaultParser() {
+    return SupportedCommandParser.builder()
+        .supportedCommandsRegistry(SupportedCommandResolversRegistry.instance())
+        .build();
+  }
 }

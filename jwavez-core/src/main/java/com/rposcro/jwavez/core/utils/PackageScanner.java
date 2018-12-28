@@ -44,6 +44,13 @@ public class PackageScanner {
         .collect(Collectors.toList());
   }
 
+  public <T> List<Class<T>> findAllClassesOfType(String basePackage, boolean scanSubpackages, Class<T> classType) {
+    List<Class<T>> classList = findAllClasses(basePackage, scanSubpackages);
+    return classList.stream()
+        .filter(classType::isAssignableFrom)
+        .collect(Collectors.toList());
+  }
+
   public <T> List<Class<T>> findAllClasses(String basePackage, boolean scanSubpackages) {
     try {
       List<File> basePackageEntries = packageEntries(basePackage);

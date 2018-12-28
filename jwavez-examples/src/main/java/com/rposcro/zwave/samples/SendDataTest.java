@@ -16,9 +16,7 @@ public class SendDataTest extends AbstractExample {
   private ZWaveControlledCommandBuilder commandBuilder;
 
   public SendDataTest() {
-    super("/dev/cu.usbmodem1411");
-    this.channel.addInboundFrameInterceptor(new ApplicationUpdateCatcher());
-    this.channel.addInboundFrameInterceptor(new ApplicationCommandHandlerLogger());
+    super("/dev/cu.usbmodem1411", new ApplicationUpdateCatcher(), new ApplicationCommandHandlerLogger());
     this.commandBuilder = new ZWaveControlledCommandBuilder();
   }
 

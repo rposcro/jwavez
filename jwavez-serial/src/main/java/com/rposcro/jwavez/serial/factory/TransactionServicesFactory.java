@@ -1,6 +1,5 @@
 package com.rposcro.jwavez.serial.factory;
 
-import com.rposcro.jwavez.serial.rxtx.InboundFrameProcessor;
 import com.rposcro.jwavez.serial.rxtx.SerialCommunicationBroker;
 import com.rposcro.jwavez.serial.transactions.TransactionIdDispatcher;
 import com.rposcro.jwavez.serial.transactions.TransactionManager;
@@ -13,10 +12,13 @@ public class TransactionServicesFactory {
 
   private TransactionIdDispatcher transactionIdDispatcher;
 
-  public TransactionManager createTransactionManager(InboundFrameProcessor frameProcessor, SerialCommunicationBroker communicationBroker) {
+  private TransactionServicesFactory() {
+    transactionIdDispatcher = new TransactionIdDispatcher();
+  }
+
+  public TransactionManager createTransactionManager(SerialCommunicationBroker communicationBroker) {
     return TransactionManager.builder()
         .callbackIdDispatcher(transactionIdDispatcher)
-        .frameProcessor(frameProcessor)
         .communicationBroker(communicationBroker)
         .build();
   }

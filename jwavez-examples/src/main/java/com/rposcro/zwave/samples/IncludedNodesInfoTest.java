@@ -22,8 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 public class IncludedNodesInfoTest  extends AbstractExample {
 
   public IncludedNodesInfoTest() {
-    super("/dev/cu.usbmodem1411");
-    this.channel.addInboundFrameInterceptor(new ApplicationUpdateCatcher());
+    super("/dev/cu.usbmodem1411", new ApplicationUpdateCatcher());
   }
 
   private List<NodeId> findIncludedNodes() throws Exception {
@@ -38,7 +37,7 @@ public class IncludedNodesInfoTest  extends AbstractExample {
     StringBuffer nodesInfo = new StringBuffer("Found node ids: ");
     List<NodeId> nodes = result.getResult().getNodeList();
     nodes.stream().forEach(nodeId -> {
-      nodesInfo.append(String.format("%02X, ", nodeId));
+      nodesInfo.append(String.format("%02x, ", nodeId.getId()));
     });
     log.info(nodesInfo.toString());
 
@@ -56,11 +55,16 @@ public class IncludedNodesInfoTest  extends AbstractExample {
   }
 
   public static void main(String[] args) throws Exception {
-    IncludedNodesInfoTest test = new IncludedNodesInfoTest();
-    for (NodeId nodeId : test.findIncludedNodes()) {
-      test.requestNodeInfo(nodeId);
+    try {
+      IncludedNodesInfoTest test = new IncludedNodesInfoTest();
+      for (NodeId nodeId : test.findIncludedNodes()) {
+        test.requestNodeInfo(nodeId);
+      }
+      Thread.sleep(30000);
+    } catch(Exception e) {
+      e.printStackTrace();
+    } finally {
+      System.exit(0);
     }
-    Thread.sleep(30000);
-    System.exit(0);
   }
 }

@@ -26,5 +26,6 @@ public class ZStickLightOnOff extends AbstractExample {
     ZStickLightOnOff test = new ZStickLightOnOff();
     test.turnLedOff();
     //test.turnLedOn();
+    System.exit(0);
   }
 }

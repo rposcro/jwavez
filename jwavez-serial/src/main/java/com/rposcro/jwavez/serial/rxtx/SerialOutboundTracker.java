@@ -22,9 +22,12 @@ public class SerialOutboundTracker implements Runnable {
   }
 
   public void run() {
+    log.info("Serial outbound tracker started");
     try {
-      OutboundOrder outboundOrder = communicationBroker.takeOutboundOrder();
-      orderHandler.accept(outboundOrder);
+      while(true) {
+        OutboundOrder outboundOrder = communicationBroker.takeOutboundOrder();
+        orderHandler.accept(outboundOrder);
+      }
     } catch(InterruptedException e) {
       log.error("Outbound tracker interrupted!", e);
     }

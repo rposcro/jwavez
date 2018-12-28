@@ -11,9 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 public class KeepListening extends AbstractExample {
 
   public KeepListening() {
-    super("/dev/cu.usbmodem1411");
-    channel.addInboundFrameInterceptor(new ApplicationUpdateCatcher());
-    channel.addInboundFrameInterceptor(new ApplicationCommandHandlerLogger());
+    super("/dev/cu.usbmodem1411", new ApplicationUpdateCatcher(), new ApplicationCommandHandlerLogger());
   }
 
   public static void main(String[] args) throws Exception {

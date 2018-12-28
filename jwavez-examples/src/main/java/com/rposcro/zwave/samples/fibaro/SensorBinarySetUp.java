@@ -29,9 +29,7 @@ public class SensorBinarySetUp extends AbstractExample {
   private NodeId nodeId;
 
   public SensorBinarySetUp(int nodeId, String device) {
-    super(device);
-    this.channel.addInboundFrameInterceptor(new ApplicationUpdateCatcher());
-    this.channel.addInboundFrameInterceptor(new ApplicationCommandHandlerLogger());
+    super(device, new ApplicationUpdateCatcher(), new ApplicationCommandHandlerLogger());
     this.nodeId = new NodeId((byte) nodeId);
     this.commandBuilder = new ConfigurationCommandBuilder();
   }

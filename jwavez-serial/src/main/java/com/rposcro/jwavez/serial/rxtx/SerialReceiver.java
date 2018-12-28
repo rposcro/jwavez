@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import jdk.internal.org.objectweb.asm.tree.analysis.Frame;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -56,6 +57,19 @@ public class SerialReceiver {
 
     log.debug("Received data: {}", FrameUtil.bufferToString(buffer));
     return buffer;
+  }
+
+  public void purgeStream() throws Exception {
+    log.debug("Purging stream: ");
+    StringBuffer purgedBytes = new StringBuffer();
+
+    while (serialStream.available() > 0) {
+      byte chunk = serialStream.readByte();
+      if (log.isDebugEnabled()) {
+        purgedBytes.append(String.format("%02x ", chunk));
+      }
+    }
+    log.debug(purgedBytes.toString());
   }
 
   private byte nextFrameStart() throws Exception {

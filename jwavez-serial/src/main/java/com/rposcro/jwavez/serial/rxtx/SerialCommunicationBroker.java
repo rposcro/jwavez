@@ -31,8 +31,8 @@ public class SerialCommunicationBroker {
     return outboundResultQueue.take();
   }
 
-  void enqueueInboundFrame(SOFFrame outboundFrame) {
-    inboundFrameQueue.add(outboundFrame);
+  void enqueueInboundFrame(SOFFrame inboundFrame) {
+    inboundFrameQueue.add(inboundFrame);
   }
 
   public SOFFrame takeInboundFrame() throws InterruptedException {
