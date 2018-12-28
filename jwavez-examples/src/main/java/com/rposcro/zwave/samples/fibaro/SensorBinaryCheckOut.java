@@ -10,7 +10,7 @@ import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandDispatcher;
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandHandlerLogger;
-import com.rposcro.jwavez.serial.interceptors.ApplicationUpdateCatcher;
+import com.rposcro.jwavez.serial.interceptors.ApplicationUpdateLogger;
 import com.rposcro.jwavez.serial.transactions.SendDataTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.zwave.samples.AbstractExample;
@@ -23,7 +23,7 @@ public class SensorBinaryCheckOut extends AbstractExample {
   private final SupportedCommandDispatcher commandDspatcher;
 
   public SensorBinaryCheckOut(int nodeId, String device) {
-    super(device, new ApplicationUpdateCatcher(), new ApplicationCommandHandlerLogger());
+    super(device, new ApplicationUpdateLogger(), new ApplicationCommandHandlerLogger());
     this.commandDspatcher = new SupportedCommandDispatcher();
     this.nodeId = new NodeId((byte) nodeId);
 

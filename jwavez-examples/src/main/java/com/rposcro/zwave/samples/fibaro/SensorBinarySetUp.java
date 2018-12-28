@@ -4,7 +4,7 @@ import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandHandlerLogger;
-import com.rposcro.jwavez.serial.interceptors.ApplicationUpdateCatcher;
+import com.rposcro.jwavez.serial.interceptors.ApplicationUpdateLogger;
 import com.rposcro.jwavez.serial.transactions.SendDataTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.zwave.samples.AbstractExample;
@@ -29,7 +29,7 @@ public class SensorBinarySetUp extends AbstractExample {
   private NodeId nodeId;
 
   public SensorBinarySetUp(int nodeId, String device) {
-    super(device, new ApplicationUpdateCatcher(), new ApplicationCommandHandlerLogger());
+    super(device, new ApplicationUpdateLogger(), new ApplicationCommandHandlerLogger());
     this.nodeId = new NodeId((byte) nodeId);
     this.commandBuilder = new ConfigurationCommandBuilder();
   }

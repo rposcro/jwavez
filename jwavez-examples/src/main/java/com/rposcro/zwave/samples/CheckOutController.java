@@ -51,8 +51,8 @@ public class CheckOutController  extends AbstractExample {
   private void learnIds() throws Exception {
     TransactionResult<MemoryGetIdResponseFrame> result = channel.sendFrameWithResponseAndWait(new MemoryGetIdRequestFrame());
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
-    System.out.println(String.format("HomeId: %02X", result.getResult().getHomeId()));
-    System.out.println(String.format("Controller NodeId: %02X", result.getResult().getNodeId()));
+    System.out.println(String.format("HomeId: %02x", result.getResult().getHomeId()));
+    System.out.println(String.format("Controller NodeId: %02x", result.getResult().getNodeId().getId()));
   }
 
   private void learnVersion() throws Exception {

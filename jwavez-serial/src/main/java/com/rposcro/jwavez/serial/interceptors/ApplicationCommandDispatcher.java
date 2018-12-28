@@ -26,8 +26,8 @@ public class ApplicationCommandDispatcher implements InboundFrameInterceptor {
       try {
         ApplicationCommandHandlerCallbackFrame commandFrame = (ApplicationCommandHandlerCallbackFrame) context.getFrame();
         ImmutableBuffer payload = ImmutableBuffer.overBuffer(commandFrame.getCommandPayload(), 0, commandFrame.getCommandLength());
-        ZWaveSupportedCommand command = supportedCommandParser.parseCommand(payload);
-        log.debug("Application Command Handler from {}. Command: {} {}", commandFrame.getSourceNodeId(), command.commandClass(), command.commandType());
+        ZWaveSupportedCommand command = supportedCommandParser.parseCommand(payload, commandFrame.getSourceNodeId());
+        log.debug("Application Command Handler from {}. Command: {} {}", commandFrame.getSourceNodeId(), command.getCommandClass(), command.getCommandType());
         supportedCommandDispatcher.dispatchCommand(command);
       } catch(CommandNotSupportedException e) {
         log.warn("", e);

@@ -1,7 +1,7 @@
 package com.rposcro.zwave.samples;
 
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandHandlerLogger;
-import com.rposcro.jwavez.serial.interceptors.ApplicationUpdateCatcher;
+import com.rposcro.jwavez.serial.interceptors.ApplicationUpdateLogger;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 public class KeepListening extends AbstractExample {
 
   public KeepListening() {
-    super("/dev/cu.usbmodem1411", new ApplicationUpdateCatcher(), new ApplicationCommandHandlerLogger());
+    super("/dev/cu.usbmodem1411", new ApplicationUpdateLogger(), new ApplicationCommandHandlerLogger());
   }
 
   public static void main(String[] args) throws Exception {

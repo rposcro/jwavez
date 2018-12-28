@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.serial.frame.responses;
 
+import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.ResponseFrameModel;
 import com.rposcro.jwavez.serial.frame.SOFResponseFrame;
@@ -13,7 +14,7 @@ public class MemoryGetIdResponseFrame extends SOFResponseFrame {
   private static final int OFFSET_NODE_ID = 8;
 
   private int homeId;
-  private short nodeId;
+  private NodeId nodeId;
 
   public MemoryGetIdResponseFrame(byte[] buffer) {
     super(buffer);
@@ -21,6 +22,6 @@ public class MemoryGetIdResponseFrame extends SOFResponseFrame {
         | (((int) buffer[OFFSET_HOME_ID + 1]) << 16)
         | (((int) buffer[OFFSET_HOME_ID + 2]) << 8)
         | (((int) buffer[OFFSET_HOME_ID + 3]));
-    this.nodeId = (short) buffer[OFFSET_NODE_ID];
+    this.nodeId = new NodeId(buffer[OFFSET_NODE_ID]);
   }
 }

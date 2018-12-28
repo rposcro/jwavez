@@ -2,6 +2,7 @@ package com.rposcro.jwavez.core.commands.supported.configuration;
 
 import com.rposcro.jwavez.core.commands.enums.ConfigurationCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
+import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
@@ -14,8 +15,8 @@ public class ConfigurationReport extends ZWaveSupportedCommand<ConfigurationComm
   private byte valueSize;
   private int value;
 
-  public ConfigurationReport(ImmutableBuffer payload) {
-    super(ConfigurationCommandType.CONFIGURATION_REPORT);
+  public ConfigurationReport(ImmutableBuffer payload, NodeId sourceNodeId) {
+    super(ConfigurationCommandType.CONFIGURATION_REPORT, sourceNodeId);
     parameterNumber = payload.getUnsignedByte(2);
     valueSize = (byte) (payload.getByte(3) & 0x07);
 

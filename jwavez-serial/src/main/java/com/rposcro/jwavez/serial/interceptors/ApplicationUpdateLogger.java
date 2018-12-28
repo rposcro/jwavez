@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ApplicationUpdateCatcher implements InboundFrameInterceptor {
+public class ApplicationUpdateLogger implements InboundFrameInterceptor {
 
   @Override
   public void intercept(InboundFrameInterceptorContext context) {

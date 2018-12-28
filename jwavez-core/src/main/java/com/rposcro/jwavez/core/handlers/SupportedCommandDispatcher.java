@@ -22,8 +22,8 @@ public class SupportedCommandDispatcher {
   }
 
   public void dispatchCommand(ZWaveSupportedCommand command) {
-    log.info("Command to dispatch: {} {}", command.commandClass(), command.commandType());
-    Optional.ofNullable(handlersPerCommandType.get(command.commandType()))
+    log.info("Command to dispatch: {} {}", command.getCommandClass(), command.getCommandType());
+    Optional.ofNullable(handlersPerCommandType.get(command.getCommandType()))
         .ifPresent(handlers -> handlers.stream().forEach(handler -> handler.handleCommand(command)));
   }
 }

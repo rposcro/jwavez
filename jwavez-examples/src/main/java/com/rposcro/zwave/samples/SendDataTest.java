@@ -4,7 +4,7 @@ import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandHandlerLogger;
-import com.rposcro.jwavez.serial.interceptors.ApplicationUpdateCatcher;
+import com.rposcro.jwavez.serial.interceptors.ApplicationUpdateLogger;
 import com.rposcro.jwavez.serial.transactions.SendDataTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import java.util.function.Supplier;
@@ -16,7 +16,7 @@ public class SendDataTest extends AbstractExample {
   private ZWaveControlledCommandBuilder commandBuilder;
 
   public SendDataTest() {
-    super("/dev/cu.usbmodem1411", new ApplicationUpdateCatcher(), new ApplicationCommandHandlerLogger());
+    super("/dev/cu.usbmodem1411", new ApplicationUpdateLogger(), new ApplicationCommandHandlerLogger());
     this.commandBuilder = new ZWaveControlledCommandBuilder();
   }
 
