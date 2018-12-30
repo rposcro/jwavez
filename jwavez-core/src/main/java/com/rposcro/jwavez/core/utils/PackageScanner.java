@@ -113,7 +113,7 @@ public class PackageScanner {
   }
 
   private List<File> packageEntries(String packagePath) throws IOException {
-    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    ClassLoader classLoader = ClassLoader.getSystemClassLoader();
     assert classLoader != null;
     String path = packagePath.replace('.', '/');
 
@@ -122,4 +122,5 @@ public class PackageScanner {
         .map(File::new)
         .collect(Collectors.toList());
   }
+
 }

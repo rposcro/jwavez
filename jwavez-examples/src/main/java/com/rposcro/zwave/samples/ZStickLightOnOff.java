@@ -24,8 +24,8 @@ public class ZStickLightOnOff extends AbstractExample {
 
   public static void main(String[] args) throws Exception {
     ZStickLightOnOff test = new ZStickLightOnOff();
-    test.turnLedOff();
-    //test.turnLedOn();
+    //test.turnLedOff();
+    test.turnLedOn();
     System.exit(0);
   }
 }

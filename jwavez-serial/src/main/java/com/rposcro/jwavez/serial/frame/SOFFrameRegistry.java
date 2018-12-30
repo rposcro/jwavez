@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Semaphore;
 import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -19,15 +20,21 @@ public class SOFFrameRegistry {
   private Map<Byte, Class<? extends SOFCallbackFrame>> callbackFramesMap;
   private Map<Byte, Class<? extends SOFResponseFrame>> responseFramesMap;
 
+  private static final Semaphore instanceSemaphore = new Semaphore(1);
   private static SOFFrameRegistry registryInstance;
 
   public static SOFFrameRegistry defaultRegistry() {
-    if (registryInstance == null) {
-      SOFFrameRegistry registry = new SOFFrameRegistry();
-      registry.scanAndRegisterFrames("com.rposcro.jwavez.serial.frame");
-      registryInstance = registry;
+    instanceSemaphore.acquireUninterruptibly();
+    try {
+      if (registryInstance == null) {
+        SOFFrameRegistry registry = new SOFFrameRegistry();
+        registry.scanAndRegisterFrames("com.rposcro.jwavez.serial.frame");
+        registryInstance = registry;
+      }
+      return registryInstance;
+    } finally {
+      instanceSemaphore.release();
     }
-    return registryInstance;
   }
 
   public Optional<Class<? extends SOFRequestFrame>> requestClass(byte functionId) {
@@ -55,12 +62,14 @@ public class SOFFrameRegistry {
   }
 
   private void scanAndRegisterFrames(String basePackage) {
+    log.debug("Scanning SOF frame classes");
     PackageScanner scanner = new PackageScanner();
     List<Class<Object>> classList = scanner.findAllClasses(basePackage, true);
     this.responseFramesMap = new HashMap<>();
     this.requestFramesMap = new HashMap<>();
     this.callbackFramesMap = new HashMap<>();
     registerModels(classList);
+    log.debug("Found {} request classes, {} response classes, {} callback classes", requestFramesMap.size(), responseFramesMap.size(), callbackFramesMap.size());
     //validateRegistry();
   }
 

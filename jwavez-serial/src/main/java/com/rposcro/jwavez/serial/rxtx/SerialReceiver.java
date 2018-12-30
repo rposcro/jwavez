@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SerialReceiver {
 
-  private static final long TIMEOUT_NEXT_BYTE = 100;
+  private static final long TIMEOUT_NEXT_BYTE = 500;
   private static final long TIMEOUT_NEXT_FRAME = 1500;
 
   private DataInputStream serialStream;
@@ -58,8 +58,8 @@ public class SerialReceiver {
     return buffer;
   }
 
-  public void purgeStream() throws Exception {
-    log.debug("Purging stream: ");
+  public void purgeStream() throws IOException {
+    log.debug("Purging stream ...");
     StringBuffer purgedBytes = new StringBuffer();
 
     while (serialStream.available() > 0) {
@@ -68,7 +68,7 @@ public class SerialReceiver {
         purgedBytes.append(String.format("%02x ", chunk));
       }
     }
-    log.debug(purgedBytes.toString());
+    log.debug("Stream purged: " + purgedBytes.toString());
   }
 
   private byte nextFrameStart() throws Exception {

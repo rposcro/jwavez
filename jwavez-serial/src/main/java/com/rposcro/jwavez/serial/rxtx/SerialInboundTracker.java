@@ -2,6 +2,7 @@ package com.rposcro.jwavez.serial.rxtx;
 
 import com.rposcro.jwavez.serial.frame.constants.FrameCategory;
 import com.rposcro.jwavez.serial.utils.ByteBuffer;
+import java.io.IOException;
 import java.util.function.Consumer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -52,6 +53,11 @@ public class SerialInboundTracker implements Runnable {
           }
         } catch (Exception e) {
           log.error("Failed to receive frame from stream!", e);
+          try {
+            serialReceiver.purgeStream();
+          } catch(IOException ex) {
+            log.error("Exception while purging stream!", e);
+          }
         }
         Thread.sleep(INPUT_POOLING_RATE_MS);
       }
