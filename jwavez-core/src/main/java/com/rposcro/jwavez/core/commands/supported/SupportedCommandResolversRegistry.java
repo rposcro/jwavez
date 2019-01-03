@@ -6,11 +6,14 @@ import com.rposcro.jwavez.core.utils.PackageScanner;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class SupportedCommandResolversRegistry {
 
@@ -33,13 +36,13 @@ public final class SupportedCommandResolversRegistry {
 
   private void initialize() {
     PackageScanner scanner = new PackageScanner();
-    List<Class<ZWaveSupportedCommandResolver>> classList = scanner.findAllClassifiedClasses(
-        "com.rposcro.jwavez.core.commands.supported",
-        false,
+    Set<Class<? extends ZWaveSupportedCommandResolver>> classList = scanner.findAllClassifiedClasses(
         SupportedCommandResolver.class,
-        ZWaveSupportedCommandResolver.class);
-    List<ZWaveSupportedCommandResolver> resolverList = scanner.instantiateAll(classList);
+        ZWaveSupportedCommandResolver.class,
+        "com.rposcro.jwavez.core.commands.supported");
+    Set<ZWaveSupportedCommandResolver> resolverList = scanner.instantiateAll(classList);
     resolverMap = resolverList.stream()
         .collect(Collectors.toMap(ZWaveSupportedCommandResolver::supportedCommandClass, Function.identity()));
+    log.debug("Class registry: {} resolver classes", resolverMap.size());
   }
 }

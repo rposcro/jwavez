@@ -11,7 +11,7 @@ public final class CommandTypesRegistry {
   private static Map<CommandClass, Map<Byte, CommandType>> typesPerCode = new HashMap<>();
   private static Map<Class<? extends CommandType>, Map<CommandType, Byte>> codesPerType = new HashMap<>();
 
-  public <T extends CommandType> T decodeCommandType(CommandClass commandClass, byte code) {
+  public static <T extends CommandType> T decodeCommandType(CommandClass commandClass, byte code) {
     return CommandTypesRegistry.constantOfCode(commandClass, code);
   }
 

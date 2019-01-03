@@ -34,79 +34,54 @@ class PackageScannerSpec extends Specification {
     @Shared
     def packageScanner = new PackageScanner();
 
-    def "successful scan for all classes {#packagePath, #recursive}"() {
-        when:
-        def classList = packageScanner.findAllClasses(packagePath, recursive);
-
-        then:
-        classList.size() == expectedClasses.size();
-        classList.containsAll(expectedClasses);
-
-        where:
-        packagePath                | recursive | expectedClasses
-        "test.scanner.correct"     | false     | [ TCA.class, TCAnnotatedTypedA.class, TCAnnotatedTypedB.class, TCAnnotatedTypedC.class ]
-        "test.scanner.correct"     | true      | [ TCA.class, TCAnnotatedTypedA.class, TCAnnotatedTypedB.class, TCAnnotatedTypedC.class, TCB.class, TCC.class, TCAnnotatedTypedD.class ]
-        "test.scanner.incorrect1"  | false     | [ TI1A.class, TI1AnnotatedTypedA.class, TI1AnnotatedTypedC.class, TI1AnnotatedB.class ]
-        "test.scanner.incorrect1"  | true      | [ TI1A.class, TI1AnnotatedTypedA.class, TI1AnnotatedTypedC.class, TI1AnnotatedB.class, TI1B.class, TI1C.class, TI1AnnotatedTypedD.class ]
-        "test.scanner.incorrect2"  | false     | [ TI2A.class, TI2AnnotatedTypedA.class, TI2AnnotatedTypedB.class, TI2AnnotatedTypedC.class ]
-        "test.scanner.incorrect2"  | true      | [ TI2A.class, TI2AnnotatedTypedA.class, TI2AnnotatedTypedB.class, TI2AnnotatedTypedC.class, TI2B.class, TI2C.class, TI2TypedD.class ]
-    }
-
-    def "successful scan for annotated classes {#packagePath, #recursive}"() {
+    def "successful scan for annotated classes {#packagePaths}"() {
         given:
         def annotationClass = TestAnnotation.class;
 
         when:
-        def classList = packageScanner.findAllClassesWithAnnotation(packagePath, recursive, annotationClass);
+        def classList = packageScanner.findAllClassesWithAnnotation(annotationClass, packagePaths.toArray(new String[0]));
 
         then:
         classList.size() == expectedClasses.size();
         classList.containsAll(expectedClasses);
 
         where:
-        packagePath                | recursive | expectedClasses
-        "test.scanner.correct"     | false     | [ TCAnnotatedTypedA.class, TCAnnotatedTypedB.class, TCAnnotatedTypedC.class ]
-        "test.scanner.correct"     | true      | [ TCAnnotatedTypedA.class, TCAnnotatedTypedB.class, TCAnnotatedTypedC.class, TCAnnotatedTypedD.class ]
-        "test.scanner.incorrect1"  | false     | [ TI1AnnotatedTypedA.class, TI1AnnotatedTypedC.class, TI1AnnotatedB.class ]
-        "test.scanner.incorrect1"  | true      | [ TI1AnnotatedTypedA.class, TI1AnnotatedTypedC.class, TI1AnnotatedB.class, TI1AnnotatedTypedD.class ]
-        "test.scanner.incorrect2"  | false     | [ TI2AnnotatedTypedA.class, TI2AnnotatedTypedB.class, TI2AnnotatedTypedC.class ]
-        "test.scanner.incorrect2"  | true      | [ TI2AnnotatedTypedA.class, TI2AnnotatedTypedB.class, TI2AnnotatedTypedC.class ]
+        packagePaths                        | expectedClasses
+        [ "test.scanner.correct" ]          | [ TCAnnotatedTypedA.class, TCAnnotatedTypedB.class, TCAnnotatedTypedC.class, TCAnnotatedTypedD.class ]
+        [ "test.scanner.incorrect1" ]       | [ TI1AnnotatedTypedA.class, TI1AnnotatedTypedC.class, TI1AnnotatedB.class, TI1AnnotatedTypedD.class ]
+        [ "test.scanner.incorrect2" ]       | [ TI2AnnotatedTypedA.class, TI2AnnotatedTypedB.class, TI2AnnotatedTypedC.class ]
     }
 
-    def "successful scan for classified classes {#packagePath, #recursive}"() {
+    def "successful scan for classified classes {#packagePaths}"() {
         given:
         def annotationClass = TestAnnotation.class;
         def expectedClassType = TestInterface.class;
 
         when:
-        def classList = packageScanner.findAllClassifiedClasses(packagePath, recursive, annotationClass, expectedClassType);
+        def classList = packageScanner.findAllClassifiedClasses(annotationClass, expectedClassType, packagePaths.toArray(new String[0]));
 
         then:
         classList.size() == expectedClasses.size();
         classList.containsAll(expectedClasses);
 
         where:
-        packagePath                | recursive | expectedClasses
-        "test.scanner.correct"     | false     | [ TCAnnotatedTypedA.class, TCAnnotatedTypedB.class, TCAnnotatedTypedC.class ]
-        "test.scanner.correct"     | true      | [ TCAnnotatedTypedA.class, TCAnnotatedTypedB.class, TCAnnotatedTypedC.class, TCAnnotatedTypedD.class ]
-        "test.scanner.incorrect2"  | false     | [ TI2AnnotatedTypedA.class, TI2AnnotatedTypedB.class, TI2AnnotatedTypedC.class ]
+        packagePaths                    | expectedClasses
+        [ "test.scanner.correct" ]      | [ TCAnnotatedTypedA.class, TCAnnotatedTypedB.class, TCAnnotatedTypedC.class, TCAnnotatedTypedD.class ]
     }
 
-    def "failed scan for classified classes {#packagePath, #recursive}"() {
+    def "failed scan for classified classes {#packagePaths}"() {
         given:
         def annotationClass = TestAnnotation.class;
         def expectedClassType = TestInterface.class;
 
         when:
-        def classList = packageScanner.findAllClassifiedClasses(packagePath, recursive, annotationClass, expectedClassType);
+        def classList = packageScanner.findAllClassifiedClasses(annotationClass, expectedClassType, packagePaths.toArray(new String[0]));
 
         then:
         thrown CodeIntegrityException;
 
         where:
-        packagePath                | recursive
-        "test.scanner.incorrect1"  | false
-        "test.scanner.incorrect1"  | true
-        "test.scanner.incorrect2"  | true
+        packagePaths                    | _
+        [ "test.scanner.incorrect2" ]   | _
     }
 }

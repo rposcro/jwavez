@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.core.commands.supported;
 
+import com.rposcro.jwavez.core.commands.enums.CommandTypesRegistry;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.commands.enums.SceneActivationCommandType;
 import com.rposcro.jwavez.core.commands.supported.sceneactivation.SceneActivationSet;
@@ -27,7 +28,7 @@ public class SceneActivationCommandResolver extends AbstractCommandResolver<Scen
 
   @Override
   public ZWaveSupportedCommand resolve(ImmutableBuffer payloadBuffer, NodeId sourceNodeId) {
-    SceneActivationCommandType commandType = commandTypesRegistry.decodeCommandType(supportedCommandClass(), payloadBuffer.getByte(1));
+    SceneActivationCommandType commandType = CommandTypesRegistry.decodeCommandType(supportedCommandClass(), payloadBuffer.getByte(1));
     BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand> producer = Optional.ofNullable(suppliersPerCommandType.get(commandType))
         .orElseThrow(() -> new CommandNotSupportedException("Command " + commandType + " has no resolver implemented!"));
     return producer.apply(payloadBuffer, sourceNodeId);

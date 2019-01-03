@@ -3,11 +3,15 @@ package com.rposcro.zwave.samples;
 import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.requests.GetCapabilitiesRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetInitDataRequestFrame;
+import com.rposcro.jwavez.serial.frame.requests.GetRFPowerLevelRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetSUCNodeIdRequestFrame;
+import com.rposcro.jwavez.serial.frame.requests.GetTypeLibraryRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetVersionRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.MemoryGetIdRequestFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetCapabilitiesResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetInitDataResponseFrame;
+import com.rposcro.jwavez.serial.frame.responses.GetLibraryTypeResponseFrame;
+import com.rposcro.jwavez.serial.frame.responses.GetRFPowerLevelResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetSUCNodeIdResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetVersionResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.MemoryGetIdResponseFrame;
@@ -17,7 +21,7 @@ import java.util.stream.Collectors;
 public class CheckOutController  extends AbstractExample {
 
   public CheckOutController() {
-    super("/dev/cu.usbmodem14211");
+    super("/dev/cu.usbmodem1411");
   }
 
   private void learnControllerCapabilities() throws Exception {
@@ -68,13 +72,27 @@ public class CheckOutController  extends AbstractExample {
     System.out.println(String.format("SUC node id: %02X", result.getResult().getSucNodeId()));
   }
 
+  private void learnPowerLevel() throws Exception {
+    TransactionResult<GetRFPowerLevelResponseFrame> result = channel.sendFrameWithResponseAndWait(new GetRFPowerLevelRequestFrame());
+    System.out.println(String.format("Transaction status: %s", result.getStatus()));
+    System.out.println(String.format("Power level: %s", result.getResult().getPowerLevel()));
+  }
+
+  private void learnLibraryType() throws Exception {
+    TransactionResult<GetLibraryTypeResponseFrame> result = channel.sendFrameWithResponseAndWait(new GetTypeLibraryRequestFrame());
+    System.out.println(String.format("Transaction status: %s", result.getStatus()));
+    System.out.println(String.format("Library type: %s", result.getResult().getLibraryType()));
+  }
+
   public static void main(String[] args) throws Exception {
     CheckOutController test = new CheckOutController();
     test.learnControllerCapabilities();
-    test.learnInitData();
-    test.learnIds();
-    test.learnVersion();
-    test.learnSUCNode();
+//    test.learnInitData();
+//    test.learnIds();
+//    test.learnVersion();
+//    test.learnSUCNode();
+//    test.learnPowerLevel();
+//    test.learnLibraryType();
 
     Thread.sleep(10_000);
     System.exit(0);

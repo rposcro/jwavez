@@ -32,18 +32,18 @@ public class SensorBinaryCheckOut extends AbstractExample {
         .supportedCommandDispatcher(commandDspatcher)
         .build();
 
-    this.commandDspatcher.registerHandler(ConfigurationCommandType.CONFIGURATION_GET, this::handleCheckCallback);
+    this.commandDspatcher.registerHandler(ConfigurationCommandType.CONFIGURATION_REPORT, this::handleCheckCallback);
     this.manager.addInboundFrameInterceptor(dispatcherInterceptor);
   }
 
   private void handleCheckCallback(ZWaveSupportedCommand command) {
     ConfigurationReport report = (ConfigurationReport) command;
-    String.format("Parameter {} value {}", report.getParameterNumber(), report.getValue());
+    log.info("Parameter {} value {}", report.getParameterNumber(), report.getValue());
   }
 
   private void printResult(String message, TransactionResult<Void> result) {
     StringBuffer logMessage = new StringBuffer(String.format("%s. Status: %s", message, result.getStatus()));
-    System.out.println(logMessage.toString());
+    log.debug(logMessage.toString());
   }
 
   private void send(String message, SendDataTransaction transaction) throws Exception {
@@ -60,6 +60,7 @@ public class SensorBinaryCheckOut extends AbstractExample {
   }
 
   private void learnConfiguration() throws Exception {
+    log.debug("Checking configuration");
     ConfigurationCommandBuilder commandBuilder = new ConfigurationCommandBuilder();
     for (int paramNumber = 1; paramNumber <= 14; paramNumber++) {
       send("Send get parameter " + paramNumber, new SendDataTransaction(nodeId, commandBuilder.buildGetParameterCommand(paramNumber)));
@@ -69,6 +70,8 @@ public class SensorBinaryCheckOut extends AbstractExample {
   public static void main(String[] args) throws Exception {
     SensorBinaryCheckOut setup = new SensorBinaryCheckOut(4, "/dev/cu.usbmodem1411");
     setup.learnAssociations();
+    setup.learnConfiguration();
+
 
     Thread.sleep(60_000);
     System.exit(0);

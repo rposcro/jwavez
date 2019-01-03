@@ -2,7 +2,6 @@ package com.rposcro.jwavez.serial.frame;
 
 import com.rposcro.jwavez.serial.frame.constants.FrameType;
 import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
-import com.rposcro.jwavez.serial.transactions.SerialTransaction;
 
 public abstract class SOFRequestFrame extends SOFFrame {
 

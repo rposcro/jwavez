@@ -11,10 +11,10 @@ import lombok.Getter;
 @ResponseFrameModel(function = SerialCommand.SET_SUC_NODE_ID)
 public class SetSUCNodeIdResponseFrame extends SOFResponseFrame {
 
-  private boolean status;
+  private boolean successful;
 
   public SetSUCNodeIdResponseFrame(byte[] buffer) {
     super(buffer);
-    this.status = byteBoolean(buffer[OFFSET_PAYLOAD]);
+    this.successful = byteBoolean(buffer[OFFSET_PAYLOAD]);
   }
 }

@@ -26,6 +26,8 @@
     <cglib.nodep.version>3.2.5</cglib.nodep.version>
     <spock.version>1.1-groovy-2.4</spock.version>
     <codehouse.groovy.version>2.4.6</codehouse.groovy.version>
+    <reflections.version>0.9.11</reflections.version>
+
   </properties>
 
   <build>
@@ -118,6 +120,12 @@
         <groupId>com.fasterxml.jackson.datatype</groupId>
         <artifactId>jackson-datatype-jsr310</artifactId>
         <version>${jackson.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.reflections</groupId>
+        <artifactId>reflections</artifactId>
+        <version>${reflections.version}</version>
       </dependency>
 
       <!-- Test scope -->

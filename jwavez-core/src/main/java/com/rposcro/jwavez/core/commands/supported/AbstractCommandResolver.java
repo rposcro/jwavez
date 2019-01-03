@@ -8,8 +8,6 @@ import java.util.Set;
 
 public abstract class AbstractCommandResolver<T extends CommandType> implements ZWaveSupportedCommandResolver<T> {
 
-  protected CommandTypesRegistry commandTypesRegistry;
-
   private Set<T> supportedCommands;
 
   protected AbstractCommandResolver(Collection<T> supportedCommands) {
