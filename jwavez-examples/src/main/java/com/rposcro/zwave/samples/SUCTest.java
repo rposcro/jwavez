@@ -7,6 +7,7 @@ import com.rposcro.jwavez.serial.frame.requests.SetSUCNodeIdRequestFrame;
 import com.rposcro.jwavez.serial.frame.responses.EnableSUCResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetSUCNodeIdResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.SetSUCNodeIdResponseFrame;
+import com.rposcro.jwavez.serial.transactions.SetSUCNodeIdTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 
 /**
@@ -40,11 +41,9 @@ public class SUCTest extends AbstractExample {
     Attempts to set local controller as the SUC/SIS controller, no callbacks expected in this case
    */
   private void setLocalNodeSUC(NodeId nodeId) throws Exception {
-    TransactionResult<SetSUCNodeIdResponseFrame> result = channel.sendFrameWithResponseAndWait(
-        new SetSUCNodeIdRequestFrame(nodeId, true, (byte) 0xee));
+    TransactionResult<Void> result = channel.executeTransaction(
+        new SetSUCNodeIdTransaction(nodeId, true, true)).get();
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
-    System.out.println(String.format("Response: %s", result.getResult().isRequestAccepted()));
-
     checkSUCNode();
   }
 
@@ -52,11 +51,9 @@ public class SUCTest extends AbstractExample {
     Attempts to remove SUC/SIS from local controller, no callbacks expected in this case
    */
   private void removeSUCFromLocalNode(NodeId nodeId) throws Exception {
-    TransactionResult<SetSUCNodeIdResponseFrame> result = channel.sendFrameWithResponseAndWait(
-        new SetSUCNodeIdRequestFrame(nodeId, false, (byte) 0xee));
+    TransactionResult<Void> result = channel.executeTransaction(
+        new SetSUCNodeIdTransaction(nodeId, false, true)).get();
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
-    System.out.println(String.format("Response: %s", result.getResult().isRequestAccepted()));
-
     checkSUCNode();
   }
 

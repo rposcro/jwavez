@@ -10,8 +10,8 @@ import com.rposcro.jwavez.serial.frame.constants.TransmitOption;
 @RequestFrameModel(function = SerialCommand.SEND_SUC_ID)
 public class SendSUCIdRequestFrame extends SOFRequestFrame {
 
-  public SendSUCIdRequestFrame(NodeId addresseeId) {
-    super(SendSUCIdRequestFrame.class.getAnnotation(RequestFrameModel.class).function(), addresseeId.getId(), defaultTransmitOptions());
+  public SendSUCIdRequestFrame(NodeId addresseeId, byte callbackFunctionId) {
+    super(SendSUCIdRequestFrame.class.getAnnotation(RequestFrameModel.class).function(), addresseeId.getId(), defaultTransmitOptions(), callbackFunctionId);
   }
 
   private static byte defaultTransmitOptions() {

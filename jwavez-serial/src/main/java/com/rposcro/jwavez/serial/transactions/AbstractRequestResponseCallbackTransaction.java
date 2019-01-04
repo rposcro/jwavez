@@ -11,15 +11,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class AbstractRequestResponseCallbackTransaction<RT extends SOFResponseFrame, CT extends SOFCallbackFrame, CTX> extends AbstractSerialTransaction<CTX> {
 
-  private SOFRequestFrame startUpFrame;
   private Phase phase;
   private boolean deliveryConfirmed;
   private byte callbackId;
 
-  public AbstractRequestResponseCallbackTransaction(SOFRequestFrame startUpFrame) {
+  public AbstractRequestResponseCallbackTransaction() {
     super(true, true);
-    this.startUpFrame = startUpFrame;
   }
+
+  protected abstract SOFRequestFrame startUpFrame();
 
   protected abstract boolean handleResponse(RT responseFrame);
 
@@ -37,13 +37,13 @@ public abstract class AbstractRequestResponseCallbackTransaction<RT extends SOFR
   public SOFRequestFrame startUp() {
     setPhase(Phase.REQUEST_SEND);
     deliveryConfirmed = false;
-    return startUpFrame;
+    return startUpFrame();
   }
 
   @Override
   public Optional<SOFFrame> acceptInboundFrame(SOFFrame inboundFrame) {
     try {
-      validateFrameReceivalReadiness();
+      validateFrameReceiptReadiness();
 
       if (phase == Phase.REQUEST_SEND) {
         RT responseFrame = validateResponseAndCast(inboundFrame);
@@ -89,7 +89,7 @@ public abstract class AbstractRequestResponseCallbackTransaction<RT extends SOFR
     failTransaction();
   }
 
-  private void validateFrameReceivalReadiness() throws TransactionException {
+  private void validateFrameReceiptReadiness() throws TransactionException {
     if (!deliveryConfirmed) {
       throw new TransactionException("Received frame but prior hasn't been confirmed yet, stopping");
     }

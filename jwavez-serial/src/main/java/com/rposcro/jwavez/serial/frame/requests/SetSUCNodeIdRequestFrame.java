@@ -12,10 +12,17 @@ import lombok.Getter;
 @RequestFrameModel(function = SerialCommand.SET_SUC_NODE_ID)
 public class SetSUCNodeIdRequestFrame extends SOFRequestFrame {
 
-  private boolean localCall;
+  private boolean localController;
 
   public SetSUCNodeIdRequestFrame(NodeId nodeId, boolean enableSucAndSis, byte callbackFunctionId) {
     super(SerialCommand.SET_SUC_NODE_ID,
         nodeId.getId(), booleanByte(enableSucAndSis), booleanByte(false), booleanByte(enableSucAndSis), callbackFunctionId);
+    localController = false;
+  }
+
+  public SetSUCNodeIdRequestFrame(NodeId nodeId, boolean enableSucAndSis) {
+    super(SerialCommand.SET_SUC_NODE_ID,
+        nodeId.getId(), booleanByte(enableSucAndSis), booleanByte(false), booleanByte(enableSucAndSis), (byte) 0x00);
+    localController = true;
   }
 }

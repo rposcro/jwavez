@@ -13,11 +13,11 @@ import com.rposcro.jwavez.serial.builders.FrameDataBuilder;
 @RequestFrameModel(function = SerialCommand.SEND_DATA)
 public class SendDataRequestFrame extends SOFRequestFrame {
 
-  public SendDataRequestFrame(NodeId nodeId, byte callbackFunctionId, ZWaveControlledCommand zWaveCommand) {
+  public SendDataRequestFrame(NodeId addresseeId, ZWaveControlledCommand zWaveCommand, byte callbackFunctionId) {
     super(new FrameDataBuilder(9 + zWaveCommand.getPayloadLength())
         .frameType(FrameType.REQ)
         .serialCommand(SerialCommand.SEND_DATA)
-        .withByte(nodeId.getId())
+        .withByte(addresseeId.getId())
         .withByte((byte) zWaveCommand.getPayloadLength())
         .withBytes(zWaveCommand.getPayloadBuffer().cloneBytes())
         .withByte(defaultTransmitOptions())
