@@ -4,7 +4,10 @@ import com.rposcro.jwavez.serial.SerialChannel;
 import com.rposcro.jwavez.serial.SerialChannelManager;
 import com.rposcro.jwavez.serial.rxtx.InboundFrameInterceptor;
 import java.util.Arrays;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class AbstractExample {
 
   protected SerialChannelManager manager;

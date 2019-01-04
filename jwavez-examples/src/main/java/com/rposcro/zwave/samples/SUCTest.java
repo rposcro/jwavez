@@ -15,8 +15,11 @@ import com.rposcro.jwavez.serial.transactions.TransactionResult;
  */
 public class SUCTest extends AbstractExample {
 
+  private CheckOutController checkOutService;
+
   public SUCTest() {
     super("/dev/cu.usbmodem1411");
+    checkOutService = new CheckOutController(manager);
   }
 
   private void checkSUCNode() throws Exception {
@@ -45,6 +48,7 @@ public class SUCTest extends AbstractExample {
         new SetSUCNodeIdTransaction(nodeId, true, true)).get();
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
     checkSUCNode();
+    checkOutService.learnControllerCapabilities();
   }
 
   /**
@@ -55,6 +59,7 @@ public class SUCTest extends AbstractExample {
         new SetSUCNodeIdTransaction(nodeId, false, true)).get();
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
     checkSUCNode();
+    checkOutService.learnControllerCapabilities();
   }
 
   public static void main(String[] args) throws Exception {

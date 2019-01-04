@@ -1,7 +1,9 @@
 package com.rposcro.zwave.samples;
 
+import com.rposcro.jwavez.serial.SerialChannelManager;
 import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.requests.GetCapabilitiesRequestFrame;
+import com.rposcro.jwavez.serial.frame.requests.GetControllerCapabilitiesRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetInitDataRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetRFPowerLevelRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetSUCNodeIdRequestFrame;
@@ -9,6 +11,7 @@ import com.rposcro.jwavez.serial.frame.requests.GetTypeLibraryRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetVersionRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.MemoryGetIdRequestFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetCapabilitiesResponseFrame;
+import com.rposcro.jwavez.serial.frame.responses.GetControllerCapabilitiesResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetInitDataResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetLibraryTypeResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetRFPowerLevelResponseFrame;
@@ -16,15 +19,34 @@ import com.rposcro.jwavez.serial.frame.responses.GetSUCNodeIdResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetVersionResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.MemoryGetIdResponseFrame;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
+import java.nio.channels.Channel;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class CheckOutController  extends AbstractExample {
+public class CheckOutController extends AbstractExample {
 
   public CheckOutController() {
     super("/dev/cu.usbmodem1411");
   }
 
-  private void learnControllerCapabilities() throws Exception {
+  public CheckOutController(SerialChannelManager manager) {
+    super(manager, manager.getSerialChannel());
+  }
+
+  public void learnControllerCapabilities() throws Exception {
+    TransactionResult<GetControllerCapabilitiesResponseFrame> result = channel.sendFrameWithResponseAndWait(new GetControllerCapabilitiesRequestFrame());
+    System.out.println(String.format("Transaction status: %s", result.getStatus()));
+    Optional.ofNullable(result.getResult())
+        .ifPresent(frame -> {
+          System.out.println(String.format("Is real primary: %s", frame.isRealPrimary()));
+          System.out.println(String.format("Is secondary: %s", frame.isSecondary()));
+          System.out.println(String.format("Is SUC: %s", frame.isSUC()));
+          System.out.println(String.format("Is SIS: %s", frame.isSIS()));
+          System.out.println(String.format("Is on another network: %s", frame.isOnOtherNetwork()));
+        });
+  }
+
+  private void learnCapabilities() throws Exception {
     TransactionResult<GetCapabilitiesResponseFrame> result = channel.sendFrameWithResponseAndWait(new GetCapabilitiesRequestFrame());
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
     System.out.println(String.format("App version: %s", result.getResult().getSerialAppVersion()));
@@ -86,7 +108,7 @@ public class CheckOutController  extends AbstractExample {
 
   public static void main(String[] args) throws Exception {
     CheckOutController test = new CheckOutController();
-    test.learnControllerCapabilities();
+    test.learnCapabilities();
 //    test.learnInitData();
 //    test.learnIds();
 //    test.learnVersion();
