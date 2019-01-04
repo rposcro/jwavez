@@ -33,7 +33,7 @@ public class SUCTest extends AbstractExample {
     TransactionResult<SetSUCNodeIdResponseFrame> result = channel.sendFrameWithResponseAndWait(
         new SetSUCNodeIdRequestFrame(nodeId, true, (byte) 0xee));
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
-    System.out.println(String.format("Response: %s", result.getResult().isSuccessful()));
+    System.out.println(String.format("Response: %s", result.getResult().isRequestAccepted()));
   }
 
   /**
@@ -43,7 +43,7 @@ public class SUCTest extends AbstractExample {
     TransactionResult<SetSUCNodeIdResponseFrame> result = channel.sendFrameWithResponseAndWait(
         new SetSUCNodeIdRequestFrame(nodeId, true, (byte) 0xee));
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
-    System.out.println(String.format("Response: %s", result.getResult().isSuccessful()));
+    System.out.println(String.format("Response: %s", result.getResult().isRequestAccepted()));
 
     checkSUCNode();
   }
@@ -55,7 +55,7 @@ public class SUCTest extends AbstractExample {
     TransactionResult<SetSUCNodeIdResponseFrame> result = channel.sendFrameWithResponseAndWait(
         new SetSUCNodeIdRequestFrame(nodeId, false, (byte) 0xee));
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
-    System.out.println(String.format("Response: %s", result.getResult().isSuccessful()));
+    System.out.println(String.format("Response: %s", result.getResult().isRequestAccepted()));
 
     checkSUCNode();
   }

@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
  * @param <T> Transaction result type
  */
 @Slf4j
-public class SimpleRequestResponseTransaction<T> extends AbstractSerialTransaction<T> {
+public class RequestResponseFlowTransaction<T> extends AbstractSerialTransaction<T> {
 
   private SOFRequestFrame requestFrame;
   private Class<? extends SOFResponseFrame> expectedResponseFrameClass;
@@ -18,7 +18,7 @@ public class SimpleRequestResponseTransaction<T> extends AbstractSerialTransacti
   private Phase phase;
   private boolean deliveryConfirmed;
 
-  public SimpleRequestResponseTransaction(SOFRequestFrame requestFrame, Class<? extends  SOFResponseFrame> expectedResponseFrameClass) {
+  public RequestResponseFlowTransaction(SOFRequestFrame requestFrame, Class<? extends  SOFResponseFrame> expectedResponseFrameClass) {
     super(false, true);
     this.requestFrame = requestFrame;
     this.expectedResponseFrameClass = expectedResponseFrameClass;

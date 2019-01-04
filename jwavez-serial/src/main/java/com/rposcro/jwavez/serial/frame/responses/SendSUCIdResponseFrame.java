@@ -1,19 +1,19 @@
 package com.rposcro.jwavez.serial.frame.responses;
 
-import static com.rposcro.jwavez.serial.utils.FieldUtil.*;
+import static com.rposcro.jwavez.serial.utils.FieldUtil.byteBoolean;
 
-import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.ResponseFrameModel;
 import com.rposcro.jwavez.serial.frame.SOFResponseFrame;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import lombok.Getter;
 
 @Getter
-@ResponseFrameModel(function = SerialCommand.SET_SUC_NODE_ID)
-public class SetSUCNodeIdResponseFrame extends SOFResponseFrame {
+@ResponseFrameModel(function = SerialCommand.SEND_SUC_ID)
+public class SendSUCIdResponseFrame extends SOFResponseFrame {
 
   private boolean requestAccepted;
 
-  public SetSUCNodeIdResponseFrame(byte[] buffer) {
+  public SendSUCIdResponseFrame(byte[] buffer) {
     super(buffer);
     this.requestAccepted = byteBoolean(buffer[OFFSET_PAYLOAD]);
   }

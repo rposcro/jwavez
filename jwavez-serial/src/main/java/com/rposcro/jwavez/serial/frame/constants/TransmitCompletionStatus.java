@@ -12,7 +12,7 @@ public enum TransmitCompletionStatus implements EncodableConstant {
   TRANSMIT_NO_ROUTE(0x04),
   ;
 
-  private TransmitCompletionStatus(int code) {
+  TransmitCompletionStatus(int code) {
     EncodableConstantsRegistry.registerConstant(this, (byte) code);
   }
 

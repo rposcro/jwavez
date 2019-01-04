@@ -2,8 +2,6 @@ package com.rposcro.jwavez.serial.frame.constants;
 
 import com.rposcro.jwavez.core.utils.EncodableConstantsRegistry;
 import com.rposcro.jwavez.core.utils.EncodableConstant;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 
 public enum TransmitOption implements EncodableConstant {
 
@@ -14,29 +12,11 @@ public enum TransmitOption implements EncodableConstant {
   TRANSMIT_OPTION_EXPLORE(0x20),
   ;
 
-  private TransmitOption(int code) {
+  TransmitOption(int code) {
     EncodableConstantsRegistry.registerConstant(this, (byte) code);
   }
 
   public static TransmitOption ofCode(byte code) {
     return EncodableConstantsRegistry.constantOfCode(TransmitOption.class, code);
-  }
-
-  public static Builder optionsBuilder() {
-    return new Builder();
-  }
-
-  @NoArgsConstructor(access = AccessLevel.PRIVATE)
-  public static class Builder {
-    private byte options;
-
-    public Builder withOption(TransmitOption option) {
-      options |= option.getCode();
-      return this;
-    }
-
-    public byte build() {
-      return options;
-    }
   }
 }

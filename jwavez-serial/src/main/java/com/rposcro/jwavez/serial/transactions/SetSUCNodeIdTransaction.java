@@ -1,13 +1,9 @@
 package com.rposcro.jwavez.serial.transactions;
 
-import static com.rposcro.jwavez.serial.frame.SOFFrame.OFFSET_PAYLOAD;
-
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.exceptions.TransactionException;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.callbacks.SetSUCNodeIdCallbackFrame;
-import com.rposcro.jwavez.serial.frame.constants.FrameType;
-import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.requests.SetSUCNodeIdRequestFrame;
 import com.rposcro.jwavez.serial.frame.responses.SetSUCNodeIdResponseFrame;
 import java.util.HashMap;
@@ -104,9 +100,8 @@ public class SetSUCNodeIdTransaction extends AbstractSerialTransaction<Void> {
   }
 
   private void receivedAtRequestSend(SOFFrame inboundFrame) {
-    validateResponse(inboundFrame);
-    SetSUCNodeIdResponseFrame responseFrame = (SetSUCNodeIdResponseFrame) inboundFrame;
-    if (responseFrame.isSuccessful()) {
+    SetSUCNodeIdResponseFrame responseFrame = validateResponseAndCast(inboundFrame);
+    if (responseFrame.isRequestAccepted()) {
       if (localController) {
         setPhase(Phase.END);
         completeTransaction(null);
@@ -120,8 +115,7 @@ public class SetSUCNodeIdTransaction extends AbstractSerialTransaction<Void> {
   }
 
   private void receivedAtProcessStarted(SOFFrame inboundFrame) {
-    validateCallback(inboundFrame);
-    SetSUCNodeIdCallbackFrame callbackFrame = (SetSUCNodeIdCallbackFrame) inboundFrame;
+    SetSUCNodeIdCallbackFrame callbackFrame = validateCallbackAndCast(inboundFrame, callbackId);
     setPhase(Phase.END);
     if (callbackFrame.isSuccessful()) {
       completeTransaction(null);
@@ -141,25 +135,6 @@ public class SetSUCNodeIdTransaction extends AbstractSerialTransaction<Void> {
     if (phase == Phase.IDLE || phase == Phase.END) {
       throw new TransactionException("Frames are not expected at phase " + phase);
     }
-  }
-
-  private void validateCallback(SOFFrame frame) throws TransactionException {
-    if (frame instanceof SetSUCNodeIdCallbackFrame
-      && frame.getFrameType() == FrameType.REQ
-      && frame.getSerialCommand() == SerialCommand.SET_SUC_NODE_ID
-      && frame.getBuffer()[OFFSET_PAYLOAD] == callbackId) {
-      return;
-    }
-    throw new TransactionException("Callback frame validation failed, stopping");
-  }
-
-  private void validateResponse(SOFFrame frame) throws TransactionException {
-    if (frame instanceof SetSUCNodeIdResponseFrame
-      && frame.getFrameType() == FrameType.RES
-      && frame.getSerialCommand() == SerialCommand.SET_SUC_NODE_ID) {
-      return;
-    }
-    throw new TransactionException("Response frame validation failed, stopping");
   }
 
   private void setPhase(Phase phase) {

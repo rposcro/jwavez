@@ -1,15 +1,10 @@
 package com.rposcro.jwavez.serial.transactions;
 
-import static com.rposcro.jwavez.serial.frame.SOFFrame.OFFSET_PAYLOAD;
-
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.exceptions.TransactionException;
-import com.rposcro.jwavez.serial.frame.constants.FrameType;
-import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.callbacks.SendDataCallbackFrame;
-import com.rposcro.jwavez.serial.frame.constants.AddNodeToNeworkStatus;
 import com.rposcro.jwavez.serial.frame.constants.TransmitCompletionStatus;
 import com.rposcro.jwavez.serial.frame.requests.SendDataAbortRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.SendDataRequestFrame;
@@ -108,9 +103,8 @@ public class SendDataTransaction extends AbstractSerialTransaction<Void> {
   }
 
   private Optional<SOFFrame> receivedAtPreparingSendingData(SOFFrame inboundFrame) {
-    validateSendResponse(inboundFrame);
-    SendDataResponseFrame responseFrame = (SendDataResponseFrame) inboundFrame;
-    if (responseFrame.isSendingQueued()) {
+    SendDataResponseFrame responseFrame = validateResponseAndCast(inboundFrame);
+    if (responseFrame.isRequestAccepted()) {
       setPhase(Phase.SENDING_DATA);
     } else {
       setPhase(Phase.END);
@@ -120,9 +114,8 @@ public class SendDataTransaction extends AbstractSerialTransaction<Void> {
   }
 
   private Optional<SOFFrame> receivedAtSendingData(SOFFrame inboundFrame) {
-    validateSendCallback(inboundFrame);
-    SendDataCallbackFrame callbackFrame = (SendDataCallbackFrame) inboundFrame;
-    TransmitCompletionStatus status = callbackFrame.getStatus();
+    SendDataCallbackFrame callbackFrame = validateCallbackAndCast(inboundFrame, callbackId);
+    TransmitCompletionStatus status = callbackFrame.getTxStatus();
     setPhase(Phase.END);
     if (status == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK) {
       completeTransaction(null);
@@ -153,32 +146,9 @@ public class SendDataTransaction extends AbstractSerialTransaction<Void> {
     }
   }
 
-  private void validateSendCallback(SOFFrame frame) throws TransactionException {
-    if (frame instanceof SendDataCallbackFrame
-      && frame.getFrameType() == FrameType.REQ
-      && frame.getSerialCommand() == SerialCommand.SEND_DATA
-      && frame.getBuffer()[OFFSET_PAYLOAD] == callbackId) {
-      return;
-    }
-    throw new TransactionException("Callback frame validation failed, stopping");
-  }
-
-  private void validateSendResponse(SOFFrame frame) throws TransactionException {
-    if (frame instanceof SendDataResponseFrame
-      && frame.getFrameType() == FrameType.RES
-      && frame.getSerialCommand() == SerialCommand.SEND_DATA) {
-      return;
-    }
-    throw new TransactionException("Response frame validation failed, stopping");
-  }
-
   private void setPhase(Phase phase) {
     this.phase = phase;
     log.debug("Phase changed to " + phase);
-  }
-
-  private TransactionException unexpectedStatusException(AddNodeToNeworkStatus receivedStatus) {
-    return new TransactionException(String.format("Unsupported status received at %s phase: %s", phase, status));
   }
 
   private enum Phase {

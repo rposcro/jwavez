@@ -5,10 +5,9 @@ import com.rposcro.jwavez.serial.exceptions.TransactionException;
 import com.rposcro.jwavez.serial.frame.SOFFrameRegistry;
 import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
 import com.rposcro.jwavez.serial.frame.SOFResponseFrame;
-import com.rposcro.jwavez.serial.rxtx.InboundFrameInterceptor;
 import com.rposcro.jwavez.serial.rxtx.InboundFrameProcessor;
 import com.rposcro.jwavez.serial.transactions.SerialTransaction;
-import com.rposcro.jwavez.serial.transactions.SimpleRequestResponseTransaction;
+import com.rposcro.jwavez.serial.transactions.RequestResponseFlowTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionManager;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import java.util.concurrent.CancellationException;
@@ -39,7 +38,7 @@ public class SerialChannel {
   public <T> Future<TransactionResult<T>> sendFrameWithResponse(SOFRequestFrame requestFrame) {
     Class<? extends SOFResponseFrame> responseClass = frameRegistry.responseClass(requestFrame.getSerialCommand())
         .orElseThrow(() -> new SerialException("No response frame class found for serial command " + requestFrame.getSerialCommand()));
-    SerialTransaction<T> transaction = new SimpleRequestResponseTransaction<>(requestFrame, responseClass);
+    SerialTransaction<T> transaction = new RequestResponseFlowTransaction<>(requestFrame, responseClass);
     return executeTransaction(transaction);
   }
 

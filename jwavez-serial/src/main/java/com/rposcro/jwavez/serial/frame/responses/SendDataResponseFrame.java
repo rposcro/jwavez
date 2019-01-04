@@ -10,10 +10,10 @@ import lombok.Getter;
 @ResponseFrameModel(function = SerialCommand.SEND_DATA)
 public class SendDataResponseFrame extends SOFResponseFrame {
 
-  private boolean sendingQueued;
+  private boolean requestAccepted;
 
   public SendDataResponseFrame(byte[] buffer) {
     super(buffer);
-    sendingQueued = FieldUtil.byteBoolean(buffer[OFFSET_PAYLOAD]);
+    requestAccepted = FieldUtil.byteBoolean(buffer[OFFSET_PAYLOAD]);
   }
 }
