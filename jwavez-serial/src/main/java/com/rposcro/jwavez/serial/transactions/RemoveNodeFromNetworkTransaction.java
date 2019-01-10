@@ -96,10 +96,15 @@ public class RemoveNodeFromNetworkTransaction extends AbstractSerialTransaction<
       log.warn("Received order delivery confirmation while it has already been confirmed");
     }
     switch(phase) {
-      case FINAL_STOP_SENT:
+      case TERMINATION_STOP_SENT:
         deliveryConfirmed = true;
         setPhase(Phase.END);
         completeTransaction(nodeInfo.orElse(null));
+        break;
+      case CANCELLATION_STOP_SENT:
+        deliveryConfirmed = true;
+        setPhase(Phase.END);
+        cancelTransaction();
         break;
       default:
         deliveryConfirmed = true;
@@ -116,9 +121,18 @@ public class RemoveNodeFromNetworkTransaction extends AbstractSerialTransaction<
   }
 
   @Override
-  public void timeoutOccurred() {
+  public Optional<SOFFrame> timeoutOccurred() {
+    if (phase == Phase.IDLE) {
+      cancelTransaction();
+    } else if (phase == Phase.WAITING_FOR_PROTOCOL) {
+      failTransaction();
+    } else {
+      setPhase(Phase.ABORTING_OPERATION);
+      deliveryConfirmed = false;
+      return stoppingFrame();
+    }
     setPhase(Phase.END);
-    failTransaction();
+    return Optional.empty();
   }
 
   private Optional<SOFFrame> receivedAtWaitingForProtocol(RemoveNodeFromNetworkCallbackFrame callbackFrame) {
@@ -171,7 +185,7 @@ public class RemoveNodeFromNetworkTransaction extends AbstractSerialTransaction<
       setPhase(Phase.CLEANING_UP_ERRORS);
       return stoppingFrame();
     } else if (status == REMOVE_NODE_STATUS_DONE) {
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.TERMINATION_STOP_SENT);
       return finalStopFrame();
     } else {
       throw unexpectedStatusException(status);
@@ -185,7 +199,7 @@ public class RemoveNodeFromNetworkTransaction extends AbstractSerialTransaction<
       return stoppingFrame();
     } else if (status == REMOVE_NODE_STATUS_DONE) {
       // TODO: Consider additional actions like SUC, SIS setup or controller replication
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.TERMINATION_STOP_SENT);
       return finalStopFrame();
     } else {
       throw unexpectedStatusException(status);
@@ -195,10 +209,10 @@ public class RemoveNodeFromNetworkTransaction extends AbstractSerialTransaction<
   private Optional<SOFFrame> receivedAtTerminatingRemoveNodeOperation(RemoveNodeFromNetworkCallbackFrame callbackFrame) {
     RemoveNodeFromNeworkStatus status = callbackFrame.getStatus();
     if (status == REMOVE_NODE_STATUS_FAILED) {
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.TERMINATION_STOP_SENT);
       return finalStopFrame();
     } else if (status == REMOVE_NODE_STATUS_DONE) {
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.TERMINATION_STOP_SENT);
       return finalStopFrame();
     } else {
       throw unexpectedStatusException(status);
@@ -208,10 +222,10 @@ public class RemoveNodeFromNetworkTransaction extends AbstractSerialTransaction<
   private Optional<SOFFrame> receivedAtAbortingOperation(RemoveNodeFromNetworkCallbackFrame callbackFrame) {
     RemoveNodeFromNeworkStatus status = callbackFrame.getStatus();
     if (status == REMOVE_NODE_STATUS_FAILED) {
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.CANCELLATION_STOP_SENT);
       return finalStopFrame();
     } else if (status == REMOVE_NODE_STATUS_DONE) {
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.CANCELLATION_STOP_SENT);
       return finalStopFrame();
     } else if (status == REMOVE_NODE_STATUS_NODE_FOUND) {
       setPhase(Phase.NODE_FOUND);
@@ -224,10 +238,10 @@ public class RemoveNodeFromNetworkTransaction extends AbstractSerialTransaction<
   private Optional<SOFFrame> receivedAtCleaningErrors(RemoveNodeFromNetworkCallbackFrame callbackFrame) {
     RemoveNodeFromNeworkStatus status = callbackFrame.getStatus();
     if (status == REMOVE_NODE_STATUS_FAILED) {
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.CANCELLATION_STOP_SENT);
       return finalStopFrame();
     } else if (status == REMOVE_NODE_STATUS_DONE) {
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.CANCELLATION_STOP_SENT);
       return finalStopFrame();
     } else {
       throw unexpectedStatusException(status);
@@ -284,7 +298,8 @@ public class RemoveNodeFromNetworkTransaction extends AbstractSerialTransaction<
     CONTROLLER_FOUND,
     CLEANING_UP_ERRORS,
     TERMINATING_REMOVE_NODE,
-    FINAL_STOP_SENT,
+    TERMINATION_STOP_SENT,
+    CANCELLATION_STOP_SENT,
     END,
   }
 }

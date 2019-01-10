@@ -95,10 +95,15 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
       log.warn("Received order delivery confirmation while it has already been confirmed");
     }
     switch(phase) {
-      case FINAL_STOP_SENT:
+      case TERMINATION_STOP_SENT:
         deliveryConfirmed = true;
         setPhase(Phase.END);
         completeTransaction(nodeInfo.orElse(null));
+        break;
+      case CANCELLATION_STOP_SENT:
+        deliveryConfirmed = true;
+        setPhase(Phase.END);
+        cancelTransaction();
         break;
       default:
         deliveryConfirmed = true;
@@ -115,9 +120,18 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
   }
 
   @Override
-  public void timeoutOccurred() {
+  public Optional<SOFFrame> timeoutOccurred() {
+    if (phase == Phase.IDLE) {
+      cancelTransaction();
+    } else if (phase == Phase.WAITING_FOR_PROTOCOL) {
+      failTransaction();
+    } else {
+      setPhase(Phase.ABORTING_OPERATION);
+      deliveryConfirmed = false;
+      return stoppingFrame();
+    }
     setPhase(Phase.END);
-    failTransaction();
+    return Optional.empty();
   }
 
   private Optional<SOFFrame> receivedAtWaitingForProtocol(AddNodeToNetworkCallbackFrame callbackFrame) {
@@ -195,10 +209,10 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
   private Optional<SOFFrame> receivedAtTerminatingAddNodeOperation(AddNodeToNetworkCallbackFrame callbackFrame) {
     AddNodeToNeworkStatus status = callbackFrame.getStatus();
     if (status == ADD_NODE_STATUS_FAILED) {
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.TERMINATION_STOP_SENT);
       return finalStopFrame();
     } else if (status == ADD_NODE_STATUS_DONE) {
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.TERMINATION_STOP_SENT);
       return finalStopFrame();
     } else {
       throw unexpectedStatusException(status);
@@ -208,10 +222,10 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
   private Optional<SOFFrame> receivedAtAbortingOperation(AddNodeToNetworkCallbackFrame callbackFrame) {
     AddNodeToNeworkStatus status = callbackFrame.getStatus();
     if (status == ADD_NODE_STATUS_FAILED) {
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.CANCELLATION_STOP_SENT);
       return finalStopFrame();
     } else if (status == ADD_NODE_STATUS_DONE) {
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.CANCELLATION_STOP_SENT);
       return finalStopFrame();
     } else if (status == ADD_NODE_STATUS_NODE_FOUND) {
       setPhase(Phase.NODE_FOUND);
@@ -224,10 +238,10 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
   private Optional<SOFFrame> receivedAtCleaningErrors(AddNodeToNetworkCallbackFrame callbackFrame) {
     AddNodeToNeworkStatus status = callbackFrame.getStatus();
     if (status == ADD_NODE_STATUS_FAILED) {
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.CANCELLATION_STOP_SENT);
       return finalStopFrame();
     } else if (status == ADD_NODE_STATUS_DONE) {
-      setPhase(Phase.FINAL_STOP_SENT);
+      setPhase(Phase.CANCELLATION_STOP_SENT);
       return finalStopFrame();
     } else {
       throw unexpectedStatusException(status);
@@ -280,7 +294,8 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
     CONTROLLER_FOUND,
     CLEANING_UP_ERRORS,
     TERMINATING_ADD_NODE,
-    FINAL_STOP_SENT,
+    TERMINATION_STOP_SENT,
+    CANCELLATION_STOP_SENT,
     END,
   }
 }

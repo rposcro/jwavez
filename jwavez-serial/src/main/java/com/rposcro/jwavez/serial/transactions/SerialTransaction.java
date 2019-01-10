@@ -14,7 +14,7 @@ public interface SerialTransaction<T> {
   Future<TransactionResult<T>> init(TransactionContext context);
   SOFRequestFrame startUp();
   Optional<SOFFrame> acceptInboundFrame(SOFFrame inboundFrame);
+  Optional<SOFFrame> timeoutOccurred();
   void deliverySuccessful();
   void deliveryFailed();
-  void timeoutOccurred();
 }

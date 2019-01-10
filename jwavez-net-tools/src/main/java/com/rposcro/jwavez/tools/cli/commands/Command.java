@@ -1,8 +1,10 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
+import com.rposcro.jwavez.tools.cli.options.AddNodeOptions;
 import com.rposcro.jwavez.tools.cli.options.DongleCheckOptions;
 import com.rposcro.jwavez.tools.cli.options.HelpOptions;
+import com.rposcro.jwavez.tools.cli.options.RemoveNodeOptions;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
@@ -14,7 +16,9 @@ public interface Command {
 
   CommandMetaReference[] references = {
     new CommandMetaReference(HelpCommand.class, HelpOptions.OPTIONS, "help", "displays help of given command"),
-    new CommandMetaReference(DongleCheckCommand.class, DongleCheckOptions.OPTIONS,"dongle", "requests various controller and network information from dongle")
+    new CommandMetaReference(DongleCheckCommand.class, DongleCheckOptions.OPTIONS,"dongle", "requests various controller and network information from dongle"),
+    new CommandMetaReference(AddNodeCommand.class, AddNodeOptions.OPTIONS,"inclusion", "executes node inclusion process"),
+    new CommandMetaReference(RemoveNodeCommand.class, RemoveNodeOptions.OPTIONS,"exclusion", "executes node exclusion process"),
   };
 
   Map<String, CommandMetaReference> argToCommand = Stream.of(references)

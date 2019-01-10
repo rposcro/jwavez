@@ -84,9 +84,10 @@ public abstract class AbstractRequestResponseCallbackTransaction<RT extends SOFR
   }
 
   @Override
-  public void timeoutOccurred() {
+  public Optional<SOFFrame> timeoutOccurred() {
     setPhase(Phase.END);
     failTransaction();
+    return Optional.empty();
   }
 
   private void validateFrameReceiptReadiness() throws TransactionException {

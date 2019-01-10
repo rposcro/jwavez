@@ -102,7 +102,9 @@ public class TransactionManager implements InboundFrameInterceptor {
           @Override
           public void run() {
             log.info("Transaction timed out!");
-            transaction.timeoutOccurred();
+            Optional<SOFFrame> nextFrame = transaction.timeoutOccurred();
+            nextFrame.ifPresent(frame -> enqueuOutboundOrder(frame, transactionContext.getTransactionId()));
+            challengeCalledBackTransactionToClose(transactionContext);
           }
         }, timeout);
       }

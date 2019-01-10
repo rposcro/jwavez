@@ -76,9 +76,10 @@ public class RequestResponseFlowTransaction<T> extends AbstractSerialTransaction
   }
 
   @Override
-  public void timeoutOccurred() {
+  public Optional<SOFFrame> timeoutOccurred() {
     setPhase(Phase.END);
     failTransaction();
+    return Optional.empty();
   }
 
   private void setPhase(Phase phase) {
