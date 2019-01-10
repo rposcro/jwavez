@@ -12,6 +12,8 @@ import com.rposcro.jwavez.serial.rxtx.OutboundOrder;
 import com.rposcro.jwavez.serial.rxtx.OutboundResult;
 import com.rposcro.jwavez.serial.rxtx.SerialCommunicationBroker;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
@@ -27,6 +29,7 @@ public class TransactionManager implements InboundFrameInterceptor {
 
   private TransactionIdDispatcher callbackIdDispatcher;
   private SerialCommunicationBroker communicationBroker;
+  private Timer timeoutTimer;
 
   private ConcurrentHashMap<TransactionId, TransactionContext> transactionsPerId;
   private LinkedBlockingQueue<TransactionContext> awaitingForLaunch;
@@ -41,16 +44,27 @@ public class TransactionManager implements InboundFrameInterceptor {
     this.callbackIdDispatcher = callbackIdDispatcher;
     this.transactionsPerId = new ConcurrentHashMap<>();
     this.awaitingForLaunch = new LinkedBlockingQueue<>();
+    this.timeoutTimer = new Timer(true);
     this.awaitingResponse = Optional.empty();
     startOutboundResultThread();
     startTransactionLaunchThread();
   }
 
   public <T> Future<TransactionResult<T>> scheduleTransaction(SerialTransaction transaction) throws TransactionException {
+    return this.scheduleTransaction(transaction, 0);
+  }
+
+  public <T> Future<TransactionResult<T>> scheduleTransaction(SerialTransaction transaction, long timeout) throws TransactionException {
     TransactionId transactionId = callbackIdDispatcher.acquireId();
-    TransactionContext transactionContext = transaction.init(transactionId);
+    TransactionContext transactionContext = TransactionContext.builder()
+        .transaction(transaction)
+        .transactionId(transactionId)
+        .timeout(timeout)
+        .isActive(true)
+        .build();
+    Future<TransactionResult<T>> future = transaction.init(transactionContext);
     awaitingForLaunch.add(transactionContext);
-    return transactionContext.getFutureResult();
+    return future;
   }
 
   @Override
@@ -63,7 +77,7 @@ public class TransactionManager implements InboundFrameInterceptor {
     }
   }
 
-  private void launchTransaction(TransactionContext<?> transactionContext) throws InterruptedException {
+  private void launchTransaction(TransactionContext transactionContext) throws InterruptedException {
     SerialTransaction transaction = transactionContext.getTransaction();
     TransactionId transactionId = transactionContext.getTransactionId();
     transactionsPerId.put(transactionId, transactionContext);
@@ -78,7 +92,21 @@ public class TransactionManager implements InboundFrameInterceptor {
         transaction.timeoutOccurred();
       }
     }
+
     challengeCalledBackTransactionToClose(transactionContext);
+
+    if (transactionContext.isActive()) {
+      long timeout = transactionContext.getTimeout();
+      if (timeout > 0) {
+        timeoutTimer.schedule(new TimerTask() {
+          @Override
+          public void run() {
+            log.info("Transaction timed out!");
+            transaction.timeoutOccurred();
+          }
+        }, timeout);
+      }
+    }
   }
 
   private void acceptResponseFrame(SOFResponseFrame responseFrame) {
@@ -116,7 +144,7 @@ public class TransactionManager implements InboundFrameInterceptor {
     }
   }
 
-  private void processNextStep(Optional<SOFFrame> nextFrame, TransactionContext<?> transactionContext) {
+  private void processNextStep(Optional<SOFFrame> nextFrame, TransactionContext transactionContext) {
     nextFrame.ifPresent(frame -> enqueuOutboundOrder(frame, transactionContext.getTransactionId()));
     challengeCalledBackTransactionToClose(transactionContext);
   }
@@ -136,6 +164,7 @@ public class TransactionManager implements InboundFrameInterceptor {
       }
     };
 
+    thread.setName("TransactionManager.TransactionLaunchThread");
     thread.setDaemon(true);
     thread.start();
   }
@@ -172,6 +201,7 @@ public class TransactionManager implements InboundFrameInterceptor {
       }
     };
     thread.setDaemon(true);
+    thread.setName("TransactionManager.OutboundResultThread");
     thread.start();
   }
 

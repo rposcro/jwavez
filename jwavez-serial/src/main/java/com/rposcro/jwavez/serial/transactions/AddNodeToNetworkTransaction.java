@@ -15,6 +15,7 @@ import com.rposcro.jwavez.serial.frame.requests.AddNodeToNetworkRequestFrame;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Future;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -46,10 +47,10 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
   }
 
   @Override
-  public TransactionContext<NodeInfo> init(TransactionId transactionId) {
+  public Future<TransactionResult<NodeInfo>> init(TransactionContext transactionContext) {
     setPhase(Phase.IDLE);
-    callbackId = transactionId.getCallbackId();
-    return super.init(transactionId);
+    callbackId = transactionContext.getTransactionId().getCallbackId();
+    return super.init(transactionContext);
   }
 
   @Override

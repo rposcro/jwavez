@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class AddRemoveNodeTest  extends AbstractExample {
 
   public AddRemoveNodeTest() {
-    super("/dev/cu.usbmodem1411");
+    super("/dev/cu.usbmodem1421");
   }
 
   private void printResult(TransactionResult<NodeInfo> result) {

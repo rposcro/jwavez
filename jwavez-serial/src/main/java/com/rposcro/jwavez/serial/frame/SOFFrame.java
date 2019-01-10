@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.serial.frame;
 
+import com.rposcro.jwavez.serial.builders.FrameDataBuilder;
 import com.rposcro.jwavez.serial.frame.constants.FrameCategory;
 import com.rposcro.jwavez.serial.frame.constants.FrameType;
 import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
@@ -28,13 +29,13 @@ public abstract class SOFFrame extends SerialFrame {
     super.setBuffer(buffer);
   }
 
-  protected SOFFrame(FrameType sofFrameType, SerialCommand serialCommand, int payloadSize, int payloadOffset, byte[] payload) {
-    this.frameType = sofFrameType;
+  protected SOFFrame(FrameType frameType, SerialCommand serialCommand, int payloadSize, int payloadOffset, byte[] payload) {
+    this.frameType = frameType;
     this.serialCommand = serialCommand;
     byte[] buffer = new byte[payloadSize + 5];
     buffer[0] = FrameCategory.SOF.getCode();
     buffer[1] = (byte) (payloadSize + 3);
-    buffer[2] = sofFrameType.getCode();
+    buffer[2] = frameType.getCode();
     buffer[3] = serialCommand.getCode();
     System.arraycopy(payload, payloadOffset, buffer, 4, payloadSize);
     buffer[payloadSize + 4] = FrameUtil.frameCRC(buffer);

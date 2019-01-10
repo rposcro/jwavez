@@ -18,7 +18,7 @@ public class SUCTest extends AbstractExample {
   private CheckOutController checkOutService;
 
   public SUCTest() {
-    super("/dev/cu.usbmodem1411");
+    super("/dev/cu.usbmodem1421");
     checkOutService = new CheckOutController(manager);
   }
 
@@ -66,8 +66,8 @@ public class SUCTest extends AbstractExample {
     SUCTest test = new SUCTest();
     //test.checkSUCNode();
     //test.enableSUCMode();
-    //test.setLocalNodeSUC(new NodeId(1));
-    test.removeSUCFromLocalNode(new NodeId(1));
+    test.setLocalNodeSUC(new NodeId(1));
+    //test.removeSUCFromLocalNode(new NodeId(1));
 
     System.exit(0);
   }

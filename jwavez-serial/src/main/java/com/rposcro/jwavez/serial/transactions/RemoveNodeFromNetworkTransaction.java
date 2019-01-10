@@ -8,7 +8,6 @@ import com.rposcro.jwavez.serial.exceptions.TransactionException;
 import com.rposcro.jwavez.serial.frame.constants.FrameType;
 import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
-import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
 import com.rposcro.jwavez.serial.frame.callbacks.RemoveNodeFromNetworkCallbackFrame;
 import com.rposcro.jwavez.serial.frame.constants.RemoveNodeFromNeworkMode;
 import com.rposcro.jwavez.serial.frame.constants.RemoveNodeFromNeworkStatus;
@@ -16,6 +15,7 @@ import com.rposcro.jwavez.serial.frame.requests.RemoveNodeFromNetworkRequestFram
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Future;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -47,11 +47,12 @@ public class RemoveNodeFromNetworkTransaction extends AbstractSerialTransaction<
   }
 
   @Override
-  public TransactionContext<NodeInfo> init(TransactionId transactionId) {
+  public Future<TransactionResult<NodeInfo>> init(TransactionContext transactionContext) {
     setPhase(Phase.IDLE);
-    callbackId = transactionId.getCallbackId();
-    return super.init(transactionId);
+    callbackId = transactionContext.getTransactionId().getCallbackId();
+    return super.init(transactionContext);
   }
+
 
   @Override
   public RemoveNodeFromNetworkRequestFrame startUp() {

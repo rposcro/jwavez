@@ -43,6 +43,10 @@ public class SerialChannel {
   }
 
   public <T> Future<TransactionResult<T>> executeTransaction(SerialTransaction<T> transaction) {
-    return transactionManager.scheduleTransaction(transaction);
+    return executeTransaction(transaction, 0);
+  }
+
+  public <T> Future<TransactionResult<T>> executeTransaction(SerialTransaction<T> transaction, long timeout) {
+    return transactionManager.scheduleTransaction(transaction, timeout);
   }
 }

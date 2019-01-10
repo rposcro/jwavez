@@ -1,6 +1,5 @@
 package com.rposcro.jwavez.serial.transactions;
 
-import java.util.concurrent.CompletableFuture;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,11 +8,11 @@ import lombok.Setter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class TransactionContext<T> {
+public class TransactionContext {
 
   private final TransactionId transactionId;
   private final SerialTransaction transaction;
-  private final CompletableFuture<TransactionResult<T>> futureResult;
+  private final long timeout;
 
   @Setter
   private boolean isActive;

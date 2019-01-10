@@ -3,6 +3,7 @@ package com.rposcro.jwavez.serial.transactions;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
 import java.util.Optional;
+import java.util.concurrent.Future;
 
 public interface SerialTransaction<T> {
 
@@ -10,7 +11,7 @@ public interface SerialTransaction<T> {
   boolean expectsCallbacks();
   boolean expectsResponse();
 
-  TransactionContext<T> init(TransactionId transactionId);
+  Future<TransactionResult<T>> init(TransactionContext context);
   SOFRequestFrame startUp();
   Optional<SOFFrame> acceptInboundFrame(SOFFrame inboundFrame);
   void deliverySuccessful();

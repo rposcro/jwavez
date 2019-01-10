@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class CheckOutController extends AbstractExample {
 
   public CheckOutController() {
-    super("/dev/cu.usbmodem1411");
+    super("/dev/cu.usbmodem1421");
   }
 
   public CheckOutController(SerialChannelManager manager) {
@@ -109,12 +109,12 @@ public class CheckOutController extends AbstractExample {
   public static void main(String[] args) throws Exception {
     CheckOutController test = new CheckOutController();
     test.learnCapabilities();
-//    test.learnInitData();
-//    test.learnIds();
-//    test.learnVersion();
-//    test.learnSUCNode();
-//    test.learnPowerLevel();
-//    test.learnLibraryType();
+    test.learnInitData();
+    test.learnIds();
+    test.learnVersion();
+    test.learnSUCNode();
+    test.learnPowerLevel();
+    test.learnLibraryType();
 
     Thread.sleep(10_000);
     System.exit(0);

@@ -6,6 +6,7 @@ import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
 import com.rposcro.jwavez.serial.frame.SOFResponseFrame;
 import java.util.Optional;
+import java.util.concurrent.Future;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -26,11 +27,10 @@ public abstract class AbstractRequestResponseCallbackTransaction<RT extends SOFR
   protected abstract void handleCallback(CT responseFrame);
 
   @Override
-  public TransactionContext<CTX> init(TransactionId transactionId) {
-    super.init(transactionId);
+  public Future<TransactionResult<CTX>> init(TransactionContext transactionContext) {
     callbackId = transactionContext.getTransactionId().getCallbackId();
     phase = Phase.IDLE;
-    return transactionContext;
+    return super.init(transactionContext);
   }
 
   @Override
