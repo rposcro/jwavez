@@ -8,6 +8,6 @@ import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
 public class GetInitDataRequestFrame extends SOFRequestFrame {
 
   public GetInitDataRequestFrame() {
-    super(SerialCommand.GET_INIT_DATA);
+    super(GetInitDataRequestFrame.class.getAnnotation(RequestFrameModel.class).function());
   }
 }

@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class TransactionManager implements InboundFrameInterceptor {
 
-  private static final long TIMEOUT_RESPONSE = 65000;
+  private static final long TIMEOUT_RESPONSE = 5000;
 
   private TransactionIdDispatcher callbackIdDispatcher;
   private SerialCommunicationBroker communicationBroker;

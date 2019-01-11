@@ -11,8 +11,8 @@
 
   <modules>
     <module>jwavez-core</module>
-    <module>jwavez-examples</module>
     <module>jwavez-serial</module>
+    <module>jwavez-examples</module>
     <module>jwavez-net-tools</module>
   </modules>
 

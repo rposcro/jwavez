@@ -45,7 +45,7 @@ public class DongleCheckCommand implements Command {
         .manageThreads(true)
         .build()
         .connect();
-    System.out.println("Checking dongle ...\n");
+    System.out.println("Checking dongle " + options.getDevice() + "...");
     runCheck(this::runNetworkIds, options.runNetworkIds(), "Network IDs");
     runCheck(this::runSUCId, options.runSucId(), "SUC Id");
     runCheck(this::runControllerCapabilities, options.runControllerCapabilities(), "Controller Capabilities");
@@ -90,7 +90,7 @@ public class DongleCheckCommand implements Command {
       return false;
     }
     System.out.println(String.format("  HomeId: %02x", result.getResult().getHomeId()));
-    System.out.println(String.format("  Controller NodeId: %02x", result.getResult().getNodeId().getId()));
+    System.out.println(String.format("  Dongle NodeId: %02x", result.getResult().getNodeId().getId()));
     return true;
   }
 

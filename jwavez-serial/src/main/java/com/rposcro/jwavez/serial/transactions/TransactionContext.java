@@ -16,4 +16,8 @@ public class TransactionContext {
 
   @Setter
   private boolean isActive;
+
+  public byte getCallbackId() {
+    return transactionId.getCallbackId();
+  }
 }

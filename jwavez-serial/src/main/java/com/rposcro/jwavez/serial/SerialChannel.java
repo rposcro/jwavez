@@ -10,6 +10,7 @@ import com.rposcro.jwavez.serial.transactions.SerialTransaction;
 import com.rposcro.jwavez.serial.transactions.RequestResponseFlowTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionManager;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
+import com.rposcro.jwavez.serial.transactions.UnsolicitedRequestFlowTransaction;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -25,6 +26,20 @@ public class SerialChannel {
   private TransactionManager transactionManager;
   private InboundFrameProcessor inboundFrameProcessor;
   private SOFFrameRegistry frameRegistry;
+
+  public TransactionResult<Void> sendUnsolicitedFrameAndWait(SOFRequestFrame requestFrame) {
+    try {
+      UnsolicitedRequestFlowTransaction transaction = new UnsolicitedRequestFlowTransaction(requestFrame);
+      return executeTransaction(transaction).get();
+    } catch(CancellationException | ExecutionException | InterruptedException e) {
+      throw new TransactionException("Failed to receive response", e);
+    }
+  }
+
+  public Future<TransactionResult<Void>> sendUnsolicitedFrame(SOFRequestFrame requestFrame) {
+    UnsolicitedRequestFlowTransaction transaction = new UnsolicitedRequestFlowTransaction(requestFrame);
+    return executeTransaction(transaction);
+  }
 
   public <T> TransactionResult<T> sendFrameWithResponseAndWait(SOFRequestFrame requestFrame) {
     try {

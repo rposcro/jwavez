@@ -28,7 +28,7 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
   private boolean deliveryConfirmed;
   private byte callbackId;
   private Phase phase;
-  private Optional<NodeInfo> nodeInfo;
+  private NodeInfo nodeInfo;
 
   {
     phaseHandlers = new HashMap<>();
@@ -93,12 +93,13 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
   public void deliverySuccessful() {
     if (deliveryConfirmed) {
       log.warn("Received order delivery confirmation while it has already been confirmed");
+      return;
     }
     switch(phase) {
       case TERMINATION_STOP_SENT:
         deliveryConfirmed = true;
         setPhase(Phase.END);
-        completeTransaction(nodeInfo.orElse(null));
+        completeTransaction(nodeInfo);
         break;
       case CANCELLATION_STOP_SENT:
         deliveryConfirmed = true;
@@ -121,16 +122,23 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
 
   @Override
   public Optional<SOFFrame> timeoutOccurred() {
-    if (phase == Phase.IDLE) {
-      cancelTransaction();
-    } else if (phase == Phase.WAITING_FOR_PROTOCOL) {
-      failTransaction();
-    } else {
-      setPhase(Phase.ABORTING_OPERATION);
-      deliveryConfirmed = false;
-      return stoppingFrame();
+    switch(phase) {
+      case IDLE:
+        cancelTransaction();
+        setPhase(Phase.END);
+        break;
+      case WAITING_FOR_PROTOCOL:
+        failTransaction();
+        setPhase(Phase.END);
+        break;
+      case WAITING_FOR_NODE:
+        cancelTransaction();
+        setPhase(Phase.END);
+        return stoppingFrame();
+      default:
+        log.warn("Timeout occured at phase " + phase + ", ignored");
     }
-    setPhase(Phase.END);
+
     return Optional.empty();
   }
 
@@ -153,6 +161,7 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
       setPhase(Phase.CLEANING_UP_ERRORS);
       return stoppingFrame();
     } else if (status == ADD_NODE_STATUS_NODE_FOUND) {
+      nodeInfo = callbackFrame.getNodeInfo().orElse(null);
       setPhase(Phase.NODE_FOUND);
       return Optional.empty();
     } else {
@@ -166,11 +175,11 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
       setPhase(Phase.CLEANING_UP_ERRORS);
       return stoppingFrame();
     } else if (status == ADD_NODE_STATUS_ADDING_SLAVE) {
-      nodeInfo = callbackFrame.getNodeInfo();
+      nodeInfo = callbackFrame.getNodeInfo().orElse(nodeInfo);
       setPhase(Phase.SLAVE_FOUND);
       return Optional.empty();
     } else if (status == ADD_NODE_STATUS_ADDING_CONTROLLER) {
-      nodeInfo = callbackFrame.getNodeInfo();
+      nodeInfo = callbackFrame.getNodeInfo().orElse(nodeInfo);
       setPhase(Phase.CONTROLLER_FOUND);
       return Optional.empty();
     } else {
@@ -197,7 +206,6 @@ public class AddNodeToNetworkTransaction extends AbstractSerialTransaction<NodeI
       setPhase(Phase.CLEANING_UP_ERRORS);
       return stoppingFrame();
     } else if (status == ADD_NODE_STATUS_PROTOCOL_DONE) {
-      nodeInfo = callbackFrame.getNodeInfo();
       // TODO: Consider additional actions like SUC, SIS setup or controller replication
       setPhase(Phase.TERMINATING_ADD_NODE);
       return stoppingFrame();

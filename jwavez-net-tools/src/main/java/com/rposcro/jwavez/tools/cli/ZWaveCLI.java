@@ -14,7 +14,11 @@ public class ZWaveCLI {
       Command command = Command.ofCommandArgument(arguments[0]).createCommand();
       command.configure(arguments);
       command.execute(null);
+      System.out.println("");
     } catch(IndexOutOfBoundsException e) {
+      printUsage();
+    } catch(IllegalArgumentException e) {
+      System.out.println("\nUnknown command " + arguments[0] + "\n");
       printUsage();
     } catch(CommandOptionsException e) {
       processCommand("help", arguments[0]);
@@ -34,8 +38,9 @@ public class ZWaveCLI {
 
   public static void main(String[] args) {
     ZWaveCLI tool = new ZWaveCLI();
-//    tool.processCommand(args);
-    tool.processCommand("exclusion", "-d", "/dev/cu.usbmodem1421", "-t", "2000");
+    tool.processCommand(args);
+//    tool.processCommand("exclusion", "-d", "/dev/cu.usbmodem1421", "-t", "2000");
+//    tool.processCommand("dongle", "-d", "/dev/cu.usbmodem1421");
 //    tool.processCommand();
     System.exit(0);
   }

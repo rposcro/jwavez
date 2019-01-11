@@ -99,6 +99,10 @@ public abstract class AbstractRequestResponseCallbackTransaction<RT extends SOFR
     }
   }
 
+  protected void stopTransaction() {
+    setPhase(Phase.END);
+  }
+
   private void setPhase(Phase phase) {
     this.phase = phase;
     log.debug("Phase changed to " + phase);

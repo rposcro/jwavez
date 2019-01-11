@@ -60,16 +60,20 @@ public class RemoveNodeCommand implements Command {
   }
 
   private void processNodeInfo(NodeInfo nodeInfo) {
-    StringBuffer logMessage = new StringBuffer();
-    List<String> commandClasses = Arrays.stream(nodeInfo.getCommandClasses())
-        .map(clazz -> clazz.toString())
-        .collect(Collectors.toList());
-    logMessage.append("Removed node info:\n")
-        .append(String.format("  node id: %s\n", nodeInfo.getId()))
-        .append(String.format("  basic device class: %s\n", nodeInfo.getBasicDeviceClass()))
-        .append(String.format("  generic device class: %s\n", nodeInfo.getGenericDeviceClass()))
-        .append(String.format("  specific device class: %s\n", nodeInfo.getSpecificDeviceClass()))
-        .append(String.format("  command classes: %s\n", String.join(", ", commandClasses)));
-    System.out.println(logMessage);
+    if (nodeInfo == null) {
+      System.out.println("Note! Excluded node information unavailable");
+    } else {
+      StringBuffer logMessage = new StringBuffer();
+      List<String> commandClasses = Arrays.stream(nodeInfo.getCommandClasses())
+          .map(clazz -> clazz.toString())
+          .collect(Collectors.toList());
+      logMessage.append("Removed node info:\n")
+          .append(String.format("  node id: %s\n", nodeInfo.getId()))
+          .append(String.format("  basic device class: %s\n", nodeInfo.getBasicDeviceClass()))
+          .append(String.format("  generic device class: %s\n", nodeInfo.getGenericDeviceClass()))
+          .append(String.format("  specific device class: %s\n", nodeInfo.getSpecificDeviceClass()))
+          .append(String.format("  command classes: %s\n", String.join(", ", commandClasses)));
+      System.out.println(logMessage);
+    }
   }
 }

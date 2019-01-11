@@ -11,3 +11,7 @@
 
 /jwavez-examples/target/
 /jwavez-examples/*.iml
+
+/jwavez-net-tools/target/
+/jwavez-net-tools/*.iml
+

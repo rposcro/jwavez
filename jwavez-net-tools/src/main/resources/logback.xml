@@ -11,7 +11,7 @@
     <appender-ref ref="STDOUT" />
   </root>
 
-  <logger level="error" name="com.rposcro" additivity="false">
+  <logger level="${JWAVEZ_LOG_LEVEL:-ERROR}" name="com.rposcro" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger>
 </configuration>
