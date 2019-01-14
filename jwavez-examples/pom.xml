@@ -10,19 +10,14 @@
   <parent>
     <artifactId>jwavez</artifactId>
     <groupId>com.jwavez</groupId>
-    <version>1.0-SNAPSHOT</version>
+    <version>${jwavez.version}</version>
   </parent>
 
   <dependencies>
     <dependency>
       <groupId>com.jwavez</groupId>
-      <artifactId>jwavez-core</artifactId>
-      <version>1.0-SNAPSHOT</version>
-    </dependency>
-    <dependency>
-      <groupId>com.jwavez</groupId>
       <artifactId>jwavez-serial</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${jwavez.version}</version>
     </dependency>
   </dependencies>
 

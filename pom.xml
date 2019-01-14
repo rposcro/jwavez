@@ -7,7 +7,7 @@
   <groupId>com.jwavez</groupId>
   <artifactId>jwavez</artifactId>
   <packaging>pom</packaging>
-  <version>1.0-SNAPSHOT</version>
+  <version>${jwavez.version}</version>
 
   <modules>
     <module>jwavez-core</module>
@@ -17,6 +17,7 @@
   </modules>
 
   <properties>
+    <jwavez.version>1.0</jwavez.version>
     <java.version>1.8</java.version>
     <lombok.version>1.18.4</lombok.version>
     <lombok.plugin.version>1.18.4.0</lombok.plugin.version>
@@ -28,7 +29,6 @@
     <spock.version>1.1-groovy-2.4</spock.version>
     <codehouse.groovy.version>2.4.6</codehouse.groovy.version>
     <reflections.version>0.9.11</reflections.version>
-
   </properties>
 
   <build>
