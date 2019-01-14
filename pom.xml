@@ -22,7 +22,7 @@
     <lombok.version>1.18.4</lombok.version>
     <lombok.plugin.version>1.18.4.0</lombok.plugin.version>
     <slf4j.version>1.7.25</slf4j.version>
-    <jackson.version>2.9.6</jackson.version>
+    <jackson.version>[2.9.8,)</jackson.version>
     <nrjavaserial.version>3.12.1</nrjavaserial.version>
     <!-- Test related -->
     <cglib.nodep.version>3.2.5</cglib.nodep.version>
