@@ -1,13 +1,12 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
-import com.rposcro.jwavez.tools.cli.options.IncludeNodeOptions;
+import com.rposcro.jwavez.tools.cli.options.DefaultDeviceBasedOptions;
+import com.rposcro.jwavez.tools.cli.options.DefaultNodeBasedOptions;
 import com.rposcro.jwavez.tools.cli.options.DongleCheckOptions;
 import com.rposcro.jwavez.tools.cli.options.FactoryDefaultsOptions;
 import com.rposcro.jwavez.tools.cli.options.HelpOptions;
 import com.rposcro.jwavez.tools.cli.options.NetworkLearnOptions;
-import com.rposcro.jwavez.tools.cli.options.ExcludeNodeOptions;
-import com.rposcro.jwavez.tools.cli.options.NodeInfoOptions;
 import com.rposcro.jwavez.tools.cli.options.SUCOptions;
 import java.util.Map;
 import java.util.Optional;
@@ -22,11 +21,11 @@ public interface Command {
     new CommandMetaReference(HelpCommand.class, HelpOptions.OPTIONS, "help", "displays help of given command"),
     new CommandMetaReference(DongleCheckCommand.class, DongleCheckOptions.OPTIONS,"info", "requests various controller and network information from dongle"),
     new CommandMetaReference(SUCCommand.class, SUCOptions.OPTIONS,"suc", "reads or sets SUC configuration on this dongle"),
-    new CommandMetaReference(IncludeNodeCommand.class, IncludeNodeOptions.OPTIONS,"inclusion", "executes node inclusion process"),
-    new CommandMetaReference(ExcludeNodeCommand.class, ExcludeNodeOptions.OPTIONS,"exclusion", "executes node exclusion process"),
+    new CommandMetaReference(IncludeNodeCommand.class, DefaultDeviceBasedOptions.OPTIONS,"inclusion", "executes node inclusion process"),
+    new CommandMetaReference(ExcludeNodeCommand.class, DefaultDeviceBasedOptions.OPTIONS,"exclusion", "executes node exclusion process"),
     new CommandMetaReference(NetworkLearnCommand.class, NetworkLearnOptions.OPTIONS,"learn", "enables learn mode on this dongle, enables inclusion into another network"),
     new CommandMetaReference(FactoryDefaultsCommand.class, FactoryDefaultsOptions.OPTIONS,"purge", "resets dongle to factory defaults"),
-    new CommandMetaReference(NodeInfoCommand.class, NodeInfoOptions.OPTIONS,"node", "requests information of node in network"),
+    new CommandMetaReference(NodeInfoCommand.class, DefaultNodeBasedOptions.OPTIONS,"node", "requests information of node in network"),
   };
 
   Map<String, CommandMetaReference> argToCommand = Stream.of(references)

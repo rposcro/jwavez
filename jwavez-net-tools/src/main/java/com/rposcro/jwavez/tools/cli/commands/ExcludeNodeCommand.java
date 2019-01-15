@@ -7,7 +7,7 @@ import com.rposcro.jwavez.serial.transactions.RemoveNodeFromNetworkTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
-import com.rposcro.jwavez.tools.cli.options.ExcludeNodeOptions;
+import com.rposcro.jwavez.tools.cli.options.DefaultNodeBasedOptions;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -16,12 +16,12 @@ import org.apache.commons.cli.CommandLine;
 
 public class ExcludeNodeCommand implements Command {
 
-  private ExcludeNodeOptions options;
+  private DefaultNodeBasedOptions options;
   private SerialChannel serialChannel;
 
   @Override
   public void configure(String[] args) throws CommandOptionsException {
-    options = new ExcludeNodeOptions(args);
+    options = new DefaultNodeBasedOptions(args);
   }
 
   @Override

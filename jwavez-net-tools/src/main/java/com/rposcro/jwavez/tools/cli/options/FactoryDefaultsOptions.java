@@ -10,14 +10,13 @@ import org.apache.commons.cli.ParseException;
 
 public class FactoryDefaultsOptions implements CommandOptions {
 
-  private static final String OPT_DEVICE = "d";
-  private static final String OPT_TIMEOUT = "t";
   private static final String OPT_CONFIRMATION = "iamsure";
 
-  public static final Options OPTIONS = new Options()
-      .addOption(Option.builder(OPT_DEVICE).longOpt("device").hasArg().required().desc("controller dongle device").build())
-      .addOption(Option.builder(OPT_TIMEOUT).longOpt("timeout").hasArg().required(false).type(Number.class).desc("cancels node inclusion after this time").build())
-      .addOption(Option.builder(OPT_CONFIRMATION).hasArg(false).required().desc("needs to be given to confirm request is not accidential").build())
+  public static final Options OPTIONS = CommandOptions.defaultDeviceTimeoutBasedOptions()
+      .addOption(Option.builder(OPT_CONFIRMATION)
+          .required()
+          .hasArg(false)
+          .desc("needs to be given to confirm request is not accidential").build())
       ;
 
   private CommandLine commandLine;

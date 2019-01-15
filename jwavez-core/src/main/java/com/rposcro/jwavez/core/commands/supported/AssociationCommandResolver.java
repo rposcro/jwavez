@@ -1,6 +1,7 @@
 package com.rposcro.jwavez.core.commands.supported;
 
 import com.rposcro.jwavez.core.commands.enums.CommandTypesRegistry;
+import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.commands.enums.AssociationCommandType;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationGroupingsReport;
@@ -19,7 +20,8 @@ public class AssociationCommandResolver extends AbstractCommandResolver<Associat
 
   static {
     suppliersPerCommandType = new HashMap<>();
-    suppliersPerCommandType.put(AssociationCommandType.ASSOCIATION_GROUPINGS_GET, AssociationGroupingsReport::new);
+    suppliersPerCommandType.put(AssociationCommandType.ASSOCIATION_REPORT, AssociationReport::new);
+    suppliersPerCommandType.put(AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT, AssociationGroupingsReport::new);
   }
 
   public AssociationCommandResolver() {

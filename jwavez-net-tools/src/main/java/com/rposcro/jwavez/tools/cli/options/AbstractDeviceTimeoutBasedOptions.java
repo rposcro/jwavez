@@ -7,24 +7,19 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public abstract class AbstractDeviceBasedOptions {
+public abstract class AbstractDeviceTimeoutBasedOptions implements CommandOptions {
 
   protected String device;
   protected long timeout;
   protected CommandLine commandLine;
 
-  protected AbstractDeviceBasedOptions(Options options, String[] args, String deviceOption) throws CommandOptionsException {
-    this(options, args, deviceOption, null);
-  }
-
-  protected AbstractDeviceBasedOptions(Options options, String[] args, String deviceOption, String timeoutOption)
-      throws CommandOptionsException {
+  protected AbstractDeviceTimeoutBasedOptions(Options options, String[] args) throws CommandOptionsException {
     try {
       CommandLineParser parser = new DefaultParser();
       this.commandLine = parser.parse(options, args, false);
-      this.device = commandLine.getOptionValue(deviceOption);
-      if (timeoutOption != null) {
-        timeout = commandLine.hasOption(timeoutOption) ? ((Number) commandLine.getParsedOptionValue(timeoutOption)).longValue() : 0;
+      this.device = commandLine.getOptionValue(OPT_DEVICE);
+      if (OPT_TIMEOUT != null) {
+        timeout = commandLine.hasOption(OPT_TIMEOUT) ? parseLong(OPT_TIMEOUT) : 0;
       }
     } catch(ParseException e) {
       throw new CommandOptionsException(e);
@@ -37,5 +32,13 @@ public abstract class AbstractDeviceBasedOptions {
 
   public long getTimeout() {
     return this.timeout;
+  }
+
+  protected byte parseByte(String option) throws ParseException {
+    return ((Number) commandLine.getParsedOptionValue(option)).byteValue();
+  }
+
+  protected long parseLong(String option) throws ParseException {
+    return ((Number) commandLine.getParsedOptionValue(option)).longValue();
   }
 }

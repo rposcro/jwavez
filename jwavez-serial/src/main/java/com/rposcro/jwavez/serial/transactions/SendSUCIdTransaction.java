@@ -3,6 +3,7 @@ package com.rposcro.jwavez.serial.transactions;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
 import com.rposcro.jwavez.serial.frame.callbacks.SendSUCIdCallbackFrame;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.constants.TransmitCompletionStatus;
 import com.rposcro.jwavez.serial.frame.requests.SendSUCIdRequestFrame;
 import com.rposcro.jwavez.serial.frame.responses.SendSUCIdResponseFrame;
@@ -14,6 +15,7 @@ public class SendSUCIdTransaction extends AbstractRequestResponseCallbackTransac
   private NodeId addreseeId;
 
   public SendSUCIdTransaction(NodeId addresseeId) {
+    super(SerialCommand.SEND_SUC_ID);
     this.addreseeId = addresseeId;
   }
 

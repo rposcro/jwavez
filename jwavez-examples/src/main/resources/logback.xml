@@ -11,7 +11,7 @@
     <appender-ref ref="STDOUT" />
   </root>
 
-  <logger level="debug" name="com.rposcro" additivity="false">
+  <logger level="info" name="com.rposcro" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger>
 </configuration>

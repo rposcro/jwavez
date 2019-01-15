@@ -2,6 +2,7 @@ package com.rposcro.jwavez.serial.transactions;
 
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.frame.callbacks.SetSUCNodeIdCallbackFrame;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.requests.SetSUCNodeIdRequestFrame;
 import com.rposcro.jwavez.serial.frame.responses.SetSUCNodeIdResponseFrame;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ public class SetSUCNodeIdTransaction extends AbstractRequestResponseCallbackTran
   private boolean enableSucAndSis;
 
   public SetSUCNodeIdTransaction(NodeId sucNodeId, boolean enableSucAndSis, boolean localController) {
+    super(SerialCommand.SET_SUC_NODE_ID);
     this.sucNodeId = sucNodeId;
     this.localController = localController;
     this.enableSucAndSis = enableSucAndSis;

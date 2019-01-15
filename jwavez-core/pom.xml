@@ -10,7 +10,7 @@
   <parent>
     <artifactId>jwavez</artifactId>
     <groupId>com.jwavez</groupId>
-    <version>${jwavez.version}</version>
+    <version>1.0.1-SNAPSHOT</version>
   </parent>
 
   <build>

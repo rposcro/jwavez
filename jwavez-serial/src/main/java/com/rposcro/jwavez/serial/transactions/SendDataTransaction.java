@@ -3,6 +3,7 @@ package com.rposcro.jwavez.serial.transactions;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.frame.callbacks.SendDataCallbackFrame;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.constants.TransmitCompletionStatus;
 import com.rposcro.jwavez.serial.frame.requests.SendDataRequestFrame;
 import com.rposcro.jwavez.serial.frame.responses.SendDataResponseFrame;
@@ -15,6 +16,7 @@ public class SendDataTransaction extends AbstractRequestResponseCallbackTransact
   private ZWaveControlledCommand command;
 
   public SendDataTransaction(NodeId nodeId, ZWaveControlledCommand command) {
+    super(SerialCommand.SEND_DATA);
     this.nodeId = nodeId;
     this.command = command;
   }

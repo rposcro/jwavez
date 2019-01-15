@@ -3,8 +3,11 @@ package com.rposcro.zwave.samples.fibaro;
 import com.rposcro.jwavez.core.commands.SupportedCommandParser;
 import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.ConfigurationCommandBuilder;
+import com.rposcro.jwavez.core.commands.enums.AssociationCommandType;
 import com.rposcro.jwavez.core.commands.enums.ConfigurationCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
+import com.rposcro.jwavez.core.commands.supported.association.AssociationGroupingsReport;
+import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
 import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
 import com.rposcro.jwavez.core.model.NodeId;
@@ -14,6 +17,8 @@ import com.rposcro.jwavez.serial.interceptors.ApplicationUpdateLogger;
 import com.rposcro.jwavez.serial.transactions.SendDataTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.zwave.samples.AbstractExample;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -32,13 +37,32 @@ public class SensorBinaryCheckOut extends AbstractExample {
         .supportedCommandDispatcher(commandDspatcher)
         .build();
 
-    this.commandDspatcher.registerHandler(ConfigurationCommandType.CONFIGURATION_REPORT, this::handleCheckCallback);
+    this.commandDspatcher.registerHandler(AssociationCommandType.ASSOCIATION_REPORT, this::handleAssociationReport);
+    this.commandDspatcher.registerHandler(AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT, this::handleAssociationGroupingsReport);
+    this.commandDspatcher.registerHandler(ConfigurationCommandType.CONFIGURATION_REPORT, this::handleConfigurationReport);
     this.manager.addInboundFrameInterceptor(dispatcherInterceptor);
   }
 
-  private void handleCheckCallback(ZWaveSupportedCommand command) {
+  private void handleAssociationReport(ZWaveSupportedCommand command) {
+    AssociationReport report = (AssociationReport) command;
+    StringBuffer logMessage = new StringBuffer("\n")
+        .append(String.format("  association group: %s\n", report.getGroupId()))
+        .append(String.format("  max nodes supported: %s\n", report.getMaxNodesCountSupported()))
+        .append(String.format("  present nodes count: %s\n", report.getNodesCount()))
+        .append(String.format("  present nodes: %s\n", Arrays.stream(report.getNodeIds())
+          .map(nodeId -> String.format("%02X", nodeId.getId()))
+            .collect(Collectors.joining(","))));
+    log.info(logMessage.toString());
+  }
+
+  private void handleAssociationGroupingsReport(ZWaveSupportedCommand command) {
+    AssociationGroupingsReport report = (AssociationGroupingsReport) command;
+    log.info("\n  supported association groups count {}\n", report.getGroupsCount());
+  }
+
+  private void handleConfigurationReport(ZWaveSupportedCommand command) {
     ConfigurationReport report = (ConfigurationReport) command;
-    log.info("Parameter {} value {}", report.getParameterNumber(), report.getValue());
+    log.info("\n parameter {} value {}", report.getParameterNumber(), report.getValue());
   }
 
   private void printResult(String message, TransactionResult<Void> result) {
@@ -68,7 +92,7 @@ public class SensorBinaryCheckOut extends AbstractExample {
   }
 
   public static void main(String[] args) throws Exception {
-    SensorBinaryCheckOut setup = new SensorBinaryCheckOut(4, "/dev/cu.usbmodem1411");
+    SensorBinaryCheckOut setup = new SensorBinaryCheckOut(3, "/dev/cu.usbmodem1411");
     setup.learnAssociations();
     setup.learnConfiguration();
 

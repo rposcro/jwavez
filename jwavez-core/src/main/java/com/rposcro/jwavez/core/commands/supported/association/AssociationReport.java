@@ -11,10 +11,19 @@ import lombok.ToString;
 @ToString
 public class AssociationReport extends ZWaveSupportedCommand<AssociationCommandType> {
 
-  private short groupsCount;
+  private short groupId;
+  private short maxNodesCountSupported;
+  private short nodesCount;
+  private NodeId[] nodeIds;
 
   public AssociationReport(ImmutableBuffer payload, NodeId sourceNodeId) {
-    super(AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT, sourceNodeId);
-    groupsCount = payload.getUnsignedByte(2);
+    super(AssociationCommandType.ASSOCIATION_REPORT, sourceNodeId);
+    this.groupId = payload.getUnsignedByte(2);
+    this.maxNodesCountSupported = payload.getUnsignedByte(3);
+    this.nodesCount = payload.getUnsignedByte(4);
+    this.nodeIds = new NodeId[nodesCount];
+    for (int i = 0; i < nodesCount; i++) {
+      nodeIds[i] = new NodeId(payload.getByte(5 + i));
+    }
   }
 }

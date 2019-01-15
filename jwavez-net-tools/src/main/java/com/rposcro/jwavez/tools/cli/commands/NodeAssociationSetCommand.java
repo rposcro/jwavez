@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import org.apache.commons.cli.CommandLine;
 
-public class NodeInfoCommand extends AbstractDeviceCommand {
+public class NodeAssociationSetCommand extends AbstractDeviceCommand {
 
   private DefaultNodeBasedOptions options;
   private Semaphore lock;
