@@ -8,7 +8,7 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public class RemoveNodeOptions implements CommandOptions {
+public class ExcludeNodeOptions implements CommandOptions {
 
   private static final String OPT_DEVICE = "d";
   private static final String OPT_TIMEOUT = "t";
@@ -21,7 +21,7 @@ public class RemoveNodeOptions implements CommandOptions {
   private CommandLine commandLine;
   private long timeout;
 
-  public RemoveNodeOptions(String[] args) throws CommandOptionsException {
+  public ExcludeNodeOptions(String[] args) throws CommandOptionsException {
     try {
       CommandLineParser parser = new DefaultParser();
       commandLine = parser.parse(OPTIONS, args, false);

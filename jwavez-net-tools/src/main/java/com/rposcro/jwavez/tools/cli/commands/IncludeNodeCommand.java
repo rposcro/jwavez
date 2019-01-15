@@ -3,25 +3,25 @@ package com.rposcro.jwavez.tools.cli.commands;
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.SerialChannel;
 import com.rposcro.jwavez.serial.SerialChannelManager;
-import com.rposcro.jwavez.serial.transactions.RemoveNodeFromNetworkTransaction;
+import com.rposcro.jwavez.serial.transactions.AddNodeToNetworkTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
-import com.rposcro.jwavez.tools.cli.options.RemoveNodeOptions;
+import com.rposcro.jwavez.tools.cli.options.IncludeNodeOptions;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import org.apache.commons.cli.CommandLine;
 
-public class RemoveNodeCommand implements Command {
+public class IncludeNodeCommand implements Command {
 
-  private RemoveNodeOptions options;
+  private IncludeNodeOptions options;
   private SerialChannel serialChannel;
 
   @Override
   public void configure(String[] args) throws CommandOptionsException {
-    options = new RemoveNodeOptions(args);
+    options = new IncludeNodeOptions(args);
   }
 
   @Override
@@ -31,15 +31,15 @@ public class RemoveNodeCommand implements Command {
         .manageThreads(true)
         .build()
         .connect();
-    System.out.println("Starting node exclusion transaction ...");
+    System.out.println("Starting node inclusion transaction ...");
     Future<TransactionResult<NodeInfo>> futureResult = launchTransaction();
-    System.out.println("Awaiting for node to remove ...");
+    System.out.println("Awaiting for new nodes ...");
     processResult(futureResult);
-    System.out.println("End of exclusion transaction");
+    System.out.println("End of inclusion transaction");
   }
 
   private Future<TransactionResult<NodeInfo>> launchTransaction() {
-    RemoveNodeFromNetworkTransaction transaction = new RemoveNodeFromNetworkTransaction();
+    AddNodeToNetworkTransaction transaction = new AddNodeToNetworkTransaction();
     return serialChannel.executeTransaction(transaction, options.getTimeout());
   }
 
@@ -47,27 +47,27 @@ public class RemoveNodeCommand implements Command {
     try {
       TransactionResult<NodeInfo> result = futureResult.get();
       if (result.getStatus() == TransactionStatus.Completed) {
-        System.out.println("Exclusion succeeded, node removed");
-        processNodeInfo(result.getResult());
+        System.out.println("Inclusion succeeded, new node found");
+        processNewNodeInfo(result.getResult());
       } else if (result.getStatus() == TransactionStatus.Cancelled) {
-        System.out.println("Exclusion stopped by timeout");
+        System.out.println("Inclusion stopped by timeout");
       } else {
-        System.out.println("Exclusion failed by unknown reason");
+        System.out.println("Inclusion failed by unknown reason");
       }
     } catch(Exception e) {
-      System.out.println("Exclusion transaction interrupted by an error: " + e.getMessage());
+      System.out.println("Inclusion transaction interrupted by an error: " + e.getMessage());
     }
   }
 
-  private void processNodeInfo(NodeInfo nodeInfo) {
+  private void processNewNodeInfo(NodeInfo nodeInfo) {
     if (nodeInfo == null) {
-      System.out.println("Note! Excluded node information unavailable");
+      System.out.println("Note! Included node information unavailable");
     } else {
       StringBuffer logMessage = new StringBuffer();
       List<String> commandClasses = Arrays.stream(nodeInfo.getCommandClasses())
           .map(clazz -> clazz.toString())
           .collect(Collectors.toList());
-      logMessage.append("Removed node info:\n")
+      logMessage.append("New node info:\n")
           .append(String.format("  node id: %s\n", nodeInfo.getId()))
           .append(String.format("  basic device class: %s\n", nodeInfo.getBasicDeviceClass()))
           .append(String.format("  generic device class: %s\n", nodeInfo.getGenericDeviceClass()))

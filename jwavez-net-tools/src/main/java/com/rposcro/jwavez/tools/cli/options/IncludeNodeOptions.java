@@ -4,7 +4,7 @@ import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
-public class AddNodeOptions extends AbstractDeviceBasedOptions {
+public class IncludeNodeOptions extends AbstractDeviceBasedOptions {
 
   private static final String OPT_DEVICE = "d";
   private static final String OPT_TIMEOUT = "t";
@@ -14,7 +14,7 @@ public class AddNodeOptions extends AbstractDeviceBasedOptions {
       .addOption(Option.builder(OPT_TIMEOUT).longOpt("timeout").hasArg().required(false).type(Number.class).desc("cancels node inclusion after this time").build())
       ;
 
-  public AddNodeOptions(String[] args) throws CommandOptionsException {
+  public IncludeNodeOptions(String[] args) throws CommandOptionsException {
     super(OPTIONS, args, OPT_DEVICE, OPT_TIMEOUT);
   }
 }

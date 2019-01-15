@@ -13,17 +13,17 @@ import com.rposcro.jwavez.serial.transactions.SetLearnModeTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
-import com.rposcro.jwavez.tools.cli.options.LearnOptions;
+import com.rposcro.jwavez.tools.cli.options.NetworkLearnOptions;
 import java.util.stream.Collectors;
 import org.apache.commons.cli.CommandLine;
 
-public class LearnCommand extends AbstractDeviceCommand {
+public class NetworkLearnCommand extends AbstractDeviceCommand {
 
-  private LearnOptions options;
+  private NetworkLearnOptions options;
 
   @Override
   public void configure(String[] args) throws CommandOptionsException {
-    options = new LearnOptions(args);
+    options = new NetworkLearnOptions(args);
   }
 
   @Override
