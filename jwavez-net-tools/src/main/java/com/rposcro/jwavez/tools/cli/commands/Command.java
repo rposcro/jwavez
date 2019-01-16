@@ -1,5 +1,7 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
+import com.rposcro.jwavez.tools.cli.commands.node.NodeInfoCommand;
+import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
 import com.rposcro.jwavez.tools.cli.options.DefaultNodeBasedOptions;
@@ -41,5 +43,5 @@ public interface Command {
   }
 
   void configure(String args[]) throws CommandOptionsException;
-  void execute();
+  void execute() throws CommandExecutionException;
 }

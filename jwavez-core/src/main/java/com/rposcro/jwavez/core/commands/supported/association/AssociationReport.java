@@ -14,13 +14,15 @@ public class AssociationReport extends ZWaveSupportedCommand<AssociationCommandT
   private short groupId;
   private short maxNodesCountSupported;
   private short nodesCount;
+  private short reportsToFollow;
   private NodeId[] nodeIds;
 
   public AssociationReport(ImmutableBuffer payload, NodeId sourceNodeId) {
     super(AssociationCommandType.ASSOCIATION_REPORT, sourceNodeId);
     this.groupId = payload.getUnsignedByte(2);
     this.maxNodesCountSupported = payload.getUnsignedByte(3);
-    this.nodesCount = payload.getUnsignedByte(4);
+    this.reportsToFollow = payload.getUnsignedByte(4);
+    this.nodesCount = (short) (payload.getLength() - 5);
     this.nodeIds = new NodeId[nodesCount];
     for (int i = 0; i < nodesCount; i++) {
       nodeIds[i] = new NodeId(payload.getByte(5 + i));

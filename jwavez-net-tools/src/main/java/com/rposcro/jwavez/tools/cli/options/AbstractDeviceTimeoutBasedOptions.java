@@ -9,6 +9,8 @@ import org.apache.commons.cli.ParseException;
 
 public abstract class AbstractDeviceTimeoutBasedOptions implements CommandOptions {
 
+  private static final long DEFAULT_TIMEOUT = 0;
+
   protected String device;
   protected long timeout;
   protected CommandLine commandLine;
@@ -21,7 +23,7 @@ public abstract class AbstractDeviceTimeoutBasedOptions implements CommandOption
         throw new CommandOptionsException(String.format("Unrecognized tokens: '%s'", String.join(",", commandLine.getArgs())));
       }
       this.device = commandLine.getOptionValue(OPT_DEVICE);
-      this.timeout = commandLine.hasOption(OPT_TIMEOUT) ? parseLong(OPT_TIMEOUT) : 0;
+      this.timeout = commandLine.hasOption(OPT_TIMEOUT) ? parseLong(OPT_TIMEOUT) : -1;
     } catch(ParseException e) {
       throw new CommandOptionsException(e.getMessage(), e);
     }
@@ -32,11 +34,19 @@ public abstract class AbstractDeviceTimeoutBasedOptions implements CommandOption
   }
 
   public long getTimeout() {
-    return this.timeout;
+    return getTimeout(DEFAULT_TIMEOUT);
+  }
+
+  public long getTimeout(long defaultTimeout) {
+    return this.timeout < 0 ? defaultTimeout : this.timeout;
   }
 
   protected byte parseByte(String option) throws ParseException {
     return ((Number) commandLine.getParsedOptionValue(option)).byteValue();
+  }
+
+  protected int parseInteger(String option) throws ParseException {
+    return ((Number) commandLine.getParsedOptionValue(option)).intValue();
   }
 
   protected long parseLong(String option) throws ParseException {

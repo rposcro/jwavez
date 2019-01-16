@@ -24,6 +24,17 @@ public class AssociationCommandBuilder {
     return new ZWaveControlledCommand(buffer);
   }
 
+  public ZWaveControlledCommand buildRemoveCommand(int groupNumber, int... nodeIds) {
+    byte[] buffer = new byte[3 + nodeIds.length];
+    buffer[0] = CommandClass.CMD_CLASS_ASSOCIATION.getCode();
+    buffer[1] = AssociationCommandType.ASSOCIATION_REMOVE.getCode();
+    buffer[2] = (byte) groupNumber;
+    for (int i = 0; i < nodeIds.length; i++) {
+      buffer[3 + i] = (byte) nodeIds[i];
+    }
+    return new ZWaveControlledCommand(buffer);
+  }
+
   public ZWaveControlledCommand buildGetSupportedGroupingsCommand() {
     return new ZWaveControlledCommand(
         CommandClass.CMD_CLASS_ASSOCIATION.getCode(),

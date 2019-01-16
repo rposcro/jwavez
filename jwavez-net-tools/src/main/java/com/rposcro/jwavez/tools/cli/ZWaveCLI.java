@@ -9,8 +9,7 @@ public class ZWaveCLI {
   public static void main(String[] args) throws Exception {
     System.out.println(APP_HEAD_LINE);
     CommandController controller = new CommandController();
-    controller.executeCommand(args);
-//    controller.executeCommand("help", "-r", "info", "-f");
-    System.exit(0);
+    int exitCode = controller.executeCommand(args);
+    System.exit(exitCode);
   }
 }

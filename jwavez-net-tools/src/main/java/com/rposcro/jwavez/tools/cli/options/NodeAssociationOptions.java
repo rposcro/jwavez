@@ -1,10 +1,12 @@
 package com.rposcro.jwavez.tools.cli.options;
 
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
+import lombok.Getter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
+@Getter
 public class NodeAssociationOptions extends AbstractNodeBasedOptions {
 
   private static final String OPT_ASSO_GROUP = "ag";
@@ -27,14 +29,14 @@ public class NodeAssociationOptions extends AbstractNodeBasedOptions {
           .desc("node id which is to be associated").build())
       ;
 
-  private byte associationGroupId;
-  private byte associationNodeId;
+  private int associationGroupId;
+  private int associationNodeId;
 
   public NodeAssociationOptions(String[] args) throws CommandOptionsException {
     super(OPTIONS, args);
     try {
-      associationGroupId = parseByte(OPT_ASSO_GROUP);
-      associationNodeId = parseByte(OPT_ASSO_NODE);
+      associationGroupId = parseInteger(OPT_ASSO_GROUP);
+      associationNodeId = parseInteger(OPT_ASSO_NODE);
     } catch(ParseException e) {
       throw new CommandOptionsException(e.getMessage(), e);
     }

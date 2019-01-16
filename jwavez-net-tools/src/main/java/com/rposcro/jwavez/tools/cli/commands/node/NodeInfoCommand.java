@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.tools.cli.commands;
+package com.rposcro.jwavez.tools.cli.commands.node;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
@@ -9,6 +9,7 @@ import com.rposcro.jwavez.serial.frame.responses.RequestNodeInfoResponseFrame;
 import com.rposcro.jwavez.serial.rxtx.InboundFrameInterceptorContext;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
+import com.rposcro.jwavez.tools.cli.commands.AbstractDeviceCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DefaultNodeBasedOptions;
 import java.util.Arrays;

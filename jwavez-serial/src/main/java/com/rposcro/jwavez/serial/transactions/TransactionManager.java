@@ -101,10 +101,12 @@ public class TransactionManager implements InboundFrameInterceptor {
         timeoutTimer.schedule(new TimerTask() {
           @Override
           public void run() {
-            log.info("Transaction timed out!");
-            Optional<SOFFrame> nextFrame = transaction.timeoutOccurred();
-            nextFrame.ifPresent(frame -> enqueuOutboundOrder(frame, transactionContext.getTransactionId()));
-            challengeCalledBackTransactionToClose(transactionContext);
+            if (transactionContext.isActive()) {
+              log.info("Transaction timed out!");
+              Optional<SOFFrame> nextFrame = transaction.timeoutOccurred();
+              nextFrame.ifPresent(frame -> enqueuOutboundOrder(frame, transactionContext.getTransactionId()));
+              challengeCalledBackTransactionToClose(transactionContext);
+            }
           }
         }, timeout);
       }
