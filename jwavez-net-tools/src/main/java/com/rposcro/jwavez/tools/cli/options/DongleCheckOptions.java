@@ -41,7 +41,7 @@ public class DongleCheckOptions implements CommandOptions {
       allChecks = Stream.of(OPT_CCAPA, OPT_DCAPA, OPT_INIDT, OPT_NTIDS, OPT_GVERS, OPT_SUCID, OPT_PWRLV, OPT_LBRTP)
           .noneMatch(commandLine::hasOption);
     } catch(ParseException e) {
-      throw new CommandOptionsException(e);
+      throw new CommandOptionsException(e.getMessage(), e);
     }
   }
 

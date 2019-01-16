@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import org.apache.commons.cli.CommandLine;
 
 public class NodeInfoCommand extends AbstractDeviceCommand {
 
@@ -29,7 +28,7 @@ public class NodeInfoCommand extends AbstractDeviceCommand {
   }
 
   @Override
-  public void execute(CommandLine commandLine) {
+  public void execute() {
     connect(options);
     lock = new Semaphore(1);
     channelManager.addInboundFrameInterceptor(this::handleUpdate);

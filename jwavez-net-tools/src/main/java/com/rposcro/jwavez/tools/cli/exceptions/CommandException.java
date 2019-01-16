@@ -9,4 +9,8 @@ public class CommandException extends Exception {
   public CommandException(Throwable throwable) {
     super(throwable);
   }
+
+  public CommandException(String message, Throwable throwable) {
+    super(message, throwable);
+  }
 }

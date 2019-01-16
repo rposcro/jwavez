@@ -22,9 +22,9 @@ public class CommandUsageTool {
   }
 
   public void appendComposedNodeUsage(StringBuffer buffer, CommandTreeNode commandTreeNode) {
-    if (!commandTreeNode.children().isEmpty()) {
+    if (!commandTreeNode.getChildren().isEmpty()) {
       buffer.append("\nExpanded available " + commandTreeNode.getAlias() + " commands:\n");
-      appendComposedNodeUsageLines(buffer, commandTreeNode.getAlias(), commandTreeNode.children());
+      appendComposedNodeUsageLines(buffer, commandTreeNode.getAlias(), commandTreeNode.getChildren());
       buffer.append("\n");
     }
   }
@@ -36,8 +36,8 @@ public class CommandUsageTool {
         buffer.append(String.format("  %s %s [<options>]\n", applicationCommandName, path))
             .append("    ").append(node.getDescription()).append("\n\n");
       });
-      if (!node.children().isEmpty()) {
-        appendComposedNodeUsageLines(buffer, path, node.children());
+      if (!node.getChildren().isEmpty()) {
+        appendComposedNodeUsageLines(buffer, path, node.getChildren());
       }
     });
   }

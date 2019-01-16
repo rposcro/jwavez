@@ -37,7 +37,7 @@ public class SUCOptions extends AbstractDeviceTimeoutBasedOptions {
         this.otherId = ((Number) commandLine.getParsedOptionValue(OPT_SET_OTHER)).byteValue();
       }
     } catch(ParseException e) {
-      throw new CommandOptionsException(e);
+      throw new CommandOptionsException(e.getMessage(), e);
     }
   }
 

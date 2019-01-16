@@ -1,25 +1,19 @@
 package com.rposcro.jwavez.tools.cli.controller;
 
 import com.rposcro.jwavez.tools.cli.exceptions.CommandLineException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import lombok.Builder;
 
 public class CommandTree {
 
-  private Map<String, CommandTreeNode> commandTree;
+  private CommandTreeNode rootNode;
 
-  public CommandTree() {
-    this.commandTree = new LinkedHashMap<>();
-  }
-
-  public CommandTree addNode(CommandTreeNode treeNode) {
-    commandTree.put(treeNode.getAlias(), treeNode);
-    return this;
+  @Builder
+  public CommandTree(CommandTreeNode rootNode) {
+    this.rootNode = rootNode;
   }
 
   public CommandLineContent scanCommandLine(String... args) throws CommandLineException {
@@ -27,47 +21,47 @@ public class CommandTree {
       throw new CommandLineException("Wrong program arguments");
     }
 
-    List<String> commmandPath = extractCommandPath(args);
-    CommandTreeNode commandNode = findCommandNode(commmandPath);
+    List<String> expectedCommmandPath = extractCommandPath(args);
+    CommandTreeNode commandNode = findClosestMatchingCommandNode(expectedCommmandPath);
 
     return CommandLineContent.builder()
         .commandNode(commandNode)
-        .commandOtions(Arrays.copyOfRange(args, commmandPath.size(), args.length))
+        .commandOtions(Arrays.copyOfRange(args, commandNode.path().size(), args.length))
         .build();
   }
 
   public Collection<CommandTreeNode> rootCommandNodes() {
-    return commandTree.values();
+    return rootNode.getChildren();
   }
 
   private List<String> extractCommandPath(String[] args) {
-    return Stream.of(args)
-        .sequential()
-        .filter(this::isNodeAlias)
-        .collect(Collectors.toList());
+    List<String> path = new ArrayList<>();
+    for (String arg : args) {
+      if (!isAlias(arg)) {
+        break;
+      }
+      path.add(arg);
+    }
+    return path;
   }
 
-  private CommandTreeNode findCommandNode(List<String> commandPath) throws CommandLineException {
-    if (commandPath.isEmpty()) {
-      throw new CommandLineException("No command specified");
+  private CommandTreeNode findClosestMatchingCommandNode(List<String> commandPath) throws CommandLineException {
+    CommandTreeNode treeNode = rootNode;
+    for (String alias : commandPath) {
+      if (!treeNode.hasChild(alias)) {
+        break;
+      }
+      treeNode = treeNode.findChild(alias);
     }
 
-    CommandTreeNode treeNode = commandTree.get(commandPath.get(0));
-    int pathIndex = 1;
-
-    while (treeNode != null && pathIndex < commandPath.size()) {
-      treeNode = treeNode.findChild(commandPath.get(pathIndex));
-      pathIndex++;
-    }
-
-    if (treeNode == null) {
-      throw new CommandLineException("Wrong command path: " + commandPath.stream().collect(Collectors.joining()));
+    if (treeNode.isRoot()) {
+      throw new CommandLineException(String.format("Unrecognized command: '%s'", String.join(" ", commandPath)));
     }
 
     return treeNode;
   }
 
-  private boolean isNodeAlias(String arg) {
+  private boolean isAlias(String arg) {
     return !arg.startsWith("-");
   }
 }

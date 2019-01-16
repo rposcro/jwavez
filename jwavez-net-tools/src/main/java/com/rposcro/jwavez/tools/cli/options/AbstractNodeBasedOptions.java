@@ -13,7 +13,7 @@ public abstract class AbstractNodeBasedOptions extends AbstractDeviceTimeoutBase
     try {
       this.nodeId = parseByte(OPT_NODE_ID);
     } catch(ParseException e) {
-      throw new CommandOptionsException(e);
+      throw new CommandOptionsException(e.getMessage(), e);
     }
   }
 

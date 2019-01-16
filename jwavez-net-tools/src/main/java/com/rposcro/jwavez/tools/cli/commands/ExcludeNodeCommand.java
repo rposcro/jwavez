@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-import org.apache.commons.cli.CommandLine;
 
 public class ExcludeNodeCommand implements Command {
 
@@ -25,7 +24,7 @@ public class ExcludeNodeCommand implements Command {
   }
 
   @Override
-  public void execute(CommandLine commandLine) {
+  public void execute() {
     serialChannel = SerialChannelManager.builder()
         .device(options.getDevice())
         .manageThreads(true)

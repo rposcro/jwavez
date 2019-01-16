@@ -31,7 +31,7 @@ public class CommandHelpTool {
           .append(commandOptions(reference))
           ;
     });
-    node.children().stream().forEachOrdered(child -> appendNodeHelp(buffer, child));
+    node.getChildren().stream().forEachOrdered(child -> appendNodeHelp(buffer, child));
   }
 
   private StringBuffer commandOptions(CommandReference reference) {

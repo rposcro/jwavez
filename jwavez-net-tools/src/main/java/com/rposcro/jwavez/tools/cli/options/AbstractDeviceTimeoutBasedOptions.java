@@ -17,12 +17,13 @@ public abstract class AbstractDeviceTimeoutBasedOptions implements CommandOption
     try {
       CommandLineParser parser = new DefaultParser();
       this.commandLine = parser.parse(options, args, false);
-      this.device = commandLine.getOptionValue(OPT_DEVICE);
-      if (OPT_TIMEOUT != null) {
-        timeout = commandLine.hasOption(OPT_TIMEOUT) ? parseLong(OPT_TIMEOUT) : 0;
+      if (commandLine.getArgs().length > 0) {
+        throw new CommandOptionsException(String.format("Unrecognized tokens: '%s'", String.join(",", commandLine.getArgs())));
       }
+      this.device = commandLine.getOptionValue(OPT_DEVICE);
+      this.timeout = commandLine.hasOption(OPT_TIMEOUT) ? parseLong(OPT_TIMEOUT) : 0;
     } catch(ParseException e) {
-      throw new CommandOptionsException(e);
+      throw new CommandOptionsException(e.getMessage(), e);
     }
   }
 

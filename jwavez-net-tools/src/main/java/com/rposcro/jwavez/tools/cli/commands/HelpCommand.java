@@ -6,32 +6,33 @@ import com.rposcro.jwavez.tools.cli.controller.CommandTree;
 import com.rposcro.jwavez.tools.cli.controller.CommandsConfiguration;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandLineException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
-import java.util.Arrays;
-import org.apache.commons.cli.CommandLine;
 
 public class HelpCommand implements Command {
 
   private CommandTree commandTree = CommandsConfiguration.defaultConfiguration().getCommandTree();
   private CommandHelpTool commandHelpTool = CommandsConfiguration.defaultConfiguration().getCommandHelpTool();
 
-  private CommandLineContent helpNode;
+  private CommandLineContent nodeUnderHelp;
 
   @Override
   public void configure(String... args) throws CommandOptionsException {
-    if (args.length < 2) {
+    if (args.length < 1) {
       throw new CommandOptionsException("Wrong arguments count");
     }
 
     try {
-      helpNode = commandTree.scanCommandLine(Arrays.copyOfRange(args, 1, args.length));
+      nodeUnderHelp = commandTree.scanCommandLine(args);
+      if (nodeUnderHelp.getCommandOtions().length > 0) {
+        throw new CommandOptionsException(String.format("Cannot display help on '%s'", String.join(" ", args)));
+      }
     } catch(CommandLineException e) {
-      throw new CommandOptionsException(e.getMessage());
+      throw new CommandOptionsException(String.format("Cannot display help on '%s', cause: %s", String.join(" ", args), e.getMessage()));
     }
   }
 
   @Override
-  public void execute(CommandLine commandLine) {
-    StringBuffer buffer = commandHelpTool.buildCommandHelp(helpNode.getCommandNode());
+  public void execute() {
+    StringBuffer buffer = commandHelpTool.buildCommandHelp(nodeUnderHelp.getCommandNode());
     System.out.println(buffer.toString());
   }
 }

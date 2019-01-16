@@ -11,7 +11,7 @@ import com.rposcro.jwavez.tools.cli.commands.NodeAssociationRemoveCommand;
 import com.rposcro.jwavez.tools.cli.commands.NodeAssociationSetCommand;
 import com.rposcro.jwavez.tools.cli.commands.NodeInfoCommand;
 import com.rposcro.jwavez.tools.cli.commands.SUCCommand;
-import com.rposcro.jwavez.tools.cli.options.DefaultDeviceBasedOptions;
+import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
 import com.rposcro.jwavez.tools.cli.options.DefaultNodeBasedOptions;
 import com.rposcro.jwavez.tools.cli.options.DongleCheckOptions;
 import com.rposcro.jwavez.tools.cli.options.FactoryDefaultsOptions;
@@ -24,7 +24,7 @@ import lombok.Getter;
 @Getter
 public class CommandsConfiguration {
 
-  public static final String APP_CMD_NAME = "jwzt";
+  public static final String APP_CMD_NAME = "jwz";
   private static final CommandsConfiguration defaultConfiguration = new CommandsConfiguration();
 
   private CommandTree commandTree;
@@ -32,16 +32,17 @@ public class CommandsConfiguration {
   private CommandUsageTool commandUsageTool;
 
   private CommandsConfiguration() {
-    this.commandTree = new CommandTree()
-        .addNode(helpCommand())
-        .addNode(dongleInfoCommand())
-        .addNode(sucCommand())
-        .addNode(inclusionCommand())
-        .addNode(exclusionCommand())
-        .addNode(learnCommand())
-        .addNode(purgeCommand())
-        .addNode(nodeCommand())
-        ;
+    this.commandTree = CommandTree.builder()
+        .rootNode(new CommandTreeNode("", "")
+          .addChild(helpCommand())
+          .addChild(dongleInfoCommand())
+          .addChild(sucCommand())
+          .addChild(inclusionCommand())
+          .addChild(exclusionCommand())
+          .addChild(learnCommand())
+          .addChild(purgeCommand())
+          .addChild(nodeCommand())
+        ).build();
     this.commandUsageTool = CommandUsageTool.builder()
         .commandTree(commandTree)
         .applicationCommandName(APP_CMD_NAME)
@@ -72,12 +73,12 @@ public class CommandsConfiguration {
 
   private CommandTreeNode inclusionCommand() {
     return new CommandTreeNode("inclusion", "executes node inclusion process")
-        .withCommandReference(IncludeNodeCommand.class, DefaultDeviceBasedOptions.OPTIONS);
+        .withCommandReference(IncludeNodeCommand.class, DefaultDeviceTimeoutBasedOptions.OPTIONS);
   }
 
   private CommandTreeNode exclusionCommand() {
     return new CommandTreeNode("exclusion", "executes node exclusion process")
-        .withCommandReference(ExcludeNodeCommand.class, DefaultDeviceBasedOptions.OPTIONS);
+        .withCommandReference(ExcludeNodeCommand.class, DefaultDeviceTimeoutBasedOptions.OPTIONS);
   }
 
   private CommandTreeNode learnCommand() {
@@ -92,14 +93,14 @@ public class CommandsConfiguration {
 
   private CommandTreeNode nodeCommand() {
     return new CommandTreeNode("node", "reads or sets configuration of nodes in network")
-        .withChild(new CommandTreeNode("class", "reads node device/command class information")
+        .addChild(new CommandTreeNode("class", "reads node device/command class information")
             .withCommandReference(NodeInfoCommand.class, DefaultNodeBasedOptions.OPTIONS))
-        .withChild(new CommandTreeNode("association", "manages node group associations")
-            .withChild(new CommandTreeNode("info", "reads associations information from node")
+        .addChild(new CommandTreeNode("association", "manages node group associations")
+            .addChild(new CommandTreeNode("info", "reads associations information from node")
               .withCommandReference(NodeAssociationInfoCommand.class, DefaultNodeBasedOptions.OPTIONS))
-            .withChild(new CommandTreeNode("set", "sets new node association to a group")
+            .addChild(new CommandTreeNode("set", "sets new node association to a group")
               .withCommandReference(NodeAssociationSetCommand.class, NodeAssociationOptions.OPTIONS))
-            .withChild(new CommandTreeNode("remove", "removes node association from a group")
+            .addChild(new CommandTreeNode("remove", "removes node association from a group")
               .withCommandReference(NodeAssociationRemoveCommand.class, NodeAssociationOptions.OPTIONS))
         );
   }

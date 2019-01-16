@@ -36,7 +36,7 @@ public class NodeAssociationOptions extends AbstractNodeBasedOptions {
       associationGroupId = parseByte(OPT_ASSO_GROUP);
       associationNodeId = parseByte(OPT_ASSO_NODE);
     } catch(ParseException e) {
-      throw new CommandOptionsException(e);
+      throw new CommandOptionsException(e.getMessage(), e);
     }
   }
 }

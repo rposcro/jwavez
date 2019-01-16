@@ -11,12 +11,13 @@ class CommandTreeSpec extends Specification {
     def commandTree;
 
     def setup() {
-        commandTree = new CommandTree()
-                .addNode(
-                new CommandTreeNode("alias-1", "alias-1 description")
-                        .withChild(new CommandTreeNode("alias-1-1", "sub-alias-1-1 desription"))
-                        .withChild(new CommandTreeNode("alias-1-2", "sub-alias-1-2 desription")
-                        .withChild(new CommandTreeNode("alias-1-2-1", "sub-alias-1-2-1 description"))));
+        commandTree = CommandTree.builder()
+        .rootNode(new CommandTreeNode("", "")
+                .addChild(new CommandTreeNode("alias-1", "alias-1 description")
+                        .addChild(new CommandTreeNode("alias-1-1", "sub-alias-1-1 desription"))
+                        .addChild(new CommandTreeNode("alias-1-2", "sub-alias-1-2 desription")
+                        .addChild(new CommandTreeNode("alias-1-2-1", "sub-alias-1-2-1 description"))))
+        ).build();
     }
 
     @Unroll
@@ -33,6 +34,8 @@ class CommandTreeSpec extends Specification {
         ["alias-1", "-o1", "-o2"]                       | "alias-1"         | ["-o1", "-o2"]
         ["alias-1", "alias-1-1"]                        | "alias-1-1"       | []
         ["alias-1", "alias-1-2", "alias-1-2-1", "-o3"]  | "alias-1-2-1"     | ["-o3"]
+        ["alias-1", "arg0"]                             | "alias-1"         | ["arg0"]
+        ["alias-1", "alias-1-2", "arg0", "arg1", "-o3"] | "alias-1-2"       | ["arg0", "arg1", "-o3"]
     }
 
     @Unroll
@@ -53,7 +56,7 @@ class CommandTreeSpec extends Specification {
     @Unroll
     def "find command node successfully"() {
         when:
-        def commandNode = commandTree.findCommandNode(path);
+        def commandNode = commandTree.findClosestMatchingCommandNode(path);
 
         then:
         commandNode.alias == alias;
@@ -68,16 +71,8 @@ class CommandTreeSpec extends Specification {
 
     @Unroll
     def "find command node fails"() {
-        given:
-        def commandTree = new CommandTree()
-        .addNode(
-           new CommandTreeNode("alias-1", "alias1 description")
-                    .withChild(new CommandTreeNode("alias-1-1", "sub-alias-1-1 desription"))
-                    .withChild(new CommandTreeNode("alias-1-2", "sub-alias-1-2 desription")
-                        .withChild(new CommandTreeNode("alias-1-2-1", "sub-alias-1-2-1 description"))));
-
         when:
-        def commandNode = commandTree.findCommandNode(path);
+        def commandNode = commandTree.findClosestMatchingCommandNode(path);
 
         then:
         thrown CommandLineException;
@@ -113,5 +108,6 @@ class CommandTreeSpec extends Specification {
         ["item", "thing"]           | ["item", "thing"]
         ["item", "thing", "-o1"]    | ["item", "thing"]
         ["item", "-o1", "-o2"]      | ["item"]
+        ["item", "-o1", "thing"]    | ["item"]
     }
 }

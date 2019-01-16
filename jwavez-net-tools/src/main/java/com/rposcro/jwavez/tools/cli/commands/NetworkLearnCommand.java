@@ -15,7 +15,6 @@ import com.rposcro.jwavez.serial.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.NetworkLearnOptions;
 import java.util.stream.Collectors;
-import org.apache.commons.cli.CommandLine;
 
 public class NetworkLearnCommand extends AbstractDeviceCommand {
 
@@ -27,7 +26,7 @@ public class NetworkLearnCommand extends AbstractDeviceCommand {
   }
 
   @Override
-  public void execute(CommandLine commandLine) {
+  public void execute() {
     try {
       System.out.println("Starting network learn mode on " + options.getDevice() + "...");
       connect(options);

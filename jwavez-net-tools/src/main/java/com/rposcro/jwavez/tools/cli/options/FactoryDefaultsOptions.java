@@ -28,7 +28,7 @@ public class FactoryDefaultsOptions implements CommandOptions {
       commandLine = parser.parse(OPTIONS, args, false);
       timeout = commandLine.hasOption(OPT_TIMEOUT) ? ((Number) commandLine.getParsedOptionValue(OPT_TIMEOUT)).intValue() : 0;
     } catch(ParseException e) {
-      throw new CommandOptionsException(e);
+      throw new CommandOptionsException(e.getMessage(), e);
     }
   }
 
