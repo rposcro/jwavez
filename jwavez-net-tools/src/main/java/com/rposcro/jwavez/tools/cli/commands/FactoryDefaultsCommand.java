@@ -10,7 +10,6 @@ import com.rposcro.jwavez.serial.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.FactoryDefaultsOptions;
 import java.util.concurrent.Future;
-import org.apache.commons.cli.CommandLine;
 
 public class FactoryDefaultsCommand implements Command {
 
@@ -23,7 +22,7 @@ public class FactoryDefaultsCommand implements Command {
   }
 
   @Override
-  public void execute(CommandLine commandLine) {
+  public void execute() {
     serialChannel = SerialChannelManager.builder()
         .device(options.getDevice())
         .manageThreads(true)

@@ -6,9 +6,8 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 
-public class SUCOptions extends AbstractDeviceBasedOptions {
+public class SUCOptions extends AbstractDeviceTimeoutBasedOptions {
 
-  private static final String OPT_DEVICE = "d";
   private static final String OPT_READ = "r";
   private static final String OPT_SET_OTHER = "so";
   private static final String OPT_SET_THIS = "st";
@@ -30,7 +29,7 @@ public class SUCOptions extends AbstractDeviceBasedOptions {
   private byte otherId;
 
   public SUCOptions(String[] args) throws CommandOptionsException {
-    super(OPTIONS, args, OPT_DEVICE);
+    super(OPTIONS, args);
     try {
       this.action = commandLine.hasOption(OPT_READ) ? Action.READ :
           commandLine.hasOption(OPT_SET_THIS) ? Action.SET_THIS : Action.SET_OTHER;
@@ -38,7 +37,7 @@ public class SUCOptions extends AbstractDeviceBasedOptions {
         this.otherId = ((Number) commandLine.getParsedOptionValue(OPT_SET_OTHER)).byteValue();
       }
     } catch(ParseException e) {
-      throw new CommandOptionsException(e);
+      throw new CommandOptionsException(e.getMessage(), e);
     }
   }
 

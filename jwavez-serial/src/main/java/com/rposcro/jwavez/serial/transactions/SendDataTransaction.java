@@ -3,6 +3,7 @@ package com.rposcro.jwavez.serial.transactions;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.frame.callbacks.SendDataCallbackFrame;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.constants.TransmitCompletionStatus;
 import com.rposcro.jwavez.serial.frame.requests.SendDataRequestFrame;
 import com.rposcro.jwavez.serial.frame.responses.SendDataResponseFrame;
@@ -13,10 +14,17 @@ public class SendDataTransaction extends AbstractRequestResponseCallbackTransact
 
   private NodeId nodeId;
   private ZWaveControlledCommand command;
+  private boolean ackRequired;
 
   public SendDataTransaction(NodeId nodeId, ZWaveControlledCommand command) {
+    this(nodeId, command, true);
+  }
+
+  public SendDataTransaction(NodeId nodeId, ZWaveControlledCommand command, boolean ackRequired) {
+    super(SerialCommand.SEND_DATA);
     this.nodeId = nodeId;
     this.command = command;
+    this.ackRequired = ackRequired;
   }
 
   @Override
@@ -39,9 +47,14 @@ public class SendDataTransaction extends AbstractRequestResponseCallbackTransact
     if (status == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK) {
       completeTransaction(null);
     } else if (status == TransmitCompletionStatus.TRANSMIT_COMPLETE_NO_ACK) {
-      // special weak up treatment needed here, now just failing
-      log.warn("Unsupported NO_ACK situation, needs to be implemented");
-      failTransaction();
+      if (ackRequired) {
+        // special weak up treatment needed here, now just failing
+        log.warn("NO_ACK situation while ACK required, needs to be implemented");
+        failTransaction();
+      } else {
+        log.warn("NO_ACK situation but ACK ignored");
+        completeTransaction(null);
+      }
     } else {
       failTransaction();
     }

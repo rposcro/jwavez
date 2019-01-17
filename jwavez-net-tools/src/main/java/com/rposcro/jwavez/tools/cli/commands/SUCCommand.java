@@ -1,10 +1,8 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.serial.frame.requests.EnableSUCRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetSUCNodeIdRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.MemoryGetIdRequestFrame;
-import com.rposcro.jwavez.serial.frame.responses.EnableSUCResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.GetSUCNodeIdResponseFrame;
 import com.rposcro.jwavez.serial.frame.responses.MemoryGetIdResponseFrame;
 import com.rposcro.jwavez.serial.transactions.RequestResponseFlowTransaction;
@@ -13,7 +11,6 @@ import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.SUCOptions;
-import org.apache.commons.cli.CommandLine;
 
 public class SUCCommand extends AbstractDeviceCommand {
 
@@ -25,7 +22,7 @@ public class SUCCommand extends AbstractDeviceCommand {
   }
 
   @Override
-  public void execute(CommandLine commandLine) {
+  public void execute() {
     System.out.println("SUC command for " + options.getDevice());
     try {
       connect(options);

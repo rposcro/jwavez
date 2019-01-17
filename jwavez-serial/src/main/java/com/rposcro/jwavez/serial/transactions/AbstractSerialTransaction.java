@@ -73,29 +73,4 @@ abstract class AbstractSerialTransaction<T> implements SerialTransaction<T> {
     transactionContext.setActive(false);
     futureResult.complete(new TransactionResult<>(status, null));
   }
-
-  protected <T extends SOFCallbackFrame> T validateCallbackAndCast(SOFFrame frame, byte callbackId) throws TransactionException {
-    if (frame.getFrameType() == FrameType.REQ
-        && frame.getSerialCommand() == SerialCommand.SET_SUC_NODE_ID
-        && frame.getBuffer()[OFFSET_PAYLOAD] == callbackId) {
-      try {
-        return (T) frame;
-      } catch(ClassCastException e) {
-        throw new TransactionException("Callback frame validation failed, stopping");
-      }
-    }
-    throw new TransactionException("Callback frame validation failed, stopping");
-  }
-
-  protected <T extends SOFResponseFrame> T validateResponseAndCast(SOFFrame frame) throws TransactionException {
-    if (frame.getFrameType() == FrameType.RES
-        && frame.getSerialCommand() == SerialCommand.SET_SUC_NODE_ID) {
-      try {
-        return (T) frame;
-      } catch(ClassCastException e) {
-        throw new TransactionException("Response frame validation failed, stopping");
-      }
-    }
-    throw new TransactionException("Response frame validation failed, stopping");
-  }
 }

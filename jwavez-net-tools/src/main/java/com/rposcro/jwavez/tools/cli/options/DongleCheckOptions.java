@@ -11,7 +11,6 @@ import org.apache.commons.cli.ParseException;
 
 public class DongleCheckOptions implements CommandOptions {
 
-  private static final String OPT_DEVICE = "d";
   private static final String OPT_CCAPA = "cc";
   private static final String OPT_DCAPA = "cz";
   private static final String OPT_INIDT = "ci";
@@ -21,8 +20,7 @@ public class DongleCheckOptions implements CommandOptions {
   private static final String OPT_PWRLV = "cp";
   private static final String OPT_LBRTP = "cl";
 
-  public static final Options OPTIONS = new Options()
-      .addOption(Option.builder(OPT_DEVICE).longOpt("device").hasArg().required().desc("controller dongle device").build())
+  public static final Options OPTIONS = CommandOptions.defaultDeviceBasedOptions()
       .addOption(new Option(OPT_CCAPA, "ctrl-capabilities", false, "controller capabilities"))
       .addOption(new Option(OPT_DCAPA, "capabilities", false, "zwave capabilities"))
       .addOption(new Option(OPT_INIDT, "init-data", false, "initial data"))
@@ -43,7 +41,7 @@ public class DongleCheckOptions implements CommandOptions {
       allChecks = Stream.of(OPT_CCAPA, OPT_DCAPA, OPT_INIDT, OPT_NTIDS, OPT_GVERS, OPT_SUCID, OPT_PWRLV, OPT_LBRTP)
           .noneMatch(commandLine::hasOption);
     } catch(ParseException e) {
-      throw new CommandOptionsException(e);
+      throw new CommandOptionsException(e.getMessage(), e);
     }
   }
 

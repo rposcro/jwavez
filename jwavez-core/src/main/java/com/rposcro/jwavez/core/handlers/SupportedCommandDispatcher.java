@@ -14,6 +14,13 @@ public class SupportedCommandDispatcher {
 
   private Map<CommandType, List<SupportedCommandHandler>> handlersPerCommandType = new HashMap<>();
 
+  public void registerAllCommandsHandler(SupportedCommandHandler commandHandler) {
+    List<SupportedCommandHandler> handlers = handlersPerCommandType.computeIfAbsent(null, type -> new LinkedList<>());
+    if (!handlers.contains(commandHandler)) {
+      handlers.add(commandHandler);
+    }
+  }
+
   public void registerHandler(CommandType commandType, SupportedCommandHandler commandHandler) {
     List<SupportedCommandHandler> handlers = handlersPerCommandType.computeIfAbsent(commandType, type -> new LinkedList<>());
     if (!handlers.contains(commandHandler)) {
@@ -24,6 +31,8 @@ public class SupportedCommandDispatcher {
   public void dispatchCommand(ZWaveSupportedCommand command) {
     log.info("Command to dispatch: {} {}", command.getCommandClass(), command.getCommandType());
     Optional.ofNullable(handlersPerCommandType.get(command.getCommandType()))
+        .ifPresent(handlers -> handlers.stream().forEach(handler -> handler.handleCommand(command)));
+    Optional.ofNullable(handlersPerCommandType.get(null))
         .ifPresent(handlers -> handlers.stream().forEach(handler -> handler.handleCommand(command)));
   }
 }

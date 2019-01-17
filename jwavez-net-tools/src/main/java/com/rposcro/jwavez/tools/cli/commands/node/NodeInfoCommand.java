@@ -1,40 +1,35 @@
-package com.rposcro.jwavez.tools.cli.commands;
+package com.rposcro.jwavez.tools.cli.commands.node;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.SerialChannel;
-import com.rposcro.jwavez.serial.SerialChannelManager;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.callbacks.ApplicationUpdateCallbackFrame;
 import com.rposcro.jwavez.serial.frame.constants.ApplicationUpdateStatus;
 import com.rposcro.jwavez.serial.frame.requests.RequestNodeInfoRequestFrame;
 import com.rposcro.jwavez.serial.frame.responses.RequestNodeInfoResponseFrame;
 import com.rposcro.jwavez.serial.rxtx.InboundFrameInterceptorContext;
-import com.rposcro.jwavez.serial.transactions.AddNodeToNetworkTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
+import com.rposcro.jwavez.tools.cli.commands.AbstractDeviceCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
-import com.rposcro.jwavez.tools.cli.options.IncludeNodeOptions;
-import com.rposcro.jwavez.tools.cli.options.NodeInfoOptions;
+import com.rposcro.jwavez.tools.cli.options.DefaultNodeBasedOptions;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Future;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import org.apache.commons.cli.CommandLine;
 
 public class NodeInfoCommand extends AbstractDeviceCommand {
 
-  private NodeInfoOptions options;
+  private DefaultNodeBasedOptions options;
   private Semaphore lock;
 
   @Override
   public void configure(String[] args) throws CommandOptionsException {
-    options = new NodeInfoOptions(args);
+    options = new DefaultNodeBasedOptions(args);
   }
 
   @Override
-  public void execute(CommandLine commandLine) {
+  public void execute() {
     connect(options);
     lock = new Semaphore(1);
     channelManager.addInboundFrameInterceptor(this::handleUpdate);

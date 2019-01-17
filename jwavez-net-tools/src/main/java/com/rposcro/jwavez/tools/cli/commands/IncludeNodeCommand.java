@@ -7,25 +7,24 @@ import com.rposcro.jwavez.serial.transactions.AddNodeToNetworkTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
-import com.rposcro.jwavez.tools.cli.options.IncludeNodeOptions;
+import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
-import org.apache.commons.cli.CommandLine;
 
 public class IncludeNodeCommand implements Command {
 
-  private IncludeNodeOptions options;
+  private DefaultDeviceTimeoutBasedOptions options;
   private SerialChannel serialChannel;
 
   @Override
   public void configure(String[] args) throws CommandOptionsException {
-    options = new IncludeNodeOptions(args);
+    options = new DefaultDeviceTimeoutBasedOptions(args);
   }
 
   @Override
-  public void execute(CommandLine commandLine) {
+  public void execute() {
     serialChannel = SerialChannelManager.builder()
         .device(options.getDevice())
         .manageThreads(true)

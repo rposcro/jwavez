@@ -26,7 +26,6 @@ import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DongleCheckOptions;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-import org.apache.commons.cli.CommandLine;
 
 public class DongleCheckCommand implements Command {
 
@@ -39,7 +38,7 @@ public class DongleCheckCommand implements Command {
   }
 
   @Override
-  public void execute(CommandLine commandLine) {
+  public void execute() {
     serialChannel = SerialChannelManager.builder()
         .device(options.getDevice())
         .manageThreads(true)

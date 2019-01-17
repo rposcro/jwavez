@@ -1,10 +1,14 @@
 package com.rposcro.jwavez.serial.transactions;
 
+import static com.rposcro.jwavez.serial.frame.SOFFrame.OFFSET_PAYLOAD;
+
 import com.rposcro.jwavez.serial.exceptions.TransactionException;
 import com.rposcro.jwavez.serial.frame.SOFCallbackFrame;
 import com.rposcro.jwavez.serial.frame.SOFFrame;
 import com.rposcro.jwavez.serial.frame.SOFRequestFrame;
 import com.rposcro.jwavez.serial.frame.SOFResponseFrame;
+import com.rposcro.jwavez.serial.frame.constants.FrameType;
+import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import java.util.Optional;
 import java.util.concurrent.Future;
 import lombok.extern.slf4j.Slf4j;
@@ -12,12 +16,15 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public abstract class AbstractRequestResponseCallbackTransaction<RT extends SOFResponseFrame, CT extends SOFCallbackFrame, CTX> extends AbstractSerialTransaction<CTX> {
 
-  private Phase phase;
-  private boolean deliveryConfirmed;
+  private SerialCommand serialCommand;
   private byte callbackId;
 
-  public AbstractRequestResponseCallbackTransaction() {
+  private Phase phase;
+  private boolean deliveryConfirmed;
+
+  public AbstractRequestResponseCallbackTransaction(SerialCommand serialCommand) {
     super(true, true);
+    this.serialCommand = serialCommand;
   }
 
   protected abstract SOFRequestFrame startUpFrame();
@@ -53,7 +60,7 @@ public abstract class AbstractRequestResponseCallbackTransaction<RT extends SOFR
           setPhase(Phase.RESPONSE_RECEIVED);
         }
       } else if (phase == Phase.RESPONSE_RECEIVED) {
-        CT callbackFrame = validateCallbackAndCast(inboundFrame, callbackId);
+        CT callbackFrame = validateCallbackAndCast(inboundFrame);
         handleCallback(callbackFrame);
         setPhase(Phase.END);
       }
@@ -97,6 +104,31 @@ public abstract class AbstractRequestResponseCallbackTransaction<RT extends SOFR
     if (phase == Phase.IDLE || phase == Phase.END) {
       throw new TransactionException("Frames are not expected at phase " + phase);
     }
+  }
+
+  protected <T extends SOFCallbackFrame> T validateCallbackAndCast(SOFFrame frame) throws TransactionException {
+    if (frame.getFrameType() == FrameType.REQ
+        && frame.getSerialCommand() == serialCommand
+        && frame.getBuffer()[OFFSET_PAYLOAD] == callbackId) {
+      try {
+        return (T) frame;
+      } catch(ClassCastException e) {
+        throw new TransactionException("Callback frame validation failed, stopping");
+      }
+    }
+    throw new TransactionException("Callback frame validation failed, stopping");
+  }
+
+  protected <T extends SOFResponseFrame> T validateResponseAndCast(SOFFrame frame) throws TransactionException {
+    if (frame.getFrameType() == FrameType.RES
+        && frame.getSerialCommand() == serialCommand) {
+      try {
+        return (T) frame;
+      } catch(ClassCastException e) {
+        throw new TransactionException("Response frame validation failed, stopping");
+      }
+    }
+    throw new TransactionException("Response frame validation failed, stopping");
   }
 
   protected void stopTransaction() {
