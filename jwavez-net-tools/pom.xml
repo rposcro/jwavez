@@ -10,7 +10,7 @@
   <parent>
     <artifactId>jwavez</artifactId>
     <groupId>com.jwavez</groupId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
   </parent>
 
   <properties>
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>com.jwavez</groupId>
       <artifactId>jwavez-serial</artifactId>
-      <version>${jwavez.version}</version>
+      <version>${project.parent.version}</version>
     </dependency>
 
     <dependency>

@@ -7,7 +7,7 @@
   <groupId>com.jwavez</groupId>
   <artifactId>jwavez</artifactId>
   <packaging>pom</packaging>
-  <version>${jwavez.version}</version>
+  <version>1.0.1</version>
 
   <modules>
     <module>jwavez-core</module>
@@ -17,7 +17,6 @@
   </modules>
 
   <properties>
-    <jwavez.version>1.0.1-SNAPSHOT</jwavez.version>
     <java.version>1.8</java.version>
     <lombok.version>1.18.4</lombok.version>
     <lombok.plugin.version>1.18.4.0</lombok.plugin.version>
