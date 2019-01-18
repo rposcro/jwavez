@@ -9,16 +9,16 @@ import com.rposcro.jwavez.serial.frame.responses.RequestNodeInfoResponseFrame;
 import com.rposcro.jwavez.serial.rxtx.InboundFrameInterceptorContext;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
-import com.rposcro.jwavez.tools.cli.commands.AbstractDeviceCommand;
+import com.rposcro.jwavez.tools.cli.commands.AbstractDeviceTimeoutCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
-import com.rposcro.jwavez.tools.cli.options.DefaultNodeBasedOptions;
+import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class NodeInfoCommand extends AbstractDeviceCommand {
+public class NodeInfoCommand extends AbstractDeviceTimeoutCommand {
 
   private DefaultNodeBasedOptions options;
   private Semaphore lock;

@@ -16,7 +16,7 @@ import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.NetworkLearnOptions;
 import java.util.stream.Collectors;
 
-public class NetworkLearnCommand extends AbstractDeviceCommand {
+public class NetworkLearnCommand extends AbstractDeviceTimeoutCommand {
 
   private NetworkLearnOptions options;
 
@@ -52,9 +52,9 @@ public class NetworkLearnCommand extends AbstractDeviceCommand {
         showSummary();
       }
     } else if (result.getStatus() == TransactionStatus.Cancelled) {
-      System.out.println("Inclusion stopped by timeout");
+      System.out.println("Learning stopped by timeout");
     } else {
-      System.out.println("Inclusion failed by unknown reason");
+      System.out.println("Learning failed by unknown reason");
     }
   }
 

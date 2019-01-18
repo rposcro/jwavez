@@ -1,6 +1,7 @@
-package com.rposcro.jwavez.tools.cli.options;
+package com.rposcro.jwavez.tools.cli.options.node;
 
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
+import com.rposcro.jwavez.tools.cli.options.CommandOptions;
 import org.apache.commons.cli.Options;
 
 public class DefaultNodeBasedOptions extends AbstractNodeBasedOptions {

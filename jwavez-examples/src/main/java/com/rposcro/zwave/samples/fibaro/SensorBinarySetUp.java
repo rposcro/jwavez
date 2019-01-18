@@ -102,11 +102,11 @@ public class SensorBinarySetUp extends AbstractExample {
 
   public static void main(String[] args) throws Exception {
     SensorBinarySetUp setup = new SensorBinarySetUp(4, "/dev/cu.usbmodem1411");
-    //setup.setMonostableModeForBothInputs();
-    //setup.setNOModeForBothInputs();
-    //setup.setFrameGenericForBothInputs();
-    //setup.setFrameBasicSetForBothInputs();
-    //setup.enableSceneActivationCommand();
+    setup.setMonostableModeForBothInputs();
+//    setup.setNOModeForBothInputs();
+    setup.setFrameGenericForBothInputs();
+    setup.setFrameBasicSetForBothInputs();
+    setup.enableSceneActivationCommand();
     setup.associateMainController();
 
     Thread.sleep(60_000);

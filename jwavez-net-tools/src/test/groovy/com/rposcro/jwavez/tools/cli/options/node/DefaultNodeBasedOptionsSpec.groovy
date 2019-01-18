@@ -1,7 +1,7 @@
-package com.rposcro.jwavez.tools.cli.com.rposcro.jwavez.tools.cli.options
+package com.rposcro.jwavez.tools.cli.options.node
 
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException
-import com.rposcro.jwavez.tools.cli.options.DefaultNodeBasedOptions
+import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions
 import spock.lang.Specification
 import spock.lang.Unroll
 

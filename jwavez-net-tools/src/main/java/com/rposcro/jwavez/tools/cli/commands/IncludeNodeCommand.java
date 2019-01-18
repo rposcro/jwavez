@@ -1,8 +1,6 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.SerialChannel;
-import com.rposcro.jwavez.serial.SerialChannelManager;
 import com.rposcro.jwavez.serial.transactions.AddNodeToNetworkTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
@@ -13,10 +11,9 @@ import java.util.List;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-public class IncludeNodeCommand implements Command {
+public class IncludeNodeCommand extends AbstractDeviceTimeoutCommand {
 
   private DefaultDeviceTimeoutBasedOptions options;
-  private SerialChannel serialChannel;
 
   @Override
   public void configure(String[] args) throws CommandOptionsException {
@@ -25,11 +22,7 @@ public class IncludeNodeCommand implements Command {
 
   @Override
   public void execute() {
-    serialChannel = SerialChannelManager.builder()
-        .device(options.getDevice())
-        .manageThreads(true)
-        .build()
-        .connect();
+    connect(options);
     System.out.println("Starting node inclusion transaction ...");
     Future<TransactionResult<NodeInfo>> futureResult = launchTransaction();
     System.out.println("Awaiting for new nodes ...");

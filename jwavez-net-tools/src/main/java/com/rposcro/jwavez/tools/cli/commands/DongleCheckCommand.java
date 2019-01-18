@@ -1,8 +1,6 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.serial.SerialChannel;
-import com.rposcro.jwavez.serial.SerialChannelManager;
 import com.rposcro.jwavez.serial.frame.constants.SerialCommand;
 import com.rposcro.jwavez.serial.frame.requests.GetCapabilitiesRequestFrame;
 import com.rposcro.jwavez.serial.frame.requests.GetControllerCapabilitiesRequestFrame;
@@ -27,10 +25,9 @@ import com.rposcro.jwavez.tools.cli.options.DongleCheckOptions;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-public class DongleCheckCommand implements Command {
+public class DongleCheckCommand extends AbstractDeviceCommand {
 
   private DongleCheckOptions options;
-  private SerialChannel serialChannel;
 
   @Override
   public void configure(String[] args) throws CommandOptionsException {
@@ -39,11 +36,7 @@ public class DongleCheckCommand implements Command {
 
   @Override
   public void execute() {
-    serialChannel = SerialChannelManager.builder()
-        .device(options.getDevice())
-        .manageThreads(true)
-        .build()
-        .connect();
+    connect(options);
     System.out.println("Checking dongle " + options.getDevice() + "...");
     runCheck(this::runNetworkIds, options.runNetworkIds(), "Network IDs");
     runCheck(this::runSUCId, options.runSucId(), "SUC Id");
@@ -62,6 +55,7 @@ public class DongleCheckCommand implements Command {
         sectionFailure();
       };
       sectionFooter();
+      System.out.println();
     }
   }
 

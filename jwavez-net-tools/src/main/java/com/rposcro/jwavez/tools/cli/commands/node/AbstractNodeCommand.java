@@ -8,9 +8,9 @@ import com.rposcro.jwavez.serial.interceptors.ApplicationCommandDispatcher;
 import com.rposcro.jwavez.serial.transactions.SerialTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
-import com.rposcro.jwavez.tools.cli.commands.AbstractDeviceCommand;
+import com.rposcro.jwavez.tools.cli.commands.AbstractDeviceTimeoutCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
-import com.rposcro.jwavez.tools.cli.options.AbstractNodeBasedOptions;
+import com.rposcro.jwavez.tools.cli.options.node.AbstractNodeBasedOptions;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
@@ -19,7 +19,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public abstract class AbstractNodeCommand extends AbstractDeviceCommand {
+public abstract class AbstractNodeCommand extends AbstractDeviceTimeoutCommand {
 
   protected static final long DEFAULT_TRANSACTION_TIMEOUT = 10_000;
   protected static final long DEFAULT_CALLBACK_TIMEOUT = 10_000;
