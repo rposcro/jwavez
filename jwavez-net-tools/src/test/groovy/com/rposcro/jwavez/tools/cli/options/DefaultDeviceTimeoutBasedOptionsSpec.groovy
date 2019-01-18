@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.tools.cli.com.rposcro.jwavez.tools.cli.options
+package com.rposcro.jwavez.tools.cli.options
 
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions
@@ -10,16 +10,16 @@ class DefaultDeviceTimeoutBasedOptionsSpec extends Specification {
     @Unroll
     def "parse success for #args"() {
         when:
-        def options = new DefaultDeviceTimeoutBasedOptions(args.toArray(new String[0]));
+        def options = new DefaultDeviceTimeoutBasedOptions(args.split(" "));
 
         then:
         options.device == expDevice;
         options.timeout == expTimeout;
 
         where:
-        args                                | expDevice     | expTimeout
-        ["-d", "/dev/dummy"]                | "/dev/dummy"  | 0
-        ["-d", "/dev/dummy", "-t", "1234"]  | "/dev/dummy"  | 1234
+        args                        | expDevice     | expTimeout
+        "-d /dev/dummy"             | "/dev/dummy"  | 0
+        "-d /dev/dummy -t 1234"     | "/dev/dummy"  | 1234
     }
 
     @Unroll

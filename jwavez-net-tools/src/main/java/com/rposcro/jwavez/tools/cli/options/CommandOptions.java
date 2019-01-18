@@ -15,6 +15,7 @@ public interface CommandOptions {
             .longOpt("device")
             .required()
             .hasArg()
+            .numberOfArgs(1)
             .argName("device")
             .desc("controller dongle device").build())
         ;
@@ -26,6 +27,7 @@ public interface CommandOptions {
             .longOpt("timeout")
             .required(false)
             .hasArg()
+            .numberOfArgs(1)
             .argName("millis")
             .type(Number.class)
             .desc("cancels transaction after this time").build())
@@ -38,6 +40,7 @@ public interface CommandOptions {
             .longOpt("node")
             .required()
             .hasArg()
+            .numberOfArgs(1)
             .argName("nodeId")
             .type(Number.class)
             .desc("id of node to be examined").build())

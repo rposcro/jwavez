@@ -10,7 +10,7 @@ import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.commands.AbstractDeviceCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
-import com.rposcro.jwavez.tools.cli.options.AbstractNodeBasedOptions;
+import com.rposcro.jwavez.tools.cli.options.node.AbstractNodeBasedOptions;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;

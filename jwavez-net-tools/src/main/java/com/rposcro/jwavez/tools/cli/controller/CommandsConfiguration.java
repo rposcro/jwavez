@@ -9,16 +9,20 @@ import com.rposcro.jwavez.tools.cli.commands.NetworkLearnCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeAssociationInfoCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeAssociationRemoveCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeAssociationSetCommand;
+import com.rposcro.jwavez.tools.cli.commands.node.NodeConfigurationReadCommand;
+import com.rposcro.jwavez.tools.cli.commands.node.NodeConfigurationSetCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeInfoCommand;
 import com.rposcro.jwavez.tools.cli.commands.SUCCommand;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
-import com.rposcro.jwavez.tools.cli.options.DefaultNodeBasedOptions;
+import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
 import com.rposcro.jwavez.tools.cli.options.DongleCheckOptions;
 import com.rposcro.jwavez.tools.cli.options.FactoryDefaultsOptions;
 import com.rposcro.jwavez.tools.cli.options.HelpOptions;
 import com.rposcro.jwavez.tools.cli.options.NetworkLearnOptions;
-import com.rposcro.jwavez.tools.cli.options.NodeAssociationOptions;
+import com.rposcro.jwavez.tools.cli.options.node.NodeAssociationOptions;
+import com.rposcro.jwavez.tools.cli.options.node.NodeConfigurationReadOptions;
 import com.rposcro.jwavez.tools.cli.options.SUCOptions;
+import com.rposcro.jwavez.tools.cli.options.node.NodeConfigurationSetOptions;
 import lombok.Getter;
 
 @Getter
@@ -97,11 +101,16 @@ public class CommandsConfiguration {
             .withCommandReference(NodeInfoCommand.class, DefaultNodeBasedOptions.OPTIONS))
         .addChild(new CommandTreeNode("association", "manages node group associations")
             .addChild(new CommandTreeNode("info", "reads associations information from node")
-              .withCommandReference(NodeAssociationInfoCommand.class, DefaultNodeBasedOptions.OPTIONS))
+                .withCommandReference(NodeAssociationInfoCommand.class, DefaultNodeBasedOptions.OPTIONS))
             .addChild(new CommandTreeNode("set", "sets new node association to a group")
-              .withCommandReference(NodeAssociationSetCommand.class, NodeAssociationOptions.OPTIONS))
+                .withCommandReference(NodeAssociationSetCommand.class, NodeAssociationOptions.OPTIONS))
             .addChild(new CommandTreeNode("remove", "removes node association from a group")
-              .withCommandReference(NodeAssociationRemoveCommand.class, NodeAssociationOptions.OPTIONS))
+                .withCommandReference(NodeAssociationRemoveCommand.class, NodeAssociationOptions.OPTIONS)))
+        .addChild(new CommandTreeNode("configuration", "manages node configuration parameters")
+            .addChild(new CommandTreeNode("read", "reads node configuration parameters")
+                .withCommandReference(NodeConfigurationReadCommand.class, NodeConfigurationReadOptions.OPTIONS))
+            .addChild(new CommandTreeNode("set", "sets node configuration parameter")
+                .withCommandReference(NodeConfigurationSetCommand.class, NodeConfigurationSetOptions.OPTIONS))
         );
   }
 }

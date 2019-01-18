@@ -25,7 +25,7 @@ public abstract class AbstractDeviceTimeoutBasedOptions implements CommandOption
       this.device = commandLine.getOptionValue(OPT_DEVICE);
       this.timeout = commandLine.hasOption(OPT_TIMEOUT) ? parseLong(OPT_TIMEOUT) : -1;
     } catch(ParseException e) {
-      throw new CommandOptionsException(e.getMessage(), e);
+      throw new CommandOptionsException("Invalid option(s) format: " + e.getMessage(), e);
     }
   }
 

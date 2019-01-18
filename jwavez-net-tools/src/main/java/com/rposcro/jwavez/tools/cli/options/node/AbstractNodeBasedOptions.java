@@ -1,7 +1,8 @@
-package com.rposcro.jwavez.tools.cli.options;
+package com.rposcro.jwavez.tools.cli.options.node;
 
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
+import com.rposcro.jwavez.tools.cli.options.AbstractDeviceTimeoutBasedOptions;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 

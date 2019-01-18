@@ -7,7 +7,7 @@ import com.rposcro.jwavez.serial.transactions.RemoveNodeFromNetworkTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
-import com.rposcro.jwavez.tools.cli.options.DefaultNodeBasedOptions;
+import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;

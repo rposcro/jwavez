@@ -4,7 +4,7 @@ import com.rposcro.jwavez.tools.cli.commands.node.NodeInfoCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
-import com.rposcro.jwavez.tools.cli.options.DefaultNodeBasedOptions;
+import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
 import com.rposcro.jwavez.tools.cli.options.DongleCheckOptions;
 import com.rposcro.jwavez.tools.cli.options.FactoryDefaultsOptions;
 import com.rposcro.jwavez.tools.cli.options.HelpOptions;
