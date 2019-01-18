@@ -5,6 +5,7 @@ import com.rposcro.jwavez.tools.cli.commands.ExcludeNodeCommand;
 import com.rposcro.jwavez.tools.cli.commands.FactoryDefaultsCommand;
 import com.rposcro.jwavez.tools.cli.commands.HelpCommand;
 import com.rposcro.jwavez.tools.cli.commands.IncludeNodeCommand;
+import com.rposcro.jwavez.tools.cli.commands.ListenerCommand;
 import com.rposcro.jwavez.tools.cli.commands.NetworkLearnCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeAssociationInfoCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeAssociationRemoveCommand;
@@ -13,6 +14,7 @@ import com.rposcro.jwavez.tools.cli.commands.node.NodeConfigurationReadCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeConfigurationSetCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeInfoCommand;
 import com.rposcro.jwavez.tools.cli.commands.SUCCommand;
+import com.rposcro.jwavez.tools.cli.options.DefaultDeviceBasedOptions;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
 import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
 import com.rposcro.jwavez.tools.cli.options.DongleCheckOptions;
@@ -39,6 +41,7 @@ public class CommandsConfiguration {
     this.commandTree = CommandTree.builder()
         .rootNode(new CommandTreeNode("", "")
           .addChild(helpCommand())
+          .addChild(listenerCommand())
           .addChild(dongleInfoCommand())
           .addChild(sucCommand())
           .addChild(inclusionCommand())
@@ -93,6 +96,11 @@ public class CommandsConfiguration {
   private CommandTreeNode purgeCommand() {
     return new CommandTreeNode("purge", "resets dongle to factory defaults")
         .withCommandReference(FactoryDefaultsCommand.class, FactoryDefaultsOptions.OPTIONS);
+  }
+
+  private CommandTreeNode listenerCommand() {
+    return new CommandTreeNode("listen", "listens to inbound frames")
+        .withCommandReference(ListenerCommand.class, DefaultDeviceBasedOptions.OPTIONS);
   }
 
   private CommandTreeNode nodeCommand() {

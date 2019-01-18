@@ -2,14 +2,10 @@ package com.rposcro.jwavez.tools.cli.options;
 
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import java.util.stream.Stream;
-import org.apache.commons.cli.CommandLine;
-import org.apache.commons.cli.CommandLineParser;
-import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
-import org.apache.commons.cli.ParseException;
 
-public class DongleCheckOptions implements CommandOptions {
+public class DongleCheckOptions extends AbstractDeviceBasedOptions {
 
   private static final String OPT_CCAPA = "cc";
   private static final String OPT_DCAPA = "cz";
@@ -32,17 +28,11 @@ public class DongleCheckOptions implements CommandOptions {
       ;
 
   private boolean allChecks;
-  private CommandLine commandLine;
 
   public DongleCheckOptions(String[] args) throws CommandOptionsException {
-    try {
-      CommandLineParser parser = new DefaultParser();
-      commandLine = parser.parse(OPTIONS, args, false);
-      allChecks = Stream.of(OPT_CCAPA, OPT_DCAPA, OPT_INIDT, OPT_NTIDS, OPT_GVERS, OPT_SUCID, OPT_PWRLV, OPT_LBRTP)
+    super(OPTIONS, args);
+    allChecks = Stream.of(OPT_CCAPA, OPT_DCAPA, OPT_INIDT, OPT_NTIDS, OPT_GVERS, OPT_SUCID, OPT_PWRLV, OPT_LBRTP)
           .noneMatch(commandLine::hasOption);
-    } catch(ParseException e) {
-      throw new CommandOptionsException(e.getMessage(), e);
-    }
   }
 
   public boolean runControllerCapabilities() {

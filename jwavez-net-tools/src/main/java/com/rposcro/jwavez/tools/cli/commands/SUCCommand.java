@@ -12,7 +12,7 @@ import com.rposcro.jwavez.serial.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.SUCOptions;
 
-public class SUCCommand extends AbstractDeviceCommand {
+public class SUCCommand extends AbstractDeviceTimeoutCommand {
 
   private SUCOptions options;
 

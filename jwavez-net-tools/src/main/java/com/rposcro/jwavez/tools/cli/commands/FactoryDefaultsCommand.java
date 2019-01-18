@@ -1,7 +1,5 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
-import com.rposcro.jwavez.serial.SerialChannel;
-import com.rposcro.jwavez.serial.SerialChannelManager;
 import com.rposcro.jwavez.serial.frame.callbacks.SetDefaultCallbackFrame;
 import com.rposcro.jwavez.serial.frame.requests.SetDefaultRequestFrame;
 import com.rposcro.jwavez.serial.transactions.RequestCallbackFlowTransaction;
@@ -11,10 +9,9 @@ import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.FactoryDefaultsOptions;
 import java.util.concurrent.Future;
 
-public class FactoryDefaultsCommand implements Command {
+public class FactoryDefaultsCommand extends AbstractDeviceTimeoutCommand {
 
   private FactoryDefaultsOptions options;
-  private SerialChannel serialChannel;
 
   @Override
   public void configure(String[] args) throws CommandOptionsException {
@@ -23,11 +20,7 @@ public class FactoryDefaultsCommand implements Command {
 
   @Override
   public void execute() {
-    serialChannel = SerialChannelManager.builder()
-        .device(options.getDevice())
-        .manageThreads(true)
-        .build()
-        .connect();
+    connect(options);
     System.out.println("Resetting dongle to factory defaults " + options.getDevice() + "...");
     Future<TransactionResult<SetDefaultCallbackFrame>> futureResult = launchTransaction();
     System.out.println("Awaiting callback ...");

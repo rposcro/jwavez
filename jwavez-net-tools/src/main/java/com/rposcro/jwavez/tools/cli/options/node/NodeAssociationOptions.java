@@ -2,7 +2,6 @@ package com.rposcro.jwavez.tools.cli.options.node;
 
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.CommandOptions;
-import com.rposcro.jwavez.tools.cli.options.node.AbstractNodeBasedOptions;
 import lombok.Getter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;

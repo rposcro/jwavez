@@ -1,35 +1,28 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.SerialChannel;
-import com.rposcro.jwavez.serial.SerialChannelManager;
 import com.rposcro.jwavez.serial.transactions.RemoveNodeFromNetworkTransaction;
 import com.rposcro.jwavez.serial.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
-import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
+import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
-public class ExcludeNodeCommand implements Command {
+public class ExcludeNodeCommand extends AbstractDeviceTimeoutCommand {
 
-  private DefaultNodeBasedOptions options;
-  private SerialChannel serialChannel;
+  private DefaultDeviceTimeoutBasedOptions options;
 
   @Override
   public void configure(String[] args) throws CommandOptionsException {
-    options = new DefaultNodeBasedOptions(args);
+    options = new DefaultDeviceTimeoutBasedOptions(args);
   }
 
   @Override
   public void execute() {
-    serialChannel = SerialChannelManager.builder()
-        .device(options.getDevice())
-        .manageThreads(true)
-        .build()
-        .connect();
+    connect(options);
     System.out.println("Starting node exclusion transaction ...");
     Future<TransactionResult<NodeInfo>> futureResult = launchTransaction();
     System.out.println("Awaiting for node to remove ...");

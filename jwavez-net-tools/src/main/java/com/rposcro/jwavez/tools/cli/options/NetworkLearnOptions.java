@@ -8,7 +8,7 @@ public class NetworkLearnOptions extends AbstractDeviceTimeoutBasedOptions {
 
   private static final String OPT_SUMMARY = "s";
 
-  public static final Options OPTIONS = CommandOptions.defaultDeviceBasedOptions()
+  public static final Options OPTIONS = CommandOptions.defaultDeviceTimeoutBasedOptions()
       .addOption(Option.builder(OPT_SUMMARY)
           .longOpt("summary")
           .required(false)
