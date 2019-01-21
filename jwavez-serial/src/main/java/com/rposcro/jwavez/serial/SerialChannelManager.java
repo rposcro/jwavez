@@ -70,6 +70,10 @@ public class SerialChannelManager {
     }
   }
 
+  public void disconnect() {
+    this.port.disconnect();
+  }
+
   private void cancelOngoingCommunication() throws Exception {
     serialTransmitter.transmitData(SOFFrame.CAN_FRAME.getBuffer());
     Thread.sleep(500);

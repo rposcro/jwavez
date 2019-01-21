@@ -12,7 +12,6 @@ public class CommandController {
   private static final int EXIT_CODE_SUCCESSFUL = 0;
   private static final int EXIT_CODE_GENERAL_ERROR = 1;
 
-
   private CommandTree commandTree = CommandsConfiguration.defaultConfiguration().getCommandTree();
   private CommandUsageTool commandUsageTool = CommandsConfiguration.defaultConfiguration().getCommandUsageTool();
 
@@ -47,9 +46,10 @@ public class CommandController {
 
   private void invokeCommand(CommandReference reference, String[] options)
       throws CommandOptionsException, CommandExecutionException {
-    Command command = reference.createCommand();
-    command.configure(options);
-    command.execute();
+    try ( Command command = reference.createCommand() ) {
+      command.configure(options);
+      command.execute();
+    }
   }
 
   private void printUsage() {

@@ -16,7 +16,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public interface Command {
+public interface Command extends AutoCloseable {
 
   CommandMetaReference[] references = {
     new CommandMetaReference(HelpCommand.class, HelpOptions.OPTIONS, "help", "displays help of given command"),
@@ -44,4 +44,6 @@ public interface Command {
 
   void configure(String args[]) throws CommandOptionsException;
   void execute() throws CommandExecutionException;
+
+  default void close() {}
 }

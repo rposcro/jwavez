@@ -1,0 +1,8 @@
+#!/bin/bash
+
+export JWAVEZ_LOG_LEVEL=debug
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+LIBS=$SCRIPT_DIR/jwavez-net-tools.jar
+
+java -cp $LIBS com.rposcro.jwavez.tools.cli.ZWaveCLI "$@"

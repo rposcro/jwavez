@@ -10,16 +10,35 @@
   <parent>
     <artifactId>jwavez</artifactId>
     <groupId>com.jwavez</groupId>
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
   </parent>
 
   <properties>
     <commons.cli.version>1.4</commons.cli.version>
     <assembly.plugin.version>3.1.1</assembly.plugin.version>
+    <exec.plugin.version>1.6.0</exec.plugin.version>
   </properties>
 
   <build>
     <plugins>
+      <plugin>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>${exec.plugin.version}</version>
+        <groupId>org.codehaus.mojo</groupId>
+        <executions>
+          <execution>
+            <id>Packaging script binaries</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <workingDirectory>${project.basedir}</workingDirectory>
+          <executable>pack-jwz.sh</executable>
+          <commandlineArgs>${project.basedir}</commandlineArgs>
+        </configuration>
+      </plugin>
       <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>${assembly.plugin.version}</version>
@@ -27,6 +46,8 @@
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
+          <finalName>jwavez-net-tools</finalName>
+          <appendAssemblyId>false</appendAssemblyId>
         </configuration>
         <executions>
           <execution>

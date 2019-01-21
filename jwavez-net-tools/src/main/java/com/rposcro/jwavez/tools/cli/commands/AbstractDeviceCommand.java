@@ -16,4 +16,8 @@ public abstract class AbstractDeviceCommand implements Command {
         .build();
     this.serialChannel = channelManager.connect();
   }
+
+  public void close() {
+    channelManager.disconnect();
+  }
 }
