@@ -59,6 +59,20 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Implementation-Title>JWaveZ Net Tools</Implementation-Title>
+              <Specification-Title>JWaveZ Net Tools - ZWave Library</Specification-Title>
+              <Bundle-Name>JWaveZ Net Tools</Bundle-Name>
+              <Bundle-SymbolicName>com.rposcro.jwavez.tools</Bundle-SymbolicName>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 

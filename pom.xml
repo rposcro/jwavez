@@ -19,10 +19,16 @@
   <properties>
     <java.version>1.8</java.version>
     <lombok.version>1.18.4</lombok.version>
-    <lombok.plugin.version>1.18.4.0</lombok.plugin.version>
     <slf4j.version>1.7.25</slf4j.version>
     <jackson.version>[2.9.8,)</jackson.version>
     <nrjavaserial.version>3.12.1</nrjavaserial.version>
+    <!-- Plug-Ins -->
+    <plugin.maven.clean.version>3.0.0</plugin.maven.clean.version>
+    <plugin.maven.jar.version>3.1.0</plugin.maven.jar.version>
+    <plugin.maven.compiler.version>3.5.1</plugin.maven.compiler.version>
+    <plugin.maven.surefire.version>2.19.1</plugin.maven.surefire.version>
+    <plugin.gmaven.plus>1.5</plugin.gmaven.plus>
+    <plugin.lombok.version>1.18.4.0</plugin.lombok.version>
     <!-- Test related -->
     <cglib.nodep.version>3.2.5</cglib.nodep.version>
     <spock.version>1.1-groovy-2.4</spock.version>
@@ -30,16 +36,36 @@
     <reflections.version>0.9.11</reflections.version>
   </properties>
 
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://github.com/rposcro/jwavez/blob/master/LICENSE</url>
+    </license>
+  </licenses>
+
   <build>
+    <resources>
+      <resource>
+        <directory>${project.basedir}/src/main/resources</directory>
+      </resource>
+      <resource>
+        <directory>${project.basedir}/..</directory>
+        <includes>
+          <include>LICENSE</include>
+        </includes>
+      </resource>
+    </resources>
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>3.0.0</version>
+          <version>${plugin.maven.clean.version}</version>
         </plugin>
         <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.5.1</version>
+          <version>${plugin.maven.compiler.version}</version>
           <configuration>
             <source>${java.version}</source>
             <target>${java.version}</target>
@@ -50,12 +76,32 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>2.19.1</version>
+          <version>${plugin.maven.surefire.version}</version>
         </plugin>
         <plugin>
           <groupId>org.codehaus.gmavenplus</groupId>
           <artifactId>gmavenplus-plugin</artifactId>
-          <version>1.5</version>
+          <version>${plugin.gmaven.plus}</version>
+        </plugin>
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>${plugin.maven.jar.version}</version>
+          <configuration>
+            <archive>
+              <manifestEntries>
+                <Built-By>rposcro</Built-By>
+                <Implementation-URL>https://github.com/rposcro/jwavez</Implementation-URL>
+                <Implementation-Version>${project.version}</Implementation-Version>
+                <Implementation-Vendor>rposcro</Implementation-Vendor>
+                <Implementation-Vendor-Id>com.rposcro</Implementation-Vendor-Id>
+                <Specification-Version>${project.version}</Specification-Version>
+                <Specification-Vendor>rposcro</Specification-Vendor>
+                <Bundle-Version>${project.version}</Bundle-Version>
+                <Bundle-License>MIT License</Bundle-License>
+              </manifestEntries>
+            </archive>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -71,7 +117,7 @@
       <dependency>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok-maven-plugin</artifactId>
-        <version>${lombok.plugin.version}</version>
+        <version>${plugin.lombok.version}</version>
       </dependency>
 
       <dependency>

@@ -13,6 +13,25 @@
     <version>1.0.3-SNAPSHOT</version>
   </parent>
 
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Implementation-Title>JWaveZ Examples</Implementation-Title>
+              <Specification-Title>JWaveZ Examples - ZWave Library</Specification-Title>
+              <Bundle-Name>JWaveZ Examples</Bundle-Name>
+              <Bundle-SymbolicName>com.rposcro.jwavez.examples</Bundle-SymbolicName>
+            </manifestEntries>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>com.jwavez</groupId>
