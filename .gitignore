@@ -2,6 +2,7 @@
 /logs/
 /.idea/
 /*.iml
+**/.DS_Store
 
 /jwavez-core/target/
 /jwavez-core/*.iml
