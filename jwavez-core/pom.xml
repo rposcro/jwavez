@@ -10,7 +10,7 @@
   <parent>
     <artifactId>jwavez</artifactId>
     <groupId>com.jwavez</groupId>
-    <version>1.0.2</version>
+    <version>1.0.3-SNAPSHOT</version>
   </parent>
 
   <build>
@@ -18,7 +18,7 @@
       <plugin>
         <groupId>org.projectlombok</groupId>
         <artifactId>lombok-maven-plugin</artifactId>
-        <version>${lombok.plugin.version}</version>
+        <version>${plugin.lombok.version}</version>
         <executions>
           <execution>
             <id>delombok</id>
@@ -66,6 +66,20 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <manifestEntries>
+              <Implementation-Title>JWaveZ Core</Implementation-Title>
+              <Specification-Title>JWaveZ Core - ZWave Library</Specification-Title>
+              <Bundle-Name>JWaveZ Core</Bundle-Name>
+              <Bundle-SymbolicName>com.rposcro.jwavez.core</Bundle-SymbolicName>
+            </manifestEntries>
+          </archive>
+        </configuration>
       </plugin>
     </plugins>
   </build>
