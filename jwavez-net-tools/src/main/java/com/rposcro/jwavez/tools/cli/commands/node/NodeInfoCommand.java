@@ -1,14 +1,14 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.frame.SOFFrame;
-import com.rposcro.jwavez.serial.frame.callbacks.ApplicationUpdateCallbackFrame;
-import com.rposcro.jwavez.serial.frame.constants.ApplicationUpdateStatus;
-import com.rposcro.jwavez.serial.frame.requests.RequestNodeInfoRequestFrame;
-import com.rposcro.jwavez.serial.frame.responses.RequestNodeInfoResponseFrame;
-import com.rposcro.jwavez.serial.rxtx.InboundFrameInterceptorContext;
-import com.rposcro.jwavez.serial.transactions.TransactionResult;
-import com.rposcro.jwavez.serial.transactions.TransactionStatus;
+import com.rposcro.jwavez.serial.probe.frame.SOFFrame;
+import com.rposcro.jwavez.serial.probe.frame.callbacks.ApplicationUpdateCallbackFrame;
+import com.rposcro.jwavez.serial.probe.frame.constants.ApplicationUpdateStatus;
+import com.rposcro.jwavez.serial.probe.frame.requests.RequestNodeInfoRequestFrame;
+import com.rposcro.jwavez.serial.probe.frame.responses.RequestNodeInfoResponseFrame;
+import com.rposcro.jwavez.serial.probe.rxtx.InboundFrameInterceptorContext;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.commands.AbstractDeviceTimeoutCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;

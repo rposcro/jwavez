@@ -1,8 +1,8 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
-import com.rposcro.jwavez.serial.frame.SOFFrame;
-import com.rposcro.jwavez.serial.rxtx.InboundFrameInterceptorContext;
-import com.rposcro.jwavez.serial.utils.FrameUtil;
+import com.rposcro.jwavez.serial.probe.frame.SOFFrame;
+import com.rposcro.jwavez.serial.probe.rxtx.InboundFrameInterceptorContext;
+import com.rposcro.jwavez.serial.probe.utils.FrameUtil;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceBasedOptions;
 

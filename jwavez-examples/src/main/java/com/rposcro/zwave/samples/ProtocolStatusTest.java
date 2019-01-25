@@ -1,8 +1,8 @@
 package com.rposcro.zwave.samples;
 
-import com.rposcro.jwavez.serial.frame.requests.GetProtocolStatusRequestFrame;
-import com.rposcro.jwavez.serial.frame.responses.GetProtocolStatusResponseFrame;
-import com.rposcro.jwavez.serial.transactions.TransactionResult;
+import com.rposcro.jwavez.serial.probe.frame.requests.GetProtocolStatusRequestFrame;
+import com.rposcro.jwavez.serial.probe.frame.responses.GetProtocolStatusResponseFrame;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
 
 public class ProtocolStatusTest extends AbstractExample {
 

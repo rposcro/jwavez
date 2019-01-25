@@ -1,10 +1,10 @@
 package com.rposcro.zwave.samples;
 
 import com.rposcro.jwavez.core.model.NetworkStatistics;
-import com.rposcro.jwavez.serial.frame.requests.GetNetworkStatsRequestFrame;
-import com.rposcro.jwavez.serial.frame.responses.GetNetworkStatsResponseFrame;
-import com.rposcro.jwavez.serial.transactions.TransactionResult;
-import com.rposcro.jwavez.serial.transactions.TransactionStatus;
+import com.rposcro.jwavez.serial.probe.frame.requests.GetNetworkStatsRequestFrame;
+import com.rposcro.jwavez.serial.probe.frame.responses.GetNetworkStatsResponseFrame;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionStatus;
 
 public class NetworkStatisticsTest extends AbstractExample {
 

@@ -1,14 +1,14 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.serial.frame.requests.GetSUCNodeIdRequestFrame;
-import com.rposcro.jwavez.serial.frame.requests.MemoryGetIdRequestFrame;
-import com.rposcro.jwavez.serial.frame.responses.GetSUCNodeIdResponseFrame;
-import com.rposcro.jwavez.serial.frame.responses.MemoryGetIdResponseFrame;
-import com.rposcro.jwavez.serial.transactions.RequestResponseFlowTransaction;
-import com.rposcro.jwavez.serial.transactions.SetSUCNodeIdTransaction;
-import com.rposcro.jwavez.serial.transactions.TransactionResult;
-import com.rposcro.jwavez.serial.transactions.TransactionStatus;
+import com.rposcro.jwavez.serial.probe.frame.requests.GetSUCNodeIdRequestFrame;
+import com.rposcro.jwavez.serial.probe.frame.requests.MemoryGetIdRequestFrame;
+import com.rposcro.jwavez.serial.probe.frame.responses.GetSUCNodeIdResponseFrame;
+import com.rposcro.jwavez.serial.probe.frame.responses.MemoryGetIdResponseFrame;
+import com.rposcro.jwavez.serial.probe.transactions.RequestResponseFlowTransaction;
+import com.rposcro.jwavez.serial.probe.transactions.SetSUCNodeIdTransaction;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.SUCOptions;
 

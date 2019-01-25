@@ -1,15 +1,15 @@
 package com.rposcro.zwave.samples;
 
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.serial.frame.requests.MemoryGetIdRequestFrame;
-import com.rposcro.jwavez.serial.frame.responses.MemoryGetIdResponseFrame;
-import com.rposcro.jwavez.serial.interceptors.ApplicationUpdateLogger;
-import com.rposcro.jwavez.serial.frame.requests.GetInitDataRequestFrame;
-import com.rposcro.jwavez.serial.frame.requests.RequestNodeInfoRequestFrame;
-import com.rposcro.jwavez.serial.frame.responses.GetInitDataResponseFrame;
-import com.rposcro.jwavez.serial.frame.responses.RequestNodeInfoResponseFrame;
-import com.rposcro.jwavez.serial.transactions.TransactionResult;
-import com.rposcro.jwavez.serial.transactions.TransactionStatus;
+import com.rposcro.jwavez.serial.probe.frame.requests.MemoryGetIdRequestFrame;
+import com.rposcro.jwavez.serial.probe.frame.responses.MemoryGetIdResponseFrame;
+import com.rposcro.jwavez.serial.probe.interceptors.ApplicationUpdateLogger;
+import com.rposcro.jwavez.serial.probe.frame.requests.GetInitDataRequestFrame;
+import com.rposcro.jwavez.serial.probe.frame.requests.RequestNodeInfoRequestFrame;
+import com.rposcro.jwavez.serial.probe.frame.responses.GetInitDataResponseFrame;
+import com.rposcro.jwavez.serial.probe.frame.responses.RequestNodeInfoResponseFrame;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionStatus;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 

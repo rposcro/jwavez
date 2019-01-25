@@ -1,5 +1,0 @@
-package com.rposcro.jwavez.serial.frame.agents;
-
-public interface CallbackFrameAgent {
-  
-}

@@ -1,6 +1,6 @@
 package com.rposcro.zwave.samples;
 
-import com.rposcro.jwavez.serial.frame.requests.ZStickSetConfigRequestFrame;
+import com.rposcro.jwavez.serial.probe.frame.requests.ZStickSetConfigRequestFrame;
 
 public class ZStickLightOnOff extends AbstractExample {
 

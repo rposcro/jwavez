@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.transactions.RemoveNodeFromNetworkTransaction;
-import com.rposcro.jwavez.serial.transactions.TransactionResult;
-import com.rposcro.jwavez.serial.transactions.TransactionStatus;
+import com.rposcro.jwavez.serial.probe.transactions.RemoveNodeFromNetworkTransaction;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
 import java.util.Arrays;

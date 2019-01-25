@@ -1,14 +1,14 @@
 package com.rposcro.zwave.samples;
 
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.serial.frame.requests.EnableSUCRequestFrame;
-import com.rposcro.jwavez.serial.frame.requests.GetSUCNodeIdRequestFrame;
-import com.rposcro.jwavez.serial.frame.requests.SetSUCNodeIdRequestFrame;
-import com.rposcro.jwavez.serial.frame.responses.EnableSUCResponseFrame;
-import com.rposcro.jwavez.serial.frame.responses.GetSUCNodeIdResponseFrame;
-import com.rposcro.jwavez.serial.frame.responses.SetSUCNodeIdResponseFrame;
-import com.rposcro.jwavez.serial.transactions.SetSUCNodeIdTransaction;
-import com.rposcro.jwavez.serial.transactions.TransactionResult;
+import com.rposcro.jwavez.serial.probe.frame.requests.EnableSUCRequestFrame;
+import com.rposcro.jwavez.serial.probe.frame.requests.GetSUCNodeIdRequestFrame;
+import com.rposcro.jwavez.serial.probe.frame.requests.SetSUCNodeIdRequestFrame;
+import com.rposcro.jwavez.serial.probe.frame.responses.EnableSUCResponseFrame;
+import com.rposcro.jwavez.serial.probe.frame.responses.GetSUCNodeIdResponseFrame;
+import com.rposcro.jwavez.serial.probe.frame.responses.SetSUCNodeIdResponseFrame;
+import com.rposcro.jwavez.serial.probe.transactions.SetSUCNodeIdTransaction;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
 
 /**
  * Checks SUC mode on controller stick.

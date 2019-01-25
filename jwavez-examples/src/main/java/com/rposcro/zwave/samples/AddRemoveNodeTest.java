@@ -1,10 +1,10 @@
 package com.rposcro.zwave.samples;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.transactions.AddNodeToNetworkTransaction;
-import com.rposcro.jwavez.serial.transactions.RemoveNodeFromNetworkTransaction;
-import com.rposcro.jwavez.serial.transactions.TransactionResult;
-import com.rposcro.jwavez.serial.transactions.TransactionStatus;
+import com.rposcro.jwavez.serial.probe.transactions.AddNodeToNetworkTransaction;
+import com.rposcro.jwavez.serial.probe.transactions.RemoveNodeFromNetworkTransaction;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionStatus;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

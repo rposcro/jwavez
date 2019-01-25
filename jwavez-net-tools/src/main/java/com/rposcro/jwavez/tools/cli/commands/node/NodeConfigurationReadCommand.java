@@ -4,7 +4,7 @@ import static com.rposcro.jwavez.core.commands.enums.ConfigurationCommandType.CO
 
 import com.rposcro.jwavez.core.commands.controlled.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
-import com.rposcro.jwavez.serial.transactions.SendDataTransaction;
+import com.rposcro.jwavez.serial.probe.transactions.SendDataTransaction;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeConfigurationReadOptions;

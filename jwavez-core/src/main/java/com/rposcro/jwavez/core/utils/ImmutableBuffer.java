@@ -2,7 +2,7 @@ package com.rposcro.jwavez.core.utils;
 
 import lombok.Getter;
 
-public class ImmutableBuffer {
+public final class ImmutableBuffer {
 
   private byte[] data;
   @Getter

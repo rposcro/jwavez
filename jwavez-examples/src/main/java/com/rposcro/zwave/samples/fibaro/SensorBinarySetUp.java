@@ -3,10 +3,10 @@ package com.rposcro.zwave.samples.fibaro;
 import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.serial.interceptors.ApplicationCommandHandlerLogger;
-import com.rposcro.jwavez.serial.interceptors.ApplicationUpdateLogger;
-import com.rposcro.jwavez.serial.transactions.SendDataTransaction;
-import com.rposcro.jwavez.serial.transactions.TransactionResult;
+import com.rposcro.jwavez.serial.probe.interceptors.ApplicationCommandHandlerLogger;
+import com.rposcro.jwavez.serial.probe.interceptors.ApplicationUpdateLogger;
+import com.rposcro.jwavez.serial.probe.transactions.SendDataTransaction;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
 import com.rposcro.zwave.samples.AbstractExample;
 import lombok.extern.slf4j.Slf4j;
 

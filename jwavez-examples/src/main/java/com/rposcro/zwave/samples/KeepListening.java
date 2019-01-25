@@ -1,7 +1,7 @@
 package com.rposcro.zwave.samples;
 
-import com.rposcro.jwavez.serial.interceptors.ApplicationCommandHandlerLogger;
-import com.rposcro.jwavez.serial.interceptors.ApplicationUpdateLogger;
+import com.rposcro.jwavez.serial.probe.interceptors.ApplicationCommandHandlerLogger;
+import com.rposcro.jwavez.serial.probe.interceptors.ApplicationUpdateLogger;
 import lombok.extern.slf4j.Slf4j;
 
 /**

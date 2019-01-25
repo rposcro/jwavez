@@ -1,10 +1,10 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
-import com.rposcro.jwavez.serial.frame.callbacks.SetDefaultCallbackFrame;
-import com.rposcro.jwavez.serial.frame.requests.SetDefaultRequestFrame;
-import com.rposcro.jwavez.serial.transactions.RequestCallbackFlowTransaction;
-import com.rposcro.jwavez.serial.transactions.TransactionResult;
-import com.rposcro.jwavez.serial.transactions.TransactionStatus;
+import com.rposcro.jwavez.serial.probe.frame.callbacks.SetDefaultCallbackFrame;
+import com.rposcro.jwavez.serial.probe.frame.requests.SetDefaultRequestFrame;
+import com.rposcro.jwavez.serial.probe.transactions.RequestCallbackFlowTransaction;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
+import com.rposcro.jwavez.serial.probe.transactions.TransactionStatus;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.FactoryDefaultsOptions;
 import java.util.concurrent.Future;

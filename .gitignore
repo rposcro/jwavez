@@ -1,18 +1,8 @@
 /target/
+/*/target/
+
+/**/.DS_Store
+/**/*.iml
 /logs/
 /.idea/
-/*.iml
-**/.DS_Store
-
-/jwavez-core/target/
-/jwavez-core/*.iml
-
-/jwavez-serial/target/
-/jwavez-serial/*.iml
-
-/jwavez-examples/target/
-/jwavez-examples/*.iml
-
-/jwavez-net-tools/target/
-/jwavez-net-tools/*.iml
 
