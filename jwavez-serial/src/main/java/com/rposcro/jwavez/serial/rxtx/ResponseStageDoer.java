@@ -32,7 +32,7 @@ public class ResponseStageDoer {
         return receiveFrame(frameView, expectedCommand);
       }
     } while (timeoutPoint > System.currentTimeMillis());
-    return ResponseStageResult.RESULT_TIMEOUT;
+    return ResponseStageResult.RESULT_RESPONSE_TIMEOUT;
   }
 
   private ResponseStageResult receiveFrame(ViewBuffer frameBuffer, byte expectedCommand) throws IOException {
@@ -56,6 +56,7 @@ public class ResponseStageDoer {
       responseHandler.accept(frameBuffer);
       return ResponseStageResult.RESULT_OK;
     } else {
+      processException();
       return ResponseStageResult.RESULT_DIVERGENT_RESPONSE;
     }
   }

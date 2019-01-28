@@ -35,6 +35,14 @@ public class ViewBuffer {
     return position < length;
   }
 
+  public int remaining() {
+    return length - position;
+  }
+
+  public int length() {
+    return length;
+  }
+
   private int checkIndex(int index) {
     if ((index < 0) || (index >= length))
       throw new IndexOutOfBoundsException();

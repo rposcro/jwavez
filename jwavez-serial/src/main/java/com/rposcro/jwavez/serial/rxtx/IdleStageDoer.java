@@ -5,6 +5,8 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_C
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_TYPE;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.TYPE_REQ;
 
+import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException;
+import com.rposcro.jwavez.serial.exceptions.OddFrameException;
 import com.rposcro.jwavez.serial.exceptions.SerialStreamException;
 import com.rposcro.jwavez.serial.utils.ViewBuffer;
 import java.io.IOException;

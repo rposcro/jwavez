@@ -4,25 +4,33 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_ACK;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_CAN;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_NAK;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_SOF;
+import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_LENGTH;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.MAX_Z_WAVE_FRAME_SIZE;
 
+import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException;
+import com.rposcro.jwavez.serial.exceptions.OddFrameException;
 import com.rposcro.jwavez.serial.exceptions.SerialStreamException;
 import com.rposcro.jwavez.serial.utils.ViewBuffer;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import lombok.Builder;
 
-@Builder
 public class FrameInboundStream {
 
-  private static final long FRAME_COMPLETE_TIMEOUT = 1500;
-
   private SerialConnection serialConnection;
+  private RxTxConfiguration configuration;
 
   private final ByteBuffer frameBuffer;
   private final ViewBuffer viewBuffer;
 
-  public FrameInboundStream() {
+  @Builder
+  public FrameInboundStream(SerialConnection serialConnection, RxTxConfiguration configuration) {
+    this();
+    this.serialConnection = serialConnection;
+    this.configuration = configuration;
+  }
+
+  private FrameInboundStream() {
     this.frameBuffer = ByteBuffer.allocateDirect(MAX_Z_WAVE_FRAME_SIZE * 2);
     this.frameBuffer.limit(0);
     this.viewBuffer = new ViewBuffer(frameBuffer);
@@ -31,8 +39,13 @@ public class FrameInboundStream {
   public ViewBuffer nextFrame() throws SerialStreamException, IOException {
     if (!frameBuffer.hasRemaining()) {
       purgeAndLoadBuffer();
-    } else {
+    }
+
+    if (frameBuffer.hasRemaining()) {
       setViewOverFrame();
+      progressBuffer();
+    } else {
+      setViewOverEmpty();
     }
 
     return viewBuffer;
@@ -45,6 +58,23 @@ public class FrameInboundStream {
     frameBuffer.position(0).limit(0);
   }
 
+  private void purgeAndLoadBuffer() throws IOException {
+    frameBuffer.position(0);
+    frameBuffer.limit(MAX_Z_WAVE_FRAME_SIZE);
+    serialConnection.readData(frameBuffer);
+    frameBuffer.limit(frameBuffer.position());
+    frameBuffer.position(0);
+  }
+
+  private void progressBuffer() {
+    frameBuffer.position(frameBuffer.position() + viewBuffer.length());
+  }
+
+  private ViewBuffer setViewOverEmpty() {
+    viewBuffer.setViewRange(0, 0);
+    return viewBuffer;
+  }
+
   private ViewBuffer setViewOverFrame() throws SerialStreamException, IOException {
     int position = frameBuffer.position();
     byte category = frameBuffer.get(position);
@@ -54,7 +84,7 @@ public class FrameInboundStream {
     } else if (category == CATEGORY_SOF) {
       return setViewOverSOF();
     } else {
-      throw new SerialStreamException("Unrecognized frame category %0X2", category);
+      throw new OddFrameException("Unrecognized frame category %02x", category);
     }
     return viewBuffer;
   }
@@ -62,7 +92,7 @@ public class FrameInboundStream {
   private ViewBuffer setViewOverSOF() throws SerialStreamException, IOException {
     int position = frameBuffer.position();
     ensureRemaining(3);
-    int length = frameBuffer.get(position + 2) + 2;
+    int length = frameBuffer.get(position + FRAME_OFFSET_LENGTH) + 2;
     ensureRemaining(length);
     viewBuffer.setViewRange(position, length);
     return viewBuffer;
@@ -77,25 +107,18 @@ public class FrameInboundStream {
 
   private void refillBuffer(int refillSize) throws SerialStreamException, IOException {
     frameBuffer.mark();
-    frameBuffer.limit(frameBuffer.position() + refillSize);
+    frameBuffer.position(frameBuffer.limit());
+    frameBuffer.limit(frameBuffer.limit() + refillSize);
     int refilled = 0;
-    long timeOutPoint = System.currentTimeMillis();
+    long timeOutPoint = System.currentTimeMillis() + configuration.getFrameCompleteTimeout();
     while (refilled < refillSize) {
       refilled += serialConnection.readData(frameBuffer);
       if (timeOutPoint < System.currentTimeMillis()) {
         frameBuffer.limit(frameBuffer.position());
         frameBuffer.reset();
-        throw new SerialStreamException("Frame complete timeout!");
+        throw new FrameTimeoutException("Frame complete timeout!");
       }
     }
     frameBuffer.reset();
-  }
-
-  private void purgeAndLoadBuffer() throws SerialStreamException, IOException {
-    frameBuffer.position(0);
-    frameBuffer.limit(MAX_Z_WAVE_FRAME_SIZE);
-    serialConnection.readData(frameBuffer);
-    frameBuffer.limit(frameBuffer.position());
-    frameBuffer.position(0);
   }
 }

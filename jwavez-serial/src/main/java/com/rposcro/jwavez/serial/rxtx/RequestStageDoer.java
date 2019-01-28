@@ -24,33 +24,32 @@ public class RequestStageDoer {
     if (outboundBuffer.hasRemaining()) {
       return RequestStageResult.RESULT_ERR_OUTCOME;
     }
+    return expectACK();
+  }
 
+  private RequestStageResult expectACK() throws IOException, SerialStreamException {
     long timeoutPoint = System.currentTimeMillis() + configuration.getAckTimeout();
     do {
       ViewBuffer frameView = inboundStream.nextFrame();
       if (frameView.hasRemaining()) {
-        return expectACK(frameView);
+        switch(frameView.get(FRAME_OFFSET_CATEGORY)) {
+          case CATEGORY_ACK:
+            return RequestStageResult.RESULT_OK;
+          case CATEGORY_NAK:
+            return RequestStageResult.RESULT_NAK;
+          case CATEGORY_CAN:
+            return RequestStageResult.RESULT_CAN;
+          case CATEGORY_SOF:
+            processException();
+            return RequestStageResult.RESULT_SOF;
+          default:
+            processException();
+            return RequestStageResult.RESULT_ODD_INCOME;
+        }
       }
     } while (timeoutPoint > System.currentTimeMillis());
 
     return RequestStageResult.RESULT_ACK_TIMEOUT;
-  }
-
-  private RequestStageResult expectACK(ViewBuffer frameBuffer) throws IOException {
-    switch(frameBuffer.get(FRAME_OFFSET_CATEGORY)) {
-      case CATEGORY_ACK:
-        return RequestStageResult.RESULT_OK;
-      case CATEGORY_NAK:
-        return RequestStageResult.RESULT_NAK;
-      case CATEGORY_CAN:
-        return RequestStageResult.RESULT_CAN;
-      case CATEGORY_SOF:
-        processException();
-        return RequestStageResult.RESULT_SOF;
-      default:
-        processException();
-        return RequestStageResult.RESULT_ODD_INCOME;
-    }
   }
 
   private void processException() throws IOException {

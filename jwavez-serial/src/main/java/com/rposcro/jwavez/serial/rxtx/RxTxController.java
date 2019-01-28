@@ -3,6 +3,8 @@ package com.rposcro.jwavez.serial.rxtx;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_COMMAND;
 import static java.lang.System.currentTimeMillis;
 
+import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException;
+import com.rposcro.jwavez.serial.exceptions.OddFrameException;
 import com.rposcro.jwavez.serial.exceptions.RequestFlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialStreamException;
 import java.io.IOException;
@@ -13,15 +15,16 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import lombok.Builder;
 
-@Builder
 public class RxTxController {
 
   private static final long POLL_FREQUENCY_MILLIS = 50;
 
   private RxTxConfiguration configuration;
+  private IdleStageDoer idleStageDoer;
   private RequestStageDoer requestStageDoer;
   private ResponseStageDoer responseStageDoer;
-  private IdleStageDoer idleStageDoer;
+  private FrameInboundStream inboundStream;
+  private FrameOutboundStream outboundStream;
 
   private final Semaphore outboundLock;
   private final CompletableFuture<?> futureResponse;
@@ -29,6 +32,35 @@ public class RxTxController {
   private FrameRequest frameRequest;
   private int retransmissionCounter;
   private long retransmissionTime;
+
+  @Builder
+  public RxTxController(RxTxConfiguration configuration, SerialConnection serialConnection)  {
+    this();
+    this.configuration = configuration;
+
+    FrameInboundStream inboundStream = FrameInboundStream.builder()
+        .configuration(configuration)
+        .serialConnection(serialConnection)
+        .build();
+    FrameOutboundStream outboundStream = FrameOutboundStream.builder()
+        .serialConnection(serialConnection)
+        .build();
+
+    this.idleStageDoer = IdleStageDoer.builder()
+        .inboundStream(inboundStream)
+        .outboundStream(outboundStream)
+        .build();
+    this.requestStageDoer = RequestStageDoer.builder()
+        .inboundStream(inboundStream)
+        .outboundStream(outboundStream)
+        .configuration(configuration)
+        .build();
+    this.responseStageDoer = ResponseStageDoer.builder()
+        .inboundStream(inboundStream)
+        .outboundStream(outboundStream)
+        .configuration(configuration)
+        .build();
+  }
 
   private RxTxController() {
     this.futureResponse = new CompletableFuture<>();
@@ -51,11 +83,23 @@ public class RxTxController {
 
   public void run() {
     try {
-      receiveStage();
-      transmitStage();
-      Thread.sleep(POLL_FREQUENCY_MILLIS);
+      while (true) {
+        try {
+          receiveStage();
+          transmitStage();
+          Thread.sleep(POLL_FREQUENCY_MILLIS);
+        } catch(OddFrameException e) {
+          outboundStream.writeNAK();
+          inboundStream.purgeStream();
+        } catch(FrameTimeoutException e) {
+          outboundStream.writeCAN();
+          inboundStream.purgeStream();
+        } catch (SerialStreamException e) {
+          outboundStream.writeCAN();
+          inboundStream.purgeStream();
+        }
+      }
     } catch(Exception e) {
-
     }
   }
 

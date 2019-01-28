@@ -7,9 +7,10 @@ import lombok.Getter;
 @Builder
 public class RxTxConfiguration {
 
-  private long ackTimeout = 1600;
-  private long responseTimeout = 5000;
-  private long maxRetriesCount = 4;
-  private long retryDelayBias = 300;
-  private long retryDelayFactor = 1000;
+  @Builder.Default private long ackTimeout = 1600;
+  @Builder.Default private long responseTimeout = 5000;
+  @Builder.Default private long frameCompleteTimeout = 1500;
+  @Builder.Default private long maxRetriesCount = 4;
+  @Builder.Default private long retryDelayBias = 300;
+  @Builder.Default private long retryDelayFactor = 1000;
 }

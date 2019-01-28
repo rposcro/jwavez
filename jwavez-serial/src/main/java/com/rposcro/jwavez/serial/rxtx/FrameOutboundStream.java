@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import lombok.Builder;
 
-@Builder
 public class FrameOutboundStream {
 
   private final ByteBuffer sharedBuffer;
@@ -19,6 +18,12 @@ public class FrameOutboundStream {
   private final ByteBuffer sofBuffer;
 
   private SerialConnection serialConnection;
+
+  @Builder
+  public FrameOutboundStream(SerialConnection serialConnection) {
+    this();
+    this.serialConnection = serialConnection;
+  }
 
   private FrameOutboundStream() {
     this.sharedBuffer = ByteBuffer.allocateDirect(MAX_Z_WAVE_FRAME_SIZE + 3)
