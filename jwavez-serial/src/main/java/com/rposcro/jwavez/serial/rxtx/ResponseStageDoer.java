@@ -9,9 +9,9 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_C
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_TYPE;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.TYPE_RES;
 
-import com.rposcro.jwavez.serial.exceptions.SerialStreamException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.utils.ViewBuffer;
-import java.io.IOException;
 import java.util.function.Consumer;
 import lombok.Builder;
 
@@ -23,8 +23,8 @@ public class ResponseStageDoer {
   private RxTxConfiguration configuration;
   private Consumer<ViewBuffer> responseHandler;
 
-  public ResponseStageResult acquireResponse(byte expectedCommand) throws IOException, SerialStreamException {
-    long timeoutPoint = System.currentTimeMillis() + configuration.getResponseTimeout();
+  public ResponseStageResult acquireResponse(byte expectedCommand) throws SerialException {
+    long timeoutPoint = System.currentTimeMillis() + configuration.getFrameResponseTimeout();
     ViewBuffer frameView;
     do {
       frameView = inboundStream.nextFrame();
@@ -35,7 +35,7 @@ public class ResponseStageDoer {
     return ResponseStageResult.RESULT_RESPONSE_TIMEOUT;
   }
 
-  private ResponseStageResult receiveFrame(ViewBuffer frameBuffer, byte expectedCommand) throws IOException {
+  private ResponseStageResult receiveFrame(ViewBuffer frameBuffer, byte expectedCommand) throws SerialPortException {
     switch(frameBuffer.get(FRAME_OFFSET_CATEGORY)) {
       case CATEGORY_SOF:
         return receiveSOF(frameBuffer, expectedCommand);
@@ -50,7 +50,7 @@ public class ResponseStageDoer {
     }
   }
 
-  private ResponseStageResult receiveSOF(ViewBuffer frameBuffer, byte expectedCommand) throws IOException {
+  private ResponseStageResult receiveSOF(ViewBuffer frameBuffer, byte expectedCommand) throws SerialPortException {
     if (frameBuffer.get(FRAME_OFFSET_TYPE) == TYPE_RES && frameBuffer.get(FRAME_OFFSET_COMMAND) == expectedCommand) {
       outboundStream.writeACK();
       responseHandler.accept(frameBuffer);
@@ -61,7 +61,7 @@ public class ResponseStageDoer {
     }
   }
 
-  private void processException() throws IOException {
+  private void processException() throws SerialPortException {
     outboundStream.writeCAN();
     inboundStream.purgeStream();
   }

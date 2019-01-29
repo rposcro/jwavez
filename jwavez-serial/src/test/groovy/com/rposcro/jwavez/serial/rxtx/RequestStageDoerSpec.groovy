@@ -2,9 +2,8 @@ package com.rposcro.jwavez.serial.rxtx
 
 import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException
 import com.rposcro.jwavez.serial.exceptions.OddFrameException
-import com.rposcro.jwavez.serial.rxtz.MockedSerialConnection
+import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
 import spock.lang.Specification
-import spock.lang.Shared
 import spock.lang.Unroll
 
 import java.nio.ByteBuffer
@@ -34,7 +33,7 @@ class RequestStageDoerSpec extends Specification {
         result == expResult;
         doer.inboundStream.frameBuffer.position() == expPos;
         doer.inboundStream.frameBuffer.limit() == expLim;
-        doer.outboundStream.serialConnection.outboundData == expOutData;
+        doer.outboundStream.serialPort.outboundData == expOutData;
 
         where:
         resData                                | expPos | expLim | expLastOut   | expResult
@@ -73,7 +72,7 @@ class RequestStageDoerSpec extends Specification {
         def reqBuffer = makeBuffer(reqData);
         def resData = [[]];
         def doer = makeDoer(resData);
-        rxTxConfiguration.ackTimeout = 10;
+        rxTxConfiguration.frameAckTimeout = 10;
 
         when:
         def result = doer.sendRequest(reqBuffer);
@@ -90,11 +89,11 @@ class RequestStageDoerSpec extends Specification {
     }
 
     def makeDoer(List<List<Integer>> frameData) {
-        def connection = new MockedSerialConnection();
-        frameData.forEach({series -> connection.addSeries(series)});
-        connection.reset();
-        def inboundStream = FrameInboundStream.builder().serialConnection(connection).configuration(rxTxConfiguration).build();
-        def outboundStream = FrameOutboundStream.builder().serialConnection(connection).build();
+        def port = new MockedSerialPort();
+        frameData.forEach({series -> port.addSeries(series)});
+        port.reset();
+        def inboundStream = FrameInboundStream.builder().serialPort(port).configuration(rxTxConfiguration).build();
+        def outboundStream = FrameOutboundStream.builder().serialPort(port).build();
         return RequestStageDoer.builder().inboundStream(inboundStream).outboundStream(outboundStream).configuration(rxTxConfiguration).build();
     }
 }

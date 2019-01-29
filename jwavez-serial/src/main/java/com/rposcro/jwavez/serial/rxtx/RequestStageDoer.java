@@ -6,9 +6,9 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_NAK;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_SOF;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_CATEGORY;
 
-import com.rposcro.jwavez.serial.exceptions.SerialStreamException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.utils.ViewBuffer;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import lombok.Builder;
 
@@ -19,7 +19,7 @@ public class RequestStageDoer {
   private FrameOutboundStream outboundStream;
   private RxTxConfiguration configuration;
 
-  public RequestStageResult sendRequest(ByteBuffer outboundBuffer) throws IOException, SerialStreamException {
+  public RequestStageResult sendRequest(ByteBuffer outboundBuffer) throws SerialException {
     outboundStream.writeSOF(outboundBuffer);
     if (outboundBuffer.hasRemaining()) {
       return RequestStageResult.RESULT_ERR_OUTCOME;
@@ -27,8 +27,8 @@ public class RequestStageDoer {
     return expectACK();
   }
 
-  private RequestStageResult expectACK() throws IOException, SerialStreamException {
-    long timeoutPoint = System.currentTimeMillis() + configuration.getAckTimeout();
+  private RequestStageResult expectACK() throws SerialException {
+    long timeoutPoint = System.currentTimeMillis() + configuration.getFrameAckTimeout();
     do {
       ViewBuffer frameView = inboundStream.nextFrame();
       if (frameView.hasRemaining()) {
@@ -52,7 +52,7 @@ public class RequestStageDoer {
     return RequestStageResult.RESULT_ACK_TIMEOUT;
   }
 
-  private void processException() throws IOException {
+  private void processException() throws SerialPortException {
     outboundStream.writeCAN();
     inboundStream.purgeStream();
   }

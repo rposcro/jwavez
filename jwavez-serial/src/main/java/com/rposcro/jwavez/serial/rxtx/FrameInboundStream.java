@@ -9,24 +9,25 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.MAX_Z_WAVE_FRA
 
 import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException;
 import com.rposcro.jwavez.serial.exceptions.OddFrameException;
-import com.rposcro.jwavez.serial.exceptions.SerialStreamException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.exceptions.SerialPortException;
+import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 import com.rposcro.jwavez.serial.utils.ViewBuffer;
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import lombok.Builder;
 
 public class FrameInboundStream {
 
-  private SerialConnection serialConnection;
+  private SerialPort serialPort;
   private RxTxConfiguration configuration;
 
   private final ByteBuffer frameBuffer;
   private final ViewBuffer viewBuffer;
 
   @Builder
-  public FrameInboundStream(SerialConnection serialConnection, RxTxConfiguration configuration) {
+  public FrameInboundStream(SerialPort serialPort, RxTxConfiguration configuration) {
     this();
-    this.serialConnection = serialConnection;
+    this.serialPort = serialPort;
     this.configuration = configuration;
   }
 
@@ -36,7 +37,7 @@ public class FrameInboundStream {
     this.viewBuffer = new ViewBuffer(frameBuffer);
   }
 
-  public ViewBuffer nextFrame() throws SerialStreamException, IOException {
+  public ViewBuffer nextFrame() throws SerialException {
     if (!frameBuffer.hasRemaining()) {
       purgeAndLoadBuffer();
     }
@@ -51,17 +52,17 @@ public class FrameInboundStream {
     return viewBuffer;
   }
 
-  public void purgeStream() throws IOException {
+  public void purgeStream() throws SerialPortException {
     do {
       frameBuffer.position(0).limit(frameBuffer.capacity());
-    } while (serialConnection.readData(frameBuffer) > 0);
+    } while (serialPort.readData(frameBuffer) > 0);
     frameBuffer.position(0).limit(0);
   }
 
-  private void purgeAndLoadBuffer() throws IOException {
+  private void purgeAndLoadBuffer() throws SerialPortException {
     frameBuffer.position(0);
     frameBuffer.limit(MAX_Z_WAVE_FRAME_SIZE);
-    serialConnection.readData(frameBuffer);
+    serialPort.readData(frameBuffer);
     frameBuffer.limit(frameBuffer.position());
     frameBuffer.position(0);
   }
@@ -75,7 +76,7 @@ public class FrameInboundStream {
     return viewBuffer;
   }
 
-  private ViewBuffer setViewOverFrame() throws SerialStreamException, IOException {
+  private ViewBuffer setViewOverFrame() throws SerialException {
     int position = frameBuffer.position();
     byte category = frameBuffer.get(position);
 
@@ -89,7 +90,7 @@ public class FrameInboundStream {
     return viewBuffer;
   }
 
-  private ViewBuffer setViewOverSOF() throws SerialStreamException, IOException {
+  private ViewBuffer setViewOverSOF() throws SerialException {
     int position = frameBuffer.position();
     ensureRemaining(3);
     int length = frameBuffer.get(position + FRAME_OFFSET_LENGTH) + 2;
@@ -98,21 +99,21 @@ public class FrameInboundStream {
     return viewBuffer;
   }
 
-  private void ensureRemaining(int expectedRemaining) throws SerialStreamException, IOException {
+  private void ensureRemaining(int expectedRemaining) throws SerialException {
     int remaining = frameBuffer.remaining();
     if (remaining < expectedRemaining) {
       refillBuffer(expectedRemaining - remaining);
     }
   }
 
-  private void refillBuffer(int refillSize) throws SerialStreamException, IOException {
+  private void refillBuffer(int refillSize) throws SerialException {
     frameBuffer.mark();
     frameBuffer.position(frameBuffer.limit());
     frameBuffer.limit(frameBuffer.limit() + refillSize);
     int refilled = 0;
     long timeOutPoint = System.currentTimeMillis() + configuration.getFrameCompleteTimeout();
     while (refilled < refillSize) {
-      refilled += serialConnection.readData(frameBuffer);
+      refilled += serialPort.readData(frameBuffer);
       if (timeOutPoint < System.currentTimeMillis()) {
         frameBuffer.limit(frameBuffer.position());
         frameBuffer.reset();

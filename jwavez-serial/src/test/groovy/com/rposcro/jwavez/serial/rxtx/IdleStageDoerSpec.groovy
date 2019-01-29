@@ -2,10 +2,9 @@ package com.rposcro.jwavez.serial.rxtx
 
 import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException
 import com.rposcro.jwavez.serial.exceptions.OddFrameException
-import com.rposcro.jwavez.serial.rxtz.MockedSerialConnection
+import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
 import com.rposcro.jwavez.serial.utils.ViewBuffer
 import spock.lang.Specification
-import spock.lang.Shared
 import spock.lang.Unroll
 
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_ACK
@@ -46,8 +45,8 @@ class IdleStageDoerSpec extends Specification {
         result == expResult;
         doer.inboundStream.frameBuffer.position() == expPosition;
         doer.inboundStream.frameBuffer.limit() == expLimit;
-        doer.outboundStream.serialConnection.outboundData.size() == 1;
-        doer.outboundStream.serialConnection.outboundData.get(0) == expOut;
+        doer.outboundStream.serialPort.outboundData.size() == 1;
+        doer.outboundStream.serialPort.outboundData.get(0) == expOut;
 
         where:
         frameData                             | expPosition   | expLimit  | expOut        | expResult
@@ -80,10 +79,10 @@ class IdleStageDoerSpec extends Specification {
 
 
     def makeDoer(List<Integer> frameData) {
-        def connection = new MockedSerialConnection(frameData);
-        connection.reset();
-        def inboundStream = FrameInboundStream.builder().serialConnection(connection).configuration(rxTxConfiguration).build();
-        def outboundStream = FrameOutboundStream.builder().serialConnection(connection).build();
+        def port = new MockedSerialPort(frameData);
+        port.reset();
+        def inboundStream = FrameInboundStream.builder().serialPort(port).configuration(rxTxConfiguration).build();
+        def outboundStream = FrameOutboundStream.builder().serialPort(port).build();
         return IdleStageDoer.builder().inboundStream(inboundStream).outboundStream(outboundStream).build();
     }
 }

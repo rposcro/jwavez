@@ -1,13 +1,13 @@
 package com.rposcro.jwavez.serial.rxtz;
 
-import com.rposcro.jwavez.serial.rxtx.SerialConnection;
+import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 
-public class MockedSerialConnection implements SerialConnection {
+public class MockedSerialPort implements SerialPort {
 
   private List<List<Integer>> dataChunks;
   private Iterator<List<Integer>> chunksIterator;
@@ -15,28 +15,34 @@ public class MockedSerialConnection implements SerialConnection {
 
   private List<Integer> outboundData;
 
-  public MockedSerialConnection() {
+  public MockedSerialPort() {
     this.dataChunks = new ArrayList<>();
     this.outboundData = new ArrayList<>(100);
   }
 
-  public MockedSerialConnection(List<Integer> inDataSeries) {
+  public MockedSerialPort(List<Integer> inDataSeries) {
     this();
     this.dataChunks.add(inDataSeries);
   }
 
-  public MockedSerialConnection reset() {
+  public MockedSerialPort reset() {
     this.chunksIterator = dataChunks.iterator();
     return this;
   }
 
-  public MockedSerialConnection addSeries(List<Integer> inDataSeries) {
+  public MockedSerialPort addSeries(List<Integer> inDataSeries) {
     this.dataChunks.add(inDataSeries);
     return this;
   }
 
   @Override
   public void connect(String device) {}
+
+  @Override
+  public void reconnect() {}
+
+  @Override
+  public void disconnect() {}
 
   @Override
   public int readData(ByteBuffer buffer) {

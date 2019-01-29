@@ -5,11 +5,9 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_C
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_TYPE;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.TYPE_REQ;
 
-import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException;
-import com.rposcro.jwavez.serial.exceptions.OddFrameException;
-import com.rposcro.jwavez.serial.exceptions.SerialStreamException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.utils.ViewBuffer;
-import java.io.IOException;
 import java.util.function.Consumer;
 import lombok.Builder;
 
@@ -20,7 +18,7 @@ public class IdleStageDoer {
   private FrameOutboundStream outboundStream;
   private Consumer<ViewBuffer> callbackHandler;
 
-  public IdleStageResult checkInbound() throws IOException, SerialStreamException {
+  public IdleStageResult checkInbound() throws SerialException {
     ViewBuffer frameView = inboundStream.nextFrame();
     if (!framePresent(frameView)) {
       return IdleStageResult.RESULT_SILENCE;
@@ -28,7 +26,7 @@ public class IdleStageDoer {
     return consumeFrame(frameView);
   }
 
-  private IdleStageResult consumeFrame(ViewBuffer frameView) throws IOException {
+  private IdleStageResult consumeFrame(ViewBuffer frameView) throws SerialPortException {
     if (frameView.get(FRAME_OFFSET_CATEGORY) == CATEGORY_SOF && frameView.get(FRAME_OFFSET_TYPE) == TYPE_REQ) {
       outboundStream.writeACK();
       callbackHandler.accept(frameView);
@@ -43,7 +41,7 @@ public class IdleStageDoer {
     return frameBuffer.hasRemaining();
   }
 
-  private void processException() throws IOException {
+  private void processException() throws SerialPortException {
     outboundStream.writeCAN();
     inboundStream.purgeStream();
   }

@@ -1,10 +1,9 @@
 package com.rposcro.jwavez.serial.rxtx
 
 import com.rposcro.jwavez.serial.exceptions.SerialStreamException
-import com.rposcro.jwavez.serial.rxtz.MockedSerialConnection
+import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
 import com.rposcro.jwavez.serial.utils.ViewBuffer
 import spock.lang.Specification
-import spock.lang.Shared
 import spock.lang.Unroll
 
 import java.nio.ByteBuffer
@@ -20,10 +19,10 @@ class FrameInboundStreamSpec extends Specification {
 
     def "no data in pipe"() {
         given:
-        def connection = new MockedSerialConnection(Collections.emptyList()).reset();
+        def port = new MockedSerialPort(Collections.emptyList()).reset();
         def inboundStream = FrameInboundStream.builder()
                 .configuration(rxTxConfiguration)
-                .serialConnection(connection)
+                .serialPort(port)
                 .build();
 
         when:
@@ -36,10 +35,10 @@ class FrameInboundStreamSpec extends Specification {
     @Unroll
     def "single correct frame in pipe #streamData"() {
         given:
-        def connection = new MockedSerialConnection(streamData).reset();
+        def port = new MockedSerialPort(streamData).reset();
         def inboundStream = FrameInboundStream.builder()
                 .configuration(rxTxConfiguration)
-                .serialConnection(connection)
+                .serialPort(port)
                 .build();
 
         when:
@@ -59,10 +58,10 @@ class FrameInboundStreamSpec extends Specification {
 
     def "single odd frame in pipe"() {
         given:
-        def connection = new MockedSerialConnection(Collections.singletonList(0x80)).reset();
+        def port = new MockedSerialPort(Collections.singletonList(0x80)).reset();
         def inboundStream = FrameInboundStream.builder()
                 .configuration(rxTxConfiguration)
-                .serialConnection(connection)
+                .serialPort(port)
                 .build();
 
         when:
@@ -75,10 +74,10 @@ class FrameInboundStreamSpec extends Specification {
     @Unroll
     def "refills buffer correctly #streamData"() {
         given:
-        def connection = new MockedSerialConnection(streamData).reset();
+        def port = new MockedSerialPort(streamData).reset();
         def inboundStream = FrameInboundStream.builder()
                 .configuration(rxTxConfiguration)
-                .serialConnection(connection)
+                .serialPort(port)
                 .build();
 
         when:
@@ -105,11 +104,11 @@ class FrameInboundStreamSpec extends Specification {
     @Unroll
     def "refills times out #streamData"() {
         given:
-        def connection = new MockedSerialConnection(streamData).reset();
+        def port = new MockedSerialPort(streamData).reset();
         rxTxConfiguration.frameCompleteTimeout = 50;
         def inboundStream = FrameInboundStream.builder()
                 .configuration(rxTxConfiguration)
-                .serialConnection(connection)
+                .serialPort(port)
                 .build();
 
         when:
@@ -129,12 +128,12 @@ class FrameInboundStreamSpec extends Specification {
     @Unroll
     def "chunked sof frame leading in pipe #streamData"() {
         given:
-        def connection = new MockedSerialConnection();
-        streamData.stream().forEach({ data -> connection.addSeries(data); });
-        connection.reset();
+        def port = new MockedSerialPort();
+        streamData.stream().forEach({ data -> port.addSeries(data); });
+        port.reset();
         def inboundStream = FrameInboundStream.builder()
                 .configuration(rxTxConfiguration)
-                .serialConnection(connection)
+                .serialPort(port)
                 .build();
         def allDataFlat = streamData.flatten();
         def expectedData = allDataFlat.subList(0, allDataFlat.get(1) + 2);
@@ -163,12 +162,12 @@ class FrameInboundStreamSpec extends Specification {
     @Unroll
     def "multiple frames in pipe #streamData"() {
         given:
-        def connection = new MockedSerialConnection();
-        streamData.stream().forEach({ data -> connection.addSeries(data); });
-        connection.reset();
+        def port = new MockedSerialPort();
+        streamData.stream().forEach({ data -> port.addSeries(data); });
+        port.reset();
         def inboundStream = FrameInboundStream.builder()
                 .configuration(rxTxConfiguration)
-                .serialConnection(connection)
+                .serialPort(port)
                 .build();
 
         when:
@@ -192,12 +191,12 @@ class FrameInboundStreamSpec extends Specification {
     @Unroll
     def "successfully purges stream #streamData"() {
         given:
-        def connection = new MockedSerialConnection();
-        streamData.stream().forEach({ data -> connection.addSeries(data); });
-        connection.reset();
+        def port = new MockedSerialPort();
+        streamData.stream().forEach({ data -> port.addSeries(data); });
+        port.reset();
         def inboundStream = FrameInboundStream.builder()
                 .configuration(rxTxConfiguration)
-                .serialConnection(connection)
+                .serialPort(port)
                 .build();
 
         when:
@@ -207,8 +206,8 @@ class FrameInboundStreamSpec extends Specification {
         then:
         inboundStream.frameBuffer.position() == 0;
         inboundStream.frameBuffer.limit() == 0;
-        !connection.chunksIterator.hasNext();
-        !connection.seriesIterator.hasNext();
+        !port.chunksIterator.hasNext();
+        !port.seriesIterator.hasNext();
 
         where:
         streamData | _
@@ -221,14 +220,14 @@ class FrameInboundStreamSpec extends Specification {
 
 
     @Unroll
-    def "check mocked connection #streamData"() {
+    def "check mocked port #streamData"() {
         given:
-        def connection = new MockedSerialConnection(streamData).reset();
+        def port = new MockedSerialPort(streamData).reset();
         def buffer = ByteBuffer.allocateDirect(10);
 
         when:
         buffer.position(0).limit(bufferLimit);
-        connection.readData(buffer);
+        port.readData(buffer);
 
         then:
         buffer.position() == Math.min(bufferLimit, streamData.size());
