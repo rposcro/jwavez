@@ -2,6 +2,8 @@ package com.rposcro.jwavez.serial.rxtx
 
 import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException
 import com.rposcro.jwavez.serial.exceptions.OddFrameException
+import com.rposcro.jwavez.serial.exceptions.SerialPortException
+import com.rposcro.jwavez.serial.rxtx.port.SerialPort
 import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -47,6 +49,22 @@ class RequestStageDoerSpec extends Specification {
     }
 
     @Unroll
+    def "handles ack timeout"() {
+        given:
+        def reqData = [0x01, 0x03, 0x00, 0x4a, 0xee];
+        def reqBuffer = makeBuffer(reqData);
+        def resData = [[]];
+        def doer = makeDoer(resData);
+        rxTxConfiguration.frameAckTimeout = 10;
+
+        when:
+        def result = doer.sendRequest(reqBuffer);
+
+        then:
+        result == RequestStageResult.RESULT_ACK_TIMEOUT;
+    }
+
+    @Unroll
     def "handles inbound frame exceptions #resData"() {
         given:
         def reqData = [0x01, 0x03, 0x00, 0x4a, 0xee];
@@ -65,20 +83,19 @@ class RequestStageDoerSpec extends Specification {
         [[0x00]]                        | OddFrameException
     }
 
-    @Unroll
-    def "handles ack timeout"() {
+    def "carries exceptions from port"() {
         given:
-        def reqData = [0x01, 0x03, 0x00, 0x4a, 0xee];
-        def reqBuffer = makeBuffer(reqData);
-        def resData = [[]];
-        def doer = makeDoer(resData);
-        rxTxConfiguration.frameAckTimeout = 10;
+        def serialPort = Mock(SerialPort);
+        def doer = RequestStageDoer.builder()
+                .outboundStream(FrameOutboundStream.builder().serialPort(serialPort).build())
+                .build();
+        serialPort.writeData(_) >> { buffer -> throw new SerialPortException("") };
 
         when:
-        def result = doer.sendRequest(reqBuffer);
+        doer.sendRequest(ByteBuffer.allocate(1));
 
         then:
-        result == RequestStageResult.RESULT_ACK_TIMEOUT;
+        thrown SerialPortException;
     }
 
     def makeBuffer(List<Integer> bufData) {

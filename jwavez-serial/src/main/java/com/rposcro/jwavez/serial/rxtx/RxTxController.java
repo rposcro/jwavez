@@ -86,9 +86,7 @@ public class RxTxController {
   public <T> T sendFrame(FrameRequest frameRequest) throws SerialStreamException {
     outboundLock.acquireUninterruptibly();
     try {
-      this.frameRequest = frameRequest;
-      this.retransmissionCounter = 0;
-      this.retransmissionTime = currentTimeMillis();
+      scheduleRequest(frameRequest);
       return (T) futureResponse.get();
     } catch(CancellationException | InterruptedException | ExecutionException e) {
       throw new SerialStreamException(e);
@@ -101,25 +99,35 @@ public class RxTxController {
     while (true) {
       try {
         while (true) {
-          try {
-            receiveStage();
-            transmitStage();
-            Thread.sleep(POLL_FREQUENCY_MILLIS);
-          } catch (OddFrameException e) {
-            outboundStream.writeNAK();
-            inboundStream.purgeStream();
-          } catch (FrameTimeoutException e) {
-            outboundStream.writeCAN();
-            inboundStream.purgeStream();
-          } catch (SerialStreamException e) {
-            outboundStream.writeCAN();
-            inboundStream.purgeStream();
-          }
+          runOnce();
         }
       } catch (Exception e) {
         log.error("Unexpected exception occurred, trying to reconnect!", e);
         reconnectPort();
       }
+    }
+  }
+
+  private void scheduleRequest(FrameRequest frameRequest) {
+    this.frameRequest = frameRequest;
+    this.retransmissionCounter = 0;
+    this.retransmissionTime = currentTimeMillis();
+  }
+
+  private void runOnce() throws SerialException, InterruptedException {
+    try {
+      receiveStage();
+      transmitStage();
+      Thread.sleep(POLL_FREQUENCY_MILLIS);
+    } catch (OddFrameException e) {
+      outboundStream.writeNAK();
+      inboundStream.purgeStream();
+    } catch (FrameTimeoutException e) {
+      outboundStream.writeCAN();
+      inboundStream.purgeStream();
+    } catch (SerialStreamException e) {
+      outboundStream.writeCAN();
+      inboundStream.purgeStream();
     }
   }
 

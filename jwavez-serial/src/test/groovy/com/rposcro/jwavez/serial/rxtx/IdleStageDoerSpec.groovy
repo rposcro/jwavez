@@ -2,6 +2,9 @@ package com.rposcro.jwavez.serial.rxtx
 
 import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException
 import com.rposcro.jwavez.serial.exceptions.OddFrameException
+import com.rposcro.jwavez.serial.exceptions.SerialPortException
+import com.rposcro.jwavez.serial.exceptions.SerialStreamException
+import com.rposcro.jwavez.serial.rxtx.port.SerialPort
 import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
 import com.rposcro.jwavez.serial.utils.ViewBuffer
 import spock.lang.Specification
@@ -77,6 +80,20 @@ class IdleStageDoerSpec extends Specification {
         [0x55, 0x03, 0x00, 0x44, 0xee]  | OddFrameException
     }
 
+    def "carries exceptions from port"() {
+        given:
+        def serialPort = Mock(SerialPort);
+        def doer = IdleStageDoer.builder()
+            .inboundStream(FrameInboundStream.builder().serialPort(serialPort).build())
+            .build();
+        serialPort.readData(_) >> { buffer -> throw new SerialPortException("") };
+
+        when:
+        doer.checkInbound();
+
+        then:
+        thrown SerialPortException;
+    }
 
     def makeDoer(List<Integer> frameData) {
         def port = new MockedSerialPort(frameData);

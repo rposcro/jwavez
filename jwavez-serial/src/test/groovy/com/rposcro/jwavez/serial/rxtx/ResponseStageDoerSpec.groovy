@@ -2,6 +2,8 @@ package com.rposcro.jwavez.serial.rxtx
 
 import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException
 import com.rposcro.jwavez.serial.exceptions.OddFrameException
+import com.rposcro.jwavez.serial.exceptions.SerialPortException
+import com.rposcro.jwavez.serial.rxtx.port.SerialPort
 import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
 import com.rposcro.jwavez.serial.utils.ViewBuffer
 import spock.lang.Specification
@@ -70,6 +72,19 @@ class ResponseStageDoerSpec extends Specification {
         [[0x01], [0x03, 0x01, 0x2a, 0xff]]       | 0x4a   | [CATEGORY_CAN]  | ResponseStageResult.RESULT_DIVERGENT_RESPONSE
     }
 
+    def "handles response timeout"() {
+        given:
+        def resData = [[], [], []];
+        def doer = makeDoer(resData);
+
+        when:
+        rxTxConfiguration.frameResponseTimeout = 10;
+        def result = doer.acquireResponse((byte) 0x4a);
+
+        then:
+        result == ResponseStageResult.RESULT_RESPONSE_TIMEOUT;
+    }
+
     @Unroll
     def "handles inbound frame exceptions #resData"() {
         given:
@@ -87,17 +102,20 @@ class ResponseStageDoerSpec extends Specification {
         [[0x00]]                        | OddFrameException
     }
 
-    def "handles response timeout"() {
+    def "carries exceptions from port"() {
         given:
-        def resData = [[], [], []];
-        def doer = makeDoer(resData);
+        def serialPort = Mock(SerialPort);
+        def doer = ResponseStageDoer.builder()
+                .inboundStream(FrameInboundStream.builder().serialPort(serialPort).build())
+                .configuration(RxTxConfiguration.builder().build())
+                .build();
+        serialPort.readData(_) >> { buffer -> throw new SerialPortException("") };
 
         when:
-        rxTxConfiguration.frameResponseTimeout = 10;
-        def result = doer.acquireResponse((byte) 0x4a);
+        doer.acquireResponse((byte) 0x00);
 
         then:
-        result == ResponseStageResult.RESULT_RESPONSE_TIMEOUT;
+        thrown SerialPortException;
     }
 
     def dataSeriesFromBuffer(ViewBuffer buffer) {

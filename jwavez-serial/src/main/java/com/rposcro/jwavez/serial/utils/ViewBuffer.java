@@ -24,11 +24,11 @@ public class ViewBuffer {
   }
 
   public byte get() {
-    return buffer.get(checkIndex(offset + (position++)));
+    return buffer.get(offset + checkIndex(position++));
   }
 
   public byte get(int index) {
-    return buffer.get(checkIndex(offset + index));
+    return buffer.get(offset + checkIndex(index));
   }
 
   public boolean hasRemaining() {
