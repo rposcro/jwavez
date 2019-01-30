@@ -23,9 +23,7 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class RxTxController {
-
-  private static final long POLL_FREQUENCY_MILLIS = 50;
+public class RxTxController implements Runnable {
 
   private SerialPort serialPort;
   private RxTxConfiguration configuration;
@@ -36,8 +34,8 @@ public class RxTxController {
   private FrameOutboundStream outboundStream;
 
   private final Semaphore outboundLock;
-  private final CompletableFuture<?> futureResponse;
 
+  private CompletableFuture<?> futureResponse;
   private FrameRequest frameRequest;
   private int retransmissionCounter;
   private long retransmissionTime;
@@ -79,7 +77,6 @@ public class RxTxController {
   }
 
   private RxTxController() {
-    this.futureResponse = new CompletableFuture<>();
     this.outboundLock = new Semaphore(1);
   }
 
@@ -108,17 +105,11 @@ public class RxTxController {
     }
   }
 
-  private void scheduleRequest(FrameRequest frameRequest) {
-    this.frameRequest = frameRequest;
-    this.retransmissionCounter = 0;
-    this.retransmissionTime = currentTimeMillis();
-  }
-
-  private void runOnce() throws SerialException, InterruptedException {
+  public void runOnce() throws SerialException {
     try {
       receiveStage();
       transmitStage();
-      Thread.sleep(POLL_FREQUENCY_MILLIS);
+      Thread.sleep(configuration.getControllerPollDelay());
     } catch (OddFrameException e) {
       outboundStream.writeNAK();
       inboundStream.purgeStream();
@@ -128,7 +119,16 @@ public class RxTxController {
     } catch (SerialStreamException e) {
       outboundStream.writeCAN();
       inboundStream.purgeStream();
+    } catch (InterruptedException e) {
+      throw new FatalSerialException(e, "Unexpected interruption occurred!");
     }
+  }
+
+  private void scheduleRequest(FrameRequest frameRequest) {
+    this.futureResponse = new CompletableFuture<>();
+    this.frameRequest = frameRequest;
+    this.retransmissionCounter = 0;
+    this.retransmissionTime = currentTimeMillis();
   }
 
   private void reconnectPort() {
@@ -157,6 +157,7 @@ public class RxTxController {
   private void transmitStage() throws SerialException {
     if (retransmissionTime <= currentTimeMillis() && frameRequest != null) {
       ByteBuffer frameData = frameRequest.getFrameData();
+      frameData.mark();
       RequestStageResult reqResult = requestStageDoer.sendRequest(frameData);
       boolean success = false;
 
@@ -173,6 +174,7 @@ public class RxTxController {
 
       if (!success) {
         pursueRetransmission();
+        frameData.reset();
       }
     }
   }

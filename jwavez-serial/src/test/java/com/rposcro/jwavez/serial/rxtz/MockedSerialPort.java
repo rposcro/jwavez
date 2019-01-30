@@ -35,6 +35,10 @@ public class MockedSerialPort implements SerialPort {
     return this;
   }
 
+  public boolean inboundDataAvailable() {
+    return chunksIterator.hasNext() || seriesIterator.hasNext();
+  }
+
   @Override
   public void connect(String device) {}
 

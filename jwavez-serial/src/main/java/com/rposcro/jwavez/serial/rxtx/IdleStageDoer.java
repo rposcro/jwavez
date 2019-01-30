@@ -30,7 +30,7 @@ public class IdleStageDoer {
     if (frameView.get(FRAME_OFFSET_CATEGORY) == CATEGORY_SOF && frameView.get(FRAME_OFFSET_TYPE) == TYPE_REQ) {
       outboundStream.writeACK();
       callbackHandler.accept(frameView);
-      return IdleStageResult.RESULT_HANDLED;
+      return IdleStageResult.RESULT_CALLBACK_HANDLED;
     } else {
       processException();
       return IdleStageResult.RESULT_ODD_INCOME;

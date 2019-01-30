@@ -6,53 +6,70 @@ import com.rposcro.jwavez.serial.exceptions.SerialPortException
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort
 import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
 import spock.lang.Specification
+import spock.lang.Shared
 import spock.lang.Unroll
 
 import java.nio.ByteBuffer
 
+import static com.rposcro.jwavez.serial.TestUtils.bufferFromData
+import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_ACK
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_CAN
+import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_NAK
+import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_SOF
+import static java.lang.Byte.toUnsignedInt
 
 class RequestStageDoerSpec extends Specification {
 
+    static final ACK = toUnsignedInt(CATEGORY_ACK);
+    static final NAK = toUnsignedInt(CATEGORY_NAK);
+    static final CAN = toUnsignedInt(CATEGORY_CAN);
+    static final SOF = toUnsignedInt(CATEGORY_SOF);
+
+    @Shared
+    def requestData;
+
     def rxTxConfiguration;
+    def serialPort;
+
+    def setupSpec() {
+        requestData = [SOF, 0x03, 0x00, 0x4a, 0xee];
+    }
 
     def setup() {
         rxTxConfiguration = RxTxConfiguration.builder().build();
+        serialPort = new MockedSerialPort();
     }
 
     @Unroll
-    def "handles incoming frame of #resData"() {
+    def "sends request and receives answer as #inboundData"() {
         given:
-        def reqData = [0x01, 0x03, 0x00, 0x4a, 0xee];
-        def reqBuffer = makeBuffer(reqData);
-        def doer = makeDoer(resData);
-        def expOutData = reqData + expLastOut;
+        def reqBuffer = bufferFromData(requestData);
+        def doer = makeDoer(inboundData);
+        def expOutboundData = requestData + expLastOut;
 
         when:
         def result = doer.sendRequest(reqBuffer);
 
         then:
         result == expResult;
+        serialPort.outboundData == expOutboundData;
         doer.inboundStream.frameBuffer.position() == expPos;
         doer.inboundStream.frameBuffer.limit() == expLim;
-        doer.outboundStream.serialPort.outboundData == expOutData;
 
         where:
-        resData                                | expPos | expLim | expLastOut   | expResult
+        inboundData                            | expPos | expLim | expLastOut   | expResult
         [[0x06]]                               | 1      | 1      | []           | RequestStageResult.RESULT_OK
         [[], [], [], [0x06]]                   | 1      | 1      | []           | RequestStageResult.RESULT_OK
         [[0x06, 0x06, 0x15]]                   | 1      | 3      | []           | RequestStageResult.RESULT_OK
         [[0x15]]                               | 1      | 1      | []           | RequestStageResult.RESULT_NAK
         [[0x18]]                               | 1      | 1      | []           | RequestStageResult.RESULT_CAN
-        [[0x01, 0x03, 0x01, 0x44, 0xff]]       | 0      | 0      | CATEGORY_CAN | RequestStageResult.RESULT_SOF
-        [[0x01, 0x03, 0x01, 0x44, 0xff, 0x15]] | 0      | 0      | CATEGORY_CAN | RequestStageResult.RESULT_SOF
+        [[0x01, 0x03, 0x01, 0x44, 0xff]]       | 0      | 0      | CAN          | RequestStageResult.RESULT_SOF
+        [[0x01, 0x03, 0x01, 0x44, 0xff, 0x15]] | 0      | 0      | CAN          | RequestStageResult.RESULT_SOF
     }
 
-    @Unroll
     def "handles ack timeout"() {
         given:
-        def reqData = [0x01, 0x03, 0x00, 0x4a, 0xee];
-        def reqBuffer = makeBuffer(reqData);
+        def reqBuffer = bufferFromData(requestData);
         def resData = [[]];
         def doer = makeDoer(resData);
         rxTxConfiguration.frameAckTimeout = 10;
@@ -67,8 +84,7 @@ class RequestStageDoerSpec extends Specification {
     @Unroll
     def "handles inbound frame exceptions #resData"() {
         given:
-        def reqData = [0x01, 0x03, 0x00, 0x4a, 0xee];
-        def reqBuffer = makeBuffer(reqData);
+        def reqBuffer = bufferFromData(requestData);
         def doer = makeDoer(resData);
 
         when:
@@ -98,19 +114,15 @@ class RequestStageDoerSpec extends Specification {
         thrown SerialPortException;
     }
 
-    def makeBuffer(List<Integer> bufData) {
-        def buffer = ByteBuffer.allocate(256);
-        bufData.forEach({val -> buffer.put((byte) val)});
-        buffer.limit(buffer.position());
-        buffer.position(0);
-    }
-
     def makeDoer(List<List<Integer>> frameData) {
-        def port = new MockedSerialPort();
-        frameData.forEach({series -> port.addSeries(series)});
-        port.reset();
-        def inboundStream = FrameInboundStream.builder().serialPort(port).configuration(rxTxConfiguration).build();
-        def outboundStream = FrameOutboundStream.builder().serialPort(port).build();
-        return RequestStageDoer.builder().inboundStream(inboundStream).outboundStream(outboundStream).configuration(rxTxConfiguration).build();
+        frameData.forEach({series -> serialPort.addSeries(series)});
+        serialPort.reset();
+        def inboundStream = FrameInboundStream.builder().serialPort(serialPort).configuration(rxTxConfiguration).build();
+        def outboundStream = FrameOutboundStream.builder().serialPort(serialPort).build();
+        return RequestStageDoer.builder()
+                .inboundStream(inboundStream)
+                .outboundStream(outboundStream)
+                .configuration(rxTxConfiguration)
+                .build();
     }
 }

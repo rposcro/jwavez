@@ -5,71 +5,93 @@ import com.rposcro.jwavez.serial.exceptions.OddFrameException
 import com.rposcro.jwavez.serial.exceptions.SerialPortException
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort
 import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
-import com.rposcro.jwavez.serial.utils.ViewBuffer
 import spock.lang.Specification
+import spock.lang.Shared
 import spock.lang.Unroll
 
-import java.nio.ByteBuffer
+import java.util.stream.Collectors
 
+import static com.rposcro.jwavez.serial.TestUtils.dataFromBuffer
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_ACK
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_CAN
+import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_NAK
+import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_SOF
+import static java.lang.Byte.toUnsignedInt
 
 class ResponseStageDoerSpec extends Specification {
 
+    static final ACK = toUnsignedInt(CATEGORY_ACK);
+    static final NAK = toUnsignedInt(CATEGORY_NAK);
+    static final CAN = toUnsignedInt(CATEGORY_CAN);
+    static final SOF = toUnsignedInt(CATEGORY_SOF);
+
+    @Shared
+    def functionCode;
+    @Shared
+    def responseData;
+
+    def receivedResponseData;
+    def responseConsumer = { frameView -> receivedResponseData.addAll(dataFromBuffer(frameView)) };
+    def serialPort;
     def rxTxConfiguration;
+
+    def setupSpec() {
+        functionCode = 0x4a;
+        responseData = [0x01, 0x06, 0x01, functionCode, 0x02, 0x03, 0x04, 0x66];
+    }
 
     def setup() {
         rxTxConfiguration = RxTxConfiguration.builder().build();
+        serialPort = new MockedSerialPort();
+        receivedResponseData = [];
     }
 
     @Unroll
-    def "handles incoming expected frame of #resData"() {
+    def "handles expected inbound frame of #inboundData"() {
         given:
-        def doer = makeDoer(resData);
-        ViewBuffer responseBuffer;
-        doer.responseHandler = { buffer -> responseBuffer = buffer};
+        def doer = makeDoer(inboundData);
 
         when:
-        def result = doer.acquireResponse((byte) 0x4a);
+        def result = doer.acquireResponse((byte) functionCode);
 
         then:
         result == ResponseStageResult.RESULT_OK;
-        doer.outboundStream.serialPort.outboundData == [CATEGORY_ACK];
-        dataSeriesFromBuffer(responseBuffer) == [0x01, 0x03, 0x01, 0x4a, 0xff];
+        serialPort.outboundData == [ACK];
+        receivedResponseData == responseData;
 
         where:
-        resData                                             | _
-        [[0x01, 0x03, 0x01, 0x4a, 0xff]]                    | _
-        [[0x01], [0x03], [0x01], [0x4a], [0xff]]            | _
-        [[0x01, 0x03, 0x01, 0x4a, 0xff, 0x06, 0x15]]        | _
-        [[0x01, 0x03, 0x01, 0x4a, 0xff], [0x06, 0x15]]      | _
-        [[0x01, 0x03, 0x01], [0x4a, 0xff], [0x06, 0x15]]    | _
+        inboundData                                                                                 | _
+        [responseData]                                                                              | _
+        singletonsOf(responseData)                                                                  | _
+        [responseData + [0x06, 0x15]]                                                               | _
+        [responseData, [0x06, 0x15]]                                                                | _
+        [responseData.subList(0, 3), responseData.subList(3, responseData.size()), [0x06, 0x15]]    | _
     }
 
     @Unroll
-    def "handles incoming unexpected frame of #resData"() {
+    def "handles unexpected inbound frame of #inboundData"() {
         given:
-        def doer = makeDoer(resData);
+        def doer = makeDoer(inboundData);
 
         when:
-        def result = doer.acquireResponse((byte) expFnc);
+        def result = doer.acquireResponse((byte) functionCode);
 
         then:
         result == expResult;
+        serialPort.outboundData == expOutData;
         doer.inboundStream.frameBuffer.position() == 0;
         doer.inboundStream.frameBuffer.limit() == 0;
-        doer.outboundStream.serialPort.outboundData == expOutData;
 
         where:
-        resData                                  | expFnc | expOutData      | expResult
-        [[0x06]]                                 | 0x4a   | [CATEGORY_CAN]  | ResponseStageResult.RESULT_ODD_CATEGORY
-        [[0x06, 0x01, 0x03, 0x01, 0x4a, 0xff]]   | 0x4a   | [CATEGORY_CAN]  | ResponseStageResult.RESULT_ODD_CATEGORY
-        [[0x06], [0x01, 0x03, 0x01, 0x4a, 0xff]] | 0x4a   | [CATEGORY_CAN]  | ResponseStageResult.RESULT_ODD_CATEGORY
-        [[0x15]]                                 | 0x4a   | [CATEGORY_CAN]  | ResponseStageResult.RESULT_ODD_CATEGORY
-        [[0x18]]                                 | 0x4a   | [CATEGORY_CAN]  | ResponseStageResult.RESULT_ODD_CATEGORY
-        [[0x01, 0x03, 0x01, 0x2a, 0xff]]         | 0x4a   | [CATEGORY_CAN]  | ResponseStageResult.RESULT_DIVERGENT_RESPONSE
-        [[0x01, 0x03, 0x01, 0x2a, 0xff], [0x06]] | 0x4a   | [CATEGORY_CAN]  | ResponseStageResult.RESULT_DIVERGENT_RESPONSE
-        [[0x01], [0x03, 0x01, 0x2a, 0xff]]       | 0x4a   | [CATEGORY_CAN]  | ResponseStageResult.RESULT_DIVERGENT_RESPONSE
+        inboundData                             | expOutData   | expResult
+        [[ACK]]                                 | [CAN]        | ResponseStageResult.RESULT_ODD_CATEGORY
+        [[ACK] + responseData]                  | [CAN]        | ResponseStageResult.RESULT_ODD_CATEGORY
+        [[ACK], responseData]                   | [CAN]        | ResponseStageResult.RESULT_ODD_CATEGORY
+        [[NAK]]                                 | [CAN]        | ResponseStageResult.RESULT_ODD_CATEGORY
+        [[CAN]]                                 | [CAN]        | ResponseStageResult.RESULT_ODD_CATEGORY
+        [[SOF, 0x03, 0x01, 0x2a, 0xff]]         | [CAN]        | ResponseStageResult.RESULT_DIVERGENT_RESPONSE
+        [[SOF, 0x03, 0x01, 0x2a, 0xff], [ACK]]  | [CAN]        | ResponseStageResult.RESULT_DIVERGENT_RESPONSE
+        [[SOF], [0x03, 0x01, 0x2a, 0xff]]       | [CAN]        | ResponseStageResult.RESULT_DIVERGENT_RESPONSE
     }
 
     def "handles response timeout"() {
@@ -86,18 +108,18 @@ class ResponseStageDoerSpec extends Specification {
     }
 
     @Unroll
-    def "handles inbound frame exceptions #resData"() {
+    def "handles inbound frame exceptions #inboundData"() {
         given:
-        def doer = makeDoer(resData);
+        def doer = makeDoer(inboundData);
 
         when:
-        doer.acquireResponse((byte) 0x4a);
+        doer.acquireResponse((byte) functionCode);
 
         then:
         thrown expException;
 
         where:
-        resData                         | expException
+        inboundData                     | expException
         [[0x01, 0x03, 0x00]]            | FrameTimeoutException
         [[0x00]]                        | OddFrameException
     }
@@ -118,27 +140,22 @@ class ResponseStageDoerSpec extends Specification {
         thrown SerialPortException;
     }
 
-    def dataSeriesFromBuffer(ViewBuffer buffer) {
-        List<Integer> series = new ArrayList<>(buffer.remaining());
-        while (buffer.hasRemaining()) {
-            series.add(buffer.get() & 0xff);
-        }
-        return series;
-    }
-
-    def makeBuffer(List<Integer> bufData) {
-        def buffer = ByteBuffer.allocate(256);
-        bufData.forEach({val -> buffer.put((byte) val)});
-        buffer.limit(buffer.position());
-        buffer.position(0);
+    def singletonsOf(List<Integer> data) {
+        return data.stream()
+            .map({value -> Collections.singletonList(value)})
+            .collect(Collectors.toList());
     }
 
     def makeDoer(List<List<Integer>> frameData) {
-        def port = new MockedSerialPort();
-        frameData.forEach({series -> port.addSeries(series)});
-        port.reset();
-        def inboundStream = FrameInboundStream.builder().serialPort(port).configuration(rxTxConfiguration).build();
-        def outboundStream = FrameOutboundStream.builder().serialPort(port).build();
-        return ResponseStageDoer.builder().inboundStream(inboundStream).outboundStream(outboundStream).configuration(rxTxConfiguration).build();
+        frameData.forEach({series -> serialPort.addSeries(series)});
+        serialPort.reset();
+        def inboundStream = FrameInboundStream.builder().serialPort(serialPort).configuration(rxTxConfiguration).build();
+        def outboundStream = FrameOutboundStream.builder().serialPort(serialPort).build();
+        return ResponseStageDoer.builder()
+                .inboundStream(inboundStream)
+                .outboundStream(outboundStream)
+                .configuration(rxTxConfiguration)
+                .responseHandler(responseConsumer)
+                .build();
     }
 }
