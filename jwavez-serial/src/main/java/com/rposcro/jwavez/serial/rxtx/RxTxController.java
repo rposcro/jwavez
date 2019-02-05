@@ -12,7 +12,7 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.exceptions.SerialStreamException;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
-import com.rposcro.jwavez.serial.utils.ViewBuffer;
+import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import java.nio.ByteBuffer;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
@@ -88,10 +88,12 @@ public class RxTxController implements Runnable {
     } catch(CancellationException | InterruptedException | ExecutionException e) {
       throw new SerialStreamException(e);
     } finally {
+      frameRequest.getFrameData().release();
       outboundLock.release();
     }
   }
 
+  @Override
   public void run() {
     while (true) {
       try {
@@ -156,7 +158,7 @@ public class RxTxController implements Runnable {
 
   private void transmitStage() throws SerialException {
     if (retransmissionTime <= currentTimeMillis() && frameRequest != null) {
-      ByteBuffer frameData = frameRequest.getFrameData();
+      ByteBuffer frameData = frameRequest.getFrameData().asByteBuffer();
       frameData.mark();
       RequestStageResult reqResult = requestStageDoer.sendRequest(frameData);
       boolean success = false;

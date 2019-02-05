@@ -11,11 +11,11 @@ import spock.lang.Unroll
 
 import java.nio.ByteBuffer
 
-import static com.rposcro.jwavez.serial.TestUtils.bufferFromData
-import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_ACK
-import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_CAN
-import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_NAK
-import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_SOF
+import static com.rposcro.jwavez.serial.TestUtils.byteBufferFromData
+import static SerialFrameConstants.CATEGORY_ACK
+import static SerialFrameConstants.CATEGORY_CAN
+import static SerialFrameConstants.CATEGORY_NAK
+import static SerialFrameConstants.CATEGORY_SOF
 import static java.lang.Byte.toUnsignedInt
 
 class RequestStageDoerSpec extends Specification {
@@ -43,7 +43,7 @@ class RequestStageDoerSpec extends Specification {
     @Unroll
     def "sends request and receives answer as #inboundData"() {
         given:
-        def reqBuffer = bufferFromData(requestData);
+        def reqBuffer = byteBufferFromData(requestData);
         def doer = makeDoer(inboundData);
         def expOutboundData = requestData + expLastOut;
 
@@ -69,7 +69,7 @@ class RequestStageDoerSpec extends Specification {
 
     def "handles ack timeout"() {
         given:
-        def reqBuffer = bufferFromData(requestData);
+        def reqBuffer = byteBufferFromData(requestData);
         def resData = [[]];
         def doer = makeDoer(resData);
         rxTxConfiguration.frameAckTimeout = 10;
@@ -84,7 +84,7 @@ class RequestStageDoerSpec extends Specification {
     @Unroll
     def "handles inbound frame exceptions #resData"() {
         given:
-        def reqBuffer = bufferFromData(requestData);
+        def reqBuffer = byteBufferFromData(requestData);
         def doer = makeDoer(resData);
 
         when:

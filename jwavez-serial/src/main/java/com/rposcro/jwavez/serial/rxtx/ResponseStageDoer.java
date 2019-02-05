@@ -11,7 +11,7 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.TYPE_RES;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
-import com.rposcro.jwavez.serial.utils.ViewBuffer;
+import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import java.util.function.Consumer;
 import lombok.Builder;
 

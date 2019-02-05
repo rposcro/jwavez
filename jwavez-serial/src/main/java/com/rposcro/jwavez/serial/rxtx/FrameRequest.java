@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.rxtx;
 
-import java.nio.ByteBuffer;
+import com.rposcro.jwavez.serial.buffers.FrameBuffer;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -8,7 +8,7 @@ import lombok.Getter;
 @Builder
 public class FrameRequest {
 
-  private ByteBuffer frameData;
+  private FrameBuffer frameData;
   private boolean retransmissionDisabled;
   private boolean responseExpected;
 }

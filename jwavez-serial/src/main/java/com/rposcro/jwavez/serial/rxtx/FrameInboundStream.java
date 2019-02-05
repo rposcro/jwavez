@@ -12,7 +12,7 @@ import com.rposcro.jwavez.serial.exceptions.OddFrameException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
-import com.rposcro.jwavez.serial.utils.ViewBuffer;
+import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import java.nio.ByteBuffer;
 import lombok.Builder;
 

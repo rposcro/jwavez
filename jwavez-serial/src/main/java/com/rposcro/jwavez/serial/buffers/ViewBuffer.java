@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.serial.utils;
+package com.rposcro.jwavez.serial.buffers;
 
 import java.nio.ByteBuffer;
 

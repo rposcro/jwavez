@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.serial.utils;
 
+import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import java.util.stream.IntStream;
 
 public class BufferUtil {

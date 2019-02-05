@@ -12,12 +12,12 @@ import spock.lang.Shared
 import java.util.concurrent.ExecutionException
 import java.util.stream.IntStream
 
-import static com.rposcro.jwavez.serial.TestUtils.bufferFromData
+import static com.rposcro.jwavez.serial.TestUtils.frameBufferFromData
 import static com.rposcro.jwavez.serial.TestUtils.dataFromBuffer
-import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_ACK
-import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_NAK
-import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_CAN
-import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_SOF
+import static SerialFrameConstants.CATEGORY_ACK
+import static SerialFrameConstants.CATEGORY_NAK
+import static SerialFrameConstants.CATEGORY_CAN
+import static SerialFrameConstants.CATEGORY_SOF
 
 import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
 import spock.lang.Specification
@@ -86,7 +86,7 @@ class RxTxControllerSpec extends Specification {
         def expOutboundData = requestData;
         def controller = constructController(inboundData);
         def frameRequest = FrameRequest.builder()
-                .frameData(bufferFromData(requestData))
+                .frameData(frameBufferFromData(requestData))
                 .responseExpected(false)
                 .build();
 
@@ -113,7 +113,7 @@ class RxTxControllerSpec extends Specification {
         def outboundData = requestData + [ACK];
         def controller = constructController(inboundData);
         def frameRequest = FrameRequest.builder()
-            .frameData(bufferFromData(requestData))
+            .frameData(frameBufferFromData(requestData))
             .responseExpected(true)
             .build();
 
@@ -140,7 +140,7 @@ class RxTxControllerSpec extends Specification {
         def outboundData = [ACK] + requestData + [ACK];
         def controller = constructController(inboundData);
         def frameRequest = FrameRequest.builder()
-                .frameData(bufferFromData(requestData))
+                .frameData(frameBufferFromData(requestData))
                 .responseExpected(true)
                 .build();
 
@@ -213,7 +213,7 @@ class RxTxControllerSpec extends Specification {
         def controller = constructController(inboundData);
         def frameRequest = FrameRequest.builder()
                 .responseExpected(expResponse)
-                .frameData(bufferFromData(requestData))
+                .frameData(frameBufferFromData(requestData))
                 .build();
         rxTxConfiguration.requestRetryDelayBias = 0;
         rxTxConfiguration.requestRetryDelayFactor = 0;
@@ -256,7 +256,7 @@ class RxTxControllerSpec extends Specification {
         def controller = constructController(inboundData);
         def frameRequest = FrameRequest.builder()
                 .responseExpected(expResponse)
-                .frameData(bufferFromData(requestData))
+                .frameData(frameBufferFromData(requestData))
                 .build();
         rxTxConfiguration.requestRetryDelayBias = 0;
         rxTxConfiguration.requestRetryDelayFactor = 0;
@@ -288,7 +288,7 @@ class RxTxControllerSpec extends Specification {
         def controller = constructController(inboundData);
         def frameRequest = FrameRequest.builder()
                 .responseExpected(false)
-                .frameData(bufferFromData(requestData))
+                .frameData(frameBufferFromData(requestData))
                 .build();
         rxTxConfiguration.requestRetryDelayBias = 0;
         rxTxConfiguration.requestRetryDelayFactor = 0;
@@ -338,7 +338,7 @@ class RxTxControllerSpec extends Specification {
         def controller = constructController(inboundData);
         def frameRequest = FrameRequest.builder()
                 .responseExpected(true)
-                .frameData(bufferFromData(requestData))
+                .frameData(frameBufferFromData(requestData))
                 .build();
 
         when:
@@ -391,10 +391,10 @@ class RxTxControllerSpec extends Specification {
 
         when:
         controller.scheduleRequest(FrameRequest.builder()
-                .responseExpected(true).frameData(bufferFromData(requestData)).build());
+                .responseExpected(true).frameData(frameBufferFromData(requestData)).build());
         controller.transmitStage();
         controller.scheduleRequest(FrameRequest.builder()
-                .responseExpected(true).frameData(bufferFromData(requestData)).build());
+                .responseExpected(true).frameData(frameBufferFromData(requestData)).build());
         controller.transmitStage();
 
         then:

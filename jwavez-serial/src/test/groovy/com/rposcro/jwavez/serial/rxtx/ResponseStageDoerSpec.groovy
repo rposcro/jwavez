@@ -12,10 +12,10 @@ import spock.lang.Unroll
 import java.util.stream.Collectors
 
 import static com.rposcro.jwavez.serial.TestUtils.dataFromBuffer
-import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_ACK
-import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_CAN
-import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_NAK
-import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_SOF
+import static SerialFrameConstants.CATEGORY_ACK
+import static SerialFrameConstants.CATEGORY_CAN
+import static SerialFrameConstants.CATEGORY_NAK
+import static SerialFrameConstants.CATEGORY_SOF
 import static java.lang.Byte.toUnsignedInt
 
 class ResponseStageDoerSpec extends Specification {
