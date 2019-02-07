@@ -30,4 +30,14 @@ public class TestUtils {
     byteBuffer.position(0);
     return byteBuffer;
   }
+
+  public static byte[] asByteArray(List<Integer> bytesList) {
+    byte[] bytes = new byte[bytesList.size()];
+    int idx = 0;
+    for (Integer val : bytesList) {
+      bytes[idx++] = val.byteValue();
+    }
+    return bytes;
+  }
+
 }

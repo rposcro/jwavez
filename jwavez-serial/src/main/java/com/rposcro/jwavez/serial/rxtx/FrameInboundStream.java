@@ -22,7 +22,7 @@ public class FrameInboundStream {
   private RxTxConfiguration configuration;
 
   private final ByteBuffer frameBuffer;
-  private final ViewBuffer viewBuffer;
+  private final InboundViewBuffer viewBuffer;
 
   @Builder
   public FrameInboundStream(SerialPort serialPort, RxTxConfiguration configuration) {
@@ -34,7 +34,7 @@ public class FrameInboundStream {
   private FrameInboundStream() {
     this.frameBuffer = ByteBuffer.allocateDirect(MAX_Z_WAVE_FRAME_SIZE * 2);
     this.frameBuffer.limit(0);
-    this.viewBuffer = new ViewBuffer(frameBuffer);
+    this.viewBuffer = new InboundViewBuffer(frameBuffer);
   }
 
   public ViewBuffer nextFrame() throws SerialException {
@@ -121,5 +121,18 @@ public class FrameInboundStream {
       }
     }
     frameBuffer.reset();
+  }
+
+
+  private static class InboundViewBuffer extends ViewBuffer {
+
+    private InboundViewBuffer(ByteBuffer byteBuffer) {
+      super(byteBuffer);
+    }
+
+    @Override
+    protected void setViewRange(int offset, int length) {
+      super.setViewRange(offset, length);
+    }
   }
 }

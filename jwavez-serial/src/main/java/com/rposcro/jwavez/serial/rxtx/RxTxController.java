@@ -198,10 +198,10 @@ public class RxTxController implements Runnable {
   }
 
   private void handleResponse(ViewBuffer frameView) {
-    log.info("Response frame received: " + bufferToString(frameView));
+    log.info("Response frame received: {}", bufferToString(frameView));
   }
 
   private void handleCallback(ViewBuffer frameView) {
-    log.info("Callback frame received: " + bufferToString(frameView));
+    log.info("Callback frame received: {}", bufferToString(frameView));
   }
 }

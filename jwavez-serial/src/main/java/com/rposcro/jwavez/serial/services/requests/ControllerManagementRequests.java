@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.serial.frames.requests;
+package com.rposcro.jwavez.serial.services.requests;
 
 import com.rposcro.jwavez.serial.buffers.FrameBuffer;
 import com.rposcro.jwavez.serial.buffers.dispatchers.BufferDispatcher;

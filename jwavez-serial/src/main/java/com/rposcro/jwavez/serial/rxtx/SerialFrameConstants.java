@@ -16,4 +16,5 @@ public interface SerialFrameConstants {
   int FRAME_OFFSET_LENGTH = 1;
   int FRAME_OFFSET_TYPE = 2;
   int FRAME_OFFSET_COMMAND = 3;
+  int FRAME_OFFSET_PAYLOAD = 4;
 }

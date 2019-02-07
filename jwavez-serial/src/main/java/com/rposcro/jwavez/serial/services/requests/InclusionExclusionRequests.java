@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.serial.frames.requests;
+package com.rposcro.jwavez.serial.services.requests;
 
 import static com.rposcro.jwavez.serial.utils.FrameUtil.frameCRC;
 
