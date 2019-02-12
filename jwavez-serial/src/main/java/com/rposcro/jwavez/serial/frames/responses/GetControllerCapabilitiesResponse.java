@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.GET_CONTROLLER_CAPABILITIES)
-public class GetControllerCapabilitiesResponse extends Response {
+public class GetControllerCapabilitiesResponse extends ZWaveResponse {
 
   private static final byte MASK_IS_SECONDARY = 0x01;
   private static final byte MASK_ON_OTHER_NETWORK = 0x02;

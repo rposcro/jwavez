@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.SEND_SUC_ID)
-public class SendSUCIdResponse extends Response {
+public class SendSUCIdResponse extends ZWaveResponse {
 
   @Getter
   private boolean requestAccepted;

@@ -11,7 +11,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.GET_CAPABILITIES)
-public class GetCapabilitiesResponse extends Response {
+public class GetCapabilitiesResponse extends ZWaveResponse {
 
   private byte serialAppVersion;
   private byte serialAppRevision;

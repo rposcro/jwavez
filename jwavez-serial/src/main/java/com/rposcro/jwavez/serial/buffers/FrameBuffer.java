@@ -6,7 +6,8 @@ public interface FrameBuffer {
 
   FrameBuffer put(byte data);
 
-  void release();
-
   ByteBuffer asByteBuffer();
+
+  default void release() {
+  }
 }

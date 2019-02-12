@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import lombok.Getter;
 
 @Getter
-public class UnknownResponse extends Response {
+public class UnknownResponse extends ZWaveResponse {
 
   private byte[] payload;
   private byte crc;

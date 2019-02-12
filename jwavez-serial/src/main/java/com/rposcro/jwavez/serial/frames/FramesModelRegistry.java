@@ -3,7 +3,7 @@ package com.rposcro.jwavez.serial.frames;
 import com.rposcro.jwavez.core.exceptions.CodeIntegrityException;
 import com.rposcro.jwavez.core.utils.PackageScanner;
 import com.rposcro.jwavez.serial.frames.callbacks.Callback;
-import com.rposcro.jwavez.serial.frames.responses.Response;
+import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 public class FramesModelRegistry {
 
   private Map<Byte, Class<? extends Callback>> callbackFramesMap;
-  private Map<Byte, Class<? extends Response>> responseFramesMap;
+  private Map<Byte, Class<? extends ZWaveResponse>> responseFramesMap;
 
   private static final Semaphore instanceSemaphore = new Semaphore(1);
   private static FramesModelRegistry registryInstance;
@@ -39,7 +39,7 @@ public class FramesModelRegistry {
     }
   }
 
-  public Optional<Class<? extends Response>> responseClass(byte functionId) {
+  public Optional<Class<? extends ZWaveResponse>> responseClass(byte functionId) {
     return Optional.ofNullable(responseFramesMap.get(functionId));
   }
 
@@ -51,10 +51,10 @@ public class FramesModelRegistry {
     log.debug("Scanning SOF frame classes");
     PackageScanner scanner = new PackageScanner();
 
-    Set<Class<? extends Response>> responseClassList = scanner.findAllClassesOfType(Response.class, basePackages);
+    Set<Class<? extends ZWaveResponse>> responseClassList = scanner.findAllClassesOfType(ZWaveResponse.class, basePackages);
     responseClassList.stream()
         .filter(clazz -> clazz.isAnnotationPresent(ResponseFrameModel.class))
-        .forEach(clazz -> registerResponseModel(clazz.asSubclass(Response.class)));
+        .forEach(clazz -> registerResponseModel(clazz.asSubclass(ZWaveResponse.class)));
 
     Set<Class<? extends Callback>> callbackClassList = scanner.findAllClassesOfType(Callback.class, basePackages);
     callbackClassList.stream()
@@ -64,7 +64,7 @@ public class FramesModelRegistry {
     log.debug("Class registry: {} response classes, {} callback classes", responseFramesMap.size(), callbackFramesMap.size());
   }
 
-  private void registerResponseModel(Class<? extends Response> modelClass) {
+  private void registerResponseModel(Class<? extends ZWaveResponse> modelClass) {
     ResponseFrameModel modelAnnotation = modelClass.getAnnotation(ResponseFrameModel.class);
     Byte functionId = modelAnnotation.function().getCode();
     if (responseFramesMap.containsKey(functionId)) {

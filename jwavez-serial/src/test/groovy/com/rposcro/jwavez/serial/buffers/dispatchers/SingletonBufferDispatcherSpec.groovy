@@ -53,14 +53,14 @@ class SingletonBufferDispatcherSpec extends Specification {
 
     def "releases buffer by calling dispatcher's recycle"() {
         given:
-        def dispatcher = Spy(SingletonBufferDispatcher);
+        def dispatcher = new SingletonBufferDispatcher();
         def buffer = dispatcher.allocateBuffer(12);
 
         when:
         buffer.release();
 
         then:
-        1 * dispatcher.recycleBuffer(_);
+        dispatcher.bufferLock.availablePermits() == 1;
     }
 
 

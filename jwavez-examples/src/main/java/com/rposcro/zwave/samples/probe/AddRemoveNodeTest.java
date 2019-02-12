@@ -1,4 +1,4 @@
-package com.rposcro.zwave.samples;
+package com.rposcro.zwave.samples.probe;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.probe.transactions.AddNodeToNetworkTransaction;

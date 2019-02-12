@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.MEMORY_GET_ID)
-public class MemoryGetIdResponse extends Response {
+public class MemoryGetIdResponse extends ZWaveResponse {
 
   private long homeId;
   private NodeId nodeId;

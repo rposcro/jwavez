@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.SET_LEARN_MODE)
-public class SetLearnModeResponse extends Response {
+public class SetLearnModeResponse extends ZWaveResponse {
 
   @Getter
   private boolean requestAccepted;

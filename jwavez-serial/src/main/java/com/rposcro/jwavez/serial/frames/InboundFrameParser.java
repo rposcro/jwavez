@@ -7,54 +7,57 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.TYPE_RES;
 
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.exceptions.FatalSerialException;
+import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.frames.callbacks.Callback;
 import com.rposcro.jwavez.serial.frames.callbacks.UnknownCallback;
-import com.rposcro.jwavez.serial.frames.responses.Response;
+import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.frames.responses.UnknownResponse;
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Builder
 public class InboundFrameParser {
 
   private FramesModelRegistry frameRegistry;
 
-  public Callback parseCallbackFrame(ViewBuffer buffer) {
+  public InboundFrameParser() {
+    this.frameRegistry = FramesModelRegistry.defaultRegistry();
+  }
+
+  public Callback parseCallbackFrame(ViewBuffer buffer) throws FrameParseException {
     validateCallbackFrame(buffer);
     return instantiateCallbackFrame(buffer);
   }
 
-  public Response parseResponseFrame(ViewBuffer buffer) {
+  public ZWaveResponse parseResponseFrame(ViewBuffer buffer) throws FrameParseException {
     validateResponseFrame(buffer);
     return instantiateResponseFrame(buffer);
   }
 
-  private Callback instantiateCallbackFrame(ViewBuffer buffer) {
+  private Callback instantiateCallbackFrame(ViewBuffer buffer) throws FrameParseException {
     try {
       Class<? extends Callback> clazz = frameRegistry.callbackClass(buffer.get(FRAME_OFFSET_COMMAND))
           .orElse(UnknownCallback.class);
       Callback frame = clazz.getConstructor(ViewBuffer.class).newInstance(buffer);
       return frame;
     } catch(Exception e) {
-      throw new FatalSerialException(e);
+      throw new FrameParseException(e);
     }
   }
 
-  private Response instantiateResponseFrame(ViewBuffer buffer) {
+  private ZWaveResponse instantiateResponseFrame(ViewBuffer buffer) throws FrameParseException {
     try {
-      Class<? extends Response> clazz = frameRegistry.responseClass(buffer.get(FRAME_OFFSET_COMMAND))
+      Class<? extends ZWaveResponse> clazz = frameRegistry.responseClass(buffer.get(FRAME_OFFSET_COMMAND))
           .orElse(UnknownResponse.class);
-      Response frame = clazz.getConstructor(ViewBuffer.class).newInstance(buffer);
+      ZWaveResponse frame = clazz.getConstructor(ViewBuffer.class).newInstance(buffer);
       return frame;
     } catch(Exception e) {
-      throw new FatalSerialException(e);
+      throw new FrameParseException(e);
     }
   }
 
-  private void validateCallbackFrame(ViewBuffer buffer) {
+  private void validateCallbackFrame(ViewBuffer buffer)  throws FrameParseException {
     if (TYPE_REQ != buffer.get(FRAME_OFFSET_TYPE)) {
-      throw new FatalSerialException("Expected callback frame while received " + buffer.get(FRAME_OFFSET_TYPE));
+      throw new FrameParseException("Expected callback frame while received " + buffer.get(FRAME_OFFSET_TYPE));
     }
   }
 

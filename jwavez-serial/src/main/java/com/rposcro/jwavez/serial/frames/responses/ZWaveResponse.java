@@ -6,12 +6,12 @@ import com.rposcro.jwavez.serial.rxtx.SerialFrameConstants;
 import lombok.Getter;
 
 @Getter
-public class Response {
+public class ZWaveResponse {
 
   private SerialCommand serialCommand;
   private int length;
 
-  public Response(ViewBuffer viewBuffer) {
+  public ZWaveResponse(ViewBuffer viewBuffer) {
     this.length = viewBuffer.get(SerialFrameConstants.FRAME_OFFSET_LENGTH) & 0xff;
     this.serialCommand = SerialCommand.ofCode(viewBuffer.get(SerialFrameConstants.FRAME_OFFSET_COMMAND));
   }

@@ -23,7 +23,7 @@ import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class RxTxController implements Runnable {
+public class RxTxRouter implements Runnable {
 
   private SerialPort serialPort;
   private RxTxConfiguration configuration;
@@ -41,7 +41,7 @@ public class RxTxController implements Runnable {
   private long retransmissionTime;
 
   @Builder
-  public RxTxController(
+  public RxTxRouter(
       RxTxConfiguration configuration,
       SerialPort serialPort,
       Consumer<ViewBuffer> responseHandler,
@@ -76,15 +76,16 @@ public class RxTxController implements Runnable {
         .build();
   }
 
-  private RxTxController() {
+  private RxTxRouter() {
     this.outboundLock = new Semaphore(1);
+    deactivateTransmission();
   }
 
-  public <T> T sendFrame(FrameRequest frameRequest) throws SerialStreamException {
+  public void sendFrame(FrameRequest frameRequest) throws SerialStreamException {
     outboundLock.acquireUninterruptibly();
     try {
       scheduleRequest(frameRequest);
-      return (T) futureResponse.get();
+      futureResponse.get();
     } catch(CancellationException | InterruptedException | ExecutionException e) {
       throw new SerialStreamException(e);
     } finally {
@@ -122,7 +123,7 @@ public class RxTxController implements Runnable {
       outboundStream.writeCAN();
       inboundStream.purgeStream();
     } catch (InterruptedException e) {
-      throw new FatalSerialException(e, "Unexpected interruption occurred!");
+      log.info("Router's thread interrupted");
     }
   }
 
@@ -157,7 +158,7 @@ public class RxTxController implements Runnable {
   }
 
   private void transmitStage() throws SerialException {
-    if (retransmissionTime <= currentTimeMillis() && frameRequest != null) {
+    if (transmissionAwaiting()) {
       ByteBuffer frameData = frameRequest.getFrameData().asByteBuffer();
       frameData.mark();
       RequestStageResult reqResult = requestStageDoer.sendRequest(frameData);
@@ -169,12 +170,14 @@ public class RxTxController implements Runnable {
           ResponseStageResult resResult = responseStageDoer.acquireResponse(commandCode);
           success = resResult == ResponseStageResult.RESULT_OK;
         } else {
-          futureResponse.complete(null);
           success = true;
         }
       }
 
-      if (!success) {
+      if (success) {
+        deactivateTransmission();
+        futureResponse.complete(null);
+      } else {
         pursueRetransmission();
         frameData.reset();
       }
@@ -183,6 +186,7 @@ public class RxTxController implements Runnable {
 
   private void pursueRetransmission() {
     if (frameRequest.isRetransmissionDisabled() || ++retransmissionCounter > configuration.getRequestRetriesMaxCount()) {
+      deactivateTransmission();
       futureResponse.completeExceptionally(new RequestFlowException("Failed to transmit frame"));
     } else {
       retransmissionTime = currentTimeMillis() + retransmissionDelay(retransmissionCounter);
@@ -197,8 +201,16 @@ public class RxTxController implements Runnable {
     return configuration.getPortReconnectDelayBias() + (configuration.getPortReconnectDelayFactor() * retryNumber);
   }
 
+  private void deactivateTransmission() {
+    this.retransmissionTime = Long.MAX_VALUE;
+  }
+
+  private boolean transmissionAwaiting() {
+    return retransmissionTime <= System.currentTimeMillis();
+  }
+
   private void handleResponse(ViewBuffer frameView) {
-    log.info("Response frame received: {}", bufferToString(frameView));
+    log.info("ZWaveResponse frame received: {}", bufferToString(frameView));
   }
 
   private void handleCallback(ViewBuffer frameView) {

@@ -124,7 +124,7 @@ public class TransactionManager implements InboundFrameInterceptor {
       awaitingResponseLatch = null;
       awaitingResponse = Optional.empty();
     } else {
-      log.warn("Response frame received while haven't expected one, frame skipped!");
+      log.warn("ZWaveResponse frame received while haven't expected one, frame skipped!");
     }
   }
 

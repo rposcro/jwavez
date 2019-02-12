@@ -3,6 +3,7 @@ package com.rposcro.jwavez.serial.rxtx.port;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import gnu.io.NRSerialPort;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -14,6 +15,7 @@ public class NeuronRoboticsSerialPort implements SerialPort {
 
   private String device;
   private NRSerialPort port;
+  private InputStream inputStream;
   private ReadableByteChannel inputChannel;
   private WritableByteChannel outputChannel;
 
@@ -27,7 +29,8 @@ public class NeuronRoboticsSerialPort implements SerialPort {
       this.device = device;
       this.port = new NRSerialPort(device, DEFAULT_BAUD_RATE);
       this.port.connect();
-      this.inputChannel = Channels.newChannel(port.getInputStream());
+      this.inputStream = port.getInputStream();
+      this.inputChannel = Channels.newChannel(inputStream);
       this.outputChannel = Channels.newChannel(port.getOutputStream());
     } catch(Exception e) {
       throw new SerialPortException(e, "Could not connect with device %s!", device);
@@ -53,7 +56,11 @@ public class NeuronRoboticsSerialPort implements SerialPort {
   @Override
   public int readData(ByteBuffer buffer) throws SerialPortException {
     try {
-      return inputChannel.read(buffer);
+      if (inputStream.available() > 0) {
+        return inputChannel.read(buffer);
+      } else {
+        return 0;
+      }
     } catch(IOException e) {
       throw new SerialPortException(e, "Exception occurred while reading from channel!");
     }

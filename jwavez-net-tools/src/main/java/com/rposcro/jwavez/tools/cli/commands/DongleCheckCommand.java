@@ -117,7 +117,7 @@ public class DongleCheckCommand extends AbstractDeviceCommand {
       return false;
     }
     System.out.println(String.format("  Version: %s", result.getResult().getVersion()));
-    System.out.println(String.format("  Response data: %s", result.getResult().getResponseData()));
+    System.out.println(String.format("  ZWaveResponse data: %s", result.getResult().getResponseData()));
     return true;
   }
 

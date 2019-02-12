@@ -24,7 +24,7 @@ import spock.lang.Specification
 
 import static java.lang.Byte.toUnsignedInt
 
-class RxTxControllerSpec extends Specification {
+class RxTxRouterSpec extends Specification {
 
     static final ACK = toUnsignedInt(CATEGORY_ACK);
     static final NAK = toUnsignedInt(CATEGORY_NAK);
@@ -440,7 +440,7 @@ class RxTxControllerSpec extends Specification {
         inbounds.forEach({series -> serialPort.addSeries(series)});
         serialPort.reset();
 
-        return RxTxController.builder()
+        return RxTxRouter.builder()
             .serialPort(serialPort)
             .configuration(rxTxConfiguration)
             .responseHandler(responseConsumer)

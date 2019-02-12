@@ -19,7 +19,7 @@ public class SingletonBufferDispatcher implements BufferDispatcher<DirectFrameBu
     this.byteBuffer = ByteBuffer.allocateDirect(MAX_Z_WAVE_FRAME_SIZE);
     this.singletonBuffer = DirectFrameBuffer.builder()
         .byteBuffer(byteBuffer)
-        .dispatcher(this)
+        .releaseListener(this::recycleBuffer)
         .build();
     this.bufferLock = new Semaphore(1);
   }
@@ -36,8 +36,7 @@ public class SingletonBufferDispatcher implements BufferDispatcher<DirectFrameBu
     return singletonBuffer;
   }
 
-  @Override
-  public void recycleBuffer(DirectFrameBuffer frameBuffer) {
+  private void recycleBuffer(DirectFrameBuffer frameBuffer) {
     if (frameBuffer != this.singletonBuffer) {
       throw new FatalSerialException("Non-owned buffer cannot be recycled here!");
     }

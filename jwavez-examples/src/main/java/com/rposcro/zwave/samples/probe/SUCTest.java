@@ -1,4 +1,4 @@
-package com.rposcro.zwave.samples;
+package com.rposcro.zwave.samples.probe;
 
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.probe.frame.requests.EnableSUCRequestFrame;
@@ -37,7 +37,7 @@ public class SUCTest extends AbstractExample {
     TransactionResult<SetSUCNodeIdResponseFrame> result = channel.sendFrameWithResponseAndWait(
         new SetSUCNodeIdRequestFrame(nodeId, true, (byte) 0xee));
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
-    System.out.println(String.format("Response: %s", result.getResult().isRequestAccepted()));
+    System.out.println(String.format("ZWaveResponse: %s", result.getResult().isRequestAccepted()));
   }
 
   /**

@@ -125,10 +125,10 @@ public abstract class AbstractRequestResponseCallbackTransaction<RT extends SOFR
       try {
         return (T) frame;
       } catch(ClassCastException e) {
-        throw new TransactionException("Response frame validation failed, stopping");
+        throw new TransactionException("ZWaveResponse frame validation failed, stopping");
       }
     }
-    throw new TransactionException("Response frame validation failed, stopping");
+    throw new TransactionException("ZWaveResponse frame validation failed, stopping");
   }
 
   protected void stopTransaction() {

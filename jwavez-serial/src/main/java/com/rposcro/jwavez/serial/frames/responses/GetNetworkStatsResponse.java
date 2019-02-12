@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.GET_NETWORK_STATS)
-public class GetNetworkStatsResponse extends Response {
+public class GetNetworkStatsResponse extends ZWaveResponse {
 
   private NetworkStatistics networkStatistics;
 

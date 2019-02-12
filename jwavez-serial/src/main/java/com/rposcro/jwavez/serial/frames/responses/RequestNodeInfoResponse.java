@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.REQUEST_NODE_INFO)
-public class RequestNodeInfoResponse extends Response {
+public class RequestNodeInfoResponse extends ZWaveResponse {
 
   @Getter
   private boolean requestAccepted;

@@ -21,7 +21,7 @@ class InboundFrameParserSpec extends Specification {
     def parser;
 
     def setupSpec() {
-        parser = InboundFrameParser.builder().frameRegistry(FramesModelRegistry.defaultRegistry()).build();
+        parser = new InboundFrameParser();
     }
 
     @Unroll

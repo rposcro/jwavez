@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.GET_PROTOCOL_STATUS)
-public class GetProtocolStatusResponse extends Response {
+public class GetProtocolStatusResponse extends ZWaveResponse {
 
   private byte returnValue;
 

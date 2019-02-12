@@ -13,7 +13,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.GET_INIT_DATA)
-public class GetInitDataResponse extends Response {
+public class GetInitDataResponse extends ZWaveResponse {
 
   private static final int NODE_BITMASK_SIZE = 29;
 

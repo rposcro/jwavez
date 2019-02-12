@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.RF_POWER_LEVEL_GET)
-public class GetRFPowerLevelResponse extends Response {
+public class GetRFPowerLevelResponse extends ZWaveResponse {
 
   private byte powerLevel;
 

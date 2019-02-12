@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.SERIAL_API_SETUP)
-public class SerialAPISetupResponse extends Response {
+public class SerialAPISetupResponse extends ZWaveResponse {
 
   @Getter
   private boolean requestAccepted;

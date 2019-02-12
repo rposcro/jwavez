@@ -127,7 +127,7 @@ public class SOFFrameRegistry {
 
   private void registerResponseModel(Class<? extends SOFResponseFrame> modelClass) {
     if (!SOFResponseFrame.class.isAssignableFrom(modelClass)) {
-      throw new IllegalStateException("Response frame model must be applied to SOFResponseFrame type only! Equipped class: " + modelClass);
+      throw new IllegalStateException("ZWaveResponse frame model must be applied to SOFResponseFrame type only! Equipped class: " + modelClass);
     }
     ResponseFrameModel modelAnnotation = modelClass.getAnnotation(ResponseFrameModel.class);
     Byte functionId = modelAnnotation.function().getCode();

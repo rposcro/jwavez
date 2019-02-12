@@ -1,17 +1,18 @@
 package com.rposcro.jwavez.serial.buffers;
 
-import com.rposcro.jwavez.serial.buffers.dispatchers.BufferDispatcher;
 import java.nio.ByteBuffer;
+import java.util.function.Consumer;
 import lombok.Builder;
+import lombok.NonNull;
 
 @Builder
 public final class DirectFrameBuffer implements FrameBuffer {
 
-  private BufferDispatcher dispatcher;
   private ByteBuffer byteBuffer;
+  private Consumer<DirectFrameBuffer> releaseListener;
 
-  DirectFrameBuffer(BufferDispatcher dispatcher, ByteBuffer byteBuffer) {
-    this.dispatcher = dispatcher;
+  DirectFrameBuffer(@NonNull ByteBuffer byteBuffer, @NonNull Consumer<DirectFrameBuffer> releaseListener) {
+    this.releaseListener = releaseListener;
     this.byteBuffer = byteBuffer;
   }
 
@@ -30,6 +31,6 @@ public final class DirectFrameBuffer implements FrameBuffer {
 
   @Override
   public void release() {
-    dispatcher.recycleBuffer(this);
+    releaseListener.accept(this);
   }
 }

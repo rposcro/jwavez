@@ -1,4 +1,4 @@
-package com.rposcro.zwave.samples;
+package com.rposcro.zwave.samples.probe;
 
 import com.rposcro.jwavez.serial.probe.frame.requests.ZStickSetConfigRequestFrame;
 

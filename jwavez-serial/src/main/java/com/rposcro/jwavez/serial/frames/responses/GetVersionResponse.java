@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.GET_VERSION)
-public class GetVersionResponse extends Response {
+public class GetVersionResponse extends ZWaveResponse {
 
   private static final int VERSION_STRING_LENGTH = 11;
 

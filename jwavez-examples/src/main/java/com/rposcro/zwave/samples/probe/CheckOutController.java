@@ -1,4 +1,4 @@
-package com.rposcro.zwave.samples;
+package com.rposcro.zwave.samples.probe;
 
 import com.rposcro.jwavez.serial.probe.SerialChannelManager;
 import com.rposcro.jwavez.serial.probe.frame.constants.SerialCommand;
@@ -84,7 +84,7 @@ public class CheckOutController extends AbstractExample {
     TransactionResult<GetVersionResponseFrame> result = channel.sendFrameWithResponseAndWait(new GetVersionRequestFrame());
     System.out.println(String.format("Transaction status: %s", result.getStatus()));
     System.out.println(String.format("Version: %s", result.getResult().getVersion()));
-    System.out.println(String.format("Response data: %s", result.getResult().getResponseData()));
+    System.out.println(String.format("ZWaveResponse data: %s", result.getResult().getResponseData()));
   }
 
   private void learnSUCNode() throws Exception {

@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.GET_LIBRARY_TYPE)
-public class GetLibraryTypeResponse extends Response {
+public class GetLibraryTypeResponse extends ZWaveResponse {
 
   private LibraryType libraryType;
 

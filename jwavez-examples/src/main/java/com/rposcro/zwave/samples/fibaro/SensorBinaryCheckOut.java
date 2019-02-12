@@ -16,7 +16,7 @@ import com.rposcro.jwavez.serial.probe.interceptors.ApplicationCommandHandlerLog
 import com.rposcro.jwavez.serial.probe.interceptors.ApplicationUpdateLogger;
 import com.rposcro.jwavez.serial.probe.transactions.SendDataTransaction;
 import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
-import com.rposcro.zwave.samples.AbstractExample;
+import com.rposcro.zwave.samples.probe.AbstractExample;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
