@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.exceptions.SerialStreamException;
 import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.handlers.LastResponseHolder;
-import com.rposcro.jwavez.serial.rxtx.FrameRequest;
+import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.RxTxRouter;
 import com.rposcro.jwavez.serial.rxtx.port.NeuronRoboticsSerialPort;
@@ -59,7 +59,7 @@ public class AllInOneController implements AutoCloseable {
     this.serialPort.disconnect();
   }
 
-  public <T extends ZWaveResponse> T requestResponseFlow(FrameRequest request) throws FlowException {
+  public <T extends ZWaveResponse> T requestResponseFlow(SerialRequest request) throws FlowException {
     try {
       rxTxRouter.sendFrame(request);
       ZWaveResponse response = lastResponseHolder.get();

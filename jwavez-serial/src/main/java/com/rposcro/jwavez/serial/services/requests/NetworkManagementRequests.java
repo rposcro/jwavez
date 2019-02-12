@@ -8,7 +8,7 @@ import com.rposcro.jwavez.serial.buffers.FrameBuffer;
 import com.rposcro.jwavez.serial.buffers.dispatchers.BufferDispatcher;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.model.TransmitOption;
-import com.rposcro.jwavez.serial.rxtx.FrameRequest;
+import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class NetworkManagementRequests extends AbstractFrameRequests {
 
@@ -16,7 +16,7 @@ public class NetworkManagementRequests extends AbstractFrameRequests {
     super(bufferDispatcher);
   }
 
-  public FrameRequest setLocalSUCNodeIdRequest(NodeId localControllerId, boolean enableSucAndSis) {
+  public SerialRequest setLocalSUCNodeIdRequest(NodeId localControllerId, boolean enableSucAndSis) {
     FrameBuffer buffer = frameBuffer(SerialCommand.SET_SUC_NODE_ID, FRAME_CONTROL_SIZE + 5);
     buffer.put(localControllerId.getId())
         .put(booleanByte(enableSucAndSis))
@@ -27,7 +27,7 @@ public class NetworkManagementRequests extends AbstractFrameRequests {
     return commandRequest(buffer, true);
   }
 
-  public FrameRequest setSUCNodeIdRequest(NodeId localControllerId, boolean enableSucAndSis, byte callbackFunctionId) {
+  public SerialRequest setSUCNodeIdRequest(NodeId localControllerId, boolean enableSucAndSis, byte callbackFunctionId) {
     FrameBuffer buffer = frameBuffer(SerialCommand.SET_SUC_NODE_ID, FRAME_CONTROL_SIZE + 5);
     buffer.put(localControllerId.getId())
         .put(booleanByte(enableSucAndSis))
@@ -38,7 +38,7 @@ public class NetworkManagementRequests extends AbstractFrameRequests {
     return commandRequest(buffer, true);
   }
 
-  public FrameRequest sendSUCIdRequest(NodeId addresseeId, byte callbackFunctionId) {
+  public SerialRequest sendSUCIdRequest(NodeId addresseeId, byte callbackFunctionId) {
     FrameBuffer buffer = frameBuffer(SerialCommand.SET_SUC_NODE_ID, FRAME_CONTROL_SIZE + 3);
     buffer.put(addresseeId.getId())
         .put(defaultTransmitOptions())

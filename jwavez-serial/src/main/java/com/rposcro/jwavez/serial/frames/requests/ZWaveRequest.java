@@ -3,12 +3,14 @@ package com.rposcro.jwavez.serial.frames.requests;
 import com.rposcro.jwavez.serial.buffers.DisposableFrameBuffer;
 import com.rposcro.jwavez.serial.buffers.FrameBuffer;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
-import com.rposcro.jwavez.serial.rxtx.FrameRequest;
+import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import com.rposcro.jwavez.serial.rxtx.SerialFrameConstants;
 
 public class ZWaveRequest {
 
-  protected static FrameBuffer startFrameBuffer(int capacity, SerialCommand command) {
+  protected final static int FRAME_CONTROL_SIZE = 5;
+
+  protected static DisposableFrameBuffer startUpFrameBuffer(int capacity, SerialCommand command) {
     return new DisposableFrameBuffer(capacity)
         .put(SerialFrameConstants.CATEGORY_SOF)
         .put((byte) (capacity - 2))
@@ -16,7 +18,7 @@ public class ZWaveRequest {
         .put(command.getCode());
   }
 
-  protected static FrameBuffer completeFrameBuffer(SerialCommand command) {
+  private static FrameBuffer completeFrameBuffer(SerialCommand command) {
     return new DisposableFrameBuffer(5)
         .put(SerialFrameConstants.CATEGORY_SOF)
         .put((byte) (3))
@@ -25,8 +27,8 @@ public class ZWaveRequest {
         .putCRC();
   }
 
-  protected static FrameRequest nonPayloadRequest(SerialCommand command) {
-    return FrameRequest.builder()
+  protected static SerialRequest nonPayloadRequest(SerialCommand command) {
+    return SerialRequest.builder()
         .responseExpected(true)
         .frameData(completeFrameBuffer(command))
         .serialCommand(command)

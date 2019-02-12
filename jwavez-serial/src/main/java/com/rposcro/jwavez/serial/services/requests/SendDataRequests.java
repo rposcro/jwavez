@@ -7,7 +7,7 @@ import com.rposcro.jwavez.serial.buffers.FrameBuffer;
 import com.rposcro.jwavez.serial.buffers.dispatchers.BufferDispatcher;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.model.TransmitOption;
-import com.rposcro.jwavez.serial.rxtx.FrameRequest;
+import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import com.rposcro.jwavez.serial.utils.FrameUtil;
 import lombok.Builder;
 
@@ -18,7 +18,7 @@ public class SendDataRequests extends AbstractFrameRequests {
     super(bufferDispatcher);
   }
 
-  public FrameRequest SendDataRequestFrame(NodeId addresseeId, byte callbackFunctionId, ZWaveControlledCommand zWaveCommand) {
+  public SerialRequest SendDataRequestFrame(NodeId addresseeId, byte callbackFunctionId, ZWaveControlledCommand zWaveCommand) {
     FrameBuffer buffer = frameBuffer(SerialCommand.ADD_NODE_TO_NETWORK, FRAME_CONTROL_SIZE + 4 + zWaveCommand.getPayloadLength())
         .put(addresseeId.getId())
         .put((byte) zWaveCommand.getPayloadLength());
@@ -32,7 +32,7 @@ public class SendDataRequests extends AbstractFrameRequests {
         .put(callbackFunctionId)
         .put(FrameUtil.frameCRC(buffer.asByteBuffer()));
 
-    return FrameRequest.builder()
+    return SerialRequest.builder()
         .responseExpected(false)
         .frameData(buffer)
         .build();

@@ -11,7 +11,6 @@ public enum AddNodeToNeworkMode implements EncodableConstant {
   ADD_NODE_EXISTING(0x04),
   ADD_NODE_STOP(0x05),
   ADD_NODE_STOP_FAILED(0x06),
-  OPTION_HIGH_POWER(0x80)
   ;
 
   private AddNodeToNeworkMode(int code) {

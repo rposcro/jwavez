@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class FrameRequest {
+public class SerialRequest {
 
   private FrameBuffer frameData;
   private SerialCommand serialCommand;

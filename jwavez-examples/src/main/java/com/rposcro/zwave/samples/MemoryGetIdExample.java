@@ -13,7 +13,7 @@ public class MemoryGetIdExample extends AbstractExample {
         .build();) {
       controller
           .connect();
-      MemoryGetIdResponse response = controller.requestResponseFlow(MemoryGetIdRequest.createFrameRequest());
+      MemoryGetIdResponse response = controller.requestResponseFlow(MemoryGetIdRequest.createSerialRequest());
       System.out.printf("Home Id: %02x\n", response.getHomeId());
       System.out.printf("Node Id: %02x\n", response.getNodeId().getId());
     }

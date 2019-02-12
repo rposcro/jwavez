@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.buffers.dispatchers.BufferDispatcher;
 import com.rposcro.jwavez.serial.buffers.FrameBuffer;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.rxtx.SerialFrameConstants;
-import com.rposcro.jwavez.serial.rxtx.FrameRequest;
+import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -16,17 +16,17 @@ public abstract class AbstractFrameRequests {
 
   private BufferDispatcher bufferDispatcher;
 
-  protected FrameRequest commandRequest(SerialCommand command, boolean responseExpected) {
+  protected SerialRequest commandRequest(SerialCommand command, boolean responseExpected) {
     FrameBuffer buffer = frameBuffer(command, FRAME_CONTROL_SIZE);
     buffer.put(frameCRC(buffer.asByteBuffer()));
-    return FrameRequest.builder()
+    return SerialRequest.builder()
         .frameData(buffer)
         .responseExpected(responseExpected)
         .build();
   }
 
-  protected FrameRequest commandRequest(FrameBuffer frameBuffer, boolean responseExpected) {
-    return FrameRequest.builder()
+  protected SerialRequest commandRequest(FrameBuffer frameBuffer, boolean responseExpected) {
+    return SerialRequest.builder()
         .frameData(frameBuffer)
         .responseExpected(responseExpected)
         .build();

@@ -64,8 +64,9 @@ public final class ImmutableBuffer {
     return data[offset + (position++)];
   }
 
-  public void rewind() {
+  public ImmutableBuffer rewind() {
     position = 0;
+    return this;
   }
 
   public static ImmutableBuffer overBuffer(byte[] buffer, int payloadOffset, int payloadLength) {

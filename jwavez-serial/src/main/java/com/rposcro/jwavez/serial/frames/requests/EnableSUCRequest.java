@@ -4,7 +4,7 @@ import static com.rposcro.jwavez.serial.enums.SerialCommand.MEMORY_GET_ID;
 
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
-public class MemoryGetIdRequest extends ZWaveRequest {
+public class EnableSUCRequest extends ZWaveRequest {
 
   public static SerialRequest createSerialRequest() {
     return nonPayloadRequest(MEMORY_GET_ID);

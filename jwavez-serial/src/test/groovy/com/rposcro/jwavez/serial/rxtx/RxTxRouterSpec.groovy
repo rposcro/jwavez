@@ -85,7 +85,7 @@ class RxTxRouterSpec extends Specification {
         given:
         def expOutboundData = requestData;
         def controller = constructController(inboundData);
-        def frameRequest = FrameRequest.builder()
+        def frameRequest = SerialRequest.builder()
                 .frameData(frameBufferFromData(requestData))
                 .responseExpected(false)
                 .build();
@@ -112,7 +112,7 @@ class RxTxRouterSpec extends Specification {
         given:
         def outboundData = requestData + [ACK];
         def controller = constructController(inboundData);
-        def frameRequest = FrameRequest.builder()
+        def frameRequest = SerialRequest.builder()
             .frameData(frameBufferFromData(requestData))
             .responseExpected(true)
             .build();
@@ -139,7 +139,7 @@ class RxTxRouterSpec extends Specification {
         given:
         def outboundData = [ACK] + requestData + [ACK];
         def controller = constructController(inboundData);
-        def frameRequest = FrameRequest.builder()
+        def frameRequest = SerialRequest.builder()
                 .frameData(frameBufferFromData(requestData))
                 .responseExpected(true)
                 .build();
@@ -211,7 +211,7 @@ class RxTxRouterSpec extends Specification {
     def "retry request when NAK or CAN #inboundData"() {
         given:
         def controller = constructController(inboundData);
-        def frameRequest = FrameRequest.builder()
+        def frameRequest = SerialRequest.builder()
                 .responseExpected(expResponse)
                 .frameData(frameBufferFromData(requestData))
                 .build();
@@ -254,7 +254,7 @@ class RxTxRouterSpec extends Specification {
     def "retry request when race condition is detected #inboundData"() {
         given:
         def controller = constructController(inboundData);
-        def frameRequest = FrameRequest.builder()
+        def frameRequest = SerialRequest.builder()
                 .responseExpected(expResponse)
                 .frameData(frameBufferFromData(requestData))
                 .build();
@@ -286,7 +286,7 @@ class RxTxRouterSpec extends Specification {
     def "request flow exception thrown when retry limit is reached"() {
         given:
         def controller = constructController(inboundData);
-        def frameRequest = FrameRequest.builder()
+        def frameRequest = SerialRequest.builder()
                 .responseExpected(false)
                 .frameData(frameBufferFromData(requestData))
                 .build();
@@ -336,7 +336,7 @@ class RxTxRouterSpec extends Specification {
     def "odd frame exception thrown when inbound is malformed in transmit stage"() {
         given:
         def controller = constructController(inboundData);
-        def frameRequest = FrameRequest.builder()
+        def frameRequest = SerialRequest.builder()
                 .responseExpected(true)
                 .frameData(frameBufferFromData(requestData))
                 .build();
@@ -390,10 +390,10 @@ class RxTxRouterSpec extends Specification {
         rxTxConfiguration.frameCompleteTimeout = 1;
 
         when:
-        controller.scheduleRequest(FrameRequest.builder()
+        controller.scheduleRequest(SerialRequest.builder()
                 .responseExpected(true).frameData(frameBufferFromData(requestData)).build());
         controller.transmitStage();
-        controller.scheduleRequest(FrameRequest.builder()
+        controller.scheduleRequest(SerialRequest.builder()
                 .responseExpected(true).frameData(frameBufferFromData(requestData)).build());
         controller.transmitStage();
 

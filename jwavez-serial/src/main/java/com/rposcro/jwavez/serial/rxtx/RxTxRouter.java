@@ -36,7 +36,7 @@ public class RxTxRouter implements Runnable {
   private final Semaphore outboundLock;
 
   private CompletableFuture<?> futureResponse;
-  private FrameRequest frameRequest;
+  private SerialRequest serialRequest;
   private int retransmissionCounter;
   private long retransmissionTime;
 
@@ -81,15 +81,15 @@ public class RxTxRouter implements Runnable {
     deactivateTransmission();
   }
 
-  public void sendFrame(FrameRequest frameRequest) throws SerialStreamException {
+  public void sendFrame(SerialRequest serialRequest) throws SerialStreamException {
     outboundLock.acquireUninterruptibly();
     try {
-      scheduleRequest(frameRequest);
+      scheduleRequest(serialRequest);
       futureResponse.get();
     } catch(CancellationException | InterruptedException | ExecutionException e) {
       throw new SerialStreamException(e);
     } finally {
-      frameRequest.getFrameData().release();
+      serialRequest.getFrameData().release();
       outboundLock.release();
     }
   }
@@ -127,9 +127,9 @@ public class RxTxRouter implements Runnable {
     }
   }
 
-  private void scheduleRequest(FrameRequest frameRequest) {
+  private void scheduleRequest(SerialRequest serialRequest) {
     this.futureResponse = new CompletableFuture<>();
-    this.frameRequest = frameRequest;
+    this.serialRequest = serialRequest;
     this.retransmissionCounter = 0;
     this.retransmissionTime = currentTimeMillis();
   }
@@ -159,13 +159,13 @@ public class RxTxRouter implements Runnable {
 
   private void transmitStage() throws SerialException {
     if (transmissionAwaiting()) {
-      ByteBuffer frameData = frameRequest.getFrameData().asByteBuffer();
+      ByteBuffer frameData = serialRequest.getFrameData().asByteBuffer();
       frameData.mark();
       RequestStageResult reqResult = requestStageDoer.sendRequest(frameData);
       boolean success = false;
 
       if (reqResult == RequestStageResult.RESULT_OK) {
-        if (frameRequest.isResponseExpected()) {
+        if (serialRequest.isResponseExpected()) {
           byte commandCode = frameData.get(FRAME_OFFSET_COMMAND);
           ResponseStageResult resResult = responseStageDoer.acquireResponse(commandCode);
           success = resResult == ResponseStageResult.RESULT_OK;
@@ -185,7 +185,7 @@ public class RxTxRouter implements Runnable {
   }
 
   private void pursueRetransmission() {
-    if (frameRequest.isRetransmissionDisabled() || ++retransmissionCounter > configuration.getRequestRetriesMaxCount()) {
+    if (serialRequest.isRetransmissionDisabled() || ++retransmissionCounter > configuration.getRequestRetriesMaxCount()) {
       deactivateTransmission();
       futureResponse.completeExceptionally(new RequestFlowException("Failed to transmit frame"));
     } else {
