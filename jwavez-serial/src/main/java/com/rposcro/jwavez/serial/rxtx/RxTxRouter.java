@@ -78,19 +78,32 @@ public class RxTxRouter implements Runnable {
 
   private RxTxRouter() {
     this.outboundLock = new Semaphore(1);
-    deactivateTransmission();
+    this.retransmissionTime = Long.MAX_VALUE;
   }
 
-  public void sendFrame(SerialRequest serialRequest) throws SerialStreamException {
+  public void sendRequest(SerialRequest serialRequest) throws SerialStreamException {
     outboundLock.acquireUninterruptibly();
     try {
-      scheduleRequest(serialRequest);
+      enqueueRequest(serialRequest);
       futureResponse.get();
     } catch(CancellationException | InterruptedException | ExecutionException e) {
       throw new SerialStreamException(e);
     } finally {
       serialRequest.getFrameData().release();
-      outboundLock.release();
+      deactivateTransmission();
+    }
+  }
+
+  public void runUnlessRequestSent(SerialRequest serialRequest) throws SerialException {
+    outboundLock.acquireUninterruptibly();
+    try {
+      enqueueRequest(serialRequest);
+      while (transmissionAwaiting()) {
+        runOnce();
+      }
+    } finally {
+      serialRequest.getFrameData().release();
+      deactivateTransmission();
     }
   }
 
@@ -108,7 +121,7 @@ public class RxTxRouter implements Runnable {
     }
   }
 
-  public void runOnce() throws SerialException {
+  private void runOnce() throws SerialException {
     try {
       receiveStage();
       transmitStage();
@@ -127,11 +140,16 @@ public class RxTxRouter implements Runnable {
     }
   }
 
-  private void scheduleRequest(SerialRequest serialRequest) {
+  private boolean transmissionAwaiting() {
+    return retransmissionTime <= System.currentTimeMillis();
+  }
+
+  private void enqueueRequest(SerialRequest serialRequest) {
     this.futureResponse = new CompletableFuture<>();
     this.serialRequest = serialRequest;
     this.retransmissionCounter = 0;
     this.retransmissionTime = currentTimeMillis();
+    log.debug("ZWave request scheduled {}", serialRequest.getSerialCommand());
   }
 
   private void reconnectPort() {
@@ -177,9 +195,11 @@ public class RxTxRouter implements Runnable {
       if (success) {
         deactivateTransmission();
         futureResponse.complete(null);
+        log.debug("Transmission successful");
       } else {
         pursueRetransmission();
         frameData.reset();
+        log.warn("Transmission failed: {}", reqResult);
       }
     }
   }
@@ -203,10 +223,7 @@ public class RxTxRouter implements Runnable {
 
   private void deactivateTransmission() {
     this.retransmissionTime = Long.MAX_VALUE;
-  }
-
-  private boolean transmissionAwaiting() {
-    return retransmissionTime <= System.currentTimeMillis();
+    this.outboundLock.release();
   }
 
   private void handleResponse(ViewBuffer frameView) {
@@ -214,6 +231,6 @@ public class RxTxRouter implements Runnable {
   }
 
   private void handleCallback(ViewBuffer frameView) {
-    log.info("Callback frame received: {}", bufferToString(frameView));
+    log.info("ZWaveCallback frame received: {}", bufferToString(frameView));
   }
 }

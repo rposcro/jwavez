@@ -1,4 +1,4 @@
-package com.rposcro.zwave.samples.probe;
+package com.rposcro.jwavez.samples;
 
 import com.rposcro.jwavez.core.model.NetworkStatistics;
 import com.rposcro.jwavez.serial.probe.frame.requests.GetNetworkStatsRequestFrame;

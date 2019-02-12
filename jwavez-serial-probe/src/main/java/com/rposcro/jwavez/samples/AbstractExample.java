@@ -1,4 +1,4 @@
-package com.rposcro.zwave.samples.probe;
+package com.rposcro.jwavez.samples;
 
 import com.rposcro.jwavez.serial.probe.SerialChannel;
 import com.rposcro.jwavez.serial.probe.SerialChannelManager;
