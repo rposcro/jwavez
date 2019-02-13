@@ -11,7 +11,7 @@ import lombok.Getter;
 
 @Getter
 @CallbackFrameModel(function = SerialCommand.APPLICATION_COMMAND_HANDLER)
-public class ApplicationCommandHandlerCallback extends Callback {
+public class ApplicationCommandHandlerCallback extends ZWaveCallback {
 
   private RxStatus rxStatus;
   private NodeId sourceNodeId;

@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Getter
 @CallbackFrameModel(function = SerialCommand.APPLICATION_UPDATE)
-public class ApplicationUpdateCallback extends Callback {
+public class ApplicationUpdateCallback extends ZWaveCallback {
 
   private ApplicationUpdateStatus status;
   private NodeInfo nodeInfo;

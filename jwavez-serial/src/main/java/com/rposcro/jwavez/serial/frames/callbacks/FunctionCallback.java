@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import lombok.Getter;
 
 @Getter
-public abstract class FunctionCallback extends Callback {
+public abstract class FunctionCallback extends ZWaveCallback {
 
   private byte functionCallId;
 

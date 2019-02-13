@@ -8,7 +8,7 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.TYPE_RES;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.exceptions.FatalSerialException;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
-import com.rposcro.jwavez.serial.frames.callbacks.Callback;
+import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.UnknownCallback;
 import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.frames.responses.UnknownResponse;
@@ -23,7 +23,7 @@ public class InboundFrameParser {
     this.frameRegistry = FramesModelRegistry.defaultRegistry();
   }
 
-  public Callback parseCallbackFrame(ViewBuffer buffer) throws FrameParseException {
+  public ZWaveCallback parseCallbackFrame(ViewBuffer buffer) throws FrameParseException {
     validateCallbackFrame(buffer);
     return instantiateCallbackFrame(buffer);
   }
@@ -33,11 +33,11 @@ public class InboundFrameParser {
     return instantiateResponseFrame(buffer);
   }
 
-  private Callback instantiateCallbackFrame(ViewBuffer buffer) throws FrameParseException {
+  private ZWaveCallback instantiateCallbackFrame(ViewBuffer buffer) throws FrameParseException {
     try {
-      Class<? extends Callback> clazz = frameRegistry.callbackClass(buffer.get(FRAME_OFFSET_COMMAND))
+      Class<? extends ZWaveCallback> clazz = frameRegistry.callbackClass(buffer.get(FRAME_OFFSET_COMMAND))
           .orElse(UnknownCallback.class);
-      Callback frame = clazz.getConstructor(ViewBuffer.class).newInstance(buffer);
+      ZWaveCallback frame = clazz.getConstructor(ViewBuffer.class).newInstance(buffer);
       return frame;
     } catch(Exception e) {
       throw new FrameParseException(e);

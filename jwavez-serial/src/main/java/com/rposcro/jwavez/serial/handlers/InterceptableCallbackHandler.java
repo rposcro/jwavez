@@ -7,7 +7,7 @@ import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
-import com.rposcro.jwavez.serial.frames.callbacks.Callback;
+import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.interceptors.CallbackInterceptor;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class InterceptableCallbackHandler implements Consumer<ViewBuffer> {
       log.warn("Frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
     }
     try {
-      Callback callback = parser.parseCallbackFrame(frameBuffer);
+      ZWaveCallback callback = parser.parseCallbackFrame(frameBuffer);
       interceptors.forEach(interceptor -> interceptor.intercept(callback));
     } catch(FrameParseException e) {
       log.warn("Frame parse failed: {}", BufferUtil.bufferToString(frameBuffer));
