@@ -1,6 +1,6 @@
-package com.rposcro.zwave.samples;
+package com.rposcro.jwavez.samples;
 
-import com.rposcro.jwavez.serial.controllers.SingleRequestController;
+import com.rposcro.jwavez.serial.controllers.SimpleResponseController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.requests.MemoryGetIdRequest;
 import com.rposcro.jwavez.serial.frames.responses.MemoryGetIdResponse;
@@ -9,7 +9,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 public class MemoryGetIdExample extends AbstractExample {
 
   private void runExample(String device) throws SerialException {
-    try (SingleRequestController controller = SingleRequestController.builder()
+    try (SimpleResponseController controller = SimpleResponseController.builder()
         .device(device)
         .build()
         .connect();) {

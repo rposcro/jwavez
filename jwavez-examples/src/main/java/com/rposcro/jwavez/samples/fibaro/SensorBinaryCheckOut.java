@@ -1,4 +1,4 @@
-package com.rposcro.zwave.samples.fibaro;
+package com.rposcro.jwavez.samples.fibaro;
 
 import com.rposcro.jwavez.core.commands.SupportedCommandParser;
 import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
@@ -11,6 +11,9 @@ import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
 import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
 import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.samples.AbstractExample;
+import com.rposcro.jwavez.serial.controllers.SimpleResponseController;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.probe.interceptors.ApplicationCommandDispatcher;
 import com.rposcro.jwavez.serial.probe.interceptors.ApplicationCommandHandlerLogger;
 import com.rposcro.jwavez.serial.probe.interceptors.ApplicationUpdateLogger;
@@ -88,6 +91,16 @@ public class SensorBinaryCheckOut extends AbstractExample {
     ConfigurationCommandBuilder commandBuilder = new ConfigurationCommandBuilder();
     for (int paramNumber = 1; paramNumber <= 14; paramNumber++) {
       send("Send get parameter " + paramNumber, new SendDataTransaction(nodeId, commandBuilder.buildGetParameterCommand(paramNumber)));
+    }
+  }
+
+  private void runCheckout(int nodeId, String device) throws SerialException {
+    try (SimpleResponseController controller = SimpleResponseController.builder()
+        .device(device)
+        .build()
+        .connect();) {
+      checkDongleIds(controller);
+      checkNodesIds(controller);
     }
   }
 

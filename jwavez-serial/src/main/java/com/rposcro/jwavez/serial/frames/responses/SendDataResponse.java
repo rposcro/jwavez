@@ -10,7 +10,7 @@ import lombok.Getter;
 
 @Getter
 @ResponseFrameModel(function = SerialCommand.SEND_DATA)
-public class SendDataResponse extends ZWaveResponse {
+public class SendDataResponse extends SolicitedCallbackResponse {
 
   @Getter
   private boolean requestAccepted;
@@ -18,5 +18,10 @@ public class SendDataResponse extends ZWaveResponse {
   public SendDataResponse(ViewBuffer frameBuffer) {
     super(frameBuffer);
     this.requestAccepted = FieldUtil.byteBoolean(frameBuffer.get(FRAME_OFFSET_PAYLOAD));
+  }
+
+  @Override
+  public boolean isSolicitedCallbackToFollow() {
+    return requestAccepted;
   }
 }

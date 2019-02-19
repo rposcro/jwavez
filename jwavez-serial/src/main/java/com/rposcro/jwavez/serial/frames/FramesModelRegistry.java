@@ -39,12 +39,12 @@ public class FramesModelRegistry {
     }
   }
 
-  public Optional<Class<? extends ZWaveResponse>> responseClass(byte functionId) {
-    return Optional.ofNullable(responseFramesMap.get(functionId));
+  public Optional<Class<? extends ZWaveResponse>> responseClass(byte commandCode) {
+    return Optional.ofNullable(responseFramesMap.get(commandCode));
   }
 
-  public Optional<Class<? extends ZWaveCallback>> callbackClass(byte functionId) {
-    return Optional.ofNullable(callbackFramesMap.get(functionId));
+  public Optional<Class<? extends ZWaveCallback>> callbackClass(byte commandCode) {
+    return Optional.ofNullable(callbackFramesMap.get(commandCode));
   }
 
   private void scanAndRegisterFrames(String... basePackages) {
@@ -66,11 +66,11 @@ public class FramesModelRegistry {
 
   private void registerResponseModel(Class<? extends ZWaveResponse> modelClass) {
     ResponseFrameModel modelAnnotation = modelClass.getAnnotation(ResponseFrameModel.class);
-    Byte functionId = modelAnnotation.function().getCode();
-    if (responseFramesMap.containsKey(functionId)) {
+    Byte commandCode = modelAnnotation.function().getCode();
+    if (responseFramesMap.containsKey(commandCode)) {
       throw new CodeIntegrityException("Found ambiguous response model for " + modelAnnotation.function());
     }
-    responseFramesMap.put(functionId, modelClass);
+    responseFramesMap.put(commandCode, modelClass);
   }
 
   private void registerCallbackModel(Class<? extends ZWaveCallback> modelClass) {

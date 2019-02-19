@@ -13,6 +13,7 @@ import com.rposcro.jwavez.serial.utils.BufferUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
+import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -23,9 +24,9 @@ public class InterceptableCallbackHandler implements Consumer<ViewBuffer> {
 
   private List<CallbackInterceptor> interceptors;
 
-  public InterceptableCallbackHandler(InboundFrameValidator validator, InboundFrameParser parser) {
-    this.validator = validator;
-    this.parser = parser;
+  public InterceptableCallbackHandler() {
+    this.validator = new InboundFrameValidator();
+    this.parser = new InboundFrameParser();
     this.interceptors = new ArrayList<>();
   }
 

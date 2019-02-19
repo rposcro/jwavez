@@ -33,6 +33,7 @@ public class RxTxRouter implements Runnable {
   private FrameInboundStream inboundStream;
   private FrameOutboundStream outboundStream;
 
+  private boolean stopRequested;
   private final Semaphore outboundLock;
 
   private CompletableFuture<?> futureResponse;
@@ -99,7 +100,7 @@ public class RxTxRouter implements Runnable {
     try {
       enqueueRequest(serialRequest);
       while (transmissionAwaiting()) {
-        runOnce();
+        runSingleCycle();
       }
     } finally {
       serialRequest.getFrameData().release();
@@ -109,10 +110,11 @@ public class RxTxRouter implements Runnable {
 
   @Override
   public void run() {
-    while (true) {
+    stopRequested = false;
+    while (stopRequested) {
       try {
-        while (true) {
-          runOnce();
+        while (stopRequested) {
+          runSingleCycle();
         }
       } catch (Exception e) {
         log.error("Unexpected exception occurred, trying to reconnect!", e);
@@ -121,7 +123,11 @@ public class RxTxRouter implements Runnable {
     }
   }
 
-  private void runOnce() throws SerialException {
+  public void stop() {
+    this.stopRequested = true;
+  }
+
+  public void runSingleCycle() throws SerialException {
     try {
       receiveStage();
       transmitStage();

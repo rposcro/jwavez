@@ -15,10 +15,16 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
+ * Referring to scenario flow models, this controller applies to simple request-response flow model.
+ * Any callbacks received while running are simply ignored.
+ *
  * <B>Note!</B> This controller is not thread safe, must not send multiple requests at a same time.
+ * This controller runs in context of current thread, all calls are synchronized and blocking.
+ * Dedicated typical usages are flow scenarios with well defined end conditions, in other words
+ * 'do the job and exit'.</br>
  */
 @Slf4j
-public class SingleRequestController implements AutoCloseable {
+public class SimpleResponseController implements AutoCloseable {
 
   private String device;
   private RxTxRouter rxTxRouter;
@@ -28,12 +34,8 @@ public class SingleRequestController implements AutoCloseable {
   private LastResponseHolder lastResponseHolder;
 
   @Builder
-  public SingleRequestController(@NonNull String device, RxTxConfiguration configuration) {
-    if (configuration == null) {
-      configuration = RxTxConfiguration.builder().build();
-    }
-
-    this.configuration = configuration;
+  public SimpleResponseController(@NonNull String device, RxTxConfiguration configuration) {
+    this.configuration = configuration != null ? configuration : RxTxConfiguration.builder().build();
     this.lastResponseHolder = new LastResponseHolder();
     this.device = device;
     this.serialPort = new NeuronRoboticsSerialPort();
@@ -44,7 +46,7 @@ public class SingleRequestController implements AutoCloseable {
         .build();
   }
 
-  public SingleRequestController connect() throws SerialPortException {
+  public SimpleResponseController connect() throws SerialPortException {
     this.serialPort.connect(device);
     return this;
   }

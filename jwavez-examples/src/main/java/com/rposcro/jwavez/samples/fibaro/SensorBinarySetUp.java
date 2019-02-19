@@ -1,4 +1,4 @@
-package com.rposcro.zwave.samples.fibaro;
+package com.rposcro.jwavez.samples.fibaro;
 
 import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.ConfigurationCommandBuilder;

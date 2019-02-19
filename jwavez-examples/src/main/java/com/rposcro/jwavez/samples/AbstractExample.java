@@ -1,4 +1,4 @@
-package com.rposcro.zwave.samples;
+package com.rposcro.jwavez.samples;
 
 public class AbstractExample {
 
