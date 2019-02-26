@@ -33,6 +33,8 @@ public class DongleCheckOut extends AbstractExample {
     response.getNodes().stream().forEach(node -> {
       System.out.printf("%02x ", node.getId());
     });
+    System.out.println();
+    System.out.println();
   }
 
   private void checkSUCId(SimpleResponseController controller) throws FlowException {

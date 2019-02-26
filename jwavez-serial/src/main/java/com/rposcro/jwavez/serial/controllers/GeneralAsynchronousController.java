@@ -91,15 +91,16 @@ public class GeneralAsynchronousController implements AutoCloseable {
     try {
       controllerLock.acquireUninterruptibly();
       callbackFlowHelper.solicitedCallbackResponseClass(request.getSerialCommand());
-      SolicitedCallbackResponse response = doRequest(request);
       expectedCallbackFlowId = request.getCallbackFunctionId();
       expectedCommandCode = request.getSerialCommand().getCode();
       expectedFutureCallback = new CompletableFuture<>();
+      SolicitedCallbackResponse response = doRequest(request);
       return (T) expectedFutureCallback.get(DEFAULT_CALLBACK_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
     } catch(SerialException | InterruptedException | ExecutionException | TimeoutException | CancellationException e) {
       log.error("Failed to execute request-response flow!", e);
       throw new FlowException(e);
     } finally {
+      expectedFutureCallback = null;
       controllerLock.release();
     }
   }
@@ -168,7 +169,7 @@ public class GeneralAsynchronousController implements AutoCloseable {
 
   private static Thread makeThread(Runnable runnable) {
     Thread thread = new Thread(runnable);
-    thread.setName(GeneralAsynchronousController.class + ".RxTxRouterThread");
+    thread.setName(GeneralAsynchronousController.class.getSimpleName() + ".RxTxRouterThread");
     thread.setDaemon(true);
     return thread;
   }

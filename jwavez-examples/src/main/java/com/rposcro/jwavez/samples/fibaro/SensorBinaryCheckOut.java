@@ -10,9 +10,9 @@ import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationGroupingsReport;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
-import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.samples.AbstractExample;
+import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
@@ -22,6 +22,7 @@ import com.rposcro.jwavez.serial.frames.responses.SendDataResponse;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandInterceptor;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
+import com.rposcro.jwavez.serial.utils.BufferUtil;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -33,58 +34,63 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
 
   private final NodeId addresseeId;
   private final GeneralAsynchronousController controller;
-  private byte callbackFunctionId;
+  private byte callbackFlowId;
   private CountDownLatch callbacksLatch;
 
-  public SensorBinaryCheckOut(int nodeId, String device) {
+  public SensorBinaryCheckOut(int nodeId, String device) throws SerialPortException {
+    this.callbackFlowId = (byte) 0x0e;
     this.addresseeId = new NodeId((byte) nodeId);
 
-    ApplicationCommandInterceptor commandInterceptor = ApplicationCommandInterceptor.builder()
-        .supportedCommandDispatcher(new SupportedCommandDispatcher()
-            .registerHandler(AssociationCommandType.ASSOCIATION_REPORT, this::handleAssociationReport)
-            .registerHandler(AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT, this::handleAssociationGroupingsReport)
-            .registerHandler(ConfigurationCommandType.CONFIGURATION_REPORT, this::handleConfigurationReport))
-        .build();
+    ApplicationCommandInterceptor commandInterceptor = new ApplicationCommandInterceptor()
+        .registerCommandHandler(AssociationCommandType.ASSOCIATION_REPORT, this::handleAssociationReport)
+        .registerCommandHandler(AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT, this::handleAssociationGroupingsReport)
+        .registerCommandHandler(ConfigurationCommandType.CONFIGURATION_REPORT, this::handleConfigurationReport);
 
     InterceptableCallbackHandler callbacksHandler = new InterceptableCallbackHandler()
-        .addInterceptor(commandInterceptor)
-        .addInterceptor(this::handleSendDataCallback);
+        .addCallbackInterceptor(commandInterceptor)
+        .addCallbackInterceptor(this::interceptSendDataCallback)
+        .addViewbufferInterceptor(this::interceptViewBuffer);
 
     this.controller = GeneralAsynchronousController.builder()
         .callbackHandler(callbacksHandler)
         .device(device)
-        .build();
+        .build()
+        .connect();
   }
 
   private void handleAssociationReport(ZWaveSupportedCommand command) {
     AssociationReport report = (AssociationReport) command;
-    StringBuffer logMessage = new StringBuffer("\n")
+    StringBuffer logMessage = new StringBuffer()
         .append(String.format("  association group: %s\n", report.getGroupId()))
         .append(String.format("  max nodes supported: %s\n", report.getMaxNodesCountSupported()))
         .append(String.format("  present nodes count: %s\n", report.getNodesCount()))
         .append(String.format("  present nodes: %s\n", Arrays.stream(report.getNodeIds())
           .map(nodeId -> String.format("%02X", nodeId.getId()))
             .collect(Collectors.joining(","))));
-    System.out.printf("%\n", logMessage.toString());
+    System.out.printf("%s\n", logMessage.toString());
     callbacksLatch.countDown();
   }
 
   private void handleAssociationGroupingsReport(ZWaveSupportedCommand command) {
     AssociationGroupingsReport report = (AssociationGroupingsReport) command;
-    System.out.printf("supported association groups count %s\n", report.getGroupsCount());
+    System.out.printf("  supported association groups count %s\n\n", report.getGroupsCount());
     callbacksLatch.countDown();
   }
 
   private void handleConfigurationReport(ZWaveSupportedCommand command) {
     ConfigurationReport report = (ConfigurationReport) command;
-    System.out.printf("parameter %s value %s\n", report.getParameterNumber(), report.getValue());
+    System.out.printf("  parameter %s value %s\n\n", report.getParameterNumber(), report.getValue());
     callbacksLatch.countDown();
   }
 
-  private void handleSendDataCallback(ZWaveCallback callback) {
+  private void interceptViewBuffer(ViewBuffer buffer) {
+    log.debug("Callback frame received: {}", BufferUtil.bufferToString(buffer));
+  }
+
+  private void interceptSendDataCallback(ZWaveCallback callback) {
     if (callback.getSerialCommand() == SerialCommand.SEND_DATA) {
       SendDataCallback sendDataCallback = (SendDataCallback) callback;
-      if (sendDataCallback.getFunctionCallId() == callbackFunctionId) {
+      if (sendDataCallback.getFunctionCallId() == callbackFlowId) {
         System.out.printf("Send Data Callback received with status: %s\n", sendDataCallback.getTransmitCompletionStatus());
         callbacksLatch.countDown();
       } else {
@@ -95,11 +101,11 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
     }
   }
 
-  private byte nextFuncId() {
-    if (++callbackFunctionId == 0) {
-      callbackFunctionId++;
+  private byte nextFlowId() {
+    if (++callbackFlowId == 0) {
+      callbackFlowId++;
     }
-    return callbackFunctionId;
+    return callbackFlowId;
   }
 
   private void send(String message, SerialRequest request) throws Exception {
@@ -108,25 +114,25 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
     SendDataResponse response = controller.requestResponseFlow(request);
     System.out.printf("%s. Response status: %s\n", message, response.isRequestAccepted());
     if (callbacksLatch.await(5, TimeUnit.SECONDS)) {
-      log.debug("Transaction successful");
+      log.debug("Send data flow successful");
     } else {
-      System.out.printf("Transaction timed out\n");
+      System.out.printf("Send data flow timed out\n");
     }
   }
 
   private void learnAssociations() throws Exception {
     AssociationCommandBuilder commandBuilder = new AssociationCommandBuilder();
-    send("Get supported groupings", createSendDataRequest(addresseeId, commandBuilder.buildGetSupportedGroupingsCommand(), nextFuncId()));
-    send("Get group 1", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(1), nextFuncId()));
-    send("Get group 2", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(2), nextFuncId()));
-    send("Get group 3", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(3), nextFuncId()));
+    send("Get supported groupings", createSendDataRequest(addresseeId, commandBuilder.buildGetSupportedGroupingsCommand(), nextFlowId()));
+    send("Get group 1", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(1), nextFlowId()));
+    send("Get group 2", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(2), nextFlowId()));
+    send("Get group 3", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(3), nextFlowId()));
   }
 
   private void learnConfiguration() throws Exception {
     log.debug("Checking configuration");
     ConfigurationCommandBuilder commandBuilder = new ConfigurationCommandBuilder();
     for (int paramNumber = 1; paramNumber <= 14; paramNumber++) {
-      send("Send get parameter " + paramNumber, createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(paramNumber), nextFuncId()));
+      send("Send get parameter " + paramNumber, createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(paramNumber), nextFlowId()));
     }
   }
 

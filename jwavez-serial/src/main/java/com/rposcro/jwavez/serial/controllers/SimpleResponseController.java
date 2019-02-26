@@ -40,8 +40,8 @@ public class SimpleResponseController implements AutoCloseable {
     this.device = device;
     this.serialPort = new NeuronRoboticsSerialPort();
     this.rxTxRouter = RxTxRouter.builder()
-        .configuration(configuration)
-        .serialPort(serialPort)
+        .configuration(this.configuration)
+        .serialPort(this.serialPort)
         .responseHandler(this.lastResponseHolder)
         .build();
   }

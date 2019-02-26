@@ -9,11 +9,11 @@ import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.interceptors.CallbackInterceptor;
+import com.rposcro.jwavez.serial.interceptors.ViewBufferInterceptor;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -22,12 +22,14 @@ public class InterceptableCallbackHandler implements Consumer<ViewBuffer> {
   private InboundFrameValidator validator;
   private InboundFrameParser parser;
 
-  private List<CallbackInterceptor> interceptors;
+  private List<CallbackInterceptor> callbackInterceptors;
+  private List<ViewBufferInterceptor> bufferInterceptors;
 
   public InterceptableCallbackHandler() {
     this.validator = new InboundFrameValidator();
     this.parser = new InboundFrameParser();
-    this.interceptors = new ArrayList<>();
+    this.callbackInterceptors = new ArrayList<>();
+    this.bufferInterceptors = new ArrayList<>();
   }
 
   @Override
@@ -36,15 +38,21 @@ public class InterceptableCallbackHandler implements Consumer<ViewBuffer> {
       log.warn("Frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
     }
     try {
+      bufferInterceptors.forEach(interceptor -> interceptor.intercept(frameBuffer));
       ZWaveCallback callback = parser.parseCallbackFrame(frameBuffer);
-      interceptors.forEach(interceptor -> interceptor.intercept(callback));
+      callbackInterceptors.forEach(interceptor -> interceptor.intercept(callback));
     } catch(FrameParseException e) {
       log.warn("Frame parse failed: {}", BufferUtil.bufferToString(frameBuffer));
     }
   }
 
-  public InterceptableCallbackHandler addInterceptor(CallbackInterceptor interceptor) {
-    interceptors.add(interceptor);
+  public InterceptableCallbackHandler addCallbackInterceptor(CallbackInterceptor interceptor) {
+    callbackInterceptors.add(interceptor);
+    return this;
+  }
+
+  public InterceptableCallbackHandler addViewbufferInterceptor(ViewBufferInterceptor interceptor) {
+    bufferInterceptors.add(interceptor);
     return this;
   }
 }
