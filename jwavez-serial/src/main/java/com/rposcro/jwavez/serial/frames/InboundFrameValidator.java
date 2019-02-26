@@ -11,6 +11,12 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InboundFrameValidator {
 
+  private static InboundFrameValidator defaultInstance;
+
+  public static InboundFrameValidator defaultValidator() {
+    return defaultInstance == null ? defaultInstance = new InboundFrameValidator() : defaultInstance;
+  }
+
   public boolean validate(ViewBuffer buffer) {
     return validateFrameLength(buffer)
         && validateFrameCategory(buffer)

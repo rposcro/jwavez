@@ -14,16 +14,13 @@ import com.rposcro.jwavez.serial.exceptions.SerialStreamException;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import java.nio.ByteBuffer;
-import java.util.concurrent.CancellationException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class RxTxRouter implements Runnable {
+public class RxTxRouter {
 
   private SerialPort serialPort;
   private RxTxConfiguration configuration;
@@ -33,13 +30,12 @@ public class RxTxRouter implements Runnable {
   private FrameInboundStream inboundStream;
   private FrameOutboundStream outboundStream;
 
-  private boolean stopRequested;
   private final Semaphore outboundLock;
 
-  private CompletableFuture<?> futureResponse;
   private SerialRequest serialRequest;
   private int retransmissionCounter;
   private long retransmissionTime;
+  private boolean transmissionSuccess;
 
   @Builder
   public RxTxRouter(
@@ -82,19 +78,6 @@ public class RxTxRouter implements Runnable {
     this.retransmissionTime = Long.MAX_VALUE;
   }
 
-  public void sendRequest(SerialRequest serialRequest) throws SerialStreamException {
-    outboundLock.acquireUninterruptibly();
-    try {
-      enqueueRequest(serialRequest);
-      futureResponse.get();
-    } catch(CancellationException | InterruptedException | ExecutionException e) {
-      throw new SerialStreamException(e);
-    } finally {
-      serialRequest.getFrameData().release();
-      deactivateTransmission();
-    }
-  }
-
   public void runUnlessRequestSent(SerialRequest serialRequest) throws SerialException {
     outboundLock.acquireUninterruptibly();
     try {
@@ -102,36 +85,20 @@ public class RxTxRouter implements Runnable {
       while (transmissionAwaiting()) {
         runSingleCycle();
       }
+      if (!transmissionSuccess) {
+        throw new RequestFlowException("Failed to send request!");
+      }
     } finally {
       serialRequest.getFrameData().release();
       deactivateTransmission();
     }
   }
 
-  @Override
-  public void run() {
-    stopRequested = false;
-    while (stopRequested) {
-      try {
-        while (stopRequested) {
-          runSingleCycle();
-        }
-      } catch (Exception e) {
-        log.error("Unexpected exception occurred, trying to reconnect!", e);
-        reconnectPort();
-      }
-    }
-  }
-
-  public void stop() {
-    this.stopRequested = true;
-  }
-
   public void runSingleCycle() throws SerialException {
     try {
       receiveStage();
       transmitStage();
-      Thread.sleep(configuration.getControllerPollDelay());
+      Thread.sleep(configuration.getRouterPollDelay());
     } catch (OddFrameException e) {
       outboundStream.writeNAK();
       inboundStream.purgeStream();
@@ -146,19 +113,7 @@ public class RxTxRouter implements Runnable {
     }
   }
 
-  private boolean transmissionAwaiting() {
-    return retransmissionTime <= System.currentTimeMillis();
-  }
-
-  private void enqueueRequest(SerialRequest serialRequest) {
-    this.futureResponse = new CompletableFuture<>();
-    this.serialRequest = serialRequest;
-    this.retransmissionCounter = 0;
-    this.retransmissionTime = currentTimeMillis();
-    log.debug("ZWave request scheduled {}", serialRequest.getSerialCommand());
-  }
-
-  private void reconnectPort() {
+  public void reconnectPort() {
     int retryCount = 0;
     while (retryCount++ < configuration.getPortReconnectMaxCount()) {
       try {
@@ -172,6 +127,18 @@ public class RxTxRouter implements Runnable {
       }
     }
     throw new FatalSerialException("Reconnection to serial port failed after %s retries!", retryCount);
+  }
+
+  private void enqueueRequest(SerialRequest serialRequest) {
+    this.serialRequest = serialRequest;
+    this.transmissionSuccess = false;
+    this.retransmissionCounter = 0;
+    this.retransmissionTime = currentTimeMillis();
+    log.debug("ZWave request scheduled {}", serialRequest.getSerialCommand());
+  }
+
+  private boolean transmissionAwaiting() {
+    return retransmissionTime <= System.currentTimeMillis();
   }
 
   private void receiveStage() throws SerialException {
@@ -199,8 +166,8 @@ public class RxTxRouter implements Runnable {
       }
 
       if (success) {
+        transmissionSuccess = true;
         deactivateTransmission();
-        futureResponse.complete(null);
         log.debug("Transmission successful");
       } else {
         pursueRetransmission();
@@ -213,7 +180,6 @@ public class RxTxRouter implements Runnable {
   private void pursueRetransmission() {
     if (serialRequest.isRetransmissionDisabled() || ++retransmissionCounter > configuration.getRequestRetriesMaxCount()) {
       deactivateTransmission();
-      futureResponse.completeExceptionally(new RequestFlowException("Failed to transmit frame"));
     } else {
       retransmissionTime = currentTimeMillis() + retransmissionDelay(retransmissionCounter);
     }

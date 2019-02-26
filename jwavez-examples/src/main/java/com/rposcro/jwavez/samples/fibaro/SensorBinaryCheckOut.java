@@ -1,6 +1,7 @@
 package com.rposcro.jwavez.samples.fibaro;
 
-import com.rposcro.jwavez.core.commands.SupportedCommandParser;
+import static com.rposcro.jwavez.serial.frames.requests.SendDataRequest.createSendDataRequest;
+
 import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.commands.enums.AssociationCommandType;
@@ -12,38 +13,47 @@ import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationRep
 import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.samples.AbstractExample;
-import com.rposcro.jwavez.serial.controllers.SimpleResponseController;
-import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.probe.interceptors.ApplicationCommandDispatcher;
-import com.rposcro.jwavez.serial.probe.interceptors.ApplicationCommandHandlerLogger;
-import com.rposcro.jwavez.serial.probe.interceptors.ApplicationUpdateLogger;
-import com.rposcro.jwavez.serial.probe.transactions.SendDataTransaction;
-import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
-import com.rposcro.zwave.samples.probe.AbstractExample;
+import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
+import com.rposcro.jwavez.serial.enums.SerialCommand;
+import com.rposcro.jwavez.serial.exceptions.SerialPortException;
+import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
+import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
+import com.rposcro.jwavez.serial.frames.responses.SendDataResponse;
+import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
+import com.rposcro.jwavez.serial.interceptors.ApplicationCommandInterceptor;
+import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import java.util.Arrays;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SensorBinaryCheckOut extends AbstractExample {
+public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseable {
 
-  private final NodeId nodeId;
-  private final SupportedCommandDispatcher commandDspatcher;
+  private final NodeId addresseeId;
+  private final GeneralAsynchronousController controller;
+  private byte callbackFunctionId;
+  private CountDownLatch callbacksLatch;
 
   public SensorBinaryCheckOut(int nodeId, String device) {
-    super(device, new ApplicationUpdateLogger(), new ApplicationCommandHandlerLogger());
-    this.commandDspatcher = new SupportedCommandDispatcher();
-    this.nodeId = new NodeId((byte) nodeId);
+    this.addresseeId = new NodeId((byte) nodeId);
 
-    ApplicationCommandDispatcher dispatcherInterceptor = ApplicationCommandDispatcher.builder()
-        .supportedCommandParser(SupportedCommandParser.defaultParser())
-        .supportedCommandDispatcher(commandDspatcher)
+    ApplicationCommandInterceptor commandInterceptor = ApplicationCommandInterceptor.builder()
+        .supportedCommandDispatcher(new SupportedCommandDispatcher()
+            .registerHandler(AssociationCommandType.ASSOCIATION_REPORT, this::handleAssociationReport)
+            .registerHandler(AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT, this::handleAssociationGroupingsReport)
+            .registerHandler(ConfigurationCommandType.CONFIGURATION_REPORT, this::handleConfigurationReport))
         .build();
 
-    this.commandDspatcher.registerHandler(AssociationCommandType.ASSOCIATION_REPORT, this::handleAssociationReport);
-    this.commandDspatcher.registerHandler(AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT, this::handleAssociationGroupingsReport);
-    this.commandDspatcher.registerHandler(ConfigurationCommandType.CONFIGURATION_REPORT, this::handleConfigurationReport);
-    this.manager.addInboundFrameInterceptor(dispatcherInterceptor);
+    InterceptableCallbackHandler callbacksHandler = new InterceptableCallbackHandler()
+        .addInterceptor(commandInterceptor)
+        .addInterceptor(this::handleSendDataCallback);
+
+    this.controller = GeneralAsynchronousController.builder()
+        .callbackHandler(callbacksHandler)
+        .device(device)
+        .build();
   }
 
   private void handleAssociationReport(ZWaveSupportedCommand command) {
@@ -55,62 +65,82 @@ public class SensorBinaryCheckOut extends AbstractExample {
         .append(String.format("  present nodes: %s\n", Arrays.stream(report.getNodeIds())
           .map(nodeId -> String.format("%02X", nodeId.getId()))
             .collect(Collectors.joining(","))));
-    log.info(logMessage.toString());
+    System.out.printf("%\n", logMessage.toString());
+    callbacksLatch.countDown();
   }
 
   private void handleAssociationGroupingsReport(ZWaveSupportedCommand command) {
     AssociationGroupingsReport report = (AssociationGroupingsReport) command;
-    log.info("\n  supported association groups count {}\n", report.getGroupsCount());
+    System.out.printf("supported association groups count %s\n", report.getGroupsCount());
+    callbacksLatch.countDown();
   }
 
   private void handleConfigurationReport(ZWaveSupportedCommand command) {
     ConfigurationReport report = (ConfigurationReport) command;
-    log.info("\n parameter {} value {}", report.getParameterNumber(), report.getValue());
+    System.out.printf("parameter %s value %s\n", report.getParameterNumber(), report.getValue());
+    callbacksLatch.countDown();
   }
 
-  private void printResult(String message, TransactionResult<Void> result) {
-    StringBuffer logMessage = new StringBuffer(String.format("%s. Status: %s", message, result.getStatus()));
-    log.debug(logMessage.toString());
+  private void handleSendDataCallback(ZWaveCallback callback) {
+    if (callback.getSerialCommand() == SerialCommand.SEND_DATA) {
+      SendDataCallback sendDataCallback = (SendDataCallback) callback;
+      if (sendDataCallback.getFunctionCallId() == callbackFunctionId) {
+        System.out.printf("Send Data Callback received with status: %s\n", sendDataCallback.getTransmitCompletionStatus());
+        callbacksLatch.countDown();
+      } else {
+        log.debug("Received Send Data Callback but of not correlated function id {}", sendDataCallback.getFunctionCallId());
+      }
+    } else {
+      log.debug("Skipped frame {}", callback.getSerialCommand());
+    }
   }
 
-  private void send(String message, SendDataTransaction transaction) throws Exception {
+  private byte nextFuncId() {
+    if (++callbackFunctionId == 0) {
+      callbackFunctionId++;
+    }
+    return callbackFunctionId;
+  }
+
+  private void send(String message, SerialRequest request) throws Exception {
     Thread.sleep(500);
-    printResult(message, channel.executeTransaction(transaction).get());
+    callbacksLatch = new CountDownLatch(2);
+    SendDataResponse response = controller.requestResponseFlow(request);
+    System.out.printf("%s. Response status: %s\n", message, response.isRequestAccepted());
+    if (callbacksLatch.await(5, TimeUnit.SECONDS)) {
+      log.debug("Transaction successful");
+    } else {
+      System.out.printf("Transaction timed out\n");
+    }
   }
 
   private void learnAssociations() throws Exception {
     AssociationCommandBuilder commandBuilder = new AssociationCommandBuilder();
-    send("Get supported groupings", new SendDataTransaction(nodeId, commandBuilder.buildGetSupportedGroupingsCommand()));
-    send("Get group 1", new SendDataTransaction(nodeId, commandBuilder.buildGetCommand(1)));
-    send("Get group 2", new SendDataTransaction(nodeId, commandBuilder.buildGetCommand(2)));
-    send("Get group 3", new SendDataTransaction(nodeId, commandBuilder.buildGetCommand(3)));
+    send("Get supported groupings", createSendDataRequest(addresseeId, commandBuilder.buildGetSupportedGroupingsCommand(), nextFuncId()));
+    send("Get group 1", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(1), nextFuncId()));
+    send("Get group 2", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(2), nextFuncId()));
+    send("Get group 3", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(3), nextFuncId()));
   }
 
   private void learnConfiguration() throws Exception {
     log.debug("Checking configuration");
     ConfigurationCommandBuilder commandBuilder = new ConfigurationCommandBuilder();
     for (int paramNumber = 1; paramNumber <= 14; paramNumber++) {
-      send("Send get parameter " + paramNumber, new SendDataTransaction(nodeId, commandBuilder.buildGetParameterCommand(paramNumber)));
+      send("Send get parameter " + paramNumber, createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(paramNumber), nextFuncId()));
     }
   }
 
-  private void runCheckout(int nodeId, String device) throws SerialException {
-    try (SimpleResponseController controller = SimpleResponseController.builder()
-        .device(device)
-        .build()
-        .connect();) {
-      checkDongleIds(controller);
-      checkNodesIds(controller);
-    }
+  @Override
+  public void close() throws SerialPortException {
+    controller.close();
   }
 
   public static void main(String[] args) throws Exception {
-    SensorBinaryCheckOut setup = new SensorBinaryCheckOut(3, "/dev/cu.usbmodem1411");
-    setup.learnAssociations();
-    setup.learnConfiguration();
-
-
-    Thread.sleep(60_000);
-    System.exit(0);
+    try (
+      SensorBinaryCheckOut checkout = new SensorBinaryCheckOut(3, System.getProperty("zwave.device", DEFAULT_DEVICE));
+    ) {
+      checkout.learnAssociations();
+      checkout.learnConfiguration();
+    }
   }
 }

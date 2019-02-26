@@ -11,7 +11,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class SendDataRequest extends ZWaveRequest {
 
-  public static SerialRequest createSerialRequest(NodeId addresseeId, ZWaveControlledCommand zWaveCommand, byte callbackFunctionId) {
+  public static SerialRequest createSendDataRequest(NodeId addresseeId, ZWaveControlledCommand zWaveCommand, byte callbackFunctionId) {
     DisposableFrameBuffer buffer = startUpFrameBuffer(FRAME_CONTROL_SIZE + 4 + zWaveCommand.getPayloadLength(), SEND_DATA)
         .put(addresseeId.getId())
         .put((byte) zWaveCommand.getPayloadLength());
@@ -27,6 +27,7 @@ public class SendDataRequest extends ZWaveRequest {
         .responseExpected(true)
         .serialCommand(SEND_DATA)
         .frameData(buffer)
+        .callbackFunctionId(callbackFunctionId)
         .build();
   }
 }

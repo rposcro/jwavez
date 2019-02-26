@@ -19,5 +19,5 @@ public class RxTxConfiguration {
   @Builder.Default private long portReconnectDelayBias = 500;
   @Builder.Default private long portReconnectDelayFactor = 500;
 
-  @Builder.Default private long controllerPollDelay = 50;
+  @Builder.Default private long routerPollDelay = 50;
 }

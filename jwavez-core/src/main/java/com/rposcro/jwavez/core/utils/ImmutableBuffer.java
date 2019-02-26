@@ -69,6 +69,10 @@ public final class ImmutableBuffer {
     return this;
   }
 
+  public static ImmutableBuffer overBuffer(byte[] buffer) {
+    return overBuffer(buffer, 0, buffer.length);
+  }
+
   public static ImmutableBuffer overBuffer(byte[] buffer, int payloadOffset, int payloadLength) {
     byte assertByte = buffer[payloadLength + payloadOffset - 1];
     assertByte = buffer[payloadOffset];

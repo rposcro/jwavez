@@ -19,6 +19,7 @@ public class SetSUCNodeIdRequest extends ZWaveRequest {
             .put(booleanByte(enableSucAndSis))
             .put(callbackFunctionId)
             .putCRC())
+        .callbackFunctionId(callbackFunctionId)
         .build();
   }
 

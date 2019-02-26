@@ -15,6 +15,7 @@ public class SetLearnModeRequest extends ZWaveRequest {
             .put(learnMode.getCode())
             .put(callbackFunctionId)
             .putCRC())
+        .callbackFunctionId(callbackFunctionId)
         .build();
   }
 }

@@ -1,11 +1,9 @@
 package com.rposcro.jwavez.serial.rxtx
 
-import com.rposcro.jwavez.serial.exceptions.FatalSerialException
+
 import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException
 import com.rposcro.jwavez.serial.exceptions.OddFrameException
 import com.rposcro.jwavez.serial.exceptions.RequestFlowException
-import com.rposcro.jwavez.serial.exceptions.SerialPortException
-import com.rposcro.jwavez.serial.rxtx.port.SerialPort
 import spock.lang.Unroll
 import spock.lang.Shared
 
@@ -69,10 +67,10 @@ class RxTxRouterSpec extends Specification {
 
     def "no traffic"() {
         given:
-        def controller = constructController([]);
+        def controller = constructRouter([]);
 
         when:
-        controller.runOnce();
+        controller.runSingleCycle();
 
         then:
         serialPort.outboundData.isEmpty();
@@ -84,15 +82,15 @@ class RxTxRouterSpec extends Specification {
     def "sends request without response where inbound is #inboundData"() {
         given:
         def expOutboundData = requestData;
-        def controller = constructController(inboundData);
+        def controller = constructRouter(inboundData);
         def frameRequest = SerialRequest.builder()
                 .frameData(frameBufferFromData(requestData))
                 .responseExpected(false)
                 .build();
 
         when:
-        controller.scheduleRequest(frameRequest);
-        controller.runOnce();
+        controller.enqueueRequest(frameRequest);
+        controller.runSingleCycle();
 
         then:
         serialPort.outboundData == expOutboundData;
@@ -111,15 +109,15 @@ class RxTxRouterSpec extends Specification {
     def "sends request and receives response when inbound is #inboundData"() {
         given:
         def outboundData = requestData + [ACK];
-        def controller = constructController(inboundData);
+        def controller = constructRouter(inboundData);
         def frameRequest = SerialRequest.builder()
             .frameData(frameBufferFromData(requestData))
             .responseExpected(true)
             .build();
 
         when:
-        controller.scheduleRequest(frameRequest);
-        controller.runOnce();
+        controller.enqueueRequest(frameRequest);
+        controller.runSingleCycle();
 
         then:
         serialPort.outboundData == outboundData;
@@ -138,15 +136,15 @@ class RxTxRouterSpec extends Specification {
     def "receives callback, next sends request and receives response, inbound is #inboundData"() {
         given:
         def outboundData = [ACK] + requestData + [ACK];
-        def controller = constructController(inboundData);
+        def controller = constructRouter(inboundData);
         def frameRequest = SerialRequest.builder()
                 .frameData(frameBufferFromData(requestData))
                 .responseExpected(true)
                 .build();
 
         when:
-        controller.scheduleRequest(frameRequest);
-        controller.runOnce();
+        controller.enqueueRequest(frameRequest);
+        controller.runSingleCycle();
 
         then:
         serialPort.outboundData == outboundData;
@@ -164,10 +162,10 @@ class RxTxRouterSpec extends Specification {
     @Unroll
     def "receives multiple callbacks in a row #inboundData"() {
         given:
-        def controller = constructController(inboundData);
+        def controller = constructRouter(inboundData);
 
         when:
-        controller.runOnce();
+        controller.runSingleCycle();
 
         then:
         serialPort.outboundData == expOutboundData;
@@ -184,10 +182,10 @@ class RxTxRouterSpec extends Specification {
     @Unroll
     def "while idle receives unsolicited odd frame of #inboundData"() {
         given:
-        def controller = constructController(inboundData);
+        def controller = constructRouter(inboundData);
 
         when:
-        controller.runOnce();
+        controller.runSingleCycle();
 
         then:
         serialPort.outboundData == [CAN];
@@ -210,7 +208,7 @@ class RxTxRouterSpec extends Specification {
     @Unroll
     def "retry request when NAK or CAN #inboundData"() {
         given:
-        def controller = constructController(inboundData);
+        def controller = constructRouter(inboundData);
         def frameRequest = SerialRequest.builder()
                 .responseExpected(expResponse)
                 .frameData(frameBufferFromData(requestData))
@@ -220,9 +218,9 @@ class RxTxRouterSpec extends Specification {
         def expOutboundData = repeatData(requestData, attempts) + (expResponse ? [ACK] : []);
 
         when:
-        controller.scheduleRequest(frameRequest);
+        controller.enqueueRequest(frameRequest);
         for (int i = 0; i < attempts; i++) {
-            controller.runOnce();
+            controller.runSingleCycle();
         }
 
         then:
@@ -253,7 +251,7 @@ class RxTxRouterSpec extends Specification {
     @Unroll
     def "retry request when race condition is detected #inboundData"() {
         given:
-        def controller = constructController(inboundData);
+        def controller = constructRouter(inboundData);
         def frameRequest = SerialRequest.builder()
                 .responseExpected(expResponse)
                 .frameData(frameBufferFromData(requestData))
@@ -263,9 +261,9 @@ class RxTxRouterSpec extends Specification {
         def expOutboundData = requestData + [CAN] + requestData + (expResponse ? [ACK] : []);
 
         when:
-        controller.scheduleRequest(frameRequest);
-        controller.runOnce();
-        controller.runOnce();
+        controller.enqueueRequest(frameRequest);
+        controller.runSingleCycle();
+        controller.runSingleCycle();
 
         then:
         serialPort.outboundData == expOutboundData;
@@ -283,9 +281,9 @@ class RxTxRouterSpec extends Specification {
     }
 
     @Unroll
-    def "request flow exception thrown when retry limit is reached"() {
+    def "no retransmission scheduled when retry limit is reached"() {
         given:
-        def controller = constructController(inboundData);
+        def controller = constructRouter(inboundData);
         def frameRequest = SerialRequest.builder()
                 .responseExpected(false)
                 .frameData(frameBufferFromData(requestData))
@@ -295,15 +293,12 @@ class RxTxRouterSpec extends Specification {
         rxTxConfiguration.requestRetriesMaxCount = 1;
 
         when:
-        controller.scheduleRequest(frameRequest);
-        controller.runOnce();
-        controller.runOnce();
-        controller.futureResponse.get();
+        controller.enqueueRequest(frameRequest);
+        controller.runSingleCycle();
+        controller.runSingleCycle();
 
         then:
-        controller.futureResponse.isCompletedExceptionally();
-        def e = thrown(ExecutionException);
-        e.cause.getClass() == RequestFlowException;
+        !controller.transmissionAwaiting();
 
         where:
         inboundData                              | _
@@ -314,7 +309,7 @@ class RxTxRouterSpec extends Specification {
     @Unroll
     def "odd frame exception thrown when inbound is malformed in receive stage"() {
         given:
-        def controller = constructController(inboundData);
+        def controller = constructRouter(inboundData);
 
         when:
         controller.receiveStage();
@@ -335,14 +330,14 @@ class RxTxRouterSpec extends Specification {
     @Unroll
     def "odd frame exception thrown when inbound is malformed in transmit stage"() {
         given:
-        def controller = constructController(inboundData);
+        def controller = constructRouter(inboundData);
         def frameRequest = SerialRequest.builder()
                 .responseExpected(true)
                 .frameData(frameBufferFromData(requestData))
                 .build();
 
         when:
-        controller.scheduleRequest(frameRequest);
+        controller.enqueueRequest(frameRequest);
         controller.transmitStage();
         controller.transmitStage();
 
@@ -362,7 +357,7 @@ class RxTxRouterSpec extends Specification {
     @Unroll
     def "time out exception thrown when in receive stage"() {
         given:
-        def controller = constructController(inboundData);
+        def controller = constructRouter(inboundData);
         rxTxConfiguration.requestRetryDelayBias = 0;
         rxTxConfiguration.requestRetryDelayFactor = 0;
         rxTxConfiguration.frameCompleteTimeout = 1;
@@ -386,14 +381,14 @@ class RxTxRouterSpec extends Specification {
     @Unroll
     def "time out exception thrown when in transmit stage"() {
         given:
-        def controller = constructController(inboundData);
+        def controller = constructRouter(inboundData);
         rxTxConfiguration.frameCompleteTimeout = 1;
 
         when:
-        controller.scheduleRequest(SerialRequest.builder()
+        controller.enqueueRequest(SerialRequest.builder()
                 .responseExpected(true).frameData(frameBufferFromData(requestData)).build());
         controller.transmitStage();
-        controller.scheduleRequest(SerialRequest.builder()
+        controller.enqueueRequest(SerialRequest.builder()
                 .responseExpected(true).frameData(frameBufferFromData(requestData)).build());
         controller.transmitStage();
 
@@ -412,31 +407,13 @@ class RxTxRouterSpec extends Specification {
         [[ACK], responseData, [ACK], partialData]   | responseData
     }
 
-    def "fatal exception thrown when reconnection tries fail"() {
-        given:
-        def serialPort = Mock(SerialPort);
-        def controller = constructController([]);
-        serialPort.readData(_) >> { buffer -> throw new SerialPortException("") };
-        controller.serialPort = serialPort;
-        controller.inboundStream.serialPort = serialPort;
-        rxTxConfiguration.portReconnectDelayBias = 1;
-        rxTxConfiguration.portReconnectDelayFactor = 0;
-
-        when:
-        controller.run();
-
-        then:
-        thrown FatalSerialException;
-    }
-
-
     def repeatData(List<Integer> data, int repeats) {
         def result = [];
         IntStream.range(0, repeats).forEach({ i -> result.addAll(data) });
         return result;
     }
 
-    def constructController(List<List<Integer>> inbounds) {
+    def constructRouter(List<List<Integer>> inbounds) {
         inbounds.forEach({series -> serialPort.addSeries(series)});
         serialPort.reset();
 

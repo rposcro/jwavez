@@ -17,10 +17,16 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InboundFrameParser {
 
+  private static InboundFrameParser defaultParser;
+
   private FramesModelRegistry frameRegistry;
 
   public InboundFrameParser() {
     this.frameRegistry = FramesModelRegistry.defaultRegistry();
+  }
+
+  public synchronized static InboundFrameParser defaultParser() {
+    return defaultParser == null ? defaultParser = new InboundFrameParser() : defaultParser;
   }
 
   public ZWaveCallback parseCallbackFrame(ViewBuffer buffer) throws FrameParseException {

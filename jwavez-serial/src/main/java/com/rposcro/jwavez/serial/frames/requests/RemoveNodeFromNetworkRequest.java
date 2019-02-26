@@ -19,6 +19,7 @@ public class RemoveNodeFromNetworkRequest extends ZWaveRequest {
         .responseExpected(false)
         .frameData(buffer)
         .serialCommand(REMOVE_NODE_FROM_NETWORK)
+        .callbackFunctionId(callbackFunctionId)
         .build();
   }
 

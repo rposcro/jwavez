@@ -17,6 +17,7 @@ public class AddNodeToNetworkRequest extends ZWaveRequest {
         .responseExpected(false)
         .frameData(buffer)
         .serialCommand(ADD_NODE_TO_NETWORK)
+        .callbackFunctionId(callbackFunctionId)
         .build();
   }
 

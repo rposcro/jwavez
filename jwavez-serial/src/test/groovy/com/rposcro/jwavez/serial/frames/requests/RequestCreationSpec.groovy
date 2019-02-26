@@ -28,7 +28,7 @@ class RequestCreationSpec extends Specification {
         null != RequestNodeInfoRequest.createSerialRequest(new NodeId(0x12));
         null != AddNodeToNetworkRequest.createSerialRequest(AddNodeToNeworkMode.ADD_NODE_ANY, (byte) 0x44, true, false);
         null != RemoveNodeFromNetworkRequest.createSerialRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_ANY, (byte) 0x33, true);
-        null != SendDataRequest.createSerialRequest(new NodeId(0x55), new ZWaveControlledCommand((byte) 0x11), (byte) 0x77);
+        null != SendDataRequest.createSendDataRequest(new NodeId(0x55), new ZWaveControlledCommand((byte) 0x11), (byte) 0x77);
         null != SendSUCIdRequest.createSerialRequest(new NodeId(0x12), (byte) 0x23);
         null != SetLearnModeRequest.createSerialRequest(LearnMode.LEARN_MODE_CLASSIC, (byte) 0x77);
         null != SetSUCNodeIdRequest.createSetLocalSUCNodeRequest(new NodeId(0x11), false);

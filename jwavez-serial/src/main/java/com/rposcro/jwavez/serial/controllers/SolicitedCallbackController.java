@@ -1,17 +1,15 @@
 package com.rposcro.jwavez.serial.controllers;
 
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
-import com.rposcro.jwavez.serial.enums.SerialCommand;
+import com.rposcro.jwavez.serial.controllers.helpers.RequestCallbackFlowHelper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
-import com.rposcro.jwavez.serial.frames.FramesModelRegistry;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.frames.responses.SolicitedCallbackResponse;
-import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.handlers.LastResponseHolder;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.RxTxRouter;
@@ -44,6 +42,7 @@ public class SolicitedCallbackController implements AutoCloseable {
   private RxTxConfiguration configuration;
   private InboundFrameParser parser;
   private InboundFrameValidator validator;
+  private RequestCallbackFlowHelper flowHelper;
 
   private LastResponseHolder lastResponseHolder;
   private ZWaveCallback lastMatchingCallback;
@@ -61,8 +60,9 @@ public class SolicitedCallbackController implements AutoCloseable {
         .responseHandler(this.lastResponseHolder)
         .callbackHandler(this::handleCallback)
         .build();
-    this.validator = new InboundFrameValidator();
-    this.parser = new InboundFrameParser();
+    this.validator = InboundFrameValidator.defaultValidator();
+    this.parser = InboundFrameParser.defaultParser();
+    this.flowHelper = RequestCallbackFlowHelper.defaultHelper();
   }
 
   public SolicitedCallbackController connect() throws SerialPortException {
@@ -82,8 +82,8 @@ public class SolicitedCallbackController implements AutoCloseable {
   public <T extends ZWaveCallback> T requestCallbackFlow(SerialRequest request, long timeout) throws  FlowException {
     try {
       lastMatchingCallback = null;
-      responseClass(request.getSerialCommand());
-      expectedCallbackClass = Optional.of(callbackClass(request.getSerialCommand()));
+      flowHelper.solicitedCallbackResponseClass(request.getSerialCommand());
+      expectedCallbackClass = Optional.of(flowHelper.solicitedCallbackClass(request.getSerialCommand()));
 
       SolicitedCallbackResponse response = runRequest(request);
       if (!response.isSolicitedCallbackToFollow()) {
@@ -109,21 +109,6 @@ public class SolicitedCallbackController implements AutoCloseable {
       expectedCallbackClass = Optional.empty();
       lastMatchingCallback = null;
     }
-  }
-
-  private <T extends SolicitedCallbackResponse> Class<T> responseClass(SerialCommand command) throws FlowException {
-    Class<? extends ZWaveResponse> responseClass = FramesModelRegistry.defaultRegistry().responseClass(command.getCode())
-        .orElseThrow(() -> new FlowException("No correlated response class found for serial command: %s", command));
-    if (!SolicitedCallbackResponse.class.isAssignableFrom(responseClass)) {
-      throw new FlowException("Correlated response class %s is not of type %s", responseClass, SolicitedCallbackResponse.class);
-    }
-    return (Class<T>) responseClass;
-  }
-
-  private <T extends ZWaveCallback> Class<T> callbackClass(SerialCommand command) throws FlowException {
-    Class<? extends ZWaveCallback> callbackClass = FramesModelRegistry.defaultRegistry().callbackClass(command.getCode())
-        .orElseThrow(() -> new FlowException("No correlated callback class found for serial command: %s", command));
-    return (Class<T>) callbackClass;
   }
 
   private <T extends SolicitedCallbackResponse> T runRequest(SerialRequest request) throws SerialException {

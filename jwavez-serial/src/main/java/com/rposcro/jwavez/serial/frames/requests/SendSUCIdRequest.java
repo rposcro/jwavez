@@ -17,6 +17,7 @@ public class SendSUCIdRequest extends ZWaveRequest {
             .put((byte) (TransmitOption.TRANSMIT_OPTION_ACK.getCode() | TransmitOption.TRANSMIT_OPTION_AUTO_ROUTE.getCode()))
             .put(callbackFunctionId)
             .putCRC())
+        .callbackFunctionId(callbackFunctionId)
         .build();
   }
 }
