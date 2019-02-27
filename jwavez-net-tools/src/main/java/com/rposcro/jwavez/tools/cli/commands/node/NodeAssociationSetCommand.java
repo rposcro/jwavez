@@ -11,7 +11,7 @@ import com.rposcro.jwavez.tools.cli.options.node.NodeAssociationOptions;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class NodeAssociationSetCommand extends AbstractNodeCommand {
+public class NodeAssociationSetCommand extends AbstractNodeCommand2 {
 
   private NodeAssociationOptions options;
 

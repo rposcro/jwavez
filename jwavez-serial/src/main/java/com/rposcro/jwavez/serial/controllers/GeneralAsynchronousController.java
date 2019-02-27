@@ -94,7 +94,12 @@ public class GeneralAsynchronousController implements AutoCloseable {
       expectedCallbackFlowId = request.getCallbackFlowId();
       expectedCommandCode = request.getSerialCommand().getCode();
       expectedFutureCallback = new CompletableFuture<>();
+
       SolicitedCallbackResponse response = doRequest(request);
+      if (request.isResponseExpected() && !response.isSolicitedCallbackToFollow()) {
+        throw new FlowException("Received response is not expecting callback to follow!");
+      }
+
       return (T) expectedFutureCallback.get(DEFAULT_CALLBACK_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
     } catch(SerialException | InterruptedException | ExecutionException | TimeoutException | CancellationException e) {
       log.error("Failed to execute request-response flow!", e);

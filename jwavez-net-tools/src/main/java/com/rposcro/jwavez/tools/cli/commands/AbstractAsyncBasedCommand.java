@@ -8,7 +8,7 @@ import com.rposcro.jwavez.serial.interceptors.ViewBufferInterceptor;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.options.AbstractDeviceBasedOptions;
 
-public abstract class AbstractAsyncBasedCommand implements Command {
+public abstract class AbstractAsyncBasedCommand extends AbstractCommand {
 
   private InterceptableCallbackHandler callbackHandler;
   protected GeneralAsynchronousController controller;

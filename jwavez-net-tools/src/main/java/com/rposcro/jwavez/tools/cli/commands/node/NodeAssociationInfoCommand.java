@@ -6,14 +6,19 @@ import static com.rposcro.jwavez.core.commands.enums.AssociationCommandType.ASSO
 import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationGroupingsReport;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
-import com.rposcro.jwavez.serial.probe.transactions.SendDataTransaction;
+import com.rposcro.jwavez.serial.exceptions.FlowException;
+import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
+import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class NodeAssociationInfoCommand extends AbstractNodeCommand {
+public class NodeAssociationInfoCommand extends SendDataBasedCommand {
 
   private DefaultNodeBasedOptions options;
   private AssociationCommandBuilder commandBuilder;
@@ -28,44 +33,69 @@ public class NodeAssociationInfoCommand extends AbstractNodeCommand {
   public void execute() throws CommandExecutionException {
     connect(options);
     System.out.println("Requesting node association information...");
-    AssociationReport[] reports = collectReports();
+    List<AssociationReport> reports = collectReports();
     printReport(reports);
   }
 
-  private void printReport(AssociationReport[] reports) {
+  private void printReport(List<AssociationReport> reports) {
     System.out.println();
-    Stream.of(reports)
+    reports.stream()
         .forEachOrdered(report -> {
           System.out.println(":: Report on group " + report.getGroupId());
           System.out.println("  max supported nodes count: " + report.getMaxNodesCountSupported());
           System.out.println("  nodes in group: " + Stream.of(report.getNodeIds())
-              .map(nodeId -> String.format("%02X", nodeId.getId()))
+              .map(nodeId -> String.format("%02x", nodeId.getId()))
               .collect(Collectors.joining(", ")));
           System.out.println();
         });
   }
 
-  private AssociationReport[] collectReports() throws CommandExecutionException {
-    int groupsCount = readGroupingsCount();
-    AssociationReport[] reports = new AssociationReport[groupsCount];
-    for (int group = 1; group <= groupsCount; group++) {
-      reports[group - 1] = readGroupAssociations(group);
+  private List<AssociationReport> collectReports() {
+    int groupsCount;
+    try {
+      groupsCount = readGroupingsCount();
+    } catch(FlowException e) {
+      System.out.printf("Failed to read groupings count: %s\n", e.getMessage());
+      return Collections.emptyList();
+    }
+
+    List<AssociationReport> reports = new ArrayList<>(groupsCount);
+    for (int groupIdx = 1; groupIdx <= groupsCount; groupIdx++) {
+      try {
+        reports.add(readGroupAssociations(groupIdx));
+      } catch(FlowException e) {
+        System.out.printf("Failed to read group %s: %s\n", groupIdx, e.getMessage());
+      }
     }
     return reports;
   }
 
-  private int readGroupingsCount() throws CommandExecutionException {
+  private int readGroupingsCount() throws FlowException {
     System.out.println("Checking association groups availabilities...");
-    SendDataTransaction transaction = new SendDataTransaction(options.getNodeId(), commandBuilder.buildGetSupportedGroupingsCommand(), false);
-    AssociationGroupingsReport report = (AssociationGroupingsReport) requestZWaveCommand(transaction, ASSOCIATION_GROUPINGS_REPORT, options.getTimeout(DEFAULT_CALLBACK_TIMEOUT));
+    AssociationGroupingsReport report = (AssociationGroupingsReport) requestZWCommand(
+        SendDataRequest.createSendDataRequest(
+            options.getNodeId(),
+            commandBuilder.buildGetSupportedGroupingsCommand(),
+            nextFlowId()),
+        ASSOCIATION_GROUPINGS_REPORT,
+        options.getTimeout());
     System.out.println("Available groups count: " + report.getGroupsCount());
     return report.getGroupsCount();
   }
 
-  private AssociationReport readGroupAssociations(int groupNumber) throws CommandExecutionException {
-    System.out.println(String.format("Checking association group %s...", groupNumber));
-    SendDataTransaction transaction = new SendDataTransaction(options.getNodeId(), commandBuilder.buildGetCommand(groupNumber), false);
-    AssociationReport report = (AssociationReport) requestZWaveCommand(transaction, ASSOCIATION_REPORT, options.getTimeout(DEFAULT_CALLBACK_TIMEOUT));
+  private AssociationReport readGroupAssociations(int groupNumber) throws FlowException {
+    System.out.printf("Checking association group %s...\n", groupNumber);
+    AssociationReport report = (AssociationReport) requestZWCommand(
+        SendDataRequest.createSendDataRequest(
+            options.getNodeId(),
+            commandBuilder.buildGetCommand(groupNumber),
+            nextFlowId()),
+        ASSOCIATION_REPORT,
+        options.getTimeout());
     return report;
+  }
+
+  public static void main(String... args) throws Exception {
+    ZWaveCLI.main("node", "association", "info", "-d", "/dev/tty.usbmodem1421", "-n", "3");
   }
 }

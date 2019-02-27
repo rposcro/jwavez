@@ -50,7 +50,7 @@ public class CommandController {
       command.configure(options);
       command.execute();
     } catch(Exception e) {
-
+      throw new RuntimeException(e);
     }
   }
 

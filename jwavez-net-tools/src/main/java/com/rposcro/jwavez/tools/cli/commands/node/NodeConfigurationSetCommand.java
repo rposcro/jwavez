@@ -10,7 +10,7 @@ import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeConfigurationSetOptions;
 
-public class NodeConfigurationSetCommand extends AbstractNodeCommand {
+public class NodeConfigurationSetCommand extends AbstractNodeCommand2 {
 
   private NodeConfigurationSetOptions options;
   private ConfigurationCommandBuilder commandBuilder;

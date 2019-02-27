@@ -19,7 +19,7 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public abstract class AbstractNodeCommand extends AbstractDeviceTimeoutCommand {
+public abstract class AbstractNodeCommand2 extends AbstractDeviceTimeoutCommand {
 
   protected static final long DEFAULT_TRANSACTION_TIMEOUT = 10_000;
   protected static final long DEFAULT_CALLBACK_TIMEOUT = 10_000;
@@ -28,7 +28,7 @@ public abstract class AbstractNodeCommand extends AbstractDeviceTimeoutCommand {
   private CompletableFuture currentFuture;
   private CommandType currentCommandType;
 
-  protected AbstractNodeCommand() {
+  protected AbstractNodeCommand2() {
     this.timeoutLock = new Semaphore(1);
   }
 

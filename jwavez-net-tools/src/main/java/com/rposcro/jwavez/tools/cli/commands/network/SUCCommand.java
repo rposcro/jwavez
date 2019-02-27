@@ -8,6 +8,7 @@ import com.rposcro.jwavez.serial.frames.requests.MemoryGetIdRequest;
 import com.rposcro.jwavez.serial.frames.requests.SetSUCNodeIdRequest;
 import com.rposcro.jwavez.serial.frames.responses.GetSUCNodeIdResponse;
 import com.rposcro.jwavez.serial.frames.responses.MemoryGetIdResponse;
+import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.commands.AbstractSyncBasedCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
@@ -78,5 +79,9 @@ public class SUCCommand extends AbstractSyncBasedCommand {
     } else {
       System.out.println("Failed to configure SUC Id");
     }
+  }
+
+  public static void main(String... args) throws Exception {
+    ZWaveCLI.main("suc", "-r", "-d", "/dev/tty.usbmodem1421");
   }
 }

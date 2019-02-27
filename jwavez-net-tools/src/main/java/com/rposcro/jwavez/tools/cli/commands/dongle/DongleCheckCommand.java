@@ -20,6 +20,7 @@ import com.rposcro.jwavez.serial.frames.responses.GetRFPowerLevelResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetSUCNodeIdResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetVersionResponse;
 import com.rposcro.jwavez.serial.frames.responses.MemoryGetIdResponse;
+import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.commands.AbstractSyncBasedCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
@@ -39,7 +40,7 @@ public class DongleCheckCommand extends AbstractSyncBasedCommand {
   @Override
   public void execute() throws CommandExecutionException {
     connect(options);
-    System.out.println("Checking dongle " + options.getDevice() + "...");
+    System.out.println("Checking dongle " + options.getDevice() + "...\n");
     runCheck(this::runNetworkIds, options.runNetworkIds(), "Network IDs");
     runCheck(this::runSUCId, options.runSucId(), "SUC Id");
     runCheck(this::runControllerCapabilities, options.runControllerCapabilities(), "Controller Capabilities");
@@ -75,7 +76,7 @@ public class DongleCheckCommand extends AbstractSyncBasedCommand {
 
   private void runNetworkIds() throws FlowException {
     MemoryGetIdResponse response = controller.requestResponseFlow(MemoryGetIdRequest.createMemoryGetIdRequest());
-    System.out.printf("  HomeId: %02x\n", response.getHomeId());
+    System.out.printf("  HomeId: %04x\n", response.getHomeId());
     System.out.printf("  Dongle NodeId: %02x\n", response.getNodeId().getId());
   }
 
@@ -137,5 +138,9 @@ public class DongleCheckCommand extends AbstractSyncBasedCommand {
 
   private void sectionFailure() {
     System.out.println("!! Error occurred");
+  }
+
+  public static void main(String... args) throws Exception {
+    ZWaveCLI.main("info", "-d", "/dev/tty.usbmodem1421");
   }
 }

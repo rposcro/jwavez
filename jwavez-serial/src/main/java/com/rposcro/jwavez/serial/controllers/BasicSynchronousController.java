@@ -56,7 +56,7 @@ public class BasicSynchronousController implements AutoCloseable {
     this.device = device;
     this.serialPort = new NeuronRoboticsSerialPort();
     this.rxTxRouter = RxTxRouter.builder()
-        .configuration(configuration)
+        .configuration(this.configuration)
         .serialPort(serialPort)
         .responseHandler(this.lastResponseHolder)
         .callbackHandler(this::handleCallback)
