@@ -8,7 +8,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class AddNodeToNetworkRequest extends ZWaveRequest {
 
-  public static SerialRequest createSerialRequest(AddNodeToNeworkMode mode, byte callbackFlowId, boolean networkWide, boolean normalPower) {
+  public static SerialRequest createAddNodeToNetworkRequest(AddNodeToNeworkMode mode, byte callbackFlowId, boolean networkWide, boolean normalPower) {
     FrameBuffer buffer = startUpFrameBuffer(FRAME_CONTROL_SIZE + 2, ADD_NODE_TO_NETWORK)
         .put((byte) (mode.getCode() | (networkWide ? 0x40 : 0x00) | (normalPower ? 0x80 : 0x00)))
         .put(callbackFlowId)
@@ -22,18 +22,18 @@ public class AddNodeToNetworkRequest extends ZWaveRequest {
   }
 
   public static SerialRequest createStartAddAnyNodeRequest(byte callbackFlowId) {
-    return createSerialRequest(AddNodeToNeworkMode.ADD_NODE_ANY, callbackFlowId, true, true);
+    return createAddNodeToNetworkRequest(AddNodeToNeworkMode.ADD_NODE_ANY, callbackFlowId, true, true);
   }
 
   public static SerialRequest createStopTransactionRequest(byte callbackFlowId) {
-    return createSerialRequest(AddNodeToNeworkMode.ADD_NODE_STOP, callbackFlowId, true, true);
+    return createAddNodeToNetworkRequest(AddNodeToNeworkMode.ADD_NODE_STOP, callbackFlowId, true, true);
   }
 
   public static SerialRequest createStopFailedTransactionRequest(byte callbackFlowId) {
-    return createSerialRequest(AddNodeToNeworkMode.ADD_NODE_STOP_FAILED, callbackFlowId, true, true);
+    return createAddNodeToNetworkRequest(AddNodeToNeworkMode.ADD_NODE_STOP_FAILED, callbackFlowId, true, true);
   }
 
   public static SerialRequest createFinalTransactionRequest() {
-    return createSerialRequest(AddNodeToNeworkMode.ADD_NODE_ANY, (byte) 0, true, true);
+    return createAddNodeToNetworkRequest(AddNodeToNeworkMode.ADD_NODE_ANY, (byte) 0, true, true);
   }
 }

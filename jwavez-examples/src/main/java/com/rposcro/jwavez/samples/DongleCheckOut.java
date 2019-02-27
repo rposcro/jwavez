@@ -18,7 +18,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 public class DongleCheckOut extends AbstractExample {
 
   private void checkDongleIds(SimpleResponseController controller) throws FlowException {
-    SerialRequest request = MemoryGetIdRequest.createSerialRequest();
+    SerialRequest request = MemoryGetIdRequest.createMemoryGetIdRequest();
     MemoryGetIdResponse response = controller.requestResponseFlow(request);
 
     System.out.printf("Home Id: %02x\n", response.getHomeId());
@@ -26,7 +26,7 @@ public class DongleCheckOut extends AbstractExample {
   }
 
   private void checkNodesIds(SimpleResponseController controller) throws FlowException {
-    SerialRequest request = GetInitDataRequest.createSerialRequest();
+    SerialRequest request = GetInitDataRequest.createGetInitDataRequest();
     GetInitDataResponse response = controller.requestResponseFlow(request);
 
     System.out.print("Included nodes: ");
@@ -38,7 +38,7 @@ public class DongleCheckOut extends AbstractExample {
   }
 
   private void checkSUCId(SimpleResponseController controller) throws FlowException {
-    SerialRequest request = GetSUCNodeIdRequest.createSerialRequest();
+    SerialRequest request = GetSUCNodeIdRequest.createGetSUCNodeIdRequest();
     GetSUCNodeIdResponse response = controller.requestResponseFlow(request);
 
     System.out.printf("SUC node Id: %02x\n", response.getSucNodeId().getId());
@@ -46,7 +46,7 @@ public class DongleCheckOut extends AbstractExample {
   }
 
   private void controllerCapabilities(SimpleResponseController controller) throws FlowException {
-    SerialRequest request = GetControllerCapabilitiesRequest.createSerialRequest();
+    SerialRequest request = GetControllerCapabilitiesRequest.createGetControllerCapabiltiesRequest();
     GetControllerCapabilitiesResponse response = controller.requestResponseFlow(request);
 
     System.out.printf("Is real primary: %s\n", response.isRealPrimary());
@@ -58,7 +58,7 @@ public class DongleCheckOut extends AbstractExample {
   }
 
   private void capabilties(SimpleResponseController controller) throws FlowException {
-    SerialRequest request = GetCapabilitiesRequest.createSerialRequest();
+    SerialRequest request = GetCapabilitiesRequest.createGetCapabilitiesRequest();
     GetCapabilitiesResponse response = controller.requestResponseFlow(request);
 
     System.out.printf("Manufacturer Id: %02x\n", response.getManufacturerId());

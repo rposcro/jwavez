@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class GetNetworkStatsRequest extends ZWaveRequest {
 
-  public static SerialRequest createSerialRequest() {
+  public static SerialRequest createGetNetworkStatsRequest() {
     return nonPayloadRequest(GET_NETWORK_STATS);
   }
 }

@@ -7,7 +7,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class SetLearnModeRequest extends ZWaveRequest {
 
-  public static SerialRequest createSerialRequest(LearnMode learnMode, byte callbackFlowId) {
+  public static SerialRequest createSetLearnModeRequest(LearnMode learnMode, byte callbackFlowId) {
     return SerialRequest.builder()
         .responseExpected(true)
         .serialCommand(SET_LEARN_MODE)

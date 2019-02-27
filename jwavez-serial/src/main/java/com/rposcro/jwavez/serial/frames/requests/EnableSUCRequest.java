@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class EnableSUCRequest extends ZWaveRequest {
 
-  public static SerialRequest createSerialRequest() {
+  public static SerialRequest createEnableSUCRequest() {
     return nonPayloadRequest(MEMORY_GET_ID);
   }
 }

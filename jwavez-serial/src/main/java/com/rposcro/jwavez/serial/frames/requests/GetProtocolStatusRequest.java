@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class GetProtocolStatusRequest extends ZWaveRequest {
 
-  public static SerialRequest createSerialRequest() {
+  public static SerialRequest createGetProtocolStatusRequest() {
     return nonPayloadRequest(GET_PROTOCOL_STATUS);
   }
 }

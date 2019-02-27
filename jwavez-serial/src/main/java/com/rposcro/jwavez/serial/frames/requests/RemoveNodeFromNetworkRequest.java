@@ -10,7 +10,7 @@ public class RemoveNodeFromNetworkRequest extends ZWaveRequest {
 
   private static final int REMOVE_NETWORK_WIDE_OPTION = 0x40;
 
-  public static SerialRequest createSerialRequest(RemoveNodeFromNeworkMode mode, byte callbackFlowId, boolean networkWide) {
+  public static SerialRequest createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode mode, byte callbackFlowId, boolean networkWide) {
     FrameBuffer buffer = startUpFrameBuffer(FRAME_CONTROL_SIZE + 2, REMOVE_NODE_FROM_NETWORK)
         .put((byte) (mode.getCode() | (networkWide ? REMOVE_NETWORK_WIDE_OPTION : 0x00)))
         .put(callbackFlowId)
@@ -24,10 +24,10 @@ public class RemoveNodeFromNetworkRequest extends ZWaveRequest {
   }
 
   public static SerialRequest createStartRemoveAnyNodeRequest(byte callbackFlowId) {
-    return createSerialRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_ANY, callbackFlowId, true);
+    return createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_ANY, callbackFlowId, true);
   }
 
   public static SerialRequest createFinalTransactionRequest() {
-    return createSerialRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_ANY, (byte) 0, true);
+    return createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_ANY, (byte) 0, true);
   }
 }

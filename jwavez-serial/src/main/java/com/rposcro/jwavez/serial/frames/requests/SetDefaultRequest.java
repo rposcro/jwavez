@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class SetDefaultRequest extends ZWaveRequest {
 
-  public static SerialRequest createSerialRequest(byte callbackFlowId) {
+  public static SerialRequest createSetDefaultRequest(byte callbackFlowId) {
     return SerialRequest.builder()
         .responseExpected(false)
         .serialCommand(SET_DEFAULT)

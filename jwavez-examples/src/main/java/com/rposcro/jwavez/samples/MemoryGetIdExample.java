@@ -14,7 +14,7 @@ public class MemoryGetIdExample extends AbstractExample {
         .build()
         .connect();) {
 
-      SerialRequest request = MemoryGetIdRequest.createSerialRequest();
+      SerialRequest request = MemoryGetIdRequest.createMemoryGetIdRequest();
       MemoryGetIdResponse response = controller.requestResponseFlow(request);
 
       System.out.printf("Home Id: %02x\n", response.getHomeId());

@@ -7,7 +7,7 @@ import com.rposcro.jwavez.serial.utils.FieldUtil;
 
 public class SerialAPISetupRequest extends ZWaveRequest {
 
-  public static SerialRequest createSerialRequest(boolean txStatusReportEnabled) {
+  public static SerialRequest createSerialAPISetupRequest(boolean txStatusReportEnabled) {
     return SerialRequest.builder()
         .responseExpected(true)
         .serialCommand(SERIAL_API_SETUP)
@@ -18,10 +18,10 @@ public class SerialAPISetupRequest extends ZWaveRequest {
   }
 
   public static SerialRequest createEnableStatusReportRequest() {
-    return createSerialRequest(true);
+    return createSerialAPISetupRequest(true);
   }
 
   public static SerialRequest createDisableStatusReportRequest() {
-    return createSerialRequest(false);
+    return createSerialAPISetupRequest(false);
   }
 }

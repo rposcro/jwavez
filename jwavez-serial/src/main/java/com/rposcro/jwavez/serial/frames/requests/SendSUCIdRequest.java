@@ -8,7 +8,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class SendSUCIdRequest extends ZWaveRequest {
 
-  public static SerialRequest createSerialRequest(NodeId addresseeId, byte callbackFlowId) {
+  public static SerialRequest createSendSUCIdRequest(NodeId addresseeId, byte callbackFlowId) {
     return SerialRequest.builder()
         .serialCommand(SEND_SUC_ID)
         .responseExpected(true)

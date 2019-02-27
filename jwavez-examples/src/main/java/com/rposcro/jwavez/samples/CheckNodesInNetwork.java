@@ -12,7 +12,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 public class CheckNodesInNetwork extends AbstractExample {
 
   private void checkDongleIds(SimpleResponseController controller) throws FlowException {
-    SerialRequest request = MemoryGetIdRequest.createSerialRequest();
+    SerialRequest request = MemoryGetIdRequest.createMemoryGetIdRequest();
     MemoryGetIdResponse response = controller.requestResponseFlow(request);
 
     System.out.printf("Home Id: %02x\n", response.getHomeId());
@@ -20,7 +20,7 @@ public class CheckNodesInNetwork extends AbstractExample {
   }
 
   private void checkNodesIds(SimpleResponseController controller) throws FlowException {
-    SerialRequest request = GetInitDataRequest.createSerialRequest();
+    SerialRequest request = GetInitDataRequest.createGetInitDataRequest();
     GetInitDataResponse response = controller.requestResponseFlow(request);
 
     System.out.print("Included nodes: ");
