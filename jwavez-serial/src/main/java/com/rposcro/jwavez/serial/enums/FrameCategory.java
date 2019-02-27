@@ -14,4 +14,8 @@ public enum FrameCategory implements EncodableConstant {
   FrameCategory(int categoryCode) {
     EncodableConstantsRegistry.registerConstant(this, (byte) categoryCode);
   }
+
+  public static FrameCategory ofCode(byte code) {
+    return EncodableConstantsRegistry.constantOfCode(FrameCategory.class, code);
+  }
 }

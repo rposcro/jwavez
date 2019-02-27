@@ -20,7 +20,7 @@ public class NodeAssociationOptions extends AbstractNodeBasedOptions {
           .hasArg()
           .argName("groupId")
           .type(Number.class)
-          .desc("group id where association is to be added").build())
+          .desc("group id where association is to be updated").build())
       .addOption(Option.builder(OPT_ASSO_NODE)
           .longOpt("association-node")
           .required()

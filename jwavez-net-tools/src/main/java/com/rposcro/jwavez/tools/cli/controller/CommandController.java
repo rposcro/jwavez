@@ -49,6 +49,8 @@ public class CommandController {
     try ( Command command = reference.createCommand() ) {
       command.configure(options);
       command.execute();
+    } catch(Exception e) {
+
     }
   }
 

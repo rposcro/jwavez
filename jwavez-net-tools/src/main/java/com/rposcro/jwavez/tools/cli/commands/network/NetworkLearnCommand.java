@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.tools.cli.commands;
+package com.rposcro.jwavez.tools.cli.commands.network;
 
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.probe.frame.requests.GetControllerCapabilitiesRequestFrame;
@@ -12,6 +12,7 @@ import com.rposcro.jwavez.serial.probe.frame.responses.MemoryGetIdResponseFrame;
 import com.rposcro.jwavez.serial.probe.transactions.SetLearnModeTransaction;
 import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
 import com.rposcro.jwavez.serial.probe.transactions.TransactionStatus;
+import com.rposcro.jwavez.tools.cli.commands.AbstractDeviceTimeoutCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.NetworkLearnOptions;
 import java.util.stream.Collectors;

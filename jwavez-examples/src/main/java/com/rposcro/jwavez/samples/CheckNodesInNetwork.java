@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.samples;
 
-import com.rposcro.jwavez.serial.controllers.SimpleResponseController;
+import com.rposcro.jwavez.serial.controllers.BasicSynchronousController;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.requests.GetInitDataRequest;
@@ -11,7 +11,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class CheckNodesInNetwork extends AbstractExample {
 
-  private void checkDongleIds(SimpleResponseController controller) throws FlowException {
+  private void checkDongleIds(BasicSynchronousController controller) throws FlowException {
     SerialRequest request = MemoryGetIdRequest.createMemoryGetIdRequest();
     MemoryGetIdResponse response = controller.requestResponseFlow(request);
 
@@ -19,7 +19,7 @@ public class CheckNodesInNetwork extends AbstractExample {
     System.out.printf("Node Id: %02x\n", response.getNodeId().getId());
   }
 
-  private void checkNodesIds(SimpleResponseController controller) throws FlowException {
+  private void checkNodesIds(BasicSynchronousController controller) throws FlowException {
     SerialRequest request = GetInitDataRequest.createGetInitDataRequest();
     GetInitDataResponse response = controller.requestResponseFlow(request);
 
@@ -30,7 +30,7 @@ public class CheckNodesInNetwork extends AbstractExample {
   }
 
   private void runExample(String device) throws SerialException {
-    try (SimpleResponseController controller = SimpleResponseController.builder()
+    try (BasicSynchronousController controller = BasicSynchronousController.builder()
         .device(device)
         .build()
         .connect();) {

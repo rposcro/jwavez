@@ -10,6 +10,7 @@ import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.frames.responses.SolicitedCallbackResponse;
+import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.handlers.LastResponseHolder;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.RxTxRouter;
@@ -22,8 +23,8 @@ import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * Referring to scenario flow models, the controller applies to simple request-response-callback flow model.
- * Any not solicited callbacks are simply ignored. This controller does not apply to complex flow scenarios
+ * Referring to scenario flow models, this controller applies to simple request-response or request-response-callback
+ * flows. Any not solicited callbacks are simply ignored. This controller does not apply to complex flow scenarios
  * like nodes inclusion or exclusion.
  *
  * <B>Note!</B> This controller is not thread safe, must not send multiple requests at a same time.
@@ -32,7 +33,7 @@ import lombok.extern.slf4j.Slf4j;
  * 'do the job and exit'.</br>
  */
 @Slf4j
-public class SolicitedCallbackController implements AutoCloseable {
+public class BasicSynchronousController implements AutoCloseable {
 
   private static final long DEFAULT_CALLBACK_TIMEOUT_MILLIS = 5000;
 
@@ -49,7 +50,7 @@ public class SolicitedCallbackController implements AutoCloseable {
   private Optional<Class<? extends ZWaveCallback>> expectedCallbackClass;
 
   @Builder
-  public SolicitedCallbackController(@NonNull String device, RxTxConfiguration configuration) {
+  public BasicSynchronousController(@NonNull String device, RxTxConfiguration configuration) {
     this.configuration = configuration != null ? configuration : RxTxConfiguration.builder().build();
     this.lastResponseHolder = new LastResponseHolder();
     this.device = device;
@@ -65,7 +66,7 @@ public class SolicitedCallbackController implements AutoCloseable {
     this.flowHelper = RequestCallbackFlowHelper.defaultHelper();
   }
 
-  public SolicitedCallbackController connect() throws SerialPortException {
+  public BasicSynchronousController connect() throws SerialPortException {
     this.serialPort.connect(device);
     return this;
   }
@@ -75,18 +76,27 @@ public class SolicitedCallbackController implements AutoCloseable {
     this.serialPort.disconnect();
   }
 
+  public <T extends ZWaveResponse> T requestResponseFlow(SerialRequest request) throws FlowException {
+    try {
+      return runRequest(request);
+    } catch(SerialException e) {
+      log.error("Failed to execute request-response flow!", e);
+      throw new FlowException(e);
+    }
+  }
+
   public <T extends ZWaveCallback> T requestCallbackFlow(SerialRequest request) throws  FlowException {
     return requestCallbackFlow(request, DEFAULT_CALLBACK_TIMEOUT_MILLIS);
   }
 
-  public <T extends ZWaveCallback> T requestCallbackFlow(SerialRequest request, long timeout) throws  FlowException {
+  public <T extends ZWaveCallback> T requestCallbackFlow(SerialRequest request, long timeout) throws FlowException {
     try {
       lastMatchingCallback = null;
       flowHelper.solicitedCallbackResponseClass(request.getSerialCommand());
       expectedCallbackClass = Optional.of(flowHelper.solicitedCallbackClass(request.getSerialCommand()));
 
       SolicitedCallbackResponse response = runRequest(request);
-      if (!response.isSolicitedCallbackToFollow()) {
+      if (request.isResponseExpected() && !response.isSolicitedCallbackToFollow()) {
         throw new FlowException("Received response is not expecting callback to follow!");
       }
 
@@ -111,7 +121,7 @@ public class SolicitedCallbackController implements AutoCloseable {
     }
   }
 
-  private <T extends SolicitedCallbackResponse> T runRequest(SerialRequest request) throws SerialException {
+  private <T extends ZWaveResponse> T runRequest(SerialRequest request) throws SerialException {
     rxTxRouter.runUnlessRequestSent(request);
     if (request.isResponseExpected()) {
       return (T) lastResponseHolder.get();
