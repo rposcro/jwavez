@@ -13,5 +13,5 @@ public class SerialRequest {
   private SerialCommand serialCommand;
   private boolean retransmissionDisabled;
   private boolean responseExpected;
-  private byte callbackFunctionId;
+  private byte callbackFlowId;
 }

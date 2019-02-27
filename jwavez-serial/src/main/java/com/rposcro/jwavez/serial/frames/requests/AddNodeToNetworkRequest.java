@@ -8,29 +8,29 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class AddNodeToNetworkRequest extends ZWaveRequest {
 
-  public static SerialRequest createSerialRequest(AddNodeToNeworkMode mode, byte callbackFunctionId, boolean networkWide, boolean normalPower) {
+  public static SerialRequest createSerialRequest(AddNodeToNeworkMode mode, byte callbackFlowId, boolean networkWide, boolean normalPower) {
     FrameBuffer buffer = startUpFrameBuffer(FRAME_CONTROL_SIZE + 2, ADD_NODE_TO_NETWORK)
         .put((byte) (mode.getCode() | (networkWide ? 0x40 : 0x00) | (normalPower ? 0x80 : 0x00)))
-        .put(callbackFunctionId)
+        .put(callbackFlowId)
         .putCRC();
     return SerialRequest.builder()
         .responseExpected(false)
         .frameData(buffer)
         .serialCommand(ADD_NODE_TO_NETWORK)
-        .callbackFunctionId(callbackFunctionId)
+        .callbackFlowId(callbackFlowId)
         .build();
   }
 
-  public static SerialRequest createStartAddAnyNodeRequest(byte callbackFunctionId) {
-    return createSerialRequest(AddNodeToNeworkMode.ADD_NODE_ANY, callbackFunctionId, true, true);
+  public static SerialRequest createStartAddAnyNodeRequest(byte callbackFlowId) {
+    return createSerialRequest(AddNodeToNeworkMode.ADD_NODE_ANY, callbackFlowId, true, true);
   }
 
-  public static SerialRequest createStopTransactionRequest(byte callbackFunctionId) {
-    return createSerialRequest(AddNodeToNeworkMode.ADD_NODE_STOP, callbackFunctionId, true, true);
+  public static SerialRequest createStopTransactionRequest(byte callbackFlowId) {
+    return createSerialRequest(AddNodeToNeworkMode.ADD_NODE_STOP, callbackFlowId, true, true);
   }
 
-  public static SerialRequest createStopFailedTransactionRequest(byte callbackFunctionId) {
-    return createSerialRequest(AddNodeToNeworkMode.ADD_NODE_STOP_FAILED, callbackFunctionId, true, true);
+  public static SerialRequest createStopFailedTransactionRequest(byte callbackFlowId) {
+    return createSerialRequest(AddNodeToNeworkMode.ADD_NODE_STOP_FAILED, callbackFlowId, true, true);
   }
 
   public static SerialRequest createFinalTransactionRequest() {

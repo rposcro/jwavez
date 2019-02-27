@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @CallbackFrameModel(function = SerialCommand.SEND_DATA)
-public class SendDataCallback extends FunctionCallback {
+public class SendDataCallback extends FlowCallback {
 
   private TransmitCompletionStatus transmitCompletionStatus;
   private boolean statusReportPresent;

@@ -27,22 +27,22 @@ public class NetworkManagementRequests extends AbstractFrameRequests {
     return commandRequest(buffer, true);
   }
 
-  public SerialRequest setSUCNodeIdRequest(NodeId localControllerId, boolean enableSucAndSis, byte callbackFunctionId) {
+  public SerialRequest setSUCNodeIdRequest(NodeId localControllerId, boolean enableSucAndSis, byte callbackFlowId) {
     FrameBuffer buffer = frameBuffer(SerialCommand.SET_SUC_NODE_ID, FRAME_CONTROL_SIZE + 5);
     buffer.put(localControllerId.getId())
         .put(booleanByte(enableSucAndSis))
         .put(booleanByte(false))
         .put(booleanByte(enableSucAndSis))
-        .put(callbackFunctionId)
+        .put(callbackFlowId)
         .put(frameCRC(buffer.asByteBuffer()));
     return commandRequest(buffer, true);
   }
 
-  public SerialRequest sendSUCIdRequest(NodeId addresseeId, byte callbackFunctionId) {
+  public SerialRequest sendSUCIdRequest(NodeId addresseeId, byte callbackFlowId) {
     FrameBuffer buffer = frameBuffer(SerialCommand.SET_SUC_NODE_ID, FRAME_CONTROL_SIZE + 3);
     buffer.put(addresseeId.getId())
         .put(defaultTransmitOptions())
-        .put(callbackFunctionId)
+        .put(callbackFlowId)
         .put(frameCRC(buffer.asByteBuffer()));
     return commandRequest(buffer, true);
   }

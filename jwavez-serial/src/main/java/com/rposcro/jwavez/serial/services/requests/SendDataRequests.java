@@ -18,7 +18,7 @@ public class SendDataRequests extends AbstractFrameRequests {
     super(bufferDispatcher);
   }
 
-  public SerialRequest SendDataRequestFrame(NodeId addresseeId, byte callbackFunctionId, ZWaveControlledCommand zWaveCommand) {
+  public SerialRequest SendDataRequestFrame(NodeId addresseeId, byte callbackFlowId, ZWaveControlledCommand zWaveCommand) {
     FrameBuffer buffer = frameBuffer(SerialCommand.ADD_NODE_TO_NETWORK, FRAME_CONTROL_SIZE + 4 + zWaveCommand.getPayloadLength())
         .put(addresseeId.getId())
         .put((byte) zWaveCommand.getPayloadLength());
@@ -29,7 +29,7 @@ public class SendDataRequests extends AbstractFrameRequests {
     }
 
     buffer.put(defaultTransmitOptions())
-        .put(callbackFunctionId)
+        .put(callbackFlowId)
         .put(FrameUtil.frameCRC(buffer.asByteBuffer()));
 
     return SerialRequest.builder()

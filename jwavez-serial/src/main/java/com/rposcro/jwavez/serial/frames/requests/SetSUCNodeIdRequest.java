@@ -8,7 +8,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class SetSUCNodeIdRequest extends ZWaveRequest {
 
-  public static SerialRequest createSetRemoteSUCNodeRequest(NodeId remoteNodeId, boolean enableSucAndSis, byte callbackFunctionId) {
+  public static SerialRequest createSetRemoteSUCNodeRequest(NodeId remoteNodeId, boolean enableSucAndSis, byte callbackFlowId) {
     return SerialRequest.builder()
         .responseExpected(true)
         .serialCommand(SET_SUC_NODE_ID)
@@ -17,9 +17,9 @@ public class SetSUCNodeIdRequest extends ZWaveRequest {
             .put(booleanByte(enableSucAndSis))
             .put(booleanByte(true))
             .put(booleanByte(enableSucAndSis))
-            .put(callbackFunctionId)
+            .put(callbackFlowId)
             .putCRC())
-        .callbackFunctionId(callbackFunctionId)
+        .callbackFlowId(callbackFlowId)
         .build();
   }
 

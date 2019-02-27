@@ -13,7 +13,7 @@ import lombok.Getter;
 
 @Getter
 @CallbackFrameModel(function = SerialCommand.REMOVE_NODE_FROM_NETWORK)
-public class RemoveNodeFromNetworkCallback extends FunctionCallback {
+public class RemoveNodeFromNetworkCallback extends FlowCallback {
 
   private static final int OFFSET_SOURCE = FRAME_OFFSET_PAYLOAD + 2;
   private static final int OFFSET_NIF_LENGTH = FRAME_OFFSET_PAYLOAD + 3;

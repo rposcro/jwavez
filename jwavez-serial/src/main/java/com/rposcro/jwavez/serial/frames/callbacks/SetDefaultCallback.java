@@ -7,7 +7,7 @@ import lombok.Getter;
 
 @Getter
 @CallbackFrameModel(function = SerialCommand.SET_DEFAULT)
-public class SetDefaultCallback extends FunctionCallback {
+public class SetDefaultCallback extends FlowCallback {
 
   public SetDefaultCallback(ViewBuffer frameBuffer) {
     super(frameBuffer);

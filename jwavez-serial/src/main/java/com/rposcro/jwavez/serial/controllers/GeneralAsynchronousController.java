@@ -8,7 +8,7 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
-import com.rposcro.jwavez.serial.frames.callbacks.FunctionCallback;
+import com.rposcro.jwavez.serial.frames.callbacks.FlowCallback;
 import com.rposcro.jwavez.serial.frames.responses.SolicitedCallbackResponse;
 import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.handlers.LastResponseHolder;
@@ -58,7 +58,7 @@ public class GeneralAsynchronousController implements AutoCloseable {
 
   private byte expectedCallbackFlowId;
   private byte expectedCommandCode;
-  private CompletableFuture<FunctionCallback> expectedFutureCallback;
+  private CompletableFuture<FlowCallback> expectedFutureCallback;
 
   public GeneralAsynchronousController connect() throws SerialPortException {
     serialPort.connect(device);
@@ -87,11 +87,11 @@ public class GeneralAsynchronousController implements AutoCloseable {
     }
   }
 
-  public <T extends FunctionCallback> T requestCallbackFlow(SerialRequest request) throws FlowException {
+  public <T extends FlowCallback> T requestCallbackFlow(SerialRequest request) throws FlowException {
     try {
       controllerLock.acquireUninterruptibly();
       callbackFlowHelper.solicitedCallbackResponseClass(request.getSerialCommand());
-      expectedCallbackFlowId = request.getCallbackFunctionId();
+      expectedCallbackFlowId = request.getCallbackFlowId();
       expectedCommandCode = request.getSerialCommand().getCode();
       expectedFutureCallback = new CompletableFuture<>();
       SolicitedCallbackResponse response = doRequest(request);
@@ -109,11 +109,11 @@ public class GeneralAsynchronousController implements AutoCloseable {
     if (expectedFutureCallback != null && !expectedFutureCallback.isDone() && buffer.get(SerialFrameConstants.FRAME_OFFSET_COMMAND) == expectedCommandCode) {
       if (validator.validate(buffer)) {
         try {
-          FunctionCallback callback = (FunctionCallback) parser.parseCallbackFrame(buffer);
-          if (callback.getFunctionCallId() == expectedCallbackFlowId) {
+          FlowCallback callback = (FlowCallback) parser.parseCallbackFrame(buffer);
+          if (callback.getCallbackFlowId() == expectedCallbackFlowId) {
             expectedFutureCallback.complete(callback);
           } else {
-            log.info("Received matching callback class but flow id differs from expected: {}", callback.getFunctionCallId());
+            log.info("Received matching callback class but flow id differs from expected: {}", callback.getCallbackFlowId());
           }
         } catch (FrameParseException e) {
           log.error("Callback frame parsing failed {}", BufferUtil.bufferToString(buffer));

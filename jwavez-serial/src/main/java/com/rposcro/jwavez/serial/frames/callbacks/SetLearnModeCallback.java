@@ -9,7 +9,7 @@ import lombok.Getter;
 
 @Getter
 @CallbackFrameModel(function = SerialCommand.SET_LEARN_MODE)
-public class SetLearnModeCallback extends FunctionCallback {
+public class SetLearnModeCallback extends FlowCallback {
 
   private LearnStatus learnStatus;
   private NodeId nodeId;

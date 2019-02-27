@@ -6,14 +6,14 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class SetDefaultRequest extends ZWaveRequest {
 
-  public static SerialRequest createSerialRequest(byte callbackFunctionId) {
+  public static SerialRequest createSerialRequest(byte callbackFlowId) {
     return SerialRequest.builder()
         .responseExpected(false)
         .serialCommand(SET_DEFAULT)
         .frameData(startUpFrameBuffer(FRAME_CONTROL_SIZE + 1, SET_DEFAULT)
-            .put(callbackFunctionId)
+            .put(callbackFlowId)
             .putCRC())
-        .callbackFunctionId(callbackFunctionId)
+        .callbackFlowId(callbackFlowId)
         .build();
   }
 }

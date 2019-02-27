@@ -8,16 +8,16 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class SendSUCIdRequest extends ZWaveRequest {
 
-  public static SerialRequest createSerialRequest(NodeId addresseeId, byte callbackFunctionId) {
+  public static SerialRequest createSerialRequest(NodeId addresseeId, byte callbackFlowId) {
     return SerialRequest.builder()
         .serialCommand(SEND_SUC_ID)
         .responseExpected(true)
         .frameData(startUpFrameBuffer(FRAME_CONTROL_SIZE + 3, SEND_SUC_ID)
             .put(addresseeId.getId())
             .put((byte) (TransmitOption.TRANSMIT_OPTION_ACK.getCode() | TransmitOption.TRANSMIT_OPTION_AUTO_ROUTE.getCode()))
-            .put(callbackFunctionId)
+            .put(callbackFlowId)
             .putCRC())
-        .callbackFunctionId(callbackFunctionId)
+        .callbackFlowId(callbackFlowId)
         .build();
   }
 }

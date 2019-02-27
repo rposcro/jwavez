@@ -6,13 +6,13 @@ import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import lombok.Getter;
 
 @Getter
-public abstract class FunctionCallback extends ZWaveCallback {
+public abstract class FlowCallback extends ZWaveCallback {
 
-  private byte functionCallId;
+  private byte callbackFlowId;
 
-  public FunctionCallback(ViewBuffer frameBuffer) {
+  public FlowCallback(ViewBuffer frameBuffer) {
     super(frameBuffer);
     frameBuffer.position(FRAME_OFFSET_PAYLOAD);
-    functionCallId = frameBuffer.get();
+    callbackFlowId = frameBuffer.get();
   }
 }

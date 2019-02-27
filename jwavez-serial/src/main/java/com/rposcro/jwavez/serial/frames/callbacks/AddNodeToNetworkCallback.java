@@ -13,7 +13,7 @@ import lombok.Getter;
 
 @Getter
 @CallbackFrameModel(function = SerialCommand.ADD_NODE_TO_NETWORK)
-public class AddNodeToNetworkCallback extends FunctionCallback {
+public class AddNodeToNetworkCallback extends FlowCallback {
 
   private static final int OFFSET_SOURCE_NODE_ID = FRAME_OFFSET_PAYLOAD + 2;
   private static final int OFFSET_NIF_LENGTH = FRAME_OFFSET_PAYLOAD + 3;

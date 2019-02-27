@@ -8,7 +8,7 @@ import lombok.Getter;
 
 @Getter
 @CallbackFrameModel(function = SerialCommand.SET_SUC_NODE_ID)
-public class SetSUCNodeIdCallback extends FunctionCallback {
+public class SetSUCNodeIdCallback extends FlowCallback {
 
   private boolean successful;
 

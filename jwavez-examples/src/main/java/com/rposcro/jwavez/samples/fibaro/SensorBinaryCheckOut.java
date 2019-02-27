@@ -90,11 +90,11 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
   private void interceptSendDataCallback(ZWaveCallback callback) {
     if (callback.getSerialCommand() == SerialCommand.SEND_DATA) {
       SendDataCallback sendDataCallback = (SendDataCallback) callback;
-      if (sendDataCallback.getFunctionCallId() == callbackFlowId) {
+      if (sendDataCallback.getCallbackFlowId() == callbackFlowId) {
         System.out.printf("Send Data Callback received with status: %s\n", sendDataCallback.getTransmitCompletionStatus());
         callbacksLatch.countDown();
       } else {
-        log.debug("Received Send Data Callback but of not correlated function id {}", sendDataCallback.getFunctionCallId());
+        log.debug("Received Send Data Callback but of not correlated function id {}", sendDataCallback.getCallbackFlowId());
       }
     } else {
       log.debug("Skipped frame {}", callback.getSerialCommand());
