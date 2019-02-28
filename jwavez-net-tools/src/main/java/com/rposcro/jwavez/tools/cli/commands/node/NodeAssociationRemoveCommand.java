@@ -1,17 +1,11 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
-import static com.rposcro.jwavez.core.commands.enums.AssociationCommandType.ASSOCIATION_REPORT;
-
-import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
-import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
-import com.rposcro.jwavez.serial.probe.transactions.SendDataTransaction;
+import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeAssociationOptions;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class NodeAssociationRemoveCommand extends AbstractNodeCommand2 {
+public class NodeAssociationRemoveCommand extends AbstractNodeAssociationCommand {
 
   private NodeAssociationOptions options;
 
@@ -23,35 +17,20 @@ public class NodeAssociationRemoveCommand extends AbstractNodeCommand2 {
   @Override
   public void execute() throws CommandExecutionException {
     connect(options);
-    processSetRequest();
-    checkGroupAssociations();
+    processRemoveRequest();
+    checkGroupAssociations(options.getNodeId(), options.getAssociationGroupId(), options.getTimeout());
   }
 
-  private void processSetRequest() throws CommandExecutionException {
-    System.out.println(String.format("Removing association of node %s from group %s...", options.getAssociationNodeId(), options.getAssociationGroupId()));
-    SendDataTransaction transaction = new SendDataTransaction(
-        options.getNodeId(),
-        new AssociationCommandBuilder().buildRemoveCommand(options.getAssociationGroupId(), options.getAssociationNodeId()));
-    executeTransaction(transaction, options.getTimeout(DEFAULT_TRANSACTION_TIMEOUT));
-    System.out.println("Association removed successfully");
-    System.out.println();
-  }
-
-  private void checkGroupAssociations() {
+  private void processRemoveRequest() {
+    System.out.printf("Requesting association removal of node %s to group %s on node %s...\n", options.getAssociationNodeId(), options.getAssociationGroupId(), options.getNodeId());
     try {
-      int groupId = options.getAssociationGroupId();
-      System.out.println(String.format("Checking association group %s...", groupId));
-      AssociationCommandBuilder commandBuilder = new AssociationCommandBuilder();
-      SendDataTransaction transaction = new SendDataTransaction(options.getNodeId(), commandBuilder.buildGetCommand(groupId), false);
-      AssociationReport report = (AssociationReport) requestZWaveCommand(transaction, ASSOCIATION_REPORT, options.getTimeout(DEFAULT_CALLBACK_TIMEOUT));
-      System.out.println(":: Report on group " + report.getGroupId());
-      System.out.println("  max supported nodes count: " + report.getMaxNodesCountSupported());
-      System.out.println("  nodes in group: " + Stream.of(report.getNodeIds())
-          .map(nodeId -> String.format("%02X", nodeId.getId()))
-          .collect(Collectors.joining(", ")));
-      System.out.println();
-    } catch (Exception e) {
-      System.out.println("Failed to read association information due to: " + e.getMessage());
+      processSendDataRequest(
+          options.getNodeId(),
+          associationCommandBuilder.buildRemoveCommand(options.getAssociationGroupId(), options.getAssociationNodeId()));
+    } catch(FlowException e) {
+      System.out.println("Association removal failed: " + e.getMessage());
     }
+    System.out.println("Association removal successful");
+    System.out.println();
   }
 }

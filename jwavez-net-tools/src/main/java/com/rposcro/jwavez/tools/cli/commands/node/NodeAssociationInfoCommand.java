@@ -1,7 +1,6 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
 import static com.rposcro.jwavez.core.commands.enums.AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT;
-import static com.rposcro.jwavez.core.commands.enums.AssociationCommandType.ASSOCIATION_REPORT;
 
 import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationGroupingsReport;
@@ -15,10 +14,8 @@ import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-public class NodeAssociationInfoCommand extends SendDataBasedCommand {
+public class NodeAssociationInfoCommand extends AbstractNodeAssociationCommand {
 
   private DefaultNodeBasedOptions options;
   private AssociationCommandBuilder commandBuilder;
@@ -39,15 +36,7 @@ public class NodeAssociationInfoCommand extends SendDataBasedCommand {
 
   private void printReport(List<AssociationReport> reports) {
     System.out.println();
-    reports.stream()
-        .forEachOrdered(report -> {
-          System.out.println(":: Report on group " + report.getGroupId());
-          System.out.println("  max supported nodes count: " + report.getMaxNodesCountSupported());
-          System.out.println("  nodes in group: " + Stream.of(report.getNodeIds())
-              .map(nodeId -> String.format("%02x", nodeId.getId()))
-              .collect(Collectors.joining(", ")));
-          System.out.println();
-        });
+    reports.stream().forEachOrdered(this::printAssociationReport);
   }
 
   private List<AssociationReport> collectReports() {
@@ -62,7 +51,8 @@ public class NodeAssociationInfoCommand extends SendDataBasedCommand {
     List<AssociationReport> reports = new ArrayList<>(groupsCount);
     for (int groupIdx = 1; groupIdx <= groupsCount; groupIdx++) {
       try {
-        reports.add(readGroupAssociations(groupIdx));
+        System.out.printf("Checking association group %s...\n", groupIdx);
+        reports.add(readGroupAssociations(options.getNodeId(), groupIdx, options.getTimeout()));
       } catch(FlowException e) {
         System.out.printf("Failed to read group %s: %s\n", groupIdx, e.getMessage());
       }
@@ -81,18 +71,6 @@ public class NodeAssociationInfoCommand extends SendDataBasedCommand {
         options.getTimeout());
     System.out.println("Available groups count: " + report.getGroupsCount());
     return report.getGroupsCount();
-  }
-
-  private AssociationReport readGroupAssociations(int groupNumber) throws FlowException {
-    System.out.printf("Checking association group %s...\n", groupNumber);
-    AssociationReport report = (AssociationReport) requestZWCommand(
-        SendDataRequest.createSendDataRequest(
-            options.getNodeId(),
-            commandBuilder.buildGetCommand(groupNumber),
-            nextFlowId()),
-        ASSOCIATION_REPORT,
-        options.getTimeout());
-    return report;
   }
 
   public static void main(String... args) throws Exception {
