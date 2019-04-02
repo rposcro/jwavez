@@ -29,10 +29,6 @@ public class AddNodeToNetworkRequest extends ZWaveRequest {
     return createAddNodeToNetworkRequest(AddNodeToNeworkMode.ADD_NODE_STOP, callbackFlowId, true, true);
   }
 
-  public static SerialRequest createStopFailedTransactionRequest(byte callbackFlowId) {
-    return createAddNodeToNetworkRequest(AddNodeToNeworkMode.ADD_NODE_STOP_FAILED, callbackFlowId, true, true);
-  }
-
   public static SerialRequest createFinalTransactionRequest() {
     return createAddNodeToNetworkRequest(AddNodeToNeworkMode.ADD_NODE_ANY, (byte) 0, true, true);
   }
