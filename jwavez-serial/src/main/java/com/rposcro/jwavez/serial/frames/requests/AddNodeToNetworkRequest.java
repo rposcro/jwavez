@@ -30,6 +30,6 @@ public class AddNodeToNetworkRequest extends ZWaveRequest {
   }
 
   public static SerialRequest createFinalTransactionRequest() {
-    return createAddNodeToNetworkRequest(AddNodeToNeworkMode.ADD_NODE_ANY, (byte) 0, true, true);
+    return createAddNodeToNetworkRequest(AddNodeToNeworkMode.ADD_NODE_STOP, (byte) 0, true, true);
   }
 }

@@ -2,6 +2,7 @@ package com.rposcro.jwavez.serial.frames
 
 import com.rposcro.jwavez.serial.TestUtils
 import com.rposcro.jwavez.serial.buffers.ViewBuffer
+import com.rposcro.jwavez.serial.frames.callbacks.AddNodeToNetworkCallback
 import com.rposcro.jwavez.serial.frames.callbacks.SendSUCIdCallback
 import com.rposcro.jwavez.serial.frames.callbacks.SetLearnModeCallback
 import com.rposcro.jwavez.serial.frames.callbacks.UnknownCallback
@@ -73,6 +74,7 @@ class InboundFrameParserSpec extends Specification {
         data | expectedClass
         [ 0x01, 0x05, 0x00, 0x57, 0x11, 0x00, 0xaf ] | SendSUCIdCallback.class
         [ 0x01, 0x05, 0x00, 0x50, 0x11, 0x06, 0x22, 0xaf ] | SetLearnModeCallback.class
+        //[ 0x01, 0x5e, 0x25, 0x85, 0x8e, 0x59, 0x55, 0x86, 0x72, 0x5a, 0x73, 0x98, 0x9f, 0x5b, 0x31, 0x60, 0x70, 0x56, 0x71, 0x75, 0x7a, 0x6c, 0x22, 0x34 ] | AddNodeToNetworkCallback.class
     }
 
     @Unroll

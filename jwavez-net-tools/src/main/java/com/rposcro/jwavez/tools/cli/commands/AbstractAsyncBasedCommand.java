@@ -32,7 +32,7 @@ public abstract class AbstractAsyncBasedCommand extends AbstractCommand {
   }
 
   public AbstractAsyncBasedCommand addCallbackInterceptor(ViewBufferInterceptor interceptor) {
-    callbackHandler.addViewbufferInterceptor(interceptor);
+    callbackHandler.addViewBufferInterceptor(interceptor);
     return this;
   }
 

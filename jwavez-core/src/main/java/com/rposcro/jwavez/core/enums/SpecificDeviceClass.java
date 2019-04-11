@@ -73,7 +73,9 @@ public enum SpecificDeviceClass {
 
   private static Map<Integer, SpecificDeviceClass> codeToClassMap;
 
-  private SpecificDeviceClass(int code, GenericDeviceClass genericDeviceClass) {
+  SpecificDeviceClass(int code, GenericDeviceClass genericDeviceClass) {
+    this.code = (byte) code;
+    this.genericDeviceClass = genericDeviceClass;
     registerConstant(this, code, genericDeviceClass);
   }
 

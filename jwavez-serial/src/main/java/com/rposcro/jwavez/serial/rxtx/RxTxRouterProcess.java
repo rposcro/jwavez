@@ -5,6 +5,7 @@ import com.rposcro.jwavez.serial.exceptions.FatalSerialException;
 import com.rposcro.jwavez.serial.exceptions.RequestFlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
+import com.rposcro.jwavez.serial.utils.async.Runner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -41,7 +42,7 @@ public class RxTxRouterProcess implements Runnable {
         .build();
   }
 
-  private RxTxRouterProcess() {
+  RxTxRouterProcess() {
     this.requestsQueue = new ArrayBlockingQueue(DEFAULT_REQUEST_QUEUE_SIZE);
     this.routerAccessLock = new Semaphore(1);
   }
@@ -56,16 +57,15 @@ public class RxTxRouterProcess implements Runnable {
   }
 
   public void sendRequest(SerialRequest request) throws SerialException {
-    try {
-      routerAccessLock.acquireUninterruptibly();
-      rxTxRouter.runUnlessRequestSent(request);
-    } finally {
-      routerAccessLock.release();
-    }
+    executeSynchronous(() -> rxTxRouter.runUnlessRequestSent(request));
   }
 
   public void stop() {
     this.stopRequested = true;
+  }
+
+  public void initialize() throws SerialException {
+    executeSynchronous(rxTxRouter::purgeInput);
   }
 
   @Override
@@ -75,7 +75,7 @@ public class RxTxRouterProcess implements Runnable {
     while (!stopRequested) {
       try {
         while (!stopRequested) {
-          runOnce();
+          executeSynchronous(this::runOnce);
           Thread.sleep(configuration.getRouterPollDelay());
         }
       } catch (Exception e) {
@@ -86,18 +86,22 @@ public class RxTxRouterProcess implements Runnable {
   }
 
   private void runOnce() throws SerialException {
-    routerAccessLock.acquireUninterruptibly();
-    try {
-      if (!requestsQueue.isEmpty()) {
-        try {
-          SerialRequest nextRequest = requestsQueue.peek();
-          rxTxRouter.runUnlessRequestSent(nextRequest);
-        } catch (RequestFlowException e) {
-          log.error("Failed to send request", e);
-        }
-      } else {
-        rxTxRouter.runSingleCycle();
+    if (!requestsQueue.isEmpty()) {
+      try {
+        SerialRequest nextRequest = requestsQueue.peek();
+        rxTxRouter.runUnlessRequestSent(nextRequest);
+      } catch (RequestFlowException e) {
+        log.error("Failed to send request", e);
       }
+    } else {
+      rxTxRouter.runSingleCycle();
+    }
+  }
+
+  private void executeSynchronous(Runner<SerialException> runner) throws SerialException {
+    try {
+      routerAccessLock.acquireUninterruptibly();
+      runner.run();
     } finally {
       routerAccessLock.release();
     }

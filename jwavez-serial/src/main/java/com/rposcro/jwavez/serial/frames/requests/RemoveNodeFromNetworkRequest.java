@@ -27,7 +27,11 @@ public class RemoveNodeFromNetworkRequest extends ZWaveRequest {
     return createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_ANY, callbackFlowId, true);
   }
 
+  public static SerialRequest createStopTransactionRequest(byte callbackFlowId) {
+    return createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_STOP, callbackFlowId, true);
+  }
+
   public static SerialRequest createFinalTransactionRequest() {
-    return createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_ANY, (byte) 0, true);
+    return createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_STOP, (byte) 0, true);
   }
 }

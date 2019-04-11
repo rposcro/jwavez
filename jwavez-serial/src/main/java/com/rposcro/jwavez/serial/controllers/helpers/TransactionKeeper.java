@@ -3,26 +3,37 @@ package com.rposcro.jwavez.serial.controllers.helpers;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.Semaphore;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class TransactionKeeper<T extends TransactionState> {
 
   private T state;
-  private boolean completed;
-  private CompletableFuture<SerialRequest> transitRequestFuture;
+  private boolean successful;
+  private boolean failed;
+  private boolean cancelled;
 
+  private SerialRequest nextRequest;
+  private Throwable nextException;
   private Semaphore lock = new Semaphore(1);
 
-  public Optional<SerialRequest> getTransitRequest() throws InterruptedException, ExecutionException {
-    SerialRequest request = transitRequestFuture.get();
-    transitRequestFuture = new CompletableFuture<>();
-    return Optional.ofNullable(request);
+  private Consumer<T> stateChangeListener;
+
+  public TransactionKeeper(@NonNull Consumer<T> stateChangeListener) {
+    this.stateChangeListener = stateChangeListener;
   }
+
+  public void reset() {
+    this.nextRequest = null;
+    this.successful = false;
+    this.failed = false;
+  }
+
 
   public void transitAndSchedule(T state, SerialRequest transitRequest) {
     executeSynchronous(() -> this.doTransit(state, transitRequest));
@@ -32,40 +43,81 @@ public class TransactionKeeper<T extends TransactionState> {
     executeSynchronous(() -> this.doTransit(state, null));
   }
 
-  public void complete() {
-    executeSynchronous(() -> { this.completed = true; });
+  public void interrupt(Throwable t) {
+    nextException = t;
   }
 
-  public void fail(Throwable t) {
-    executeSynchronous(() -> {
-      this.completed = true;
-      this.transitRequestFuture.completeExceptionally(t);
+
+  public Optional<SerialRequest> getTransitRequest() {
+    return getSynchronous(() -> {
+      if (transitInProgress()) {
+        try {
+          if (nextException != null) {
+            throw new CompletionException(nextException);
+          } else {
+            return Optional.of(nextRequest);
+          }
+        } finally {
+          nextException = null;
+          nextRequest = null;
+        }
+      } else {
+        return Optional.empty();
+      }
     });
   }
+
+  public void complete() {
+    executeSynchronous(() -> { this.successful = true; });
+  }
+
+  public void cancel() {
+    executeSynchronous(() -> { this.cancelled = true; });
+  }
+
+  public void fail() {
+    executeSynchronous(() -> { this.failed = true; });
+  }
+
 
   public T getState() {
     return getSynchronous(() -> this.state);
   }
 
-  public boolean isCompleted() {
-    return getSynchronous(() -> this.completed);
+  public boolean isSuccessful() {
+    return getSynchronous(() -> this.successful);
   }
 
-  public boolean isTransitAllowed() {
-    return getSynchronous(this::transitAllowed);
+  public boolean isCancelled() {
+    return getSynchronous(() -> this.cancelled);
   }
+
+  public boolean isFailed() {
+    return getSynchronous(() -> this.failed);
+  }
+
+  public boolean isStopped() {
+    return getSynchronous(() -> this.failed || this.successful || this.cancelled);
+  }
+
 
   private void doTransit(T newState, SerialRequest nextRequest) {
     if (!transitAllowed()) {
-      fail(new FlowException("Cannot transit when prior transition hasn't been consumed yet"));
+      nextException = new FlowException("Cannot transit when prior transition hasn't been consumed yet");
     } else {
+      log.info("Transiting from {} to {} state, {}", this.state, newState, nextRequest != null ? "flow id " + nextRequest.getCallbackFlowId() : "no request");
       this.state = newState;
-      this.transitRequestFuture.complete(nextRequest);
+      this.nextRequest = nextRequest;
+      this.stateChangeListener.accept(state);
     }
   }
 
   private boolean transitAllowed() {
-    return this.transitRequestFuture.isDone();
+    return !(successful || failed || transitInProgress());
+  }
+
+  private boolean transitInProgress() {
+    return nextRequest != null || nextException != null;
   }
 
   private <T> T getSynchronous(Supplier<T> getter) {

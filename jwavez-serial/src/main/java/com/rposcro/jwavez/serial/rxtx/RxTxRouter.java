@@ -113,6 +113,13 @@ public class RxTxRouter {
     }
   }
 
+  public void purgeInput() throws SerialPortException {
+    log.debug("Purging input ....");
+    outboundStream.writeNAK();
+    inboundStream.purgeStream();
+    log.debug("Purge done");
+  }
+
   public void reconnectPort() {
     int retryCount = 0;
     while (retryCount++ < configuration.getPortReconnectMaxCount()) {

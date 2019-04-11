@@ -49,7 +49,7 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
     InterceptableCallbackHandler callbacksHandler = new InterceptableCallbackHandler()
         .addCallbackInterceptor(commandInterceptor)
         .addCallbackInterceptor(this::interceptSendDataCallback)
-        .addViewbufferInterceptor(this::interceptViewBuffer);
+        .addViewBufferInterceptor(this::interceptViewBuffer);
 
     this.controller = GeneralAsynchronousController.builder()
         .callbackHandler(callbacksHandler)

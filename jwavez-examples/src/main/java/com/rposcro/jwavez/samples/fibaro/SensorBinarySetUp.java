@@ -47,7 +47,7 @@ public class SensorBinarySetUp extends AbstractExample implements AutoCloseable 
     this.callbackFlowId = (byte) 0x0e;
 
     InterceptableCallbackHandler callbacksHandler = new InterceptableCallbackHandler()
-        .addViewbufferInterceptor(this::interceptViewBuffer)
+        .addViewBufferInterceptor(this::interceptViewBuffer)
         .addCallbackInterceptor(new ApplicationCommandInterceptor()
             .registerCommandHandler(ConfigurationCommandType.CONFIGURATION_REPORT, this::handleConfigurationReport))
         ;

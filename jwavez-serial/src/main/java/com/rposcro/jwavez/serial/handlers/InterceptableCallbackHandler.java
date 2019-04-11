@@ -43,6 +43,7 @@ public class InterceptableCallbackHandler implements Consumer<ViewBuffer> {
       callbackInterceptors.forEach(interceptor -> interceptor.intercept(callback));
     } catch(FrameParseException e) {
       log.warn("Frame parse failed: {}", BufferUtil.bufferToString(frameBuffer));
+      log.debug(e.getMessage(), e);
     }
   }
 
@@ -51,7 +52,7 @@ public class InterceptableCallbackHandler implements Consumer<ViewBuffer> {
     return this;
   }
 
-  public InterceptableCallbackHandler addViewbufferInterceptor(ViewBufferInterceptor interceptor) {
+  public InterceptableCallbackHandler addViewBufferInterceptor(ViewBufferInterceptor interceptor) {
     bufferInterceptors.add(interceptor);
     return this;
   }
