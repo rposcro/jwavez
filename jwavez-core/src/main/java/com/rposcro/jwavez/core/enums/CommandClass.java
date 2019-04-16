@@ -3,6 +3,7 @@ package com.rposcro.jwavez.core.enums;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.utils.EncodableConstantsRegistry;
 import com.rposcro.jwavez.core.utils.EncodableConstant;
+import java.util.Optional;
 
 public enum CommandClass implements EncodableConstant {
 
@@ -44,6 +45,8 @@ public enum CommandClass implements EncodableConstant {
   CMD_CLASS_SCHEDULE_ENTRY_LOCK(0x4E),
   CMD_CLASS_BASIC_WINDOW_COVERING(0x50),
   CMD_CLASS_MTP_WINDOW_COVERING(0x51),
+  CMD_CLASS_ASSOCIATION_GRP_INFO(0x59),
+  CMD_CLASS_ZWAVE_PLUS_INFO(0x5E),
   CMD_CLASS_MULTI_CHANNEL(0x60),
   CMD_CLASS_DOOR_LOCK(0x62),
   CMD_CLASS_USER_CODE(0x63),
@@ -100,5 +103,9 @@ public enum CommandClass implements EncodableConstant {
   public static CommandClass ofCode(byte code) {
     return EncodableConstantsRegistry.optionalConstantOfCode(CommandClass.class, code)
         .orElseThrow(() -> new CommandNotSupportedException("CommandClass of code " + code + " unknown!"));
+  }
+
+  public static Optional<CommandClass> optionalOfCode(byte code) {
+    return EncodableConstantsRegistry.optionalConstantOfCode(CommandClass.class, code);
   }
 }

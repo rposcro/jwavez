@@ -11,6 +11,11 @@ public final class DisposableFrameBuffer implements FrameBuffer {
     this.dataBuffer = ByteBuffer.allocateDirect(capacity);
   }
 
+  public DisposableFrameBuffer putData(byte... data) {
+    dataBuffer.put(data);
+    return this;
+  }
+
   public DisposableFrameBuffer putCRC() {
     dataBuffer.put(FrameUtil.frameCRC(asByteBuffer()));
     return this;

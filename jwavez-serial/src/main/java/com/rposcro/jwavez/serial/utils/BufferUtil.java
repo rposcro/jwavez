@@ -7,7 +7,7 @@ public class BufferUtil {
 
   public static String bufferToString(ViewBuffer buffer) {
     StringBuffer string = new StringBuffer();
-    IntStream.range(buffer.position(), buffer.length())
+    IntStream.range(0, buffer.length())
         .forEach(index -> string.append(String.format("%02x ", buffer.get(index))));
     return string.toString();
   }

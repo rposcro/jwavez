@@ -52,8 +52,8 @@ public abstract class AbstractInclusionController<T extends TransactionState> {
 
       if (transactionKeeper.isSuccessful()) {
         NodeInfo nodeInfo = flowHandler.getNodeInfo();
-        log.info("Transaction successful {}, {} node id {}", transactionId, processName, nodeInfo.getId().getId());
-        return Optional.ofNullable(flowHandler.getNodeInfo());
+        log.info("Transaction successful {}, {} node id {}", transactionId, processName, nodeInfo == null ? "UNKNOWN" : nodeInfo.getId().getId());
+        return Optional.ofNullable(nodeInfo);
       } else if (transactionKeeper.isCancelled()) {
         log.info("Transaction cancelled due to no node to {} appeared {}", processName, transactionId);
         return Optional.empty();

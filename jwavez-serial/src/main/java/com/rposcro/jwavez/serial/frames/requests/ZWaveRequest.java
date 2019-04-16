@@ -34,4 +34,18 @@ public class ZWaveRequest {
         .serialCommand(command)
         .build();
   }
+
+  public static SerialRequest ofFrameData(SerialCommand command, byte... data) {
+    return SerialRequest.builder()
+        .responseExpected(false)
+        .serialCommand(command)
+        .frameData(new DisposableFrameBuffer(data.length + 5)
+            .put(SerialFrameConstants.CATEGORY_SOF)
+            .put((byte) (data.length + 3))
+            .put(SerialFrameConstants.TYPE_REQ)
+            .put(command.getCode())
+            .putData(data)
+            .putCRC()
+      ).build();
+  }
 }

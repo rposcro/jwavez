@@ -161,11 +161,12 @@ public class RxTxRouter {
       frameData.mark();
       RequestStageResult reqResult = requestStageDoer.sendRequest(frameData);
       boolean success = false;
+      ResponseStageResult resResult = null;
 
       if (reqResult == RequestStageResult.RESULT_OK) {
         if (serialRequest.isResponseExpected()) {
           byte commandCode = frameData.get(FRAME_OFFSET_COMMAND);
-          ResponseStageResult resResult = responseStageDoer.acquireResponse(commandCode);
+          resResult = responseStageDoer.acquireResponse(commandCode);
           success = resResult == ResponseStageResult.RESULT_OK;
         } else {
           success = true;
@@ -179,7 +180,7 @@ public class RxTxRouter {
       } else {
         pursueRetransmission();
         frameData.reset();
-        log.warn("Transmission failed: {}", reqResult);
+        log.warn("Transmission failed, request result: {}, response result: {}", reqResult, resResult == null ? "N/A" : resResult);
       }
     }
   }

@@ -7,6 +7,8 @@ import com.rposcro.jwavez.core.enums.SpecificDeviceClass;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class NodeUtil {
 
@@ -17,10 +19,14 @@ public class NodeUtil {
     GenericDeviceClass genericDeviceClass = GenericDeviceClass.ofCode(frameBuffer.get());
     SpecificDeviceClass specificDeviceClass = SpecificDeviceClass.ofCode(frameBuffer.get(), genericDeviceClass);
     int cmdClassLen = length - 3;
-    CommandClass[] commandClasses = new CommandClass[cmdClassLen];
+
+    List<CommandClass> commandClasses = new ArrayList<>(cmdClassLen);
+    byte[] commandCodes = new byte[cmdClassLen];
 
     for (int i = 0; i < cmdClassLen; i++) {
-      commandClasses[i] = CommandClass.ofCode(frameBuffer.get());
+      commandCodes[i] = frameBuffer.get();
+      CommandClass.optionalOfCode(commandCodes[i])
+          .ifPresent(commandClasses::add);
     }
 
     return NodeInfo.builder()
@@ -28,7 +34,8 @@ public class NodeUtil {
         .basicDeviceClass(basicDeviceClass)
         .genericDeviceClass(genericDeviceClass)
         .specificDeviceClass(specificDeviceClass)
-        .commandClasses(commandClasses)
+        .commandClasses(commandClasses.toArray(new CommandClass[0]))
+        .commandCodes(commandCodes)
         .build();
   }
 }

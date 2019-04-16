@@ -100,7 +100,7 @@ public class AddNodeToNetworkController extends AbstractInclusionController<AddN
           //.waitForNodeTimeout(5_000)
           .build();
 
-      serialPort.connect("/dev/tty.usbmodem1421");
+      serialPort.connect("/dev/tty.usbmodem1411");
       rxTxRouterProcess.initialize();
       Thread thread = new Thread(rxTxRouterProcess);
       thread.setDaemon(true);

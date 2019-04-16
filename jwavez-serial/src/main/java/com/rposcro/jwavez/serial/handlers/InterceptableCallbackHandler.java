@@ -36,7 +36,10 @@ public class InterceptableCallbackHandler implements Consumer<ViewBuffer> {
   public void accept(ViewBuffer frameBuffer) {
     if (frameBuffer.get(FRAME_OFFSET_TYPE) != TYPE_REQ || !validator.validate(frameBuffer)) {
       log.warn("Frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
+    } else if (log.isDebugEnabled()) {
+      log.debug("Frame received: {}", BufferUtil.bufferToString(frameBuffer));
     }
+
     try {
       bufferInterceptors.forEach(interceptor -> interceptor.intercept(frameBuffer));
       ZWaveCallback callback = parser.parseCallbackFrame(frameBuffer);

@@ -33,7 +33,10 @@ public class InterceptableResponseHandler implements Consumer<ViewBuffer> {
   public void accept(ViewBuffer frameBuffer) {
     if (frameBuffer.get(FRAME_OFFSET_TYPE) != TYPE_RES || !validator.validate(frameBuffer)) {
       log.warn("Frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
+    } else if (log.isDebugEnabled()) {
+      log.debug("Frame received: {}", BufferUtil.bufferToString(frameBuffer));
     }
+
     try {
       ZWaveResponse response = parser.parseResponseFrame(frameBuffer);
       interceptors.forEach(interceptor -> interceptor.intercept(response));

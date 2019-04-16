@@ -87,6 +87,12 @@ class RemoveNodeFromNetworkFlowHandler extends AbstractFlowHandler {
         finalStopFrame());
   }
 
+  void byPassTermination() {
+    this.transactionKeeper.transitAndSchedule(
+        TERMINATION_STOP_SENT,
+        finalStopFrame());
+  }
+
   private void transit(RemoveNodeFromNetworkFlowState newState) {
     transactionKeeper.transit(newState);
   }

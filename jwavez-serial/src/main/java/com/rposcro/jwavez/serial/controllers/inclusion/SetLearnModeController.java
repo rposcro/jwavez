@@ -1,12 +1,10 @@
 package com.rposcro.jwavez.serial.controllers.inclusion;
 
-import static com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetworkFlowState.CANCELLATION_STOP_SENT;
-import static com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetworkFlowState.FAILURE_STOP_SENT;
-import static com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetworkFlowState.TERMINATING_REMOVE_NODE;
-import static com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetworkFlowState.TERMINATION_STOP_SENT;
-import static com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetworkFlowState.WAITING_FOR_NODE;
+import static com.rposcro.jwavez.serial.controllers.inclusion.SetLearnModeFlowState.LEARN_MODE_ACTIVATED;
+import static com.rposcro.jwavez.serial.controllers.inclusion.SetLearnModeFlowState.LEARN_MODE_CANCELLED;
+import static com.rposcro.jwavez.serial.controllers.inclusion.SetLearnModeFlowState.LEARN_MODE_DONE;
+import static com.rposcro.jwavez.serial.controllers.inclusion.SetLearnModeFlowState.LEARN_MODE_FAILED;
 
-import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.controllers.helpers.CallbackFlowIdDispatcher;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
@@ -16,7 +14,6 @@ import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.RxTxRouterProcess;
 import com.rposcro.jwavez.serial.rxtx.port.NeuronRoboticsSerialPort;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
-import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -25,29 +22,30 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class RemoveNodeFromNetworkController extends AbstractInclusionController<RemoveNodeFromNetworkFlowState> {
+public class SetLearnModeController extends AbstractInclusionController<SetLearnModeFlowState> {
 
-  public Optional<NodeInfo> listenForNodeToRemove() throws FlowException {
-    return runTransaction("remove");
+  public boolean activateLearnMode() throws FlowException {
+    runTransaction("learn");
+    return transactionKeeper.isSuccessful();
   }
 
   @Override
-  protected boolean isFinalState(RemoveNodeFromNetworkFlowState state) {
-    return state == CANCELLATION_STOP_SENT || state == TERMINATION_STOP_SENT || state == FAILURE_STOP_SENT;
+  protected boolean isFinalState(SetLearnModeFlowState state) {
+    return state == LEARN_MODE_DONE || state == LEARN_MODE_CANCELLED || state == LEARN_MODE_FAILED;
   }
 
   @Override
-  protected boolean isWaitingForTouchState(RemoveNodeFromNetworkFlowState state) {
-    return WAITING_FOR_NODE == state;
+  protected boolean isWaitingForTouchState(SetLearnModeFlowState state) {
+    return LEARN_MODE_ACTIVATED == state;
   }
 
   @Override
-  protected void finalizeTransaction(RemoveNodeFromNetworkFlowState state) {
+  protected void finalizeTransaction(SetLearnModeFlowState state) {
     switch(state) {
-      case CANCELLATION_STOP_SENT:
+      case LEARN_MODE_CANCELLED:
         transactionKeeper.cancel();
         break;
-      case FAILURE_STOP_SENT:
+      case LEARN_MODE_FAILED:
         transactionKeeper.fail();
         break;
       default:
@@ -56,27 +54,20 @@ public class RemoveNodeFromNetworkController extends AbstractInclusionController
   }
 
   @Override
-  protected void timeoutTransaction(RemoveNodeFromNetworkFlowState state) {
-    if (WAITING_FOR_NODE == state) {
-      flowHandler.stopTransaction();
-    } else if (TERMINATING_REMOVE_NODE == state) {
-      log.info("No callback to the first stopping frame, assuming dongle not to follow protocol");
-      ((RemoveNodeFromNetworkFlowHandler) flowHandler).byPassTermination();
-    } else {
-      flowHandler.killTransaction();
-    }
+  protected void timeoutTransaction(SetLearnModeFlowState state) {
+    flowHandler.stopTransaction();
   }
 
   @Builder
-  public static RemoveNodeFromNetworkController build(
+  public static SetLearnModeController build(
       long waitForTouchTimeout,
       long waitForProgressTimeout,
       @NonNull InterceptableCallbackHandler callbackHandler,
       @NonNull CallbackFlowIdDispatcher flowIdDispatcher,
       @NonNull RxTxRouterProcess rxTxRouterProcess) {
-    RemoveNodeFromNetworkController controller = new RemoveNodeFromNetworkController();
+    SetLearnModeController controller = new SetLearnModeController();
     controller.transactionKeeper = new TransactionKeeper<>(controller::transactionStateChanged);
-    controller.flowHandler = new RemoveNodeFromNetworkFlowHandler(controller.transactionKeeper);
+    controller.flowHandler = new SetLearnModeFlowHandler(controller.transactionKeeper);
 
     controller.flowIdDispatcher = flowIdDispatcher;
     controller.rxTxRouterProcess = rxTxRouterProcess;
@@ -97,7 +88,7 @@ public class RemoveNodeFromNetworkController extends AbstractInclusionController
           .configuration(RxTxConfiguration.defaultConfiguration())
           .serialPort(serialPort)
           .build();
-      RemoveNodeFromNetworkController controller = RemoveNodeFromNetworkController.builder()
+      SetLearnModeController controller = SetLearnModeController.builder()
           .callbackHandler(callbackHandler)
           .rxTxRouterProcess(rxTxRouterProcess)
           .flowIdDispatcher(new CallbackFlowIdDispatcher())
@@ -110,15 +101,8 @@ public class RemoveNodeFromNetworkController extends AbstractInclusionController
       thread.setDaemon(true);
       thread.start();
 
-      Optional<NodeInfo> nodeInfoWrap = controller.listenForNodeToRemove();
-      System.out.println(nodeInfoWrap.map(
-          info -> String.format("id: %s\nbdc: %s\ngdc: %s\nsdc: %s",
-              info.getId().getId(),
-              info.getBasicDeviceClass(),
-              info.getGenericDeviceClass(),
-              info.getSpecificDeviceClass())
-          ).orElse("No node found")
-      );
+      boolean success = controller.activateLearnMode();
+      System.out.println("Success: " + success);
     } finally {
       serialPort.disconnect();
     }
