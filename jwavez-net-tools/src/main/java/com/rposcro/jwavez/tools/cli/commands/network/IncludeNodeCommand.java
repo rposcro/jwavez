@@ -1,54 +1,56 @@
 package com.rposcro.jwavez.tools.cli.commands.network;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.probe.transactions.AddNodeToNetworkTransaction;
-import com.rposcro.jwavez.serial.probe.transactions.TransactionResult;
-import com.rposcro.jwavez.serial.probe.transactions.TransactionStatus;
-import com.rposcro.jwavez.tools.cli.commands.AbstractDeviceTimeoutCommand;
+import com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkController;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.exceptions.SerialPortException;
+import com.rposcro.jwavez.tools.cli.commands.Command;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Future;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
-public class IncludeNodeCommand extends AbstractDeviceTimeoutCommand {
+@Slf4j
+public class IncludeNodeCommand implements Command {
 
-  private DefaultDeviceTimeoutBasedOptions options;
+  protected DefaultDeviceTimeoutBasedOptions options;
 
   @Override
   public void configure(String[] args) throws CommandOptionsException {
-    options = new DefaultDeviceTimeoutBasedOptions(args);
+    this.options = new DefaultDeviceTimeoutBasedOptions(args);
   }
 
   @Override
   public void execute() {
-    connect(options);
-    System.out.println("Starting node inclusion transaction ...");
-    Future<TransactionResult<NodeInfo>> futureResult = launchTransaction();
-    System.out.println("Awaiting for new nodes ...");
-    processResult(futureResult);
+    try(
+        AddNodeToNetworkController controller = AddNodeToNetworkController.builder()
+            .dongleDevice(options.getDevice())
+            .build()
+    ) {
+      System.out.printf("Starting node inclusion transaction on %s ...\n", options.getDevice());
+      controller.connect();
+      System.out.println("Awaiting for new nodes ...");
+      Optional<NodeInfo> nodeInfo = controller.listenForNodeToAdd();
+      processResult(nodeInfo);
+    } catch (SerialPortException e) {
+      log.info("Failed to connect to port", e);
+      System.out.println("Failed to connect to port ...");
+    } catch (SerialException e) {
+      log.info("Serial exception", e);
+      System.out.println("Inclusion process failed ...");
+    }
     System.out.println("End of inclusion transaction");
   }
 
-  private Future<TransactionResult<NodeInfo>> launchTransaction() {
-    AddNodeToNetworkTransaction transaction = new AddNodeToNetworkTransaction();
-    return serialChannel.executeTransaction(transaction, options.getTimeout());
-  }
-
-  private void processResult(Future<TransactionResult<NodeInfo>> futureResult) {
-    try {
-      TransactionResult<NodeInfo> result = futureResult.get();
-      if (result.getStatus() == TransactionStatus.Completed) {
-        System.out.println("Inclusion succeeded, new node found");
-        processNewNodeInfo(result.getResult());
-      } else if (result.getStatus() == TransactionStatus.Cancelled) {
-        System.out.println("Inclusion stopped by timeout");
-      } else {
-        System.out.println("Inclusion failed by unknown reason");
-      }
-    } catch(Exception e) {
-      System.out.println("Inclusion transaction interrupted by an error: " + e.getMessage());
+  private void processResult(Optional<NodeInfo> nodeInfo) {
+    if (nodeInfo.isPresent()) {
+      System.out.println("Inclusion succeeded, new node found");
+      processNewNodeInfo(nodeInfo.get());
+    } else {
+      System.out.println("Inclusion transaction didn't return node information, check dongle state");
     }
   }
 
@@ -62,9 +64,9 @@ public class IncludeNodeCommand extends AbstractDeviceTimeoutCommand {
           .collect(Collectors.toList());
       logMessage.append("New node info:\n")
           .append(String.format("  node id: %s\n", nodeInfo.getId()))
-          .append(String.format("  basic device class: %s\n", nodeInfo.getBasicDeviceClass()))
-          .append(String.format("  generic device class: %s\n", nodeInfo.getGenericDeviceClass()))
-          .append(String.format("  specific device class: %s\n", nodeInfo.getSpecificDeviceClass()))
+          .append(String.format("  basic dongleDevice class: %s\n", nodeInfo.getBasicDeviceClass()))
+          .append(String.format("  generic dongleDevice class: %s\n", nodeInfo.getGenericDeviceClass()))
+          .append(String.format("  specific dongleDevice class: %s\n", nodeInfo.getSpecificDeviceClass()))
           .append(String.format("  command classes: %s\n", String.join(", ", commandClasses)));
       System.out.println(logMessage);
     }

@@ -1,12 +1,11 @@
 package com.rposcro.jwavez.serial.controllers.inclusion;
 
-import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.controllers.helpers.CallbackFlowIdDispatcher;
+import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.serial.controllers.AbstractAsynchronousController;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionState;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.rxtx.RxTxRouterProcess;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
@@ -15,13 +14,11 @@ import java.util.concurrent.Semaphore;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class AbstractInclusionController<T extends TransactionState> {
+public abstract class AbstractInclusionController<T extends TransactionState, S extends AbstractInclusionController> extends AbstractAsynchronousController<S> {
 
   protected Semaphore controllerLock;
-  protected RxTxRouterProcess rxTxRouterProcess;
   protected TransactionKeeper<T> transactionKeeper;
   protected AbstractFlowHandler flowHandler;
-  protected CallbackFlowIdDispatcher flowIdDispatcher;
 
   protected long waitForTouchTimeout;
   protected long waitForProgressTimeout;
@@ -37,23 +34,23 @@ public abstract class AbstractInclusionController<T extends TransactionState> {
   protected abstract void finalizeTransaction(T state);
   protected abstract void timeoutTransaction(T state);
 
-  protected Optional<NodeInfo> runTransaction(String processName) throws FlowException {
+  protected Optional<NodeId> runTransaction(String processName) throws FlowException {
     long transactionId = System.currentTimeMillis();
     log.info("Requested {} node from network with transaction id {}", processName, transactionId);
     controllerLock.acquireUninterruptibly();
     log.info("Transaction launched {}", transactionId);
     try {
       transactionKeeper.reset();
-      flowHandler.startOver(flowIdDispatcher.nextFlowId());
+      flowHandler.startOver(callbackFlowIdDispatcher.nextFlowId());
 
       do {
         flowStep();
       } while (!transactionKeeper.isStopped());
 
       if (transactionKeeper.isSuccessful()) {
-        NodeInfo nodeInfo = flowHandler.getNodeInfo();
-        log.info("Transaction successful {}, {} node id {}", transactionId, processName, nodeInfo == null ? "UNKNOWN" : nodeInfo.getId().getId());
-        return Optional.ofNullable(nodeInfo);
+        NodeId nodeId = flowHandler.getNodeId();
+        log.info("Transaction successful {}, {} node id {}", transactionId, processName, nodeId == null ? "UNKNOWN" : nodeId.getId());
+        return Optional.ofNullable(nodeId);
       } else if (transactionKeeper.isCancelled()) {
         log.info("Transaction cancelled due to no node to {} appeared {}", processName, transactionId);
         return Optional.empty();

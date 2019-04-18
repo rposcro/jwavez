@@ -74,7 +74,7 @@ public class DongleCheckOut extends AbstractExample {
 
   private void runExample(String device) throws SerialException {
     try (BasicSynchronousController controller = BasicSynchronousController.builder()
-        .device(device)
+        .dongleDevice(device)
         .build()
         .connect();) {
       checkDongleIds(controller);
@@ -86,6 +86,6 @@ public class DongleCheckOut extends AbstractExample {
   }
 
   public static void main(String... args) throws SerialException {
-    new DongleCheckOut().runExample(System.getProperty("zwave.device", DEFAULT_DEVICE));
+    new DongleCheckOut().runExample(System.getProperty("zwave.dongleDevice", DEFAULT_DEVICE));
   }
 }

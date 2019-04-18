@@ -7,16 +7,13 @@ import static com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetw
 import static com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetworkFlowState.WAITING_FOR_NODE;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.controllers.helpers.CallbackFlowIdDispatcher;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
-import com.rposcro.jwavez.serial.rxtx.RxTxRouterProcess;
-import com.rposcro.jwavez.serial.rxtx.port.NeuronRoboticsSerialPort;
-import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -25,10 +22,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class RemoveNodeFromNetworkController extends AbstractInclusionController<RemoveNodeFromNetworkFlowState> {
+public class RemoveNodeFromNetworkController extends AbstractInclusionController<RemoveNodeFromNetworkFlowState, RemoveNodeFromNetworkController> {
 
   public Optional<NodeInfo> listenForNodeToRemove() throws FlowException {
-    return runTransaction("remove");
+    runTransaction("remove");
+    return Optional.ofNullable(((RemoveNodeFromNetworkFlowHandler) flowHandler).getNodeInfo());
   }
 
   @Override
@@ -69,17 +67,18 @@ public class RemoveNodeFromNetworkController extends AbstractInclusionController
 
   @Builder
   public static RemoveNodeFromNetworkController build(
+      @NonNull String dongleDevice,
+      RxTxConfiguration rxTxConfiguration,
+      ExecutorService executorService,
       long waitForTouchTimeout,
-      long waitForProgressTimeout,
-      @NonNull InterceptableCallbackHandler callbackHandler,
-      @NonNull CallbackFlowIdDispatcher flowIdDispatcher,
-      @NonNull RxTxRouterProcess rxTxRouterProcess) {
+      long waitForProgressTimeout) {
     RemoveNodeFromNetworkController controller = new RemoveNodeFromNetworkController();
     controller.transactionKeeper = new TransactionKeeper<>(controller::transactionStateChanged);
     controller.flowHandler = new RemoveNodeFromNetworkFlowHandler(controller.transactionKeeper);
 
-    controller.flowIdDispatcher = flowIdDispatcher;
-    controller.rxTxRouterProcess = rxTxRouterProcess;
+    InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
+    controller.helpWithBuild(dongleDevice, rxTxConfiguration, null, callbackHandler, executorService);
+
     controller.waitForTouchTimeout = waitForTouchTimeout;
     controller.waitForProgressTimeout = waitForProgressTimeout;
 
@@ -88,28 +87,12 @@ public class RemoveNodeFromNetworkController extends AbstractInclusionController
   }
 
   public static void main(String... args) throws SerialException {
-    SerialPort serialPort = new NeuronRoboticsSerialPort();
-
-    try {
-      InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
-      RxTxRouterProcess rxTxRouterProcess = RxTxRouterProcess.builder()
-          .callbackHandler(callbackHandler)
-          .configuration(RxTxConfiguration.defaultConfiguration())
-          .serialPort(serialPort)
-          .build();
-      RemoveNodeFromNetworkController controller = RemoveNodeFromNetworkController.builder()
-          .callbackHandler(callbackHandler)
-          .rxTxRouterProcess(rxTxRouterProcess)
-          .flowIdDispatcher(new CallbackFlowIdDispatcher())
-          //.waitForNodeTimeout(5_000)
-          .build();
-
-      serialPort.connect("/dev/tty.usbmodem14211");
-      rxTxRouterProcess.initialize();
-      Thread thread = new Thread(rxTxRouterProcess);
-      thread.setDaemon(true);
-      thread.start();
-
+    try (
+        RemoveNodeFromNetworkController controller = RemoveNodeFromNetworkController.builder()
+            .dongleDevice("/dev/tty.usbmodem1411")
+            .build()
+    ) {
+      controller.connect();
       Optional<NodeInfo> nodeInfoWrap = controller.listenForNodeToRemove();
       System.out.println(nodeInfoWrap.map(
           info -> String.format("id: %s\nbdc: %s\ngdc: %s\nsdc: %s",
@@ -119,8 +102,6 @@ public class RemoveNodeFromNetworkController extends AbstractInclusionController
               info.getSpecificDeviceClass())
           ).orElse("No node found")
       );
-    } finally {
-      serialPort.disconnect();
     }
   }
 }

@@ -31,7 +31,7 @@ public class CheckNodesInNetwork extends AbstractExample {
 
   private void runExample(String device) throws SerialException {
     try (BasicSynchronousController controller = BasicSynchronousController.builder()
-        .device(device)
+        .dongleDevice(device)
         .build()
         .connect();) {
       checkDongleIds(controller);
@@ -40,6 +40,6 @@ public class CheckNodesInNetwork extends AbstractExample {
   }
 
   public static void main(String... args) throws SerialException {
-    new CheckNodesInNetwork().runExample(System.getProperty("zwave.device", DEFAULT_DEVICE));
+    new CheckNodesInNetwork().runExample(System.getProperty("zwave.dongleDevice", DEFAULT_DEVICE));
   }
 }

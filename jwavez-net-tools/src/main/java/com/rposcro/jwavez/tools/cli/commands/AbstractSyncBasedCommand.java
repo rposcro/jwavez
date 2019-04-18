@@ -12,7 +12,7 @@ public abstract class AbstractSyncBasedCommand extends AbstractCommand {
   protected void connect(AbstractDeviceBasedOptions options) throws CommandExecutionException {
     try {
       controller = BasicSynchronousController.builder()
-          .device(options.getDevice())
+          .dongleDevice(options.getDevice())
           .build()
           .connect();
     } catch(SerialPortException e) {

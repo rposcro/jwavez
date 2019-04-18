@@ -79,7 +79,7 @@
   <dependencies>
     <dependency>
       <groupId>com.jwavez</groupId>
-      <artifactId>jwavez-serial-probe</artifactId>
+      <artifactId>jwavez-serial</artifactId>
       <version>${project.parent.version}</version>
     </dependency>
 

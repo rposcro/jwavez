@@ -5,7 +5,6 @@ import com.rposcro.jwavez.serial.controllers.helpers.RequestCallbackFlowHelper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.callbacks.FlowCallback;
@@ -13,18 +12,14 @@ import com.rposcro.jwavez.serial.frames.responses.SolicitedCallbackResponse;
 import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.handlers.LastResponseHolder;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
-import com.rposcro.jwavez.serial.rxtx.RxTxRouterProcess;
 import com.rposcro.jwavez.serial.rxtx.SerialFrameConstants;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
-import com.rposcro.jwavez.serial.rxtx.port.NeuronRoboticsSerialPort;
-import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -37,16 +32,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class GeneralAsynchronousController implements AutoCloseable {
+public class GeneralAsynchronousController extends AbstractAsynchronousController<GeneralAsynchronousController> {
 
   private static final long DEFAULT_CALLBACK_TIMEOUT_MILLIS = 5000;
 
-  private String device;
-  private RxTxRouterProcess rxTxRouterProcess;
-  private SerialPort serialPort;
-  private ExecutorService executorService;
-
-  private boolean selfExecutor;
   private Semaphore controllerLock;
 
   private InboundFrameParser parser;
@@ -59,21 +48,6 @@ public class GeneralAsynchronousController implements AutoCloseable {
   private byte expectedCallbackFlowId;
   private byte expectedCommandCode;
   private CompletableFuture<FlowCallback> expectedFutureCallback;
-
-  public GeneralAsynchronousController connect() throws SerialPortException {
-    serialPort.connect(device);
-    executorService.execute(rxTxRouterProcess);
-    return this;
-  }
-
-  @Override
-  public void close() throws SerialPortException {
-    rxTxRouterProcess.stop();
-    if (selfExecutor) {
-      executorService.shutdownNow();
-    }
-    serialPort.disconnect();
-  }
 
   public <T extends ZWaveResponse> T requestResponseFlow(SerialRequest request) throws FlowException {
     try {
@@ -146,22 +120,14 @@ public class GeneralAsynchronousController implements AutoCloseable {
 
   @Builder
   private static GeneralAsynchronousController build(
-      @NonNull String device,
-      RxTxConfiguration configuration,
+      @NonNull String dongleDevice,
+      RxTxConfiguration rxTxConfiguration,
       ExecutorService executorService,
       Consumer<ViewBuffer> responseHandler,
       Consumer<ViewBuffer> callbackHandler) {
     GeneralAsynchronousController instance = new GeneralAsynchronousController();
-    instance.device = device;
-    instance.serialPort = new NeuronRoboticsSerialPort();
-    instance.rxTxRouterProcess = RxTxRouterProcess.builder()
-        .configuration(configuration != null ? configuration : RxTxConfiguration.builder().build())
-        .serialPort(instance.serialPort)
-        .responseHandler(instance::handleResponse)
-        .callbackHandler(instance::handleCallback)
-        .build();
-    instance.executorService = executorService == null ? Executors.newSingleThreadExecutor(GeneralAsynchronousController::makeThread) : executorService;
-    instance.selfExecutor = executorService == null;
+    instance.helpWithBuild(dongleDevice, rxTxConfiguration, instance::handleResponse, instance::handleCallback, executorService);
+
     instance.customResponseHandler = Optional.ofNullable(responseHandler);
     instance.customCallbackHandler = Optional.ofNullable(callbackHandler);
     instance.lastResponseHandler = new LastResponseHolder();
@@ -170,12 +136,5 @@ public class GeneralAsynchronousController implements AutoCloseable {
     instance.validator = InboundFrameValidator.defaultValidator();
     instance.controllerLock = new Semaphore(1);
     return instance;
-  }
-
-  private static Thread makeThread(Runnable runnable) {
-    Thread thread = new Thread(runnable);
-    thread.setName(GeneralAsynchronousController.class.getSimpleName() + ".RxTxRouterThread");
-    thread.setDaemon(true);
-    return thread;
   }
 }

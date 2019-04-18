@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.tools.cli.controller;
 
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.cli.commands.Command;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandLineException;
@@ -41,16 +42,18 @@ public class CommandController {
       System.out.println(e.getMessage() + "\n");
       log.warn("", e.getCause());
       return EXIT_CODE_GENERAL_ERROR;
+    } catch(SerialException e) {
+      System.out.printf("Serial communication error: %s\n\n", e.getMessage());
+      log.warn("", e.getCause());
+      return EXIT_CODE_GENERAL_ERROR;
     }
   }
 
   private void invokeCommand(CommandReference reference, String[] options)
-      throws CommandOptionsException, CommandExecutionException {
+      throws CommandOptionsException, CommandExecutionException, SerialException {
     try ( Command command = reference.createCommand() ) {
       command.configure(options);
       command.execute();
-    } catch(Exception e) {
-      throw new RuntimeException(e);
     }
   }
 

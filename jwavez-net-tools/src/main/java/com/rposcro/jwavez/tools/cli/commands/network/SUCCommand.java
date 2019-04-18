@@ -8,6 +8,7 @@ import com.rposcro.jwavez.serial.frames.requests.MemoryGetIdRequest;
 import com.rposcro.jwavez.serial.frames.requests.SetSUCNodeIdRequest;
 import com.rposcro.jwavez.serial.frames.responses.GetSUCNodeIdResponse;
 import com.rposcro.jwavez.serial.frames.responses.MemoryGetIdResponse;
+import com.rposcro.jwavez.serial.frames.responses.SetSUCNodeIdResponse;
 import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.commands.AbstractSyncBasedCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
@@ -50,6 +51,19 @@ public class SUCCommand extends AbstractSyncBasedCommand {
     System.out.printf("  SUC Id: 0x%02x\n", response.getSucNodeId().getId());
   }
 
+  private void setOtherSUC() throws FlowException {
+    System.out.printf("Setting SUC Id as 0x%02x ...\n", options.getOtherId());
+    SetSUCNodeIdCallback callback = controller.requestCallbackFlow(
+        SetSUCNodeIdRequest.createSetRemoteSUCNodeRequest(new NodeId(options.getOtherId()), true, nextFlowId()),
+        options.getTimeout());
+
+    if (callback.isSuccessful()) {
+      System.out.println("SUC id set");
+    } else {
+      System.out.println("Failed to set SUC id");
+    }
+  }
+
   private void setThisSUC() throws FlowException {
     System.out.println("Reading this dongle's id...");
     MemoryGetIdResponse response = controller.requestResponseFlow(MemoryGetIdRequest.createMemoryGetIdRequest());
@@ -57,27 +71,13 @@ public class SUCCommand extends AbstractSyncBasedCommand {
     System.out.printf("This dongle's id is 0x%02x\n", thisId.getId());
 
     System.out.println("Setting up this dongle as SUC...");
-    SetSUCNodeIdCallback callback = controller.requestCallbackFlow(
-        SetSUCNodeIdRequest.createSetRemoteSUCNodeRequest(thisId, true, nextFlowId()),
-        options.getTimeout());
+    SetSUCNodeIdResponse sucResponse = controller.requestResponseFlow(
+        SetSUCNodeIdRequest.createSetLocalSUCNodeRequest(thisId, true));
 
-    if (callback.isSuccessful()) {
-      System.out.println("Dongle set as SUC");
+    if (sucResponse.isRequestAccepted()) {
+      System.out.println("This dongle set as SUC");
     } else {
-      System.out.println("Failed to set this dongle as SUC");
-    }
-  }
-
-  private void setOtherSUC() throws FlowException {
-    System.out.printf("Setting SUC Id as 0x%02x ...\n", options.getOtherId());
-    SetSUCNodeIdCallback callback = controller.requestCallbackFlow(
-        SetSUCNodeIdRequest.createSetLocalSUCNodeRequest(new NodeId(options.getOtherId()), true),
-        options.getTimeout());
-
-    if (callback.isSuccessful()) {
-      System.out.println("SUC Id set");
-    } else {
-      System.out.println("Failed to configure SUC Id");
+      System.out.println("Failed to configure itself as SUC");
     }
   }
 

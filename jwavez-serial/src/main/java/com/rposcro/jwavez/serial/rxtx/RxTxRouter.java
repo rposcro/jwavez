@@ -1,9 +1,11 @@
 package com.rposcro.jwavez.serial.rxtx;
 
+import static com.rposcro.jwavez.core.utils.ObjectsUtil.orDefault;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_COMMAND;
 import static com.rposcro.jwavez.serial.utils.BufferUtil.bufferToString;
 import static java.lang.System.currentTimeMillis;
 
+import com.rposcro.jwavez.core.utils.ObjectsUtil;
 import com.rposcro.jwavez.serial.exceptions.FatalSerialException;
 import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException;
 import com.rposcro.jwavez.serial.exceptions.OddFrameException;
@@ -44,11 +46,11 @@ public class RxTxRouter {
       Consumer<ViewBuffer> responseHandler,
       Consumer<ViewBuffer> callbackHandler)  {
     this();
-    this.configuration = configuration;
+    this.configuration = orDefault(configuration, RxTxConfiguration::defaultConfiguration);
     this.serialPort = serialPort;
 
     this.inboundStream = FrameInboundStream.builder()
-        .configuration(configuration)
+        .configuration(this.configuration)
         .serialPort(serialPort)
         .build();
     this.outboundStream = FrameOutboundStream.builder()
@@ -58,18 +60,18 @@ public class RxTxRouter {
     this.idleStageDoer = IdleStageDoer.builder()
         .inboundStream(inboundStream)
         .outboundStream(outboundStream)
-        .callbackHandler(callbackHandler == null ?  this::handleCallback : callbackHandler)
+        .callbackHandler(orDefault(callbackHandler, this::handleCallback))
         .build();
     this.requestStageDoer = RequestStageDoer.builder()
         .inboundStream(inboundStream)
         .outboundStream(outboundStream)
-        .configuration(configuration)
+        .configuration(this.configuration)
         .build();
     this.responseStageDoer = ResponseStageDoer.builder()
         .inboundStream(inboundStream)
         .outboundStream(outboundStream)
-        .configuration(configuration)
-        .responseHandler(responseHandler == null ? this::handleResponse : responseHandler)
+        .configuration(this.configuration)
+        .responseHandler(orDefault(responseHandler, this::handleResponse))
         .build();
   }
 

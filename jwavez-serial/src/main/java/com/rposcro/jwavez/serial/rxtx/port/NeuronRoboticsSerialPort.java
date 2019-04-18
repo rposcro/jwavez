@@ -23,7 +23,7 @@ public class NeuronRoboticsSerialPort implements SerialPort {
   public synchronized void connect(String device) throws SerialPortException {
     try {
       if (this.port != null) {
-        throw new SerialPortException("Port is already connected with device %s!", device);
+        throw new SerialPortException("Port is already connected with dongleDevice %s!", device);
       }
 
       this.device = device;
@@ -33,7 +33,7 @@ public class NeuronRoboticsSerialPort implements SerialPort {
       this.inputChannel = Channels.newChannel(inputStream);
       this.outputChannel = Channels.newChannel(port.getOutputStream());
     } catch(Exception e) {
-      throw new SerialPortException(e, "Could not connect with device %s!", device);
+      throw new SerialPortException(e, "Could not connect with dongleDevice %s!", device);
     }
   }
 
@@ -45,11 +45,14 @@ public class NeuronRoboticsSerialPort implements SerialPort {
 
   @Override
   public synchronized void disconnect() throws SerialPortException {
-    try {
-      port.disconnect();
-      port = null;
-    } catch(Exception e) {
-      throw new SerialPortException(e, "Could not successfully disconnect from serial channel!");
+    if (port != null) {
+      try {
+        port.disconnect();
+      } catch (Exception e) {
+        throw new SerialPortException(e, "Could not successfully disconnect from serial channel!");
+      } finally {
+        port = null;
+      }
     }
   }
 

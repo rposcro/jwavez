@@ -19,6 +19,7 @@ import static com.rposcro.jwavez.serial.model.AddNodeToNeworkStatus.ADD_NODE_STA
 import static com.rposcro.jwavez.serial.model.AddNodeToNeworkStatus.ADD_NODE_STATUS_NODE_FOUND;
 import static com.rposcro.jwavez.serial.model.AddNodeToNeworkStatus.ADD_NODE_STATUS_PROTOCOL_DONE;
 
+import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
@@ -46,6 +47,11 @@ class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
 
   AddNodeToNetworkFlowHandler(TransactionKeeper<AddNodeToNetworkFlowState> transactionKeeper) {
     this.transactionKeeper = transactionKeeper;
+  }
+
+  @Override
+  NodeId getNodeId() {
+    return nodeInfo == null ? null : nodeInfo.getId();
   }
 
   @Override

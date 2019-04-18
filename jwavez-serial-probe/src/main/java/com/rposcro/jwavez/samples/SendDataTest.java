@@ -47,7 +47,7 @@ public class SendDataTest extends AbstractExample {
   }
 
   /**
-   * Checks node's configuration parameter values using Configuration Command Class.
+   * Checks node's rxTxConfiguration parameter values using Configuration Command Class.
    * @param nodeId
    */
   private void testConfigurationClass(NodeId nodeId) throws Exception {

@@ -1,11 +1,12 @@
 package com.rposcro.jwavez.serial.controllers;
 
+import static com.rposcro.jwavez.core.utils.ObjectsUtil.orDefault;
+
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.controllers.helpers.RequestCallbackFlowHelper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
@@ -16,7 +17,6 @@ import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.RxTxRouter;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import com.rposcro.jwavez.serial.rxtx.port.NeuronRoboticsSerialPort;
-import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 import java.util.Optional;
 import lombok.Builder;
 import lombok.NonNull;
@@ -27,20 +27,17 @@ import lombok.extern.slf4j.Slf4j;
  * flows. Any not solicited callbacks are simply ignored. This controller does not apply to complex flow scenarios
  * like nodes inclusion or exclusion.
  *
- * <B>Note!</B> This controller is not thread safe, must not send multiple requests at a same time.
+ * <B>Note!</B> This controller is not thread safe, must not send multiple requests at a time.
  * This controller runs in context of current thread, all calls are synchronized and blocking.
  * Dedicated typical usages are flow scenarios with well defined end conditions, in other words
  * 'do the job and exit'.</br>
  */
 @Slf4j
-public class BasicSynchronousController implements AutoCloseable {
+public class BasicSynchronousController extends AbstractClosableController<BasicSynchronousController> {
 
   private static final long DEFAULT_CALLBACK_TIMEOUT_MILLIS = 5000;
 
-  private String device;
   private RxTxRouter rxTxRouter;
-  private SerialPort serialPort;
-  private RxTxConfiguration configuration;
   private InboundFrameParser parser;
   private InboundFrameValidator validator;
   private RequestCallbackFlowHelper flowHelper;
@@ -50,13 +47,13 @@ public class BasicSynchronousController implements AutoCloseable {
   private Optional<Class<? extends ZWaveCallback>> expectedCallbackClass;
 
   @Builder
-  public BasicSynchronousController(@NonNull String device, RxTxConfiguration configuration) {
-    this.configuration = configuration != null ? configuration : RxTxConfiguration.builder().build();
+  public BasicSynchronousController(@NonNull String dongleDevice, RxTxConfiguration rxTxConfiguration) {
+    this.rxTxConfiguration = orDefault(rxTxConfiguration, RxTxConfiguration::defaultConfiguration);
     this.lastResponseHolder = new LastResponseHolder();
-    this.device = device;
+    this.dongleDevice = dongleDevice;
     this.serialPort = new NeuronRoboticsSerialPort();
     this.rxTxRouter = RxTxRouter.builder()
-        .configuration(this.configuration)
+        .configuration(this.rxTxConfiguration)
         .serialPort(serialPort)
         .responseHandler(this.lastResponseHolder)
         .callbackHandler(this::handleCallback)
@@ -64,16 +61,6 @@ public class BasicSynchronousController implements AutoCloseable {
     this.validator = InboundFrameValidator.defaultValidator();
     this.parser = InboundFrameParser.defaultParser();
     this.flowHelper = RequestCallbackFlowHelper.defaultHelper();
-  }
-
-  public BasicSynchronousController connect() throws SerialPortException {
-    this.serialPort.connect(device);
-    return this;
-  }
-
-  @Override
-  public void close() throws SerialPortException {
-    this.serialPort.disconnect();
   }
 
   public <T extends ZWaveResponse> T requestResponseFlow(SerialRequest request) throws FlowException {

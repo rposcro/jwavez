@@ -5,15 +5,14 @@ import static com.rposcro.jwavez.serial.controllers.inclusion.SetLearnModeFlowSt
 import static com.rposcro.jwavez.serial.controllers.inclusion.SetLearnModeFlowState.LEARN_MODE_DONE;
 import static com.rposcro.jwavez.serial.controllers.inclusion.SetLearnModeFlowState.LEARN_MODE_FAILED;
 
-import com.rposcro.jwavez.serial.controllers.helpers.CallbackFlowIdDispatcher;
+import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
-import com.rposcro.jwavez.serial.rxtx.RxTxRouterProcess;
-import com.rposcro.jwavez.serial.rxtx.port.NeuronRoboticsSerialPort;
-import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -22,11 +21,10 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class SetLearnModeController extends AbstractInclusionController<SetLearnModeFlowState> {
+public class SetLearnModeController extends AbstractInclusionController<SetLearnModeFlowState, SetLearnModeController> {
 
-  public boolean activateLearnMode() throws FlowException {
-    runTransaction("learn");
-    return transactionKeeper.isSuccessful();
+  public Optional<NodeId> activateLearnMode() throws FlowException {
+    return runTransaction("learn");
   }
 
   @Override
@@ -60,17 +58,18 @@ public class SetLearnModeController extends AbstractInclusionController<SetLearn
 
   @Builder
   public static SetLearnModeController build(
+      @NonNull String dongleDevice,
+      RxTxConfiguration rxTxConfiguration,
+      ExecutorService executorService,
       long waitForTouchTimeout,
-      long waitForProgressTimeout,
-      @NonNull InterceptableCallbackHandler callbackHandler,
-      @NonNull CallbackFlowIdDispatcher flowIdDispatcher,
-      @NonNull RxTxRouterProcess rxTxRouterProcess) {
+      long waitForProgressTimeout) {
     SetLearnModeController controller = new SetLearnModeController();
     controller.transactionKeeper = new TransactionKeeper<>(controller::transactionStateChanged);
     controller.flowHandler = new SetLearnModeFlowHandler(controller.transactionKeeper);
 
-    controller.flowIdDispatcher = flowIdDispatcher;
-    controller.rxTxRouterProcess = rxTxRouterProcess;
+    InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
+    controller.helpWithBuild(dongleDevice, rxTxConfiguration, null, callbackHandler, executorService);
+
     controller.waitForTouchTimeout = waitForTouchTimeout;
     controller.waitForProgressTimeout = waitForProgressTimeout;
 
@@ -79,32 +78,18 @@ public class SetLearnModeController extends AbstractInclusionController<SetLearn
   }
 
   public static void main(String... args) throws SerialException {
-    SerialPort serialPort = new NeuronRoboticsSerialPort();
-
-    try {
-      InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
-      RxTxRouterProcess rxTxRouterProcess = RxTxRouterProcess.builder()
-          .callbackHandler(callbackHandler)
-          .configuration(RxTxConfiguration.defaultConfiguration())
-          .serialPort(serialPort)
-          .build();
-      SetLearnModeController controller = SetLearnModeController.builder()
-          .callbackHandler(callbackHandler)
-          .rxTxRouterProcess(rxTxRouterProcess)
-          .flowIdDispatcher(new CallbackFlowIdDispatcher())
-          //.waitForNodeTimeout(5_000)
-          .build();
-
-      serialPort.connect("/dev/tty.usbmodem14211");
-      rxTxRouterProcess.initialize();
-      Thread thread = new Thread(rxTxRouterProcess);
-      thread.setDaemon(true);
-      thread.start();
-
-      boolean success = controller.activateLearnMode();
-      System.out.println("Success: " + success);
-    } finally {
-      serialPort.disconnect();
+    try (
+        SetLearnModeController controller = SetLearnModeController.builder()
+            .dongleDevice("/dev/tty.usbmodem1411")
+            .build()
+    ) {
+      controller.connect();
+      Optional<NodeId> nodeId = controller.activateLearnMode();
+      if (nodeId.isPresent()) {
+        System.out.println("Received node id: " + nodeId.get().getId());
+      } else {
+        System.out.println("No node id received");
+      }
     }
   }
 }

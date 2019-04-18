@@ -105,7 +105,7 @@ public class CommandsConfiguration {
 
   private CommandTreeNode nodeCommand() {
     return new CommandTreeNode("node", "reads or sets configuration of nodes in network")
-        .addChild(new CommandTreeNode("class", "reads node device/command class information")
+        .addChild(new CommandTreeNode("class", "reads node dongleDevice/command class information")
             .withCommandReference(NodeInfoCommand.class, DefaultNodeBasedOptions.OPTIONS))
         .addChild(new CommandTreeNode("association", "manages node group associations")
             .addChild(new CommandTreeNode("info", "reads associations information from node")

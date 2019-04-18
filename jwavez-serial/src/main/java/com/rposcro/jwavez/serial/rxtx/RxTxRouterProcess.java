@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.serial.rxtx;
 
+import com.rposcro.jwavez.core.utils.ObjectsUtil;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.exceptions.FatalSerialException;
 import com.rposcro.jwavez.serial.exceptions.RequestFlowException;
@@ -9,7 +10,6 @@ import com.rposcro.jwavez.serial.utils.async.Runner;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import lombok.Builder;
 import lombok.NonNull;
@@ -28,14 +28,14 @@ public class RxTxRouterProcess implements Runnable {
 
   @Builder
   public RxTxRouterProcess(
-      @NonNull RxTxConfiguration configuration,
       @NonNull SerialPort serialPort,
+      RxTxConfiguration configuration,
       Consumer<ViewBuffer> callbackHandler,
       Consumer<ViewBuffer> responseHandler)  {
     this();
-    this.configuration = configuration;
+    this.configuration = ObjectsUtil.orDefault(configuration, RxTxConfiguration::defaultConfiguration);
     this.rxTxRouter = RxTxRouter.builder()
-        .configuration(configuration)
+        .configuration(this.configuration)
         .serialPort(serialPort)
         .responseHandler(responseHandler)
         .callbackHandler(callbackHandler)
@@ -64,7 +64,7 @@ public class RxTxRouterProcess implements Runnable {
     this.stopRequested = true;
   }
 
-  public void initialize() throws SerialException {
+  public void resetStreams() throws SerialException {
     executeSynchronous(rxTxRouter::purgeInput);
   }
 

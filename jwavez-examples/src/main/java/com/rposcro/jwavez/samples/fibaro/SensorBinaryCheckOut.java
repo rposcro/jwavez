@@ -53,7 +53,7 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
 
     this.controller = GeneralAsynchronousController.builder()
         .callbackHandler(callbacksHandler)
-        .device(device)
+        .dongleDevice(device)
         .build()
         .connect();
   }
@@ -129,7 +129,7 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
   }
 
   private void learnConfiguration() throws Exception {
-    log.debug("Checking configuration");
+    log.debug("Checking rxTxConfiguration");
     ConfigurationCommandBuilder commandBuilder = new ConfigurationCommandBuilder();
     for (int paramNumber = 1; paramNumber <= 14; paramNumber++) {
       send("Send get parameter " + paramNumber, createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(paramNumber), nextFlowId()));
@@ -143,7 +143,7 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
 
   public static void main(String[] args) throws Exception {
     try (
-      SensorBinaryCheckOut checkout = new SensorBinaryCheckOut(3, System.getProperty("zwave.device", DEFAULT_DEVICE));
+      SensorBinaryCheckOut checkout = new SensorBinaryCheckOut(3, System.getProperty("zwave.dongleDevice", DEFAULT_DEVICE));
     ) {
       checkout.learnAssociations();
       checkout.learnConfiguration();

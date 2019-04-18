@@ -23,16 +23,13 @@ class AddNodeToNetworkControllerSpec extends Specification {
     Iterator<Runnable> actions;
 
     def setup() {
-        def flowIdDispatcher = new CallbackFlowIdDispatcher();
-        def callbackHandler = new InterceptableCallbackHandler();
         rxTxRouterProcess = Mock(RxTxRouterProcess.class);
         controller = AddNodeToNetworkController.builder()
-                .callbackHandler(callbackHandler)
-                .flowIdDispatcher(flowIdDispatcher)
-                .rxTxRouterProcess(rxTxRouterProcess)
+                .dongleDevice("/fake")
                 .waitForTouchTimeout(20)
                 .waitForProgressTimeout(20)
                 .build();
+        controller.rxTxRouterProcess = rxTxRouterProcess;
     }
 
     def "new node successfully added"() {
@@ -41,7 +38,7 @@ class AddNodeToNetworkControllerSpec extends Specification {
 
         when:
         controller.transactionKeeper.reset();
-        controller.flowHandler.startOver(controller.flowIdDispatcher.nextFlowId());
+        controller.flowHandler.startOver(controller.callbackFlowIdDispatcher.nextFlowId());
         controller.flowStep();
         controller.flowHandler.handleCallback(learnReadyCallback(controller.flowHandler.callbackFlowId));
         controller.flowStep();
@@ -91,7 +88,7 @@ class AddNodeToNetworkControllerSpec extends Specification {
 
         when:
         controller.transactionKeeper.reset();
-        controller.flowHandler.startOver(controller.flowIdDispatcher.nextFlowId());
+        controller.flowHandler.startOver(controller.callbackFlowIdDispatcher.nextFlowId());
         controller.flowStep();
         controller.flowHandler.handleCallback(learnReadyCallback(controller.flowHandler.callbackFlowId));
         controller.flowStep();

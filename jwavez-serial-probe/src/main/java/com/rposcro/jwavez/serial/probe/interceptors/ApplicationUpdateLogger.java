@@ -27,9 +27,9 @@ public class ApplicationUpdateLogger implements InboundFrameInterceptor {
             .collect(Collectors.toList());
         StringBuffer logMessage = new StringBuffer()
             .append(String.format("node id: %s\n", nodeInfo.getId()))
-            .append(String.format("basic device class: %s\n", nodeInfo.getBasicDeviceClass()))
-            .append(String.format("generic device class: %s\n", nodeInfo.getGenericDeviceClass()))
-            .append(String.format("specific device class: %s\n", nodeInfo.getSpecificDeviceClass()))
+            .append(String.format("basic dongleDevice class: %s\n", nodeInfo.getBasicDeviceClass()))
+            .append(String.format("generic dongleDevice class: %s\n", nodeInfo.getGenericDeviceClass()))
+            .append(String.format("specific dongleDevice class: %s\n", nodeInfo.getSpecificDeviceClass()))
             .append(String.format("command classes: %s\n", String.join(", ", commandClasses)))
                 ;
         log.info(logMessage.toString());

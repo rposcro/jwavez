@@ -10,7 +10,7 @@ import static com.rposcro.jwavez.serial.model.LearnStatus.LEARN_STATUS_FAILED;
 import static com.rposcro.jwavez.serial.model.LearnStatus.LEARN_STATUS_SECURITY_FAILED;
 import static com.rposcro.jwavez.serial.model.LearnStatus.LEARN_STATUS_STARTED;
 
-import com.rposcro.jwavez.core.model.NodeInfo;
+import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationUpdateCallback;
@@ -33,6 +33,9 @@ class SetLearnModeFlowHandler extends AbstractFlowHandler {
 
   @Getter(AccessLevel.PACKAGE)
   private byte callbackFlowId;
+
+  @Getter(AccessLevel.PACKAGE)
+  private NodeId nodeId;
 
   SetLearnModeFlowHandler(TransactionKeeper<SetLearnModeFlowState> transactionKeeper) {
     this.transactionKeeper = transactionKeeper;
@@ -59,6 +62,7 @@ class SetLearnModeFlowHandler extends AbstractFlowHandler {
 
   @Override
   void startOver(byte callbackFlowId) {
+    this.nodeId = null;
     this.callbackFlowId = callbackFlowId;
     this.transactionKeeper.transitAndSchedule(
         LEARN_MODE_ACTIVATED,
@@ -75,9 +79,9 @@ class SetLearnModeFlowHandler extends AbstractFlowHandler {
     this.transactionKeeper.transitAndSchedule(LEARN_MODE_FAILED, disableLearnModeFrame());
   }
 
-  @Override
-  NodeInfo getNodeInfo() {
-    return null;
+  private void readNodeIdAndTransit(SetLearnModeFlowState newState, SetLearnModeCallback callback) {
+    this.nodeId = callback.getNodeId();
+    transactionKeeper.transit(newState);
   }
 
   private void transit(SetLearnModeFlowState newState) {
@@ -122,7 +126,7 @@ class SetLearnModeFlowHandler extends AbstractFlowHandler {
     addTransition(LEARN_MODE_ACTIVATED, LEARN_STATUS_STARTED, LEARN_MODE_STARTED, (h, c, s) -> h.transit(s));
 
     addTransition(LEARN_MODE_STARTED, LEARN_STATUS_STARTED, LEARN_MODE_STARTED, (h, c, s) -> h.transit(s));
-    addTransition(LEARN_MODE_STARTED, LEARN_STATUS_DONE, LEARN_MODE_DONE, (h, c, s) -> h.transit(s));
+    addTransition(LEARN_MODE_STARTED, LEARN_STATUS_DONE, LEARN_MODE_DONE, (h, c, s) -> h.readNodeIdAndTransit(s, c));
     addTransition(LEARN_MODE_STARTED, LEARN_STATUS_FAILED, LEARN_MODE_FAILED, (h, c, s) -> h.transit(s));
     addTransition(LEARN_MODE_STARTED, LEARN_STATUS_SECURITY_FAILED, LEARN_MODE_FAILED, (h, c, s) -> h.transit(s));
   }

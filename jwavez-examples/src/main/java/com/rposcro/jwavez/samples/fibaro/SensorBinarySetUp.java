@@ -54,7 +54,7 @@ public class SensorBinarySetUp extends AbstractExample implements AutoCloseable 
 
     this.controller = GeneralAsynchronousController.builder()
         .callbackHandler(callbacksHandler)
-        .device(device)
+        .dongleDevice(device)
         .build()
         .connect();
   }
@@ -148,7 +148,7 @@ public class SensorBinarySetUp extends AbstractExample implements AutoCloseable 
 
   public static void main(String[] args) throws Exception {
     try (
-        SensorBinarySetUp setup = new SensorBinarySetUp(3, System.getProperty("zwave.device", DEFAULT_DEVICE));
+        SensorBinarySetUp setup = new SensorBinarySetUp(3, System.getProperty("zwave.dongleDevice", DEFAULT_DEVICE));
     ) {
       setup.setMonostableModeForBothInputs();
       //setup.setNOModeForBothInputs();

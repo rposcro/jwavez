@@ -10,7 +10,7 @@ public class MemoryGetIdExample extends AbstractExample {
 
   private void runExample(String device) throws SerialException {
     try (BasicSynchronousController controller = BasicSynchronousController.builder()
-        .device(device)
+        .dongleDevice(device)
         .build()
         .connect();) {
 
@@ -23,6 +23,6 @@ public class MemoryGetIdExample extends AbstractExample {
   }
 
   public static void main(String... args) throws SerialException {
-    new MemoryGetIdExample().runExample(System.getProperty("zwave.device", DEFAULT_DEVICE));
+    new MemoryGetIdExample().runExample(System.getProperty("zwave.dongleDevice", DEFAULT_DEVICE));
   }
 }

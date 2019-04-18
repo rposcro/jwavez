@@ -6,16 +6,13 @@ import static com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkFl
 import static com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkFlowState.WAITING_FOR_NODE;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.controllers.helpers.CallbackFlowIdDispatcher;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
-import com.rposcro.jwavez.serial.rxtx.RxTxRouterProcess;
-import com.rposcro.jwavez.serial.rxtx.port.NeuronRoboticsSerialPort;
-import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -24,10 +21,11 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class AddNodeToNetworkController extends AbstractInclusionController<AddNodeToNetworkFlowState> {
+public class AddNodeToNetworkController extends AbstractInclusionController<AddNodeToNetworkFlowState, AddNodeToNetworkController> {
 
   public Optional<NodeInfo> listenForNodeToAdd() throws FlowException {
-    return runTransaction("add");
+    runTransaction("add");
+    return Optional.ofNullable(((AddNodeToNetworkFlowHandler) flowHandler).getNodeInfo());
   }
 
   @Override
@@ -65,17 +63,18 @@ public class AddNodeToNetworkController extends AbstractInclusionController<AddN
 
   @Builder
   public static AddNodeToNetworkController build(
+      @NonNull String dongleDevice,
+      RxTxConfiguration rxTxConfiguration,
+      ExecutorService executorService,
       long waitForTouchTimeout,
-      long waitForProgressTimeout,
-      @NonNull InterceptableCallbackHandler callbackHandler,
-      @NonNull CallbackFlowIdDispatcher flowIdDispatcher,
-      @NonNull RxTxRouterProcess rxTxRouterProcess) {
+      long waitForProgressTimeout) {
     AddNodeToNetworkController controller = new AddNodeToNetworkController();
     controller.transactionKeeper = new TransactionKeeper<>(controller::transactionStateChanged);
     controller.flowHandler = new AddNodeToNetworkFlowHandler(controller.transactionKeeper);
 
-    controller.flowIdDispatcher = flowIdDispatcher;
-    controller.rxTxRouterProcess = rxTxRouterProcess;
+    InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
+    controller.helpWithBuild(dongleDevice, rxTxConfiguration, null, callbackHandler, executorService);
+
     controller.waitForTouchTimeout = waitForTouchTimeout;
     controller.waitForProgressTimeout = waitForProgressTimeout;
 
@@ -84,28 +83,12 @@ public class AddNodeToNetworkController extends AbstractInclusionController<AddN
   }
 
   public static void main(String... args) throws SerialException {
-    SerialPort serialPort = new NeuronRoboticsSerialPort();
-
-    try {
-      InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
-      RxTxRouterProcess rxTxRouterProcess = RxTxRouterProcess.builder()
-          .callbackHandler(callbackHandler)
-          .configuration(RxTxConfiguration.defaultConfiguration())
-          .serialPort(serialPort)
-          .build();
-      AddNodeToNetworkController controller = AddNodeToNetworkController.builder()
-          .callbackHandler(callbackHandler)
-          .rxTxRouterProcess(rxTxRouterProcess)
-          .flowIdDispatcher(new CallbackFlowIdDispatcher())
-          //.waitForNodeTimeout(5_000)
-          .build();
-
-      serialPort.connect("/dev/tty.usbmodem1411");
-      rxTxRouterProcess.initialize();
-      Thread thread = new Thread(rxTxRouterProcess);
-      thread.setDaemon(true);
-      thread.start();
-
+    try (
+        AddNodeToNetworkController controller = AddNodeToNetworkController.builder()
+          .dongleDevice("/dev/tty.usbmodem1411")
+          .build()
+    ) {
+      controller.connect();
       Optional<NodeInfo> nodeInfoWrap = controller.listenForNodeToAdd();
       System.out.println(nodeInfoWrap.map(
           info -> String.format("id: %s\nbdc: %s\ngdc: %s\nsdc: %s",
@@ -115,8 +98,6 @@ public class AddNodeToNetworkController extends AbstractInclusionController<AddN
               info.getSpecificDeviceClass())
           ).orElse("No node found")
       );
-    } finally {
-      serialPort.disconnect();
     }
   }
 }

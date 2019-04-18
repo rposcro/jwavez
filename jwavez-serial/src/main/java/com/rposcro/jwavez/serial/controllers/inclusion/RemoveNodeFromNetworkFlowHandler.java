@@ -18,6 +18,7 @@ import static com.rposcro.jwavez.serial.model.RemoveNodeFromNeworkStatus.REMOVE_
 import static com.rposcro.jwavez.serial.model.RemoveNodeFromNeworkStatus.REMOVE_NODE_STATUS_REMOVING_CONTROLLER;
 import static com.rposcro.jwavez.serial.model.RemoveNodeFromNeworkStatus.REMOVE_NODE_STATUS_REMOVING_SLAVE;
 
+import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
@@ -43,6 +44,11 @@ class RemoveNodeFromNetworkFlowHandler extends AbstractFlowHandler {
 
   RemoveNodeFromNetworkFlowHandler(TransactionKeeper<RemoveNodeFromNetworkFlowState> transactionKeeper) {
     this.transactionKeeper = transactionKeeper;
+  }
+
+  @Override
+  NodeId getNodeId() {
+    return nodeInfo == null ? null : nodeInfo.getId();
   }
 
   @Override

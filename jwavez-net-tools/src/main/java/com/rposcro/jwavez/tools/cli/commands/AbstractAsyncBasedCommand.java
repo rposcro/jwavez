@@ -16,7 +16,7 @@ public abstract class AbstractAsyncBasedCommand extends AbstractCommand {
   protected AbstractAsyncBasedCommand connect(AbstractDeviceBasedOptions options) throws CommandExecutionException {
     try {
       this.controller = GeneralAsynchronousController.builder()
-          .device(options.getDevice())
+          .dongleDevice(options.getDevice())
           .callbackHandler(this.callbackHandler = new InterceptableCallbackHandler())
           .build()
           .connect();

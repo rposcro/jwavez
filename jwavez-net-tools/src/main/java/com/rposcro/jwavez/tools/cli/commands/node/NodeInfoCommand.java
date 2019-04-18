@@ -63,9 +63,9 @@ public class NodeInfoCommand extends AbstractAsyncBasedCommand {
             .collect(Collectors.toList());
         StringBuffer logMessage = new StringBuffer("Node info successfully received\n")
             .append(String.format("  node id: %02X\n", nodeInfo.getId().getId()))
-            .append(String.format("  basic device class: %s\n", nodeInfo.getBasicDeviceClass()))
-            .append(String.format("  generic device class: %s\n", nodeInfo.getGenericDeviceClass()))
-            .append(String.format("  specific device class: %s\n", nodeInfo.getSpecificDeviceClass()))
+            .append(String.format("  basic dongleDevice class: %s\n", nodeInfo.getBasicDeviceClass()))
+            .append(String.format("  generic dongleDevice class: %s\n", nodeInfo.getGenericDeviceClass()))
+            .append(String.format("  specific dongleDevice class: %s\n", nodeInfo.getSpecificDeviceClass()))
             .append(String.format("  command classes: %s\n", String.join(", ", commandClasses)));
         System.out.println(logMessage.toString());
         doneLock.release();

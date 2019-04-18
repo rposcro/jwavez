@@ -15,7 +15,7 @@ public class NetworkListener extends AbstractExample implements AutoCloseable {
   public NetworkListener(String device) throws SerialPortException {
     this.controller = GeneralAsynchronousController.builder()
         .callbackHandler(this::handleViewBuffer)
-        .device(device)
+        .dongleDevice(device)
         .build()
         .connect();
   }
@@ -29,7 +29,7 @@ public class NetworkListener extends AbstractExample implements AutoCloseable {
   }
 
   public static void main(String[] args) throws Exception {
-    String device = System.getProperty("zwave.device", DEFAULT_DEVICE);
+    String device = System.getProperty("zwave.dongleDevice", DEFAULT_DEVICE);
 
     try (
         NetworkListener setup = new NetworkListener(device);

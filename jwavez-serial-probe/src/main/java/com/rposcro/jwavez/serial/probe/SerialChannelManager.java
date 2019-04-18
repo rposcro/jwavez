@@ -63,10 +63,10 @@ public class SerialChannelManager {
         }
         return serialChannel;
       } catch(Exception e) {
-        throw new CommunicationException("Failed to initialize communication with device!", e);
+        throw new CommunicationException("Failed to resetStreams communication with dongleDevice!", e);
       }
     } else {
-      throw new CommunicationException("Failed to connect to device!");
+      throw new CommunicationException("Failed to connect to dongleDevice!");
     }
   }
 
