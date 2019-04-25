@@ -2,7 +2,6 @@ package com.rposcro.jwavez.tools.cli.commands.dongle;
 
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
-import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.requests.GetCapabilitiesRequest;
 import com.rposcro.jwavez.serial.frames.requests.GetControllerCapabilitiesRequest;
@@ -64,28 +63,28 @@ public class DongleCheckCommand extends AbstractSyncBasedCommand {
     }
   }
 
-  private void runSUCId() throws FlowException {
+  private void runSUCId() throws SerialException {
     GetSUCNodeIdResponse response = controller.requestResponseFlow(GetSUCNodeIdRequest.createGetSUCNodeIdRequest());
     System.out.printf("  SUC node id: %02X\n", response.getSucNodeId().getId());
   }
 
-  private void runPowerLevel() throws FlowException {
+  private void runPowerLevel() throws SerialException {
     GetRFPowerLevelResponse response = controller.requestResponseFlow(GetRFPowerLevelRequest.createGetRFPowerLevelRequest());
     System.out.printf("  Power level: %s\n", response.getPowerLevel());
   }
 
-  private void runNetworkIds() throws FlowException {
+  private void runNetworkIds() throws SerialException {
     MemoryGetIdResponse response = controller.requestResponseFlow(MemoryGetIdRequest.createMemoryGetIdRequest());
     System.out.printf("  HomeId: %04x\n", response.getHomeId());
     System.out.printf("  Dongle NodeId: %02x\n", response.getNodeId().getId());
   }
 
-  private void runLibraryType() throws FlowException {
+  private void runLibraryType() throws SerialException {
     GetLibraryTypeResponse response = controller.requestResponseFlow(GetLibraryTypeRequest.createLibraryTypeRequest());
     System.out.printf("  Library type: %s\n", response.getLibraryType());
   }
 
-  private void runInitialData() throws FlowException {
+  private void runInitialData() throws SerialException {
     GetInitDataResponse response = controller.requestResponseFlow(GetInitDataRequest.createGetInitDataRequest());
     System.out.printf("  Version: %s\n", response.getVersion());
     System.out.printf("  Capabilities: %s\n", response.getCapabilities());
@@ -96,13 +95,13 @@ public class DongleCheckCommand extends AbstractSyncBasedCommand {
       .collect(Collectors.toList()));
   }
 
-  private void runGetVersion() throws FlowException {
+  private void runGetVersion() throws SerialException {
     GetVersionResponse response = controller.requestResponseFlow(GetVersionRequest.createGetVersionRequest());
     System.out.printf("  Version: %s\n", response.getVersion());
     System.out.printf("  ZWaveResponse data: %s\n", response.getResponseData());
   }
 
-  private void runControllerCapabilities() throws FlowException {
+  private void runControllerCapabilities() throws SerialException {
     GetControllerCapabilitiesResponse response = controller.requestResponseFlow(GetControllerCapabilitiesRequest.createGetControllerCapabiltiesRequest());
     System.out.printf("  Is real primary: %s\n", response.isRealPrimary());
     System.out.printf("  Is secondary: %s\n", response.isSecondary());
@@ -111,7 +110,7 @@ public class DongleCheckCommand extends AbstractSyncBasedCommand {
     System.out.printf("  Is on another network: %s\n", response.isOnOtherNetwork());
   }
 
-  private void runCapabilities() throws FlowException {
+  private void runCapabilities() throws SerialException {
     GetCapabilitiesResponse response = controller.requestResponseFlow(GetCapabilitiesRequest.createGetCapabilitiesRequest());
     System.out.printf("  App version: %s\n", response.getSerialAppVersion());
     System.out.printf("  App revision: %s\n", response.getSerialAppRevision());

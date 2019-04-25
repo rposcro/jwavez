@@ -5,14 +5,14 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_C
 import static com.rposcro.jwavez.serial.utils.BufferUtil.bufferToString;
 import static java.lang.System.currentTimeMillis;
 
-import com.rposcro.jwavez.core.utils.ObjectsUtil;
 import com.rposcro.jwavez.serial.exceptions.FatalSerialException;
-import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException;
-import com.rposcro.jwavez.serial.exceptions.OddFrameException;
-import com.rposcro.jwavez.serial.exceptions.RequestFlowException;
+import com.rposcro.jwavez.serial.exceptions.RxTxException;
+import com.rposcro.jwavez.serial.exceptions.StreamTimeoutException;
+import com.rposcro.jwavez.serial.exceptions.StreamMalformedException;
+import com.rposcro.jwavez.serial.exceptions.StreamFlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
-import com.rposcro.jwavez.serial.exceptions.SerialStreamException;
+import com.rposcro.jwavez.serial.exceptions.StreamException;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import java.nio.ByteBuffer;
@@ -80,7 +80,7 @@ public class RxTxRouter {
     this.retransmissionTime = Long.MAX_VALUE;
   }
 
-  public void runUnlessRequestSent(SerialRequest serialRequest) throws SerialException {
+  public void runUnlessRequestSent(SerialRequest serialRequest) throws RxTxException {
     outboundLock.acquireUninterruptibly();
     try {
       enqueueRequest(serialRequest);
@@ -88,7 +88,7 @@ public class RxTxRouter {
         runSingleCycle();
       }
       if (!transmissionSuccess) {
-        throw new RequestFlowException("Failed to send request!");
+        throw new StreamFlowException("Failed to send request!");
       }
     } finally {
       serialRequest.getFrameData().release();
@@ -96,18 +96,18 @@ public class RxTxRouter {
     }
   }
 
-  public void runSingleCycle() throws SerialException {
+  public void runSingleCycle() throws RxTxException {
     try {
       receiveStage();
       transmitStage();
       Thread.sleep(configuration.getRouterPollDelay());
-    } catch (OddFrameException e) {
+    } catch (StreamMalformedException e) {
       outboundStream.writeNAK();
       inboundStream.purgeStream();
-    } catch (FrameTimeoutException e) {
+    } catch (StreamTimeoutException e) {
       outboundStream.writeCAN();
       inboundStream.purgeStream();
-    } catch (SerialStreamException e) {
+    } catch (StreamException e) {
       outboundStream.writeCAN();
       inboundStream.purgeStream();
     } catch (InterruptedException e) {
@@ -150,14 +150,14 @@ public class RxTxRouter {
     return retransmissionTime <= System.currentTimeMillis();
   }
 
-  private void receiveStage() throws SerialException {
+  private void receiveStage() throws RxTxException {
     IdleStageResult idleStageResult;
     do {
       idleStageResult = idleStageDoer.checkInbound();
     } while(idleStageResult != IdleStageResult.RESULT_SILENCE);
   }
 
-  private void transmitStage() throws SerialException {
+  private void transmitStage() throws RxTxException {
     if (transmissionAwaiting()) {
       ByteBuffer frameData = serialRequest.getFrameData().asByteBuffer();
       frameData.mark();

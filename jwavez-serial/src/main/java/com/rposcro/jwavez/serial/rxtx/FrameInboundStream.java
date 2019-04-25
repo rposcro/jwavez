@@ -7,9 +7,9 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_SOF;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_LENGTH;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.MAX_Z_WAVE_FRAME_SIZE;
 
-import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException;
-import com.rposcro.jwavez.serial.exceptions.OddFrameException;
-import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.exceptions.RxTxException;
+import com.rposcro.jwavez.serial.exceptions.StreamTimeoutException;
+import com.rposcro.jwavez.serial.exceptions.StreamMalformedException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
@@ -37,7 +37,7 @@ public class FrameInboundStream {
     this.viewBuffer = new InboundViewBuffer(frameBuffer);
   }
 
-  public ViewBuffer nextFrame() throws SerialException {
+  public ViewBuffer nextFrame() throws RxTxException {
     if (!frameBuffer.hasRemaining()) {
       purgeAndLoadBuffer();
     }
@@ -76,7 +76,7 @@ public class FrameInboundStream {
     return viewBuffer;
   }
 
-  private ViewBuffer setViewOverFrame() throws SerialException {
+  private ViewBuffer setViewOverFrame() throws RxTxException {
     int position = frameBuffer.position();
     byte category = frameBuffer.get(position);
 
@@ -85,12 +85,12 @@ public class FrameInboundStream {
     } else if (category == CATEGORY_SOF) {
       return setViewOverSOF();
     } else {
-      throw new OddFrameException("Unrecognized frame category %02x", category);
+      throw new StreamMalformedException("Unrecognized frame category %02x", category);
     }
     return viewBuffer;
   }
 
-  private ViewBuffer setViewOverSOF() throws SerialException {
+  private ViewBuffer setViewOverSOF() throws RxTxException {
     int position = frameBuffer.position();
     ensureRemaining(3);
     int length = frameBuffer.get(position + FRAME_OFFSET_LENGTH) + 2;
@@ -99,14 +99,14 @@ public class FrameInboundStream {
     return viewBuffer;
   }
 
-  private void ensureRemaining(int expectedRemaining) throws SerialException {
+  private void ensureRemaining(int expectedRemaining) throws RxTxException {
     int remaining = frameBuffer.remaining();
     if (remaining < expectedRemaining) {
       refillBuffer(expectedRemaining - remaining);
     }
   }
 
-  private void refillBuffer(int refillSize) throws SerialException {
+  private void refillBuffer(int refillSize) throws RxTxException {
     frameBuffer.mark();
     frameBuffer.position(frameBuffer.limit());
     frameBuffer.limit(frameBuffer.limit() + refillSize);
@@ -117,7 +117,7 @@ public class FrameInboundStream {
       if (timeOutPoint < System.currentTimeMillis()) {
         frameBuffer.limit(frameBuffer.position());
         frameBuffer.reset();
-        throw new FrameTimeoutException("Frame complete timeout!");
+        throw new StreamTimeoutException("Frame complete timeout!");
       }
     }
     frameBuffer.reset();

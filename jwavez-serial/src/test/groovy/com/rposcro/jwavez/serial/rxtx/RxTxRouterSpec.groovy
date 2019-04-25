@@ -1,13 +1,11 @@
 package com.rposcro.jwavez.serial.rxtx
 
 
-import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException
-import com.rposcro.jwavez.serial.exceptions.OddFrameException
-import com.rposcro.jwavez.serial.exceptions.RequestFlowException
+import com.rposcro.jwavez.serial.exceptions.StreamTimeoutException
+import com.rposcro.jwavez.serial.exceptions.StreamMalformedException
 import spock.lang.Unroll
 import spock.lang.Shared
 
-import java.util.concurrent.ExecutionException
 import java.util.stream.IntStream
 
 import static com.rposcro.jwavez.serial.TestUtils.frameBufferFromData
@@ -318,7 +316,7 @@ class RxTxRouterSpec extends Specification {
         then:
         receivedResponseData.isEmpty();
         receivedCallbackData == expCallbackData;
-        thrown OddFrameException;
+        thrown StreamMalformedException;
 
         where:
         inboundData                             | expCallbackData
@@ -344,7 +342,7 @@ class RxTxRouterSpec extends Specification {
         then:
         receivedResponseData.isEmpty();
         receivedCallbackData.isEmpty();
-        thrown OddFrameException;
+        thrown StreamMalformedException;
 
         where:
         inboundData                             | _
@@ -369,7 +367,7 @@ class RxTxRouterSpec extends Specification {
         then:
         receivedResponseData.isEmpty();
         receivedCallbackData == expCallbackData;
-        thrown FrameTimeoutException;
+        thrown StreamTimeoutException;
 
         where:
         inboundData                             | expCallbackData
@@ -395,7 +393,7 @@ class RxTxRouterSpec extends Specification {
         then:
         receivedResponseData == expResponseData;
         receivedCallbackData.isEmpty();
-        thrown FrameTimeoutException;
+        thrown StreamTimeoutException;
 
         where:
         inboundData                                 | expResponseData

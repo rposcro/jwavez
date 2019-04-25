@@ -5,8 +5,9 @@ import static com.rposcro.jwavez.core.utils.ObjectsUtil.orDefault;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.controllers.helpers.RequestCallbackFlowHelper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
+import com.rposcro.jwavez.serial.exceptions.FrameException;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
-import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.exceptions.RxTxException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
@@ -63,20 +64,15 @@ public class BasicSynchronousController extends AbstractClosableController<Basic
     this.flowHelper = RequestCallbackFlowHelper.defaultHelper();
   }
 
-  public <T extends ZWaveResponse> T requestResponseFlow(SerialRequest request) throws FlowException {
-    try {
-      return runRequest(request);
-    } catch(SerialException e) {
-      log.error("Failed to execute request-response flow!", e);
-      throw new FlowException(e);
-    }
+  public <T extends ZWaveResponse> T requestResponseFlow(SerialRequest request) throws RxTxException, FrameException {
+    return runRequest(request);
   }
 
-  public <T extends ZWaveCallback> T requestCallbackFlow(SerialRequest request) throws  FlowException {
+  public <T extends ZWaveCallback> T requestCallbackFlow(SerialRequest request) throws FlowException, RxTxException, FrameException {
     return requestCallbackFlow(request, DEFAULT_CALLBACK_TIMEOUT_MILLIS);
   }
 
-  public <T extends ZWaveCallback> T requestCallbackFlow(SerialRequest request, long timeout) throws FlowException {
+  public <T extends ZWaveCallback> T requestCallbackFlow(SerialRequest request, long timeout) throws FlowException, RxTxException, FrameException {
     try {
       lastMatchingCallback = null;
       flowHelper.solicitedCallbackResponseClass(request.getSerialCommand());
@@ -99,16 +95,13 @@ public class BasicSynchronousController extends AbstractClosableController<Basic
           }
         }
       }
-    } catch(SerialException e) {
-      log.error("Failed to execute request-response-callback flow!", e);
-      throw new FlowException(e);
     } finally {
       expectedCallbackClass = Optional.empty();
       lastMatchingCallback = null;
     }
   }
 
-  private <T extends ZWaveResponse> T runRequest(SerialRequest request) throws SerialException {
+  private <T extends ZWaveResponse> T runRequest(SerialRequest request) throws RxTxException, FrameException {
     rxTxRouter.runUnlessRequestSent(request);
     if (request.isResponseExpected()) {
       return (T) lastResponseHolder.get();

@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
-import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.exceptions.RxTxException;
 import com.rposcro.jwavez.tools.cli.commands.dongle.DongleCheckCommand;
 import com.rposcro.jwavez.tools.cli.commands.network.ExcludeNodeCommand;
 import com.rposcro.jwavez.tools.cli.commands.dongle.FactoryDefaultsCommand;
@@ -8,7 +8,6 @@ import com.rposcro.jwavez.tools.cli.commands.network.IncludeNodeCommand;
 import com.rposcro.jwavez.tools.cli.commands.network.NetworkLearnCommand;
 import com.rposcro.jwavez.tools.cli.commands.network.SUCCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeInfoCommand;
-import com.rposcro.jwavez.tools.cli.exceptions.CommandException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
@@ -53,5 +52,5 @@ public interface Command extends AutoCloseable {
   void configure(String args[]) throws CommandOptionsException;
   void execute() throws CommandExecutionException;
 
-  default void close() throws SerialException {}
+  default void close() throws RxTxException {}
 }

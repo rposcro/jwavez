@@ -9,7 +9,7 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_C
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_TYPE;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.TYPE_RES;
 
-import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.exceptions.RxTxException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import java.util.function.Consumer;
@@ -23,7 +23,7 @@ public class ResponseStageDoer {
   private RxTxConfiguration configuration;
   private Consumer<ViewBuffer> responseHandler;
 
-  public ResponseStageResult acquireResponse(byte expectedCommand) throws SerialException {
+  public ResponseStageResult acquireResponse(byte expectedCommand) throws RxTxException {
     long timeoutPoint = System.currentTimeMillis() + configuration.getFrameResponseTimeout();
     ViewBuffer frameView;
     do {

@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
-import com.rposcro.jwavez.serial.exceptions.FlowException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
@@ -37,7 +37,7 @@ public class NodeConfigurationReadCommand extends AbstractNodeConfigurationComma
       try {
         System.out.printf("Reading configuration parameter %s...\n", paramIdx);
         reports.add(readConfiguration(options.getNodeId(), parameterNumbers[paramIdx], options.getTimeout()));
-      } catch(FlowException e) {
+      } catch(SerialException e) {
         System.out.printf("Failed to read parameter %s: %s\n", paramIdx, e.getMessage());
       }
     }

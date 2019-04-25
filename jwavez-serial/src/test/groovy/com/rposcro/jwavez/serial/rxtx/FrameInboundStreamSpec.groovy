@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.rxtx
 
-import com.rposcro.jwavez.serial.exceptions.SerialStreamException
+import com.rposcro.jwavez.serial.exceptions.StreamException
 import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -68,7 +68,7 @@ class FrameInboundStreamSpec extends Specification {
         inboundStream.nextFrame();
 
         then:
-        thrown SerialStreamException;
+        thrown StreamException;
     }
 
     @Unroll
@@ -104,7 +104,7 @@ class FrameInboundStreamSpec extends Specification {
         inboundStream.refillBuffer(4);
 
         then:
-        thrown SerialStreamException;
+        thrown StreamException;
 
         where:
         inboundData                                         | _

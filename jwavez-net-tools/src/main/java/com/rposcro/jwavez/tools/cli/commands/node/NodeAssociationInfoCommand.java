@@ -5,7 +5,7 @@ import static com.rposcro.jwavez.core.commands.enums.AssociationCommandType.ASSO
 import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationGroupingsReport;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
-import com.rposcro.jwavez.serial.exceptions.FlowException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
@@ -43,7 +43,7 @@ public class NodeAssociationInfoCommand extends AbstractNodeAssociationCommand {
     int groupsCount;
     try {
       groupsCount = readGroupingsCount();
-    } catch(FlowException e) {
+    } catch(SerialException e) {
       System.out.printf("Failed to read groupings count: %s\n", e.getMessage());
       return Collections.emptyList();
     }
@@ -53,14 +53,14 @@ public class NodeAssociationInfoCommand extends AbstractNodeAssociationCommand {
       try {
         System.out.printf("Checking association group %s...\n", groupIdx);
         reports.add(readGroupAssociations(options.getNodeId(), groupIdx, options.getTimeout()));
-      } catch(FlowException e) {
+      } catch(SerialException e) {
         System.out.printf("Failed to read group %s: %s\n", groupIdx, e.getMessage());
       }
     }
     return reports;
   }
 
-  private int readGroupingsCount() throws FlowException {
+  private int readGroupingsCount() throws SerialException {
     System.out.println("Checking association groups availabilities...");
     AssociationGroupingsReport report = (AssociationGroupingsReport) requestZWCommand(
         SendDataRequest.createSendDataRequest(

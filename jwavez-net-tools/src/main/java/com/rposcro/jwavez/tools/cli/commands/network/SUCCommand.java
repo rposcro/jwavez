@@ -2,6 +2,7 @@ package com.rposcro.jwavez.tools.cli.commands.network;
 
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.SetSUCNodeIdCallback;
 import com.rposcro.jwavez.serial.frames.requests.GetSUCNodeIdRequest;
 import com.rposcro.jwavez.serial.frames.requests.MemoryGetIdRequest;
@@ -41,30 +42,36 @@ public class SUCCommand extends AbstractSyncBasedCommand {
           break;
       }
     } catch(FlowException e) {
-      System.out.println("Command interrupted by an error " + e.getMessage());
+      System.out.println("Command flow failed due to: " + e.getMessage());
+    } catch(SerialException e) {
+      System.out.println("Command failed by an error " + e.getMessage());
     }
   }
 
-  private void readSUC() throws FlowException {
+  private void readSUC() throws SerialException {
     System.out.println("Checking SUC id on this dongle ...");
     GetSUCNodeIdResponse response = controller.requestResponseFlow(GetSUCNodeIdRequest.createGetSUCNodeIdRequest());
     System.out.printf("  SUC Id: 0x%02x\n", response.getSucNodeId().getId());
   }
 
-  private void setOtherSUC() throws FlowException {
+  private void setOtherSUC() throws SerialException {
     System.out.printf("Setting SUC Id as 0x%02x ...\n", options.getOtherId());
-    SetSUCNodeIdCallback callback = controller.requestCallbackFlow(
-        SetSUCNodeIdRequest.createSetRemoteSUCNodeRequest(new NodeId(options.getOtherId()), true, nextFlowId()),
-        options.getTimeout());
 
-    if (callback.isSuccessful()) {
-      System.out.println("SUC id set");
-    } else {
-      System.out.println("Failed to set SUC id");
+    try {
+      SetSUCNodeIdCallback callback = controller.requestCallbackFlow(
+          SetSUCNodeIdRequest.createSetRemoteSUCNodeRequest(new NodeId(options.getOtherId()), true, nextFlowId()),
+          options.getTimeout());
+      if (callback.isSuccessful()) {
+        System.out.println("SUC id set");
+      } else {
+        System.out.println("Failed to set SUC id");
+      }
+    } catch(FlowException e) {
+      System.out.println("Dongle denied to initiate setup");
     }
   }
 
-  private void setThisSUC() throws FlowException {
+  private void setThisSUC() throws SerialException {
     System.out.println("Reading this dongle's id...");
     MemoryGetIdResponse response = controller.requestResponseFlow(MemoryGetIdRequest.createMemoryGetIdRequest());
     NodeId thisId = response.getNodeId();

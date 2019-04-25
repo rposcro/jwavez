@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.exceptions;
 
-public class SerialPortException extends SerialException {
+public class SerialPortException extends RxTxException {
 
   public SerialPortException(String message) {
     super(message);

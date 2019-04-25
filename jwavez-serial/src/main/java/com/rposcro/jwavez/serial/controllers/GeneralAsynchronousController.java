@@ -3,8 +3,9 @@ package com.rposcro.jwavez.serial.controllers;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.controllers.helpers.RequestCallbackFlowHelper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
+import com.rposcro.jwavez.serial.exceptions.FrameException;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
-import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.exceptions.RxTxException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.callbacks.FlowCallback;
@@ -49,19 +50,16 @@ public class GeneralAsynchronousController extends AbstractAsynchronousControlle
   private byte expectedCommandCode;
   private CompletableFuture<FlowCallback> expectedFutureCallback;
 
-  public <T extends ZWaveResponse> T requestResponseFlow(SerialRequest request) throws FlowException {
+  public <T extends ZWaveResponse> T requestResponseFlow(SerialRequest request) throws RxTxException, FrameException {
     try {
       controllerLock.acquireUninterruptibly();
       return doRequest(request);
-    } catch(SerialException e) {
-      log.error("Failed to execute request-response flow!", e);
-      throw new FlowException(e);
     } finally {
       controllerLock.release();
     }
   }
 
-  public <T extends FlowCallback> T requestCallbackFlow(SerialRequest request) throws FlowException {
+  public <T extends FlowCallback> T requestCallbackFlow(SerialRequest request) throws FlowException, RxTxException, FrameException {
     try {
       controllerLock.acquireUninterruptibly();
       callbackFlowHelper.solicitedCallbackResponseClass(request.getSerialCommand());
@@ -75,7 +73,7 @@ public class GeneralAsynchronousController extends AbstractAsynchronousControlle
       }
 
       return (T) expectedFutureCallback.get(DEFAULT_CALLBACK_TIMEOUT_MILLIS, TimeUnit.MILLISECONDS);
-    } catch(SerialException | InterruptedException | ExecutionException | TimeoutException | CancellationException e) {
+    } catch(InterruptedException | ExecutionException | TimeoutException | CancellationException e) {
       log.error("Failed to execute request-response flow!", e);
       throw new FlowException(e);
     } finally {
@@ -104,7 +102,7 @@ public class GeneralAsynchronousController extends AbstractAsynchronousControlle
     customCallbackHandler.ifPresent(handler -> handler.accept(buffer));
   }
 
-  private <T extends ZWaveResponse> T doRequest(SerialRequest request) throws SerialException {
+  private <T extends ZWaveResponse> T doRequest(SerialRequest request) throws RxTxException, FrameException {
     rxTxRouterProcess.sendRequest(request);
     if (request.isResponseExpected()) {
       return (T) lastResponseHandler.get();

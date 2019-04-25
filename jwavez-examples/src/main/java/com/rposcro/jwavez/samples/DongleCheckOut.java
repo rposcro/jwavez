@@ -1,7 +1,6 @@
 package com.rposcro.jwavez.samples;
 
 import com.rposcro.jwavez.serial.controllers.BasicSynchronousController;
-import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.requests.GetCapabilitiesRequest;
 import com.rposcro.jwavez.serial.frames.requests.GetControllerCapabilitiesRequest;
@@ -17,7 +16,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class DongleCheckOut extends AbstractExample {
 
-  private void checkDongleIds(BasicSynchronousController controller) throws FlowException {
+  private void checkDongleIds(BasicSynchronousController controller) throws SerialException {
     SerialRequest request = MemoryGetIdRequest.createMemoryGetIdRequest();
     MemoryGetIdResponse response = controller.requestResponseFlow(request);
 
@@ -25,7 +24,7 @@ public class DongleCheckOut extends AbstractExample {
     System.out.printf("Node Id: %02x\n", response.getNodeId().getId());
   }
 
-  private void checkNodesIds(BasicSynchronousController controller) throws FlowException {
+  private void checkNodesIds(BasicSynchronousController controller) throws SerialException {
     SerialRequest request = GetInitDataRequest.createGetInitDataRequest();
     GetInitDataResponse response = controller.requestResponseFlow(request);
 
@@ -37,7 +36,7 @@ public class DongleCheckOut extends AbstractExample {
     System.out.println();
   }
 
-  private void checkSUCId(BasicSynchronousController controller) throws FlowException {
+  private void checkSUCId(BasicSynchronousController controller) throws SerialException {
     SerialRequest request = GetSUCNodeIdRequest.createGetSUCNodeIdRequest();
     GetSUCNodeIdResponse response = controller.requestResponseFlow(request);
 
@@ -45,7 +44,7 @@ public class DongleCheckOut extends AbstractExample {
     System.out.println();
   }
 
-  private void controllerCapabilities(BasicSynchronousController controller) throws FlowException {
+  private void controllerCapabilities(BasicSynchronousController controller) throws SerialException {
     SerialRequest request = GetControllerCapabilitiesRequest.createGetControllerCapabiltiesRequest();
     GetControllerCapabilitiesResponse response = controller.requestResponseFlow(request);
 
@@ -57,7 +56,7 @@ public class DongleCheckOut extends AbstractExample {
     System.out.println();
   }
 
-  private void capabilties(BasicSynchronousController controller) throws FlowException {
+  private void capabilties(BasicSynchronousController controller) throws SerialException {
     SerialRequest request = GetCapabilitiesRequest.createGetCapabilitiesRequest();
     GetCapabilitiesResponse response = controller.requestResponseFlow(request);
 

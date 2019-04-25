@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.serial.rxtx
 
-import com.rposcro.jwavez.serial.exceptions.FrameTimeoutException
-import com.rposcro.jwavez.serial.exceptions.OddFrameException
+import com.rposcro.jwavez.serial.exceptions.StreamTimeoutException
+import com.rposcro.jwavez.serial.exceptions.StreamMalformedException
 import com.rposcro.jwavez.serial.exceptions.SerialPortException
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort
 import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
@@ -120,8 +120,8 @@ class ResponseStageDoerSpec extends Specification {
 
         where:
         inboundData                     | expException
-        [[0x01, 0x03, 0x00]]            | FrameTimeoutException
-        [[0x00]]                        | OddFrameException
+        [[0x01, 0x03, 0x00]]            | StreamTimeoutException
+        [[0x00]]                        | StreamMalformedException
     }
 
     def "carries exceptions from port"() {

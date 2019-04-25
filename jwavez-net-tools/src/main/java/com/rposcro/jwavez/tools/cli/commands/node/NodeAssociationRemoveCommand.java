@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
-import com.rposcro.jwavez.serial.exceptions.FlowException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeAssociationOptions;
@@ -27,7 +27,7 @@ public class NodeAssociationRemoveCommand extends AbstractNodeAssociationCommand
       processSendDataRequest(
           options.getNodeId(),
           associationCommandBuilder.buildRemoveCommand(options.getAssociationGroupId(), options.getAssociationNodeId()));
-    } catch(FlowException e) {
+    } catch(SerialException e) {
       System.out.println("Association removal failed: " + e.getMessage());
     }
     System.out.println("Association removal successful");

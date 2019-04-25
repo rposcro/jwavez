@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
-import com.rposcro.jwavez.serial.exceptions.FlowException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeAssociationOptions;
@@ -28,7 +28,7 @@ public class NodeAssociationSetCommand extends AbstractNodeAssociationCommand {
           options.getNodeId(),
           associationCommandBuilder.buildSetCommand(options.getAssociationGroupId(), options.getAssociationNodeId()));
       System.out.println("Association successful");
-    } catch(FlowException e) {
+    } catch(SerialException e) {
       System.out.println("Association failed: " + e.getMessage());
     }
     System.out.println();

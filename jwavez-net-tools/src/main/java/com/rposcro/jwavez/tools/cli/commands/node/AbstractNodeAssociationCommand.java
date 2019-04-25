@@ -5,7 +5,7 @@ import static com.rposcro.jwavez.core.commands.enums.AssociationCommandType.ASSO
 import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.serial.exceptions.FlowException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.tools.cli.commands.AbstractSendDataBasedCommand;
 import java.util.stream.Collectors;
@@ -29,7 +29,7 @@ public abstract class AbstractNodeAssociationCommand extends AbstractSendDataBas
     }
   }
 
-  protected AssociationReport readGroupAssociations(NodeId addresseeNodeId, int groupId, long timeout) throws FlowException {
+  protected AssociationReport readGroupAssociations(NodeId addresseeNodeId, int groupId, long timeout) throws SerialException {
     AssociationReport report = (AssociationReport) requestZWCommand(
         SendDataRequest.createSendDataRequest(
             addresseeNodeId,

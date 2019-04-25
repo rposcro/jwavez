@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
-import com.rposcro.jwavez.serial.exceptions.FlowException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeConfigurationSetOptions;
@@ -28,7 +28,7 @@ public class NodeConfigurationSetCommand extends AbstractNodeConfigurationComman
           options.getNodeId(),
           configurationCommandBuilder.buildSetParameterCommand(options.getParameterNumber(), options.getParameterValue(), options.getParameterSize()));
       System.out.println("Configuration set successful");
-    } catch(FlowException e) {
+    } catch(SerialException e) {
       System.out.println("Configuration set failed: " + e.getMessage());
     }
     System.out.println();

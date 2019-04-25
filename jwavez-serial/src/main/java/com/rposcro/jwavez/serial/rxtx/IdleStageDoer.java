@@ -5,6 +5,7 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_C
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_TYPE;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.TYPE_REQ;
 
+import com.rposcro.jwavez.serial.exceptions.RxTxException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
@@ -18,7 +19,7 @@ public class IdleStageDoer {
   private FrameOutboundStream outboundStream;
   private Consumer<ViewBuffer> callbackHandler;
 
-  public IdleStageResult checkInbound() throws SerialException {
+  public IdleStageResult checkInbound() throws RxTxException {
     ViewBuffer frameView = inboundStream.nextFrame();
     if (!framePresent(frameView)) {
       return IdleStageResult.RESULT_SILENCE;

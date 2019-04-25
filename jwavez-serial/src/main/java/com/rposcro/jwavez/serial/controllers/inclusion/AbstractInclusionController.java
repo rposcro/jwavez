@@ -5,7 +5,7 @@ import com.rposcro.jwavez.serial.controllers.AbstractAsynchronousController;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionState;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
-import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.exceptions.RxTxException;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
@@ -79,7 +79,7 @@ public abstract class AbstractInclusionController<T extends TransactionState, S 
       } else if (System.currentTimeMillis() > transitTimeoutPoint) {
         timeoutTransaction(state);
       }
-    } catch(SerialException e) {
+    } catch(RxTxException e) {
       transactionKeeper.fail();
       throw new FlowException(e, "Transaction broken when sending request: " + e.getMessage());
     } catch(CompletionException e) {

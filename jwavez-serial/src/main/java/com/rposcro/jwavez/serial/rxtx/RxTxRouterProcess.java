@@ -3,8 +3,8 @@ package com.rposcro.jwavez.serial.rxtx;
 import com.rposcro.jwavez.core.utils.ObjectsUtil;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.exceptions.FatalSerialException;
-import com.rposcro.jwavez.serial.exceptions.RequestFlowException;
-import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.exceptions.RxTxException;
+import com.rposcro.jwavez.serial.exceptions.StreamFlowException;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 import com.rposcro.jwavez.serial.utils.async.Runner;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -56,7 +56,7 @@ public class RxTxRouterProcess implements Runnable {
     }
   }
 
-  public void sendRequest(SerialRequest request) throws SerialException {
+  public void sendRequest(SerialRequest request) throws RxTxException {
     executeSynchronous(() -> rxTxRouter.runUnlessRequestSent(request));
   }
 
@@ -64,7 +64,7 @@ public class RxTxRouterProcess implements Runnable {
     this.stopRequested = true;
   }
 
-  public void resetStreams() throws SerialException {
+  public void resetStreams() throws RxTxException {
     executeSynchronous(rxTxRouter::purgeInput);
   }
 
@@ -85,12 +85,12 @@ public class RxTxRouterProcess implements Runnable {
     }
   }
 
-  private void runOnce() throws SerialException {
+  private void runOnce() throws RxTxException {
     if (!requestsQueue.isEmpty()) {
       try {
         SerialRequest nextRequest = requestsQueue.peek();
         rxTxRouter.runUnlessRequestSent(nextRequest);
-      } catch (RequestFlowException e) {
+      } catch (StreamFlowException e) {
         log.error("Failed to send request", e);
       }
     } else {
@@ -98,7 +98,7 @@ public class RxTxRouterProcess implements Runnable {
     }
   }
 
-  private void executeSynchronous(Runner<SerialException> runner) throws SerialException {
+  private void executeSynchronous(Runner<RxTxException> runner) throws RxTxException {
     try {
       routerAccessLock.acquireUninterruptibly();
       runner.run();

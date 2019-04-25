@@ -5,6 +5,7 @@ import com.rposcro.jwavez.core.commands.enums.CommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
 import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandInterceptor;
@@ -27,7 +28,7 @@ public abstract class AbstractSendDataBasedCommand extends AbstractAsyncBasedCom
             .registerAllCommandsHandler(this::handleZWaveCommand));
   }
 
-  protected void processSendDataRequest(NodeId hostNodeId, ZWaveControlledCommand command) throws FlowException {
+  protected void processSendDataRequest(NodeId hostNodeId, ZWaveControlledCommand command) throws SerialException {
     SendDataCallback callback = controller.requestCallbackFlow(SendDataRequest.createSendDataRequest(hostNodeId, command, nextFlowId()));
     if (callback.getTransmitCompletionStatus() != TransmitCompletionStatus.TRANSMIT_COMPLETE_OK) {
       throw new FlowException("Dongle failed to deliver request: " + callback.getTransmitCompletionStatus());
@@ -35,7 +36,7 @@ public abstract class AbstractSendDataBasedCommand extends AbstractAsyncBasedCom
   }
 
   protected ZWaveSupportedCommand requestZWCommand(SerialRequest request, CommandType expectedCommandType, long timeout)
-  throws FlowException {
+  throws SerialException {
     this.expectedCommandType = expectedCommandType;
     futureCommand = new CompletableFuture<>();
 

@@ -3,7 +3,6 @@ package com.rposcro.jwavez.tools.cli.commands.network;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.controllers.BasicSynchronousController;
 import com.rposcro.jwavez.serial.controllers.inclusion.SetLearnModeController;
-import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.frames.requests.GetControllerCapabilitiesRequest;
@@ -102,7 +101,7 @@ public class NetworkLearnCommand implements Command {
     } catch (SerialPortException e) {
       log.info("Failed to connect to port", e);
       System.out.println("Failed to connect to port ...");
-    } catch (FlowException e) {
+    } catch (SerialException e) {
       log.info("Flow exception", e);
       System.out.println("Request response flow problem occured...");
     }
