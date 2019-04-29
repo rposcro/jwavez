@@ -12,12 +12,12 @@ public interface CommandOptions {
   static Options defaultDeviceBasedOptions() {
     return new Options()
         .addOption(Option.builder(OPT_DEVICE)
-            .longOpt("device")
+            .longOpt("dongleDevice")
             .required()
             .hasArg()
             .numberOfArgs(1)
-            .argName("device")
-            .desc("controller dongle device").build())
+            .argName("dongleDevice")
+            .desc("controller dongle dongleDevice").build())
         ;
   }
 

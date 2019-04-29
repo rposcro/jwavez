@@ -1,17 +1,11 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
-import static com.rposcro.jwavez.core.commands.enums.AssociationCommandType.ASSOCIATION_REPORT;
-
-import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
-import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
-import com.rposcro.jwavez.serial.transactions.SendDataTransaction;
-import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeAssociationOptions;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 
-public class NodeAssociationSetCommand extends AbstractNodeCommand {
+public class NodeAssociationSetCommand extends AbstractNodeAssociationCommand {
 
   private NodeAssociationOptions options;
 
@@ -21,37 +15,17 @@ public class NodeAssociationSetCommand extends AbstractNodeCommand {
   }
 
   @Override
-  public void execute() throws CommandExecutionException {
+  public void execute() {
+    System.out.printf("Requesting association of node %s to group %s on node %s...\n", options.getAssociationNodeId(), options.getAssociationGroupId(), options.getNodeId());
+    ProcedureUtil.executeProcedure(this::processSetRequest);
+    checkGroupAssociations(options.getNodeId(), options.getAssociationGroupId(), options.getTimeout());
+    System.out.println("Association finished");
+  }
+
+  private void processSetRequest() throws SerialException {
     connect(options);
-    processSetRequest();
-    checkGroupAssociations();
-  }
-
-  private void processSetRequest() throws CommandExecutionException {
-    System.out.println(String.format("Requesting association of node %s to group %s...", options.getAssociationNodeId(), options.getAssociationGroupId()));
-    SendDataTransaction transaction = new SendDataTransaction(
+    processSendDataRequest(
         options.getNodeId(),
-        new AssociationCommandBuilder().buildSetCommand(options.getAssociationGroupId(), options.getAssociationNodeId()));
-    executeTransaction(transaction, options.getTimeout(DEFAULT_TRANSACTION_TIMEOUT));
-    System.out.println("Association successful");
-    System.out.println();
-  }
-
-  private void checkGroupAssociations() {
-    try {
-      int groupId = options.getAssociationGroupId();
-      System.out.println(String.format("Checking association group %s...", groupId));
-      AssociationCommandBuilder commandBuilder = new AssociationCommandBuilder();
-      SendDataTransaction transaction = new SendDataTransaction(options.getNodeId(), commandBuilder.buildGetCommand(groupId), false);
-      AssociationReport report = (AssociationReport) requestZWaveCommand(transaction, ASSOCIATION_REPORT, options.getTimeout(DEFAULT_CALLBACK_TIMEOUT));
-      System.out.println(":: Report on group " + report.getGroupId());
-      System.out.println("  max supported nodes count: " + report.getMaxNodesCountSupported());
-      System.out.println("  nodes in group: " + Stream.of(report.getNodeIds())
-          .map(nodeId -> String.format("%02X", nodeId.getId()))
-          .collect(Collectors.joining(", ")));
-      System.out.println();
-    } catch (Exception e) {
-      System.out.println("Failed to read association information due to: " + e.getMessage());
-    }
+        associationCommandBuilder.buildSetCommand(options.getAssociationGroupId(), options.getAssociationNodeId()));
   }
 }

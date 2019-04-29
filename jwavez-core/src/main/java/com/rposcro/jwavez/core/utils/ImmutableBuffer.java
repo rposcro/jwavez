@@ -2,7 +2,7 @@ package com.rposcro.jwavez.core.utils;
 
 import lombok.Getter;
 
-public class ImmutableBuffer {
+public final class ImmutableBuffer {
 
   private byte[] data;
   @Getter
@@ -64,8 +64,13 @@ public class ImmutableBuffer {
     return data[offset + (position++)];
   }
 
-  public void rewind() {
+  public ImmutableBuffer rewind() {
     position = 0;
+    return this;
+  }
+
+  public static ImmutableBuffer overBuffer(byte[] buffer) {
+    return overBuffer(buffer, 0, buffer.length);
   }
 
   public static ImmutableBuffer overBuffer(byte[] buffer, int payloadOffset, int payloadLength) {

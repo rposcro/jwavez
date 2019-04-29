@@ -18,5 +18,5 @@ public class NodeInfo {
   private GenericDeviceClass genericDeviceClass;
   private SpecificDeviceClass specificDeviceClass;
   private CommandClass[] commandClasses;
-
+  private byte[] commandCodes;
 }

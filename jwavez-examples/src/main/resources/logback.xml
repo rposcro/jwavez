@@ -7,11 +7,11 @@
     </encoder>
   </appender>
 
-  <root level="info">
+  <root level="error">
     <appender-ref ref="STDOUT" />
   </root>
 
-  <logger level="info" name="com.rposcro" additivity="false">
+  <logger level="error" name="com.rposcro" additivity="false">
     <appender-ref ref="STDOUT" />
   </logger>
 </configuration>

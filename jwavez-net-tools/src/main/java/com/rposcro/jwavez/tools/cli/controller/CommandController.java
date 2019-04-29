@@ -1,5 +1,7 @@
 package com.rposcro.jwavez.tools.cli.controller;
 
+import com.rposcro.jwavez.serial.exceptions.RxTxException;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.cli.commands.Command;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandLineException;
@@ -20,7 +22,9 @@ public class CommandController {
       printUsage();
       return EXIT_CODE_SUCCESSFUL;
     } else {
-      return processCommand(args);
+      int retCode = processCommand(args);
+      System.out.println();
+      return retCode;
     }
   }
 
@@ -41,11 +45,15 @@ public class CommandController {
       System.out.println(e.getMessage() + "\n");
       log.warn("", e.getCause());
       return EXIT_CODE_GENERAL_ERROR;
+    } catch(RxTxException e) {
+      System.out.printf("Serial RxTx error: %s\n\n", e.getMessage());
+      log.warn("", e.getCause());
+      return EXIT_CODE_GENERAL_ERROR;
     }
   }
 
   private void invokeCommand(CommandReference reference, String[] options)
-      throws CommandOptionsException, CommandExecutionException {
+      throws CommandOptionsException, CommandExecutionException, RxTxException {
     try ( Command command = reference.createCommand() ) {
       command.configure(options);
       command.execute();

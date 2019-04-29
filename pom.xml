@@ -7,11 +7,12 @@
   <groupId>com.jwavez</groupId>
   <artifactId>jwavez</artifactId>
   <packaging>pom</packaging>
-  <version>1.0.3</version>
+  <version>1.1.0</version>
 
   <modules>
     <module>jwavez-core</module>
     <module>jwavez-serial</module>
+    <module>jwavez-serial-probe</module>
     <module>jwavez-examples</module>
     <module>jwavez-net-tools</module>
   </modules>

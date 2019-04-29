@@ -1,19 +1,19 @@
 package com.rposcro.jwavez.tools.cli.controller;
 
-import com.rposcro.jwavez.tools.cli.commands.DongleCheckCommand;
-import com.rposcro.jwavez.tools.cli.commands.ExcludeNodeCommand;
-import com.rposcro.jwavez.tools.cli.commands.FactoryDefaultsCommand;
+import com.rposcro.jwavez.tools.cli.commands.dongle.DongleCheckCommand;
+import com.rposcro.jwavez.tools.cli.commands.network.ExcludeNodeCommand;
+import com.rposcro.jwavez.tools.cli.commands.dongle.FactoryDefaultsCommand;
 import com.rposcro.jwavez.tools.cli.commands.HelpCommand;
-import com.rposcro.jwavez.tools.cli.commands.IncludeNodeCommand;
-import com.rposcro.jwavez.tools.cli.commands.ListenerCommand;
-import com.rposcro.jwavez.tools.cli.commands.NetworkLearnCommand;
+import com.rposcro.jwavez.tools.cli.commands.network.IncludeNodeCommand;
+import com.rposcro.jwavez.tools.cli.commands.network.ListenerCommand;
+import com.rposcro.jwavez.tools.cli.commands.network.NetworkLearnCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeAssociationInfoCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeAssociationRemoveCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeAssociationSetCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeConfigurationReadCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeConfigurationSetCommand;
 import com.rposcro.jwavez.tools.cli.commands.node.NodeInfoCommand;
-import com.rposcro.jwavez.tools.cli.commands.SUCCommand;
+import com.rposcro.jwavez.tools.cli.commands.network.SUCCommand;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceBasedOptions;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
 import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
@@ -105,7 +105,7 @@ public class CommandsConfiguration {
 
   private CommandTreeNode nodeCommand() {
     return new CommandTreeNode("node", "reads or sets configuration of nodes in network")
-        .addChild(new CommandTreeNode("class", "reads node device/command class information")
+        .addChild(new CommandTreeNode("class", "reads node dongleDevice/command class information")
             .withCommandReference(NodeInfoCommand.class, DefaultNodeBasedOptions.OPTIONS))
         .addChild(new CommandTreeNode("association", "manages node group associations")
             .addChild(new CommandTreeNode("info", "reads associations information from node")

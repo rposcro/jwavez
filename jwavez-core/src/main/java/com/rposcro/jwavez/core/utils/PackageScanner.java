@@ -1,16 +1,8 @@
 package com.rposcro.jwavez.core.utils;
 
 import com.rposcro.jwavez.core.exceptions.CodeIntegrityException;
-import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Modifier;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -35,7 +27,7 @@ public class PackageScanner {
           if (annPresent && !isOfType) {
             throw new CodeIntegrityException(String.format("Class %s is annotated as %s, but is not of type %s!", clazz, annotation, classType));
           } else if (!annPresent && isOfType) {
-            throw new CodeIntegrityException(String.format("Class %s is of type %s, but is not annotate as %s!", clazz, annotation, classType));
+            throw new CodeIntegrityException(String.format("Class %s is of type %s, but is not annotated as %s!", clazz, annotation, classType));
           } else {
             return annPresent && isOfType;
           }

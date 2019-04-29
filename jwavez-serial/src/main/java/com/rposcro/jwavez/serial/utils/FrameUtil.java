@@ -1,5 +1,12 @@
 package com.rposcro.jwavez.serial.utils;
 
+import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.serial.enums.FrameCategory;
+import com.rposcro.jwavez.serial.enums.FrameType;
+import com.rposcro.jwavez.serial.enums.SerialCommand;
+import com.rposcro.jwavez.serial.rxtx.SerialFrameConstants;
+import java.nio.ByteBuffer;
+
 public class FrameUtil {
 
   public static byte frameCRC(byte[] frameBuffer) {
@@ -12,29 +19,41 @@ public class FrameUtil {
 
   public static byte frameCRC(ByteBuffer buffer) {
     byte crc = (byte) 0xff;
-    buffer.get();
-    for (int idx = 1; idx < buffer.getLength() - 1; idx++) {
+    for (int idx = 1; idx < buffer.limit() - 1; idx++) {
       crc ^= buffer.get(idx);
     }
     return crc;
   }
 
-  public static String bufferToString(ByteBuffer buffer) {
-    StringBuffer string = new StringBuffer();
-    int position = buffer.getPosition();
-    buffer.rewind();
-    for (int i = 0; i < buffer.getLength(); i++) {
-      string.append(String.format("%02x ", ((int) buffer.get()) & 0xff));
+  public static byte frameCRC(ViewBuffer buffer) {
+    byte crc = (byte) 0xff;
+    for (int idx = 1; idx < buffer.length() - 1; idx++) {
+      crc ^= buffer.get(idx);
     }
-    buffer.setPosition(position);
-    return string.toString();
+    return crc;
   }
 
-  public static String bufferToString(byte[] buffer) {
-    StringBuffer string = new StringBuffer();
-    for (byte bt: buffer) {
-      string.append(String.format("%02x ", ((int) bt) & 0xff));
-    }
-    return string.toString();
+  public static FrameCategory category(ViewBuffer buffer) {
+    return FrameCategory.ofCode(buffer.get(SerialFrameConstants.FRAME_OFFSET_CATEGORY));
+  }
+
+  public static byte categoryCode(ViewBuffer buffer) {
+    return buffer.get(SerialFrameConstants.FRAME_OFFSET_CATEGORY);
+  }
+
+  public static FrameType type(ViewBuffer buffer) {
+    return FrameType.ofCode(buffer.get(SerialFrameConstants.FRAME_OFFSET_TYPE));
+  }
+
+  public static byte typeCode(ViewBuffer buffer) {
+    return buffer.get(SerialFrameConstants.FRAME_OFFSET_TYPE);
+  }
+
+  public static SerialCommand serialCommand(ViewBuffer buffer) {
+    return SerialCommand.ofCode(buffer.get(SerialFrameConstants.FRAME_OFFSET_COMMAND));
+  }
+
+  public static byte serialCommandCode(ViewBuffer buffer) {
+    return buffer.get(SerialFrameConstants.FRAME_OFFSET_COMMAND);
   }
 }

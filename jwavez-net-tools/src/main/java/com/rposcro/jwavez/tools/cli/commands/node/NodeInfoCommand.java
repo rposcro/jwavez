@@ -1,27 +1,29 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.frame.SOFFrame;
-import com.rposcro.jwavez.serial.frame.callbacks.ApplicationUpdateCallbackFrame;
-import com.rposcro.jwavez.serial.frame.constants.ApplicationUpdateStatus;
-import com.rposcro.jwavez.serial.frame.requests.RequestNodeInfoRequestFrame;
-import com.rposcro.jwavez.serial.frame.responses.RequestNodeInfoResponseFrame;
-import com.rposcro.jwavez.serial.rxtx.InboundFrameInterceptorContext;
-import com.rposcro.jwavez.serial.transactions.TransactionResult;
-import com.rposcro.jwavez.serial.transactions.TransactionStatus;
-import com.rposcro.jwavez.tools.cli.commands.AbstractDeviceTimeoutCommand;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.frames.callbacks.ApplicationUpdateCallback;
+import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
+import com.rposcro.jwavez.serial.frames.requests.RequestNodeInfoRequest;
+import com.rposcro.jwavez.serial.frames.responses.RequestNodeInfoResponse;
+import com.rposcro.jwavez.serial.model.ApplicationUpdateStatus;
+import com.rposcro.jwavez.tools.cli.ZWaveCLI;
+import com.rposcro.jwavez.tools.cli.commands.AbstractAsyncBasedCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
+import com.rposcro.jwavez.tools.cli.utils.EasySemaphore;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
-public class NodeInfoCommand extends AbstractDeviceTimeoutCommand {
+@Slf4j
+public class NodeInfoCommand extends AbstractAsyncBasedCommand {
 
   private DefaultNodeBasedOptions options;
-  private Semaphore lock;
+  private EasySemaphore doneLock;
 
   @Override
   public void configure(String[] args) throws CommandOptionsException {
@@ -30,42 +32,29 @@ public class NodeInfoCommand extends AbstractDeviceTimeoutCommand {
 
   @Override
   public void execute() {
-    connect(options);
-    lock = new Semaphore(1);
-    channelManager.addInboundFrameInterceptor(this::handleUpdate);
-    System.out.println("Requesting node information transaction...");
+    System.out.println("Starting node info check command ...");
+    ProcedureUtil.executeProcedure(this::runInfoFetch);
+    System.out.println("Node info check command finished");
+  }
 
-    if (launchTransaction()) {
-      try {
-        lock.acquireUninterruptibly();
-        if (!lock.tryAcquire(1, options.getTimeout(), TimeUnit.MILLISECONDS)) {
-          System.out.println("Node information request failed due to timeout");
-        }
-        ;
-      } catch (InterruptedException e) {
-        System.out.println("Unexpected error occurred when awaiting callback");
+  private void runInfoFetch() throws SerialException {
+    connect(options).addCallbackInterceptor(this::handleUpdate);
+    RequestNodeInfoResponse response = controller.requestResponseFlow(
+        RequestNodeInfoRequest.createRequestNodeInfoRequest(options.getNodeId()));
+    if (response.isRequestAccepted()) {
+      doneLock = new EasySemaphore();
+      doneLock.acquireUninterruptibly();
+      if (!doneLock.tryAcquire(options.getTimeout(), TimeUnit.MILLISECONDS)) {
+        System.out.println("Node information request failed due to timeout");
       }
-    }
-
-    System.out.println("End of transaction");
-  }
-
-  private boolean launchTransaction() {
-    TransactionResult<RequestNodeInfoResponseFrame> result = serialChannel.sendFrameWithResponseAndWait(
-        new RequestNodeInfoRequestFrame(options.getNodeId()));
-    if (result.getStatus() == TransactionStatus.Completed) {
-      System.out.println("Request successfully sent, awaiting node info callback...");
-      return true;
     } else {
-      System.out.println("Failed to place node info request");
-      return false;
+      System.out.println("Request was not accepted by dongle");
     }
   }
 
-  private void handleUpdate(InboundFrameInterceptorContext context) {
-    SOFFrame frame = context.getFrame();
-    if (frame instanceof ApplicationUpdateCallbackFrame) {
-      ApplicationUpdateCallbackFrame updateCallback = (ApplicationUpdateCallbackFrame) frame;
+  private void handleUpdate(ZWaveCallback callback) {
+    if (callback instanceof ApplicationUpdateCallback) {
+      ApplicationUpdateCallback updateCallback = (ApplicationUpdateCallback) callback;
       if (updateCallback.getStatus() == ApplicationUpdateStatus.APP_UPDATE_STATUS_NODE_INFO_RECEIVED) {
         NodeInfo nodeInfo = updateCallback.getNodeInfo();
         List<String> commandClasses = Arrays.stream(nodeInfo.getCommandClasses())
@@ -73,16 +62,21 @@ public class NodeInfoCommand extends AbstractDeviceTimeoutCommand {
             .collect(Collectors.toList());
         StringBuffer logMessage = new StringBuffer("Node info successfully received\n")
             .append(String.format("  node id: %02X\n", nodeInfo.getId().getId()))
-            .append(String.format("  basic device class: %s\n", nodeInfo.getBasicDeviceClass()))
-            .append(String.format("  generic device class: %s\n", nodeInfo.getGenericDeviceClass()))
-            .append(String.format("  specific device class: %s\n", nodeInfo.getSpecificDeviceClass()))
+            .append(String.format("  basic dongleDevice class: %s\n", nodeInfo.getBasicDeviceClass()))
+            .append(String.format("  generic dongleDevice class: %s\n", nodeInfo.getGenericDeviceClass()))
+            .append(String.format("  specific dongleDevice class: %s\n", nodeInfo.getSpecificDeviceClass()))
             .append(String.format("  command classes: %s\n", String.join(", ", commandClasses)));
         System.out.println(logMessage.toString());
-        lock.release();
+        doneLock.release();
       } else {
         System.out.println("Unexpected command update status: " + updateCallback.getStatus());
       }
     } else {
+      log.debug("Skipping callback: {}", callback.getSerialCommand());
     }
+  }
+
+  public static void main(String... args) throws Exception {
+    ZWaveCLI.main("node", "class", "-d", "/dev/tty.usbmodem1421", "-n", "3");
   }
 }

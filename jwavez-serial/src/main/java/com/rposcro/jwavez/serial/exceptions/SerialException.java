@@ -1,16 +1,16 @@
 package com.rposcro.jwavez.serial.exceptions;
 
-public class SerialException extends RuntimeException {
+public class SerialException extends Exception {
 
   public SerialException(String message) {
     super(message);
   }
 
-  public SerialException(Throwable t) {
-    super(t);
+  public SerialException(Throwable throwable) {
+    super(throwable);
   }
 
-  public SerialException(String message, Throwable t) {
-    super(message, t);
+  public SerialException(Throwable throwable, String message) {
+    super(message, throwable);
   }
 }
