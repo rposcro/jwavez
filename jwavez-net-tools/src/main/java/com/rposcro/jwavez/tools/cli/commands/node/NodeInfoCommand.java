@@ -1,6 +1,7 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationUpdateCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.frames.requests.RequestNodeInfoRequest;
@@ -8,12 +9,12 @@ import com.rposcro.jwavez.serial.frames.responses.RequestNodeInfoResponse;
 import com.rposcro.jwavez.serial.model.ApplicationUpdateStatus;
 import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.commands.AbstractAsyncBasedCommand;
-import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
+import com.rposcro.jwavez.tools.cli.utils.EasySemaphore;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +23,7 @@ import lombok.extern.slf4j.Slf4j;
 public class NodeInfoCommand extends AbstractAsyncBasedCommand {
 
   private DefaultNodeBasedOptions options;
-  private Semaphore doneLock;
+  private EasySemaphore doneLock;
 
   @Override
   public void configure(String[] args) throws CommandOptionsException {
@@ -30,27 +31,25 @@ public class NodeInfoCommand extends AbstractAsyncBasedCommand {
   }
 
   @Override
-  public void execute() throws CommandExecutionException {
+  public void execute() {
+    System.out.println("Starting node info check command ...");
+    ProcedureUtil.executeProcedure(this::runInfoFetch);
+    System.out.println("Node info check command finished");
+  }
+
+  private void runInfoFetch() throws SerialException {
     connect(options).addCallbackInterceptor(this::handleUpdate);
-
-    try {
-      RequestNodeInfoResponse response = controller.requestResponseFlow(
-          RequestNodeInfoRequest.createRequestNodeInfoRequest(options.getNodeId()));
-      if (response.isRequestAccepted()) {
-        doneLock = new Semaphore(1);
-        doneLock.acquireUninterruptibly(1);
-        if (!doneLock.tryAcquire(1, options.getTimeout(), TimeUnit.MILLISECONDS)) {
-          System.out.println("Node information request failed due to timeout");
-        }
-      } else {
-        System.out.println("Request was not accepted by dongle");
+    RequestNodeInfoResponse response = controller.requestResponseFlow(
+        RequestNodeInfoRequest.createRequestNodeInfoRequest(options.getNodeId()));
+    if (response.isRequestAccepted()) {
+      doneLock = new EasySemaphore();
+      doneLock.acquireUninterruptibly();
+      if (!doneLock.tryAcquire(options.getTimeout(), TimeUnit.MILLISECONDS)) {
+        System.out.println("Node information request failed due to timeout");
       }
-    } catch(Exception e) {
-      log.debug("Command failed with error", e);
-      System.out.printf("Node information request failed due to an error: %s\n", e.getMessage());
+    } else {
+      System.out.println("Request was not accepted by dongle");
     }
-
-    System.out.println("End of transaction");
   }
 
   private void handleUpdate(ZWaveCallback callback) {

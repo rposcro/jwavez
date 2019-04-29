@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeAssociationOptions;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 
 public class NodeAssociationRemoveCommand extends AbstractNodeAssociationCommand {
 
@@ -15,22 +15,17 @@ public class NodeAssociationRemoveCommand extends AbstractNodeAssociationCommand
   }
 
   @Override
-  public void execute() throws CommandExecutionException {
-    connect(options);
-    processRemoveRequest();
+  public void execute() {
+    System.out.printf("Requesting association removal of node %s to group %s on node %s...\n", options.getAssociationNodeId(), options.getAssociationGroupId(), options.getNodeId());
+    ProcedureUtil.executeProcedure(this::processRemoveRequest);
     checkGroupAssociations(options.getNodeId(), options.getAssociationGroupId(), options.getTimeout());
+    System.out.println("Association removal finished");
   }
 
-  private void processRemoveRequest() {
-    System.out.printf("Requesting association removal of node %s to group %s on node %s...\n", options.getAssociationNodeId(), options.getAssociationGroupId(), options.getNodeId());
-    try {
-      processSendDataRequest(
-          options.getNodeId(),
-          associationCommandBuilder.buildRemoveCommand(options.getAssociationGroupId(), options.getAssociationNodeId()));
-    } catch(SerialException e) {
-      System.out.println("Association removal failed: " + e.getMessage());
-    }
-    System.out.println("Association removal successful");
-    System.out.println();
+  private void processRemoveRequest() throws SerialException {
+    connect(options);
+    processSendDataRequest(
+        options.getNodeId(),
+        associationCommandBuilder.buildRemoveCommand(options.getAssociationGroupId(), options.getAssociationNodeId()));
   }
 }

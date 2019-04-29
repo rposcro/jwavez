@@ -65,6 +65,7 @@ public class BasicSynchronousController extends AbstractClosableController<Basic
   }
 
   public <T extends ZWaveResponse> T requestResponseFlow(SerialRequest request) throws RxTxException, FrameException {
+    expectedCallbackClass = Optional.empty();
     return runRequest(request);
   }
 
@@ -75,7 +76,6 @@ public class BasicSynchronousController extends AbstractClosableController<Basic
   public <T extends ZWaveCallback> T requestCallbackFlow(SerialRequest request, long timeout) throws FlowException, RxTxException, FrameException {
     try {
       lastMatchingCallback = null;
-      flowHelper.solicitedCallbackResponseClass(request.getSerialCommand());
       expectedCallbackClass = Optional.of(flowHelper.solicitedCallbackClass(request.getSerialCommand()));
 
       SolicitedCallbackResponse response = runRequest(request);
@@ -83,7 +83,7 @@ public class BasicSynchronousController extends AbstractClosableController<Basic
         throw new FlowException("Received response is not expecting callback to follow!");
       }
 
-      long timeoutPoint = System.currentTimeMillis() + timeout;
+      long timeoutPoint = System.currentTimeMillis() + (timeout <= 0 ? DEFAULT_CALLBACK_TIMEOUT_MILLIS : timeout);
 
       while(true) {
         rxTxRouter.runSingleCycle();

@@ -24,7 +24,8 @@ import com.rposcro.jwavez.tools.cli.commands.AbstractSyncBasedCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DongleCheckOptions;
-import com.rposcro.jwavez.tools.cli.utils.SerialExecutor;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
+import com.rposcro.jwavez.tools.cli.utils.SerialProcedure;
 import java.util.stream.Collectors;
 
 public class DongleCheckCommand extends AbstractSyncBasedCommand {
@@ -37,9 +38,14 @@ public class DongleCheckCommand extends AbstractSyncBasedCommand {
   }
 
   @Override
-  public void execute() throws CommandExecutionException {
-    connect(options);
+  public void execute() {
     System.out.println("Checking dongle " + options.getDevice() + "...\n");
+    ProcedureUtil.executeProcedure(this::runChecks);
+    System.out.println("Checking dongle finished");
+  }
+
+  private void runChecks() throws SerialException {
+    connect(options);
     runCheck(this::runNetworkIds, options.runNetworkIds(), "Network IDs");
     runCheck(this::runSUCId, options.runSucId(), "SUC Id");
     runCheck(this::runControllerCapabilities, options.runControllerCapabilities(), "Controller Capabilities");
@@ -50,14 +56,10 @@ public class DongleCheckCommand extends AbstractSyncBasedCommand {
     runCheck(this::runPowerLevel, options.runPowerLevel(), "Power Level");
   }
 
-  private void runCheck(SerialExecutor executor, boolean activate, String header) {
+  private void runCheck(SerialProcedure procedure, boolean activate, String header) throws SerialException {
     if (activate) {
       sectionHeader(header);
-      try {
-        executor.execute();
-      } catch(SerialException e) {
-        sectionFailure();
-      }
+      procedure.execute();
       sectionFooter();
       System.out.println();
     }

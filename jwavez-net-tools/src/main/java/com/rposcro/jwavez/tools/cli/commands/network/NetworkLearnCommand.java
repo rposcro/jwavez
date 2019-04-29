@@ -4,7 +4,6 @@ import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.controllers.BasicSynchronousController;
 import com.rposcro.jwavez.serial.controllers.inclusion.SetLearnModeController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.frames.requests.GetControllerCapabilitiesRequest;
 import com.rposcro.jwavez.serial.frames.requests.GetInitDataRequest;
 import com.rposcro.jwavez.serial.frames.requests.GetSUCNodeIdRequest;
@@ -16,6 +15,7 @@ import com.rposcro.jwavez.serial.frames.responses.MemoryGetIdResponse;
 import com.rposcro.jwavez.tools.cli.commands.Command;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.NetworkLearnOptions;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -32,32 +32,27 @@ public class NetworkLearnCommand implements Command {
 
   @Override
   public void execute() {
-    executeLearning();
+    System.out.printf("Starting node learn mode transaction on %s ...\n", options.getDevice());
+    ProcedureUtil.executeProcedure(this::executeLearning);
+    System.out.println("Network learn protocol finished");
 
     if (options.showSummary()) {
-      executeSummary();
+      System.out.printf("Checking dongle summary for %s ...\n", options.getDevice());
+      ProcedureUtil.executeProcedure(this::executeSummary);
     }
   }
 
-  private void executeLearning() {
+  private void executeLearning() throws SerialException {
     try (
         SetLearnModeController controller = SetLearnModeController.builder()
             .dongleDevice(options.getDevice())
             .build()
     ) {
-      System.out.printf("Starting node learn mode transaction on %s ...\n", options.getDevice());
       controller.connect();
       System.out.println("Awaiting for learn protocol ...");
       Optional<NodeId> nodeId = controller.activateLearnMode();
       processLearningResult(nodeId);
-    } catch (SerialPortException e) {
-      log.info("Failed to connect to port", e);
-      System.out.println("Failed to connect to port ...");
-    } catch (SerialException e) {
-      log.info("Serial exception", e);
-      System.out.println("Inclusion process failed ...");
     }
-    System.out.println("Network learn protocol completed");
   }
 
   private void processLearningResult(Optional<NodeId> optionalNodeId) {
@@ -73,13 +68,12 @@ public class NetworkLearnCommand implements Command {
     }
   }
 
-  private void executeSummary() {
+  private void executeSummary() throws SerialException {
     try (
         BasicSynchronousController controller = BasicSynchronousController.builder()
             .dongleDevice(options.getDevice())
             .build()
     ) {
-      System.out.printf("Checking dongle summary for %s ...\n", options.getDevice());
       controller.connect();
 
       MemoryGetIdResponse memoryGetIdResponse = controller.requestResponseFlow(MemoryGetIdRequest.createMemoryGetIdRequest());
@@ -98,12 +92,6 @@ public class NetworkLearnCommand implements Command {
 
       GetSUCNodeIdResponse sucId = controller.requestResponseFlow(GetSUCNodeIdRequest.createGetSUCNodeIdRequest());
       System.out.println(String.format("  SUC node id: %02X", sucId.getSucNodeId()));
-    } catch (SerialPortException e) {
-      log.info("Failed to connect to port", e);
-      System.out.println("Failed to connect to port ...");
-    } catch (SerialException e) {
-      log.info("Flow exception", e);
-      System.out.println("Request response flow problem occured...");
     }
   }
 }

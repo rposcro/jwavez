@@ -3,10 +3,10 @@ package com.rposcro.jwavez.tools.cli.commands.network;
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetworkController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.tools.cli.commands.Command;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -25,24 +25,22 @@ public class ExcludeNodeCommand implements Command {
 
   @Override
   public void execute() {
+    System.out.println("Starting node exclusion transaction ...");
+    ProcedureUtil.executeProcedure(this::runExclusion);
+    System.out.println("Exclusion transaction finished");
+  }
+
+  private void runExclusion() throws SerialException {
     try(
         RemoveNodeFromNetworkController controller = RemoveNodeFromNetworkController.builder()
             .dongleDevice(options.getDevice())
             .build()
     ) {
-      System.out.println("Starting node exclusion transaction ...");
       controller.connect();
       System.out.println("Awaiting for node to remove ...");
       Optional<NodeInfo> nodeInfo = controller.listenForNodeToRemove();
       processResult(nodeInfo);
-    } catch (SerialPortException e) {
-      log.info("Failed to connect to port", e);
-      System.out.println("Failed to connect to port ...");
-    } catch (SerialException e) {
-      log.info("Serial exception", e);
-      System.out.println("Inclusion process failed ...");
     }
-    System.out.println("End of exclusion transaction");
   }
 
   private void processResult(Optional<NodeInfo> nodeInfo) {

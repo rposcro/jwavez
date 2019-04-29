@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeAssociationOptions;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 
 public class NodeAssociationSetCommand extends AbstractNodeAssociationCommand {
 
@@ -15,22 +15,17 @@ public class NodeAssociationSetCommand extends AbstractNodeAssociationCommand {
   }
 
   @Override
-  public void execute() throws CommandExecutionException {
-    connect(options);
-    processSetRequest();
+  public void execute() {
+    System.out.printf("Requesting association of node %s to group %s on node %s...\n", options.getAssociationNodeId(), options.getAssociationGroupId(), options.getNodeId());
+    ProcedureUtil.executeProcedure(this::processSetRequest);
     checkGroupAssociations(options.getNodeId(), options.getAssociationGroupId(), options.getTimeout());
+    System.out.println("Association finished");
   }
 
-  private void processSetRequest() {
-    System.out.printf("Requesting association of node %s to group %s on node %s...\n", options.getAssociationNodeId(), options.getAssociationGroupId(), options.getNodeId());
-    try {
-      processSendDataRequest(
-          options.getNodeId(),
-          associationCommandBuilder.buildSetCommand(options.getAssociationGroupId(), options.getAssociationNodeId()));
-      System.out.println("Association successful");
-    } catch(SerialException e) {
-      System.out.println("Association failed: " + e.getMessage());
-    }
-    System.out.println();
+  private void processSetRequest() throws SerialException {
+    connect(options);
+    processSendDataRequest(
+        options.getNodeId(),
+        associationCommandBuilder.buildSetCommand(options.getAssociationGroupId(), options.getAssociationNodeId()));
   }
 }

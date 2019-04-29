@@ -1,12 +1,13 @@
 package com.rposcro.jwavez.tools.cli.commands.network;
 
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
 import com.rposcro.jwavez.serial.utils.FrameUtil;
 import com.rposcro.jwavez.tools.cli.commands.AbstractAsyncBasedCommand;
-import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceBasedOptions;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 
 public class ListenerCommand extends AbstractAsyncBasedCommand {
 
@@ -18,7 +19,12 @@ public class ListenerCommand extends AbstractAsyncBasedCommand {
   }
 
   @Override
-  public void execute() throws CommandExecutionException {
+  public void execute() {
+    System.out.println("Frame listener starting ...");
+    ProcedureUtil.executeProcedure(this::startListening);
+  }
+
+  private void startListening() throws SerialException {
     connect(options).addCallbackInterceptor(this::intercept);
     System.out.println("Listening to inbound frames, exit with Ctrl+C");
     while(true);

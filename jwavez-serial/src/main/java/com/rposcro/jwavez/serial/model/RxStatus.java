@@ -16,8 +16,7 @@ public class RxStatus {
     foreignFrame = (status & 0x40) > 0;
     foreignHomeId = (status & 0x80) > 0;
 
-    int cast = status & 0xc0;
-    switch(status & 0xc0) {
+    switch(status & 0x0c) {
       case 0x00:
         frameCast = FrameCast.SINGLE;
         break;

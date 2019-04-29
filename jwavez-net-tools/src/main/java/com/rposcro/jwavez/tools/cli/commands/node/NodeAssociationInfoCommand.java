@@ -8,9 +8,9 @@ import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.tools.cli.ZWaveCLI;
-import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -27,9 +27,14 @@ public class NodeAssociationInfoCommand extends AbstractNodeAssociationCommand {
   }
 
   @Override
-  public void execute() throws CommandExecutionException {
-    connect(options);
+  public void execute() {
     System.out.println("Requesting node association information...");
+    ProcedureUtil.executeProcedure(this::runAssociationFetch);
+    System.out.println("Node association fetch finished");
+  }
+
+  private void runAssociationFetch() throws SerialException {
+    connect(options);
     List<AssociationReport> reports = collectReports();
     printReport(reports);
   }

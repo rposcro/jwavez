@@ -12,9 +12,9 @@ import com.rposcro.jwavez.serial.frames.responses.MemoryGetIdResponse;
 import com.rposcro.jwavez.serial.frames.responses.SetSUCNodeIdResponse;
 import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.commands.AbstractSyncBasedCommand;
-import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.SUCOptions;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 
 public class SUCCommand extends AbstractSyncBasedCommand {
 
@@ -26,25 +26,24 @@ public class SUCCommand extends AbstractSyncBasedCommand {
   }
 
   @Override
-  public void execute() throws CommandExecutionException {
+  public void execute() {
     System.out.println("SUC command for " + options.getDevice());
+    ProcedureUtil.executeProcedure(this::commandProcedure);
+    System.out.println("SUC command finished");
+  }
+
+  private void commandProcedure() throws SerialException {
     connect(options);
-    try {
-      switch (options.getAction()) {
-        case READ:
-          readSUC();
-          break;
-        case SET_THIS:
-          setThisSUC();
-          break;
-        case SET_OTHER:
-          setOtherSUC();
-          break;
-      }
-    } catch(FlowException e) {
-      System.out.println("Command flow failed due to: " + e.getMessage());
-    } catch(SerialException e) {
-      System.out.println("Command failed by an error " + e.getMessage());
+    switch (options.getAction()) {
+      case READ:
+        readSUC();
+        break;
+      case SET_THIS:
+        setThisSUC();
+        break;
+      case SET_OTHER:
+        setOtherSUC();
+        break;
     }
   }
 

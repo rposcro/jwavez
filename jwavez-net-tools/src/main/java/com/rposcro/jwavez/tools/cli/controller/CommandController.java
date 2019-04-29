@@ -22,7 +22,9 @@ public class CommandController {
       printUsage();
       return EXIT_CODE_SUCCESSFUL;
     } else {
-      return processCommand(args);
+      int retCode = processCommand(args);
+      System.out.println();
+      return retCode;
     }
   }
 

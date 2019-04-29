@@ -3,10 +3,10 @@ package com.rposcro.jwavez.tools.cli.commands.network;
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.tools.cli.commands.Command;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -25,24 +25,22 @@ public class IncludeNodeCommand implements Command {
 
   @Override
   public void execute() {
+    System.out.printf("Starting node inclusion transaction on %s ...\n", options.getDevice());
+    ProcedureUtil.executeProcedure(this::runInclusion);
+    System.out.println("Inclusion transaction finished");
+  }
+
+  public void runInclusion() throws SerialException {
     try(
         AddNodeToNetworkController controller = AddNodeToNetworkController.builder()
             .dongleDevice(options.getDevice())
             .build()
     ) {
-      System.out.printf("Starting node inclusion transaction on %s ...\n", options.getDevice());
       controller.connect();
       System.out.println("Awaiting for new nodes ...");
       Optional<NodeInfo> nodeInfo = controller.listenForNodeToAdd();
       processResult(nodeInfo);
-    } catch (SerialPortException e) {
-      log.info("Failed to connect to port", e);
-      System.out.println("Failed to connect to port ...");
-    } catch (SerialException e) {
-      log.info("Serial exception", e);
-      System.out.println("Inclusion process failed ...");
     }
-    System.out.println("End of inclusion transaction");
   }
 
   private void processResult(Optional<NodeInfo> nodeInfo) {

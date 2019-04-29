@@ -1,12 +1,11 @@
 package com.rposcro.jwavez.tools.cli.commands.dongle;
 
-import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.requests.SetDefaultRequest;
 import com.rposcro.jwavez.tools.cli.commands.AbstractSyncBasedCommand;
-import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.FactoryDefaultsOptions;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -20,22 +19,17 @@ public class FactoryDefaultsCommand extends AbstractSyncBasedCommand {
   }
 
   @Override
-  public void execute() throws CommandExecutionException {
-    connect(options);
+  public void execute() {
     System.out.println("Resetting dongle to factory defaults " + options.getDevice() + "...");
-    resetDongle();
-    System.out.println("End of set factory defaults transaction");
+    ProcedureUtil.executeProcedure(this::resetDongle);
+    System.out.println("Dongle reset finished");
   }
 
-  private void resetDongle() {
-    try {
-      controller.requestCallbackFlow(
-          SetDefaultRequest.createSetDefaultRequest(nextFlowId()),
-          options.getTimeout());
-      System.out.println("Factory defaults reset successful");
-    } catch(SerialException e) {
-      log.debug("Factory defaults failed due to an error", e);
-      System.out.printf("Factory defaults failed due to an error: %s\n", e.getMessage());
-    }
+  private void resetDongle() throws SerialException {
+    connect(options);
+    controller.requestCallbackFlow(
+        SetDefaultRequest.createSetDefaultRequest(nextFlowId()),
+        options.getTimeout());
+    System.out.println("Factory defaults reset successful");
   }
 }

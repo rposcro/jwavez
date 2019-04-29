@@ -3,9 +3,9 @@ package com.rposcro.jwavez.tools.cli.commands.node;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.cli.ZWaveCLI;
-import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeConfigurationReadOptions;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +19,14 @@ public class NodeConfigurationReadCommand extends AbstractNodeConfigurationComma
   }
 
   @Override
-  public void execute() throws CommandExecutionException {
-    connect(options);
+  public void execute() {
     System.out.println("Requesting configuration parameter(s) information...");
+    ProcedureUtil.executeProcedure(this::runConfigurationRead);
+    System.out.println("Configuration parameter(s) fetch finished");
+  }
+
+  private void runConfigurationRead() throws SerialException {
+    connect(options);
     printReports(collectReports());
   }
 

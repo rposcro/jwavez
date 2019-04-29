@@ -11,7 +11,6 @@ import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandInterceptor;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
-import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.options.node.AbstractNodeBasedOptions;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +21,7 @@ public abstract class AbstractSendDataBasedCommand extends AbstractAsyncBasedCom
   private CompletableFuture<ZWaveSupportedCommand> futureCommand;
   private CommandType expectedCommandType;
 
-  protected void connect(AbstractNodeBasedOptions options) throws CommandExecutionException {
+  protected void connect(AbstractNodeBasedOptions options) throws SerialException {
     super.connect(options)
         .addCallbackInterceptor(new ApplicationCommandInterceptor()
             .registerAllCommandsHandler(this::handleZWaveCommand));

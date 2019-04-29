@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeConfigurationSetOptions;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 
 public class NodeConfigurationSetCommand extends AbstractNodeConfigurationCommand {
 
@@ -15,22 +15,17 @@ public class NodeConfigurationSetCommand extends AbstractNodeConfigurationComman
   }
 
   @Override
-  public void execute() throws CommandExecutionException {
-    connect(options);
-    setConfiguration();
+  public void execute() {
+    System.out.println("Setting configuration parameter value...");
+    ProcedureUtil.executeProcedure(this::setConfiguration);
     checkConfiguration(options.getNodeId(), options.getParameterNumber(), options.getTimeout());
+    System.out.println("Configuration set up finished");
   }
 
-  private void setConfiguration() throws CommandExecutionException {
-    System.out.println("Setting configuration parameter value...");
-    try {
-      processSendDataRequest(
-          options.getNodeId(),
-          configurationCommandBuilder.buildSetParameterCommand(options.getParameterNumber(), options.getParameterValue(), options.getParameterSize()));
-      System.out.println("Configuration set successful");
-    } catch(SerialException e) {
-      System.out.println("Configuration set failed: " + e.getMessage());
-    }
-    System.out.println();
+  private void setConfiguration() throws SerialException {
+    connect(options);
+    processSendDataRequest(
+        options.getNodeId(),
+        configurationCommandBuilder.buildSetParameterCommand(options.getParameterNumber(), options.getParameterValue(), options.getParameterSize()));
   }
 }

@@ -44,6 +44,11 @@ class SetLearnModeFlowHandler extends AbstractFlowHandler {
   @Override
   void handleCallback(ZWaveCallback zWaveCallback) {
     SetLearnModeCallback callback = verifyAndConvertCallback(zWaveCallback);
+
+    if (callback == null) {
+      return;
+    }
+
     SetLearnModeFlowState state = transactionKeeper.getState();
     LearnStatus status = callback.getLearnStatus();
     Map<LearnStatus, Transition<SetLearnModeFlowHandler, SetLearnModeCallback, SetLearnModeFlowState>> transitionsMap = TRANSITIONS.get(state);
@@ -92,6 +97,7 @@ class SetLearnModeFlowHandler extends AbstractFlowHandler {
     if (callback instanceof ApplicationUpdateCallback) {
       ApplicationUpdateCallback updateCallback = (ApplicationUpdateCallback) callback;
       log.info("Application Update Callback received: {}", updateCallback.getStatus());
+      return null;
     }
 
     if (!(callback instanceof SetLearnModeCallback)) {
