@@ -1,5 +1,8 @@
 package com.rposcro.jwavez.serial.model;
 
+import lombok.Getter;
+
+@Getter
 public class RxStatus {
 
   private boolean routedBusy;
