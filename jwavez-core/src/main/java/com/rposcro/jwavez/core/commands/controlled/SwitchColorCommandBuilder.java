@@ -33,17 +33,24 @@ public class SwitchColorCommandBuilder {
     return new ZWaveControlledCommand(buffer);
   }
 
-  public ZWaveControlledCommand buildSetRGBWCommand(byte red, byte green, byte blue, byte white, byte duration) {
+  public ZWaveControlledCommand buildSetWarmRGBWCommand(byte red, byte green, byte blue, byte white, byte duration) {
     return new ZWaveControlledCommand(
         CommandClass.CMD_CLASS_SWITCH_COLOR.getCode(),
         SwitchColorCommandType.SWITCH_COLOR_SET.getCode(),
-        (byte) 4,
-        (byte) 0, white,
-        (byte) 1, white,
-        (byte) 2, red,
-        (byte) 3, green,
-        (byte) 4, blue,
-        duration
-    );
+        (byte) 4, (byte) 0, white, (byte) 2, red, (byte) 3, green, (byte) 4, blue, duration);
+  }
+
+  public ZWaveControlledCommand buildSetColdRGBWCommand(byte red, byte green, byte blue, byte white, byte duration) {
+    return new ZWaveControlledCommand(
+        CommandClass.CMD_CLASS_SWITCH_COLOR.getCode(),
+        SwitchColorCommandType.SWITCH_COLOR_SET.getCode(),
+        (byte) 4, (byte) 1, white, (byte) 2, red, (byte) 3, green, (byte) 4, blue, duration);
+  }
+
+  public ZWaveControlledCommand buildSetRGBCommand(byte red, byte green, byte blue, byte duration) {
+    return new ZWaveControlledCommand(
+        CommandClass.CMD_CLASS_SWITCH_COLOR.getCode(),
+        SwitchColorCommandType.SWITCH_COLOR_SET.getCode(),
+        (byte) 3, (byte) 2, red, (byte) 3, green, (byte) 4, blue, duration);
   }
 }
