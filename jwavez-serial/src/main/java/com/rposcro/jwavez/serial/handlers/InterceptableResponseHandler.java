@@ -9,6 +9,7 @@ import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.interceptors.ResponseInterceptor;
+import com.rposcro.jwavez.serial.interceptors.ViewBufferInterceptor;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,12 +22,14 @@ public class InterceptableResponseHandler implements Consumer<ViewBuffer> {
   private InboundFrameValidator validator;
   private InboundFrameParser parser;
 
-  private List<ResponseInterceptor> interceptors;
+  private List<ResponseInterceptor> responseInterceptors;
+  private List<ViewBufferInterceptor> bufferInterceptors;
 
   public InterceptableResponseHandler() {
     this.validator = new InboundFrameValidator();
     this.parser = new InboundFrameParser();
-    this.interceptors = new ArrayList<>();
+    this.responseInterceptors = new ArrayList<>();
+    this.bufferInterceptors = new ArrayList<>();
   }
 
   @Override
@@ -38,15 +41,21 @@ public class InterceptableResponseHandler implements Consumer<ViewBuffer> {
     }
 
     try {
+      bufferInterceptors.forEach(interceptor -> interceptor.intercept(frameBuffer));
       ZWaveResponse response = parser.parseResponseFrame(frameBuffer);
-      interceptors.forEach(interceptor -> interceptor.intercept(response));
+      responseInterceptors.forEach(interceptor -> interceptor.intercept(response));
     } catch(FrameParseException e) {
       log.warn("Frame parse failed: {}", BufferUtil.bufferToString(frameBuffer));
     }
   }
 
-  public InterceptableResponseHandler addInterceptor(ResponseInterceptor interceptor) {
-    interceptors.add(interceptor);
+  public InterceptableResponseHandler addResponseInterceptor(ResponseInterceptor interceptor) {
+    responseInterceptors.add(interceptor);
+    return this;
+  }
+
+  public InterceptableResponseHandler addViewBufferInterceptor(ViewBufferInterceptor interceptor) {
+    bufferInterceptors.add(interceptor);
     return this;
   }
 }
