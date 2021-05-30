@@ -44,7 +44,7 @@ public class SensorBinarySetUp extends AbstractExample implements AutoCloseable 
   public SensorBinarySetUp(int nodeId, String device) throws SerialPortException {
     this.commandBuilder = new ConfigurationCommandBuilder();
     this.addresseeId = new NodeId((byte) nodeId);
-    this.callbackFlowId = (byte) 0x0e;
+    this.callbackFlowId = nextFlowId();
 
     InterceptableCallbackHandler callbacksHandler = new InterceptableCallbackHandler()
         .addViewBufferInterceptor(this::interceptViewBuffer)
@@ -140,10 +140,6 @@ public class SensorBinarySetUp extends AbstractExample implements AutoCloseable 
     System.out.printf("\n%s\n", message);
     SendDataResponse response = controller.requestResponseFlow(request);
     System.out.printf("Response status: %s\n", response.isRequestAccepted());
-  }
-
-  private byte nextFlowId() {
-    return ++callbackFlowId == 0 ? ++callbackFlowId : callbackFlowId;
   }
 
   public static void main(String[] args) throws Exception {

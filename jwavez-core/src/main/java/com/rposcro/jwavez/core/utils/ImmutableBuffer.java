@@ -2,6 +2,15 @@ package com.rposcro.jwavez.core.utils;
 
 import lombok.Getter;
 
+/**
+ * All methods provided refer to virtual position and length
+ *
+ * Properties:<br>
+ *     <li><b>data</b> physical byte array where this buffer is built on</li>
+ *     <li><b>offset</b> offset in physical byte array where this buffer starts from</li>
+ *     <li><b>length</b> length of this virtual buffer, it's not same as physical byte array length</li>
+ *     <li><b>position</b> current index position in this virtual buffer, physical array position is offset + position</li>
+ */
 public final class ImmutableBuffer {
 
   private byte[] data;
@@ -47,10 +56,8 @@ public final class ImmutableBuffer {
     return ((data[offset + index] & 0xFF) << 8) | (data[offset + index + 1] & 0xFF);
   }
 
-  public byte[] cloneBytes() {
-    byte[] cloned = new byte[length];
-    System.arraycopy(data, offset, cloned, 0, length);
-    return cloned;
+  public int available() {
+    return length - position;
   }
 
   public boolean hasNext() {
@@ -58,15 +65,55 @@ public final class ImmutableBuffer {
   }
 
   public byte next() {
-    if (position >= length) {
-      throw new IndexOutOfBoundsException(String.format("No more data available"));
-    }
+    checkIndex(position);
     return data[offset + (position++)];
+  }
+
+  public byte nextByte() {
+    return next();
+  }
+
+  public short nextWord() {
+    short value = getWord(position);
+    position += 2;
+    return value;
+  }
+
+  public int nextDoubleWord() {
+    int value = getDoubleWord(position);
+    position += 4;
+    return value;
+  }
+
+  public short nextUnsignedByte() {
+    short value = getUnsignedByte(position);
+    position++;
+    return value;
+  }
+
+  public int nextUnsignedWord() {
+    int value = getUnsignedWord(position);
+    position += 2;
+    return value;
+  }
+
+  public ImmutableBuffer skip(int distance) {
+    if (position + distance >= length) {
+      throw new IndexOutOfBoundsException("New index out of bound");
+    }
+    position += distance;
+    return this;
   }
 
   public ImmutableBuffer rewind() {
     position = 0;
     return this;
+  }
+
+  public byte[] cloneBytes() {
+    byte[] cloned = new byte[length];
+    System.arraycopy(data, offset, cloned, 0, length);
+    return cloned;
   }
 
   public static ImmutableBuffer overBuffer(byte[] buffer) {

@@ -38,7 +38,7 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
   private CountDownLatch callbacksLatch;
 
   public SensorBinaryCheckOut(int nodeId, String device) throws SerialPortException {
-    this.callbackFlowId = (byte) 0x0e;
+    this.callbackFlowId = nextFlowId();
     this.addresseeId = new NodeId((byte) nodeId);
 
     ApplicationCommandInterceptor commandInterceptor = new ApplicationCommandInterceptor()
@@ -99,13 +99,6 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
     } else {
       log.debug("Skipped frame {}", callback.getSerialCommand());
     }
-  }
-
-  private byte nextFlowId() {
-    if (++callbackFlowId == 0) {
-      callbackFlowId++;
-    }
-    return callbackFlowId;
   }
 
   private void send(String message, SerialRequest request) throws Exception {

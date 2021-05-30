@@ -118,4 +118,71 @@ class ImmutableBufferSpec extends Specification {
         [0x80, 0x00, 0x00, 0x00]    | Integer.MIN_VALUE
         [0x7f, 0xff, 0xff, 0xff]    | Integer.MAX_VALUE
     }
+
+    def "next byte returned #expected times"() {
+        given:
+        def dataArray = data as byte[];
+        def buffer = new ImmutableBuffer(dataArray, 0, dataArray.size());
+        def seqReceived = new byte[expected];
+
+        when:
+        for (int i = 0; i < expected; i++) {
+            seqReceived[i] = buffer.nextByte();
+        }
+
+        then:
+        buffer.available() == 0
+        seqReceived == data
+
+        where:
+        data                        | expected
+        []                          | 0
+        [0x00]                      | 1
+        [0x00, 0x01]                | 2
+        [0x00, 0x01, 0x02]          | 3
+    }
+
+    def "next word returned #count times"() {
+        given:
+        def dataArray = data as byte[];
+        def buffer = new ImmutableBuffer(dataArray, 0, dataArray.size());
+        def seqReceived = new short[count];
+
+        when:
+        for (int i = 0; i < count; i++) {
+            seqReceived[i] = buffer.nextWord();
+        }
+
+        then:
+        buffer.available() == 0
+        seqReceived == words
+
+        where:
+        data                                    | words                         | count
+        []                                      | []                            | 0
+        [0x01, 0x01]                            | [0x0101]                      | 1
+        [0x01, 0x05, 0x82, 0x02]                | [261, -32254]                 | 2
+        [0x89, 0x04, 0x02, 0x06, 0x80, 0x01]    | [-30460, 518, -32767]         | 3
+    }
+
+    def "next double word returned #count times"() {
+        given:
+        def dataArray = data as byte[];
+        def buffer = new ImmutableBuffer(dataArray, 0, dataArray.size());
+        def seqReceived = new int[count];
+
+        when:
+        for (int i = 0; i < count; i++) {
+            seqReceived[i] = buffer.nextDoubleWord();
+        }
+
+        then:
+        buffer.available() == 0
+        seqReceived == words
+
+        where:
+        data                                    | words                         | count
+        []                                      | []                            | 0
+        [0x01, 0x05, 0x82, 0x02]                | [17138178]                    | 1
+    }
 }

@@ -1,10 +1,10 @@
 #### General Assumptions
-Based on protocol specification, it's assumed to have no more than two frames in 
+Assumptions based on official protocol specification, assumed to have no more than two frames in 
 inbound buffer at the same time as:
  * Dongle won't send next frame following Response or Callback unless it receives
  ACK, NAK, CAN, or timeout occurs.
  * Dongle can send single Response or Callback frame following prior ACK, NAK or CAN.
- * When other situation is detected, buffer is purged and CAN send by the application.  
+ * In any other case, buffer is purged and CAN is sent by the application.  
 
 #### Possible Application States
 | Application State | Possible Following States
@@ -14,7 +14,7 @@ inbound buffer at the same time as:
 | AwaitingResponse  | Idle  
 
 #### Supported Inbound Buffer Content Scenarios
-Supported application states scenarios don't necessarily means successful scenarios.
+Supported application states don't necessarily mean successful scenarios.
 They just mean scenarios handled in a way by this library. Others are treated as odd
 cases to be handled as exceptional.
 
