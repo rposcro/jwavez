@@ -15,8 +15,8 @@ public class ZWaveCLI {
     final String deviceOption = "-" + CommandOptions.OPT_DEVICE;
     if (!Stream.of(args).anyMatch(deviceOption::equals) && System.getenv("JWAVEZ_DEVICE") != null) {
       String[] newArgs = Arrays.copyOf(args, args.length + 2);
-      newArgs[args.length - 2] = deviceOption;
-      newArgs[args.length - 1] = System.getenv("JWAVEZ_DEVICE");
+      newArgs[newArgs.length - 2] = deviceOption;
+      newArgs[newArgs.length - 1] = System.getenv("JWAVEZ_DEVICE");
       return newArgs;
     } else {
       return args;

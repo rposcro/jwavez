@@ -40,7 +40,7 @@ public class NodeConfigurationReadCommand extends AbstractNodeConfigurationComma
     List<ConfigurationReport> reports = new ArrayList<>(parameterNumbers.length);
     for (int paramIdx = 0; paramIdx < parameterNumbers.length; paramIdx++) {
       try {
-        System.out.printf("Reading configuration parameter %s...\n", paramIdx);
+        System.out.printf("Reading configuration parameter %s...\n", parameterNumbers[paramIdx]);
         reports.add(readConfiguration(options.getNodeId(), parameterNumbers[paramIdx], options.getTimeout()));
       } catch(SerialException e) {
         System.out.printf("Failed to read parameter %s: %s\n", paramIdx, e.getMessage());

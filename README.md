@@ -1,4 +1,4 @@
-[JWaveZ Project Wiki](https://github.com/rposcro/jwavez/wiki/JWaveZ-Home)
+[JWaveZ Project Wiki](https://github.com/rposcro/jwavez/wiki)
 
 # Java ZWave Package
 I started this projects for couple of different reasons where ZWave technology exploration was the main factor. I simply consider writing code and investigation of results as the most efficient learnig curve. It's not really clear what direction this project takes in the coming months, but for sure I will keep similar modules organisation like it is today.
