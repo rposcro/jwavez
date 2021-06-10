@@ -22,7 +22,7 @@
     <lombok.version>1.18.4</lombok.version>
     <slf4j.version>1.7.25</slf4j.version>
     <jackson.version>[2.9.8,)</jackson.version>
-    <nrjavaserial.version>3.12.1</nrjavaserial.version>
+    <nrjavaserial.version>5.2.1</nrjavaserial.version>
     <!-- Plug-Ins -->
     <plugin.maven.clean.version>3.0.0</plugin.maven.clean.version>
     <plugin.maven.jar.version>3.1.0</plugin.maven.jar.version>
