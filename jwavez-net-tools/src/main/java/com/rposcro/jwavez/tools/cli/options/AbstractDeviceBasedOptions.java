@@ -9,6 +9,8 @@ import org.apache.commons.cli.ParseException;
 
 public abstract class AbstractDeviceBasedOptions implements CommandOptions {
 
+  private String JWAVEZ_DEVICE_ENV = "JWAVEZ_DEVICE";
+
   protected String device;
   protected CommandLine commandLine;
 
@@ -19,7 +21,7 @@ public abstract class AbstractDeviceBasedOptions implements CommandOptions {
       if (commandLine.getArgs().length > 0) {
         throw new CommandOptionsException(String.format("Unrecognized tokens: '%s'", String.join(",", commandLine.getArgs())));
       }
-      this.device = commandLine.getOptionValue(OPT_DEVICE);
+      this.device = resolveDeviceOption(commandLine);
     } catch(ParseException e) {
       throw new CommandOptionsException("Invalid option(s) format: " + e.getMessage(), e);
     }
@@ -27,5 +29,16 @@ public abstract class AbstractDeviceBasedOptions implements CommandOptions {
 
   public String getDevice() {
     return this.device;
+  }
+
+  private String resolveDeviceOption(CommandLine commandLine) throws CommandOptionsException {
+    String device = commandLine.getOptionValue(OPT_DEVICE);
+    if (device == null && System.getenv(JWAVEZ_DEVICE_ENV) != null) {
+      device = System.getenv(JWAVEZ_DEVICE_ENV);
+    } else {
+      throw new CommandOptionsException("Missing device option (-d) or " + JWAVEZ_DEVICE_ENV + " env not found");
+    }
+
+    return device;
   }
 }

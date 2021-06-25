@@ -14,6 +14,8 @@ import lombok.Builder;
 @AllArgsConstructor
 public class SupportedCommandParser {
 
+  private static SupportedCommandParser DEFAULT_PARSER;
+
   private SupportedCommandResolversRegistry supportedCommandsRegistry;
 
   public <T extends ZWaveSupportedCommand> T parseCommand(ImmutableBuffer payload, NodeId sourceNodeId) throws CommandNotSupportedException {
@@ -23,8 +25,11 @@ public class SupportedCommandParser {
   }
 
   public static SupportedCommandParser defaultParser() {
-    return SupportedCommandParser.builder()
-        .supportedCommandsRegistry(SupportedCommandResolversRegistry.instance())
-        .build();
+    if (DEFAULT_PARSER == null) {
+      DEFAULT_PARSER = SupportedCommandParser.builder()
+              .supportedCommandsRegistry(SupportedCommandResolversRegistry.instance())
+              .build();
+    }
+    return DEFAULT_PARSER;
   }
 }

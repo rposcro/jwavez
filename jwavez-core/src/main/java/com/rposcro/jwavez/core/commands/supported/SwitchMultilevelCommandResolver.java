@@ -31,7 +31,7 @@ public class SwitchMultilevelCommandResolver extends AbstractCommandResolver<Swi
   public ZWaveSupportedCommand resolve(ImmutableBuffer payloadBuffer, NodeId sourceNodeId) {
     SwitchMultiLevelCommandType commandType = CommandTypesRegistry.decodeCommandType(supportedCommandClass(), payloadBuffer.getByte(1));
     BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand> producer = Optional.ofNullable(suppliersPerCommandType.get(commandType))
-        .orElseThrow(() -> new CommandNotSupportedException("Command " + commandType + " has no resolver implemented!"));
+        .orElseThrow(() -> new CommandNotSupportedException(CommandClass.CMD_CLASS_SWITCH_MULTILEVEL, commandType));
     return producer.apply(payloadBuffer, sourceNodeId);
   }
 }

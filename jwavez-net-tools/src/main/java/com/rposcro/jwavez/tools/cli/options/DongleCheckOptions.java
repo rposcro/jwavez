@@ -66,8 +66,4 @@ public class DongleCheckOptions extends AbstractDeviceBasedOptions {
   public boolean runLibraryType() {
     return allChecks || commandLine.hasOption(OPT_LBRTP);
   }
-
-  public String getDevice() {
-    return commandLine.getOptionValue(OPT_DEVICE);
-  }
 }

@@ -13,7 +13,7 @@ public interface CommandOptions {
     return new Options()
         .addOption(Option.builder(OPT_DEVICE)
             .longOpt("dongleDevice")
-            .required()
+            .optionalArg(true)
             .hasArg()
             .numberOfArgs(1)
             .argName("dongleDevice")
