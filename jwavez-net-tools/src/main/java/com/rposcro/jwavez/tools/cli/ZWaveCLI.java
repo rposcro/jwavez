@@ -8,25 +8,12 @@ import java.util.stream.Stream;
 
 public class ZWaveCLI {
 
-  private static final String APP_HEAD_LINE = "JWaveZ Network Tool 1.1.0";
-
-
-  private static String[] enhanceOptions(String... args) {
-    final String deviceOption = "-" + CommandOptions.OPT_DEVICE;
-    if (!Stream.of(args).anyMatch(deviceOption::equals) && System.getenv("JWAVEZ_DEVICE") != null) {
-      String[] newArgs = Arrays.copyOf(args, args.length + 2);
-      newArgs[newArgs.length - 2] = deviceOption;
-      newArgs[newArgs.length - 1] = System.getenv("JWAVEZ_DEVICE");
-      return newArgs;
-    } else {
-      return args;
-    }
-  }
+  private static final String APP_HEAD_LINE = "JWaveZ Network Tool 1.1.4";
 
   public static void main(String... args) throws Exception {
     System.out.println(APP_HEAD_LINE);
     CommandController controller = new CommandController();
-    int exitCode = controller.executeCommand(enhanceOptions(args));
+    int exitCode = controller.executeCommand(args);
     System.exit(exitCode);
   }
 }

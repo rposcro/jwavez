@@ -30,7 +30,7 @@ public class SceneActivationCommandResolver extends AbstractCommandResolver<Scen
   public ZWaveSupportedCommand resolve(ImmutableBuffer payloadBuffer, NodeId sourceNodeId) {
     SceneActivationCommandType commandType = CommandTypesRegistry.decodeCommandType(supportedCommandClass(), payloadBuffer.getByte(1));
     BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand> producer = Optional.ofNullable(suppliersPerCommandType.get(commandType))
-        .orElseThrow(() -> new CommandNotSupportedException("Command " + commandType + " has no resolver implemented!"));
+            .orElseThrow(() -> new CommandNotSupportedException(CommandClass.CMD_CLASS_SCENE_ACTIVATION, commandType));
     return producer.apply(payloadBuffer, sourceNodeId);
   }
 }

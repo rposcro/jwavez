@@ -23,7 +23,7 @@ public final class SupportedCommandResolversRegistry {
 
   public ZWaveSupportedCommandResolver findResolver(CommandClass commandClass) {
     return Optional.ofNullable(resolverMap.get(commandClass))
-        .orElseThrow(() -> new CommandNotSupportedException("Command class " + commandClass + " is not supported yet!"));
+        .orElseThrow(() -> new CommandNotSupportedException(commandClass));
   }
 
   public static SupportedCommandResolversRegistry instance() {

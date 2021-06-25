@@ -30,7 +30,7 @@ public class BasicCommandResolver extends AbstractCommandResolver<BasicCommandTy
   public ZWaveSupportedCommand resolve(ImmutableBuffer payloadBuffer, NodeId sourceNodeId) {
     BasicCommandType commandType = CommandTypesRegistry.decodeCommandType(supportedCommandClass(), payloadBuffer.getByte(1));
     BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand> producer = Optional.ofNullable(suppliersPerCommandType.get(commandType))
-        .orElseThrow(() -> new CommandNotSupportedException("Command " + commandType + " has no resolver implemented!"));
+        .orElseThrow(() -> new CommandNotSupportedException(CommandClass.CMD_CLASS_BASIC, commandType));
     return producer.apply(payloadBuffer, sourceNodeId);
   }
 }

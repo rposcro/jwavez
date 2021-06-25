@@ -60,7 +60,7 @@ public class SetRGBWColor extends AbstractExample implements AutoCloseable {
 
   public static void main(String[] args) throws Exception {
     try (
-          SetRGBWColor setColorApp = new SetRGBWColor(3);
+          SetRGBWColor setColorApp = new SetRGBWColor(5);
     ) {
       setColorApp.switchColor(0, 0, 0, 0);
 //      setColorApp.switchColor(0, 0, 0, 255);

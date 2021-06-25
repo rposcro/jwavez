@@ -2,6 +2,7 @@ package com.rposcro.jwavez.core.commands.supported.binaryswitch;
 
 import com.rposcro.jwavez.core.commands.enums.SwitchBinaryCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
+import com.rposcro.jwavez.core.enums.CommandClass;
 import com.rposcro.jwavez.core.enums.CommandClassVersion;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.model.NodeId;
@@ -36,7 +37,11 @@ public class BinarySwitchReport extends ZWaveSupportedCommand<SwitchBinaryComman
     } else if (length == 5) {
       return CommandClassVersion.V2;
     } else {
-      throw new CommandNotSupportedException("Unrecognized BINARY_SWITCH_REPORT command length: " + length);
+      throw new CommandNotSupportedException(
+              "Unrecognized BINARY_SWITCH_REPORT command length: " + length,
+              CommandClass.CMD_CLASS_SWITCH_BINARY,
+              SwitchBinaryCommandType.BINARY_SWITCH_REPORT
+      );
     }
   }
 }

@@ -15,7 +15,7 @@ public class SUCOptions extends AbstractDeviceTimeoutBasedOptions {
   public static final Options OPTIONS;
 
   static {
-    OPTIONS = new Options().addOption(Option.builder(OPT_DEVICE).longOpt("dongleDevice").required().hasArg().argName("dongleDevice").desc("controller dongle dongleDevice").build());
+    OPTIONS = CommandOptions.defaultDeviceTimeoutBasedOptions();
     OptionGroup group = new OptionGroup()
             .addOption(Option.builder(OPT_READ).longOpt("read").desc("reads suc id from this dongle").build())
             .addOption(Option.builder(OPT_SET_THIS).longOpt("set-this").desc("sets this dongle as suc").build())
