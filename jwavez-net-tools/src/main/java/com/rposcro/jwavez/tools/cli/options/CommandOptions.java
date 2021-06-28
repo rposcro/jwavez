@@ -12,7 +12,7 @@ public interface CommandOptions {
   static Options defaultDeviceBasedOptions() {
     return new Options()
         .addOption(Option.builder(OPT_DEVICE)
-            .longOpt("dongleDevice")
+            .longOpt("dongle-device")
             .optionalArg(true)
             .hasArg()
             .numberOfArgs(1)

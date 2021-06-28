@@ -1,82 +1,136 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
+import com.rposcro.jwavez.core.commands.controlled.VersionCommandBuilder;
+import com.rposcro.jwavez.core.commands.enums.VersionCommandType;
+import com.rposcro.jwavez.core.commands.supported.version.VersionCommandClassReport;
+import com.rposcro.jwavez.core.commands.supported.version.VersionReport;
+import com.rposcro.jwavez.core.enums.CommandClass;
 import com.rposcro.jwavez.core.model.NodeInfo;
+import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationUpdateCallback;
-import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.frames.requests.RequestNodeInfoRequest;
-import com.rposcro.jwavez.serial.frames.responses.RequestNodeInfoResponse;
 import com.rposcro.jwavez.serial.model.ApplicationUpdateStatus;
 import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.commands.AbstractAsyncBasedCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
-import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
-import com.rposcro.jwavez.tools.cli.utils.EasySemaphore;
+import com.rposcro.jwavez.tools.cli.options.node.NodeInfoOptions;
 import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class NodeInfoCommand extends AbstractAsyncBasedCommand {
 
-  private DefaultNodeBasedOptions options;
-  private EasySemaphore doneLock;
+  private NodeInfoOptions options;
+  private NodeInfoReport nodeInfoReport;
 
   @Override
   public void configure(String[] args) throws CommandOptionsException {
-    options = new DefaultNodeBasedOptions(args);
+    options = new NodeInfoOptions(args);
   }
 
   @Override
   public void execute() {
     System.out.println("Starting node info check command ...");
-    ProcedureUtil.executeProcedure(this::runInfoFetch);
+    nodeInfoReport = new NodeInfoReport();
+    ProcedureUtil.executeProcedure(this::runFetch);
     System.out.println("Node info check command finished");
   }
 
-  private void runInfoFetch() throws SerialException {
-    connect(options).addCallbackInterceptor(this::handleUpdate);
-    RequestNodeInfoResponse response = controller.requestResponseFlow(
-        RequestNodeInfoRequest.createRequestNodeInfoRequest(options.getNodeId()));
-    if (response.isRequestAccepted()) {
-      doneLock = new EasySemaphore();
-      doneLock.acquireUninterruptibly();
-      if (!doneLock.tryAcquire(options.getTimeout(), TimeUnit.MILLISECONDS)) {
-        System.out.println("Node information request failed due to timeout");
+  private void runFetch() throws SerialException {
+    connect(options);
+    runFetchClassInfo();
+    if (options.isCheckCommandsVersions()) {
+      runFetchClassVersionInfo();
+    }
+    if (options.isCheckProtocolVersions()) {
+      runFetchProtocolVersionInfo();
+    }
+    printReport();
+  }
+
+  private void printReport() {
+    NodeInfo nodeInfo = nodeInfoReport.nodeInfo;
+    if (nodeInfo != null) {
+      List<String> commandClasses = Arrays.stream(nodeInfo.getCommandClasses())
+              .map(clazz -> clazz.toString())
+              .collect(Collectors.toList());
+      StringBuffer logMessage = new StringBuffer("Node info successfully received\n")
+              .append(String.format("  node id: %02X\n", nodeInfo.getId().getId()))
+              .append(String.format("  basic dongleDevice class: %s\n", nodeInfo.getBasicDeviceClass()))
+              .append(String.format("  generic dongleDevice class: %s\n", nodeInfo.getGenericDeviceClass()))
+              .append(String.format("  specific dongleDevice class: %s\n", nodeInfo.getSpecificDeviceClass()))
+              .append(String.format("  command classes: %s\n", String.join(", ", commandClasses)));
+      System.out.println(logMessage.toString());
+
+      if (nodeInfoReport.classVersionReports != null) {
+        System.out.println("Class versions:");
+        for (VersionCommandClassReport report: nodeInfoReport.classVersionReports) {
+          System.out.println("  " + report.getCommandClass() + ": " + report.getCommandClassVersion());
+        }
+        System.out.println();
+      }
+
+      if (nodeInfoReport.protocolVersionReport != null) {
+        System.out.println("Protocol versions:");
+        System.out.println("  ZWave Library Type: " + nodeInfoReport.protocolVersionReport.getZWaveLibraryTypeEnum());
+        System.out.println("  Protocol Version: " + nodeInfoReport.protocolVersionReport.getZWaveProtocolVersion());
+        System.out.println("  Protocol Sub Version: " + nodeInfoReport.protocolVersionReport.getZWaveProtocolSubVersion());
+        System.out.println("  Application Version: " + nodeInfoReport.protocolVersionReport.getApplicationVersion());
+        System.out.println("  Application Sub Version: " + nodeInfoReport.protocolVersionReport.getApplicationSubVersion());
+        System.out.println();
       }
     } else {
-      System.out.println("Request was not accepted by dongle");
+      System.out.println("Node Class Info was not fetched!");
     }
   }
 
-  private void handleUpdate(ZWaveCallback callback) {
-    if (callback instanceof ApplicationUpdateCallback) {
-      ApplicationUpdateCallback updateCallback = (ApplicationUpdateCallback) callback;
-      if (updateCallback.getStatus() == ApplicationUpdateStatus.APP_UPDATE_STATUS_NODE_INFO_RECEIVED) {
-        NodeInfo nodeInfo = updateCallback.getNodeInfo();
-        List<String> commandClasses = Arrays.stream(nodeInfo.getCommandClasses())
-            .map(clazz -> clazz.toString())
-            .collect(Collectors.toList());
-        StringBuffer logMessage = new StringBuffer("Node info successfully received\n")
-            .append(String.format("  node id: %02X\n", nodeInfo.getId().getId()))
-            .append(String.format("  basic dongleDevice class: %s\n", nodeInfo.getBasicDeviceClass()))
-            .append(String.format("  generic dongleDevice class: %s\n", nodeInfo.getGenericDeviceClass()))
-            .append(String.format("  specific dongleDevice class: %s\n", nodeInfo.getSpecificDeviceClass()))
-            .append(String.format("  command classes: %s\n", String.join(", ", commandClasses)));
-        System.out.println(logMessage.toString());
-        doneLock.release();
-      } else {
-        System.out.println("Unexpected command update status: " + updateCallback.getStatus());
-      }
-    } else {
-      log.debug("Skipping callback: {}", callback.getSerialCommand());
+  private void runFetchClassInfo() throws SerialException {
+    System.out.println("Fetching class info");
+    ApplicationUpdateCallback callback = requestZWCallback(
+            RequestNodeInfoRequest.createRequestNodeInfoRequest(options.getNodeId()),
+            SerialCommand.APPLICATION_UPDATE,
+            options.getTimeout()
+    );
+    nodeInfoReport.nodeInfo = callback.getNodeInfo();
+    nodeInfoReport.applicationUpdateStatus = callback.getStatus();
+  }
+
+  private void runFetchClassVersionInfo() throws SerialException {
+    System.out.println("Fetching class version info");
+    nodeInfoReport.classVersionReports = new VersionCommandClassReport[nodeInfoReport.nodeInfo.getCommandClasses().length];
+    int idx = 0;
+    for (CommandClass commandClass: nodeInfoReport.nodeInfo.getCommandClasses()) {
+      VersionCommandClassReport report = requestApplicationCommand(
+              options.getNodeId(),
+              new VersionCommandBuilder().buildCommandClassGetCommand(commandClass),
+              VersionCommandType.VERSION_COMMAND_CLASS_REPORT,
+              options.getTimeout());
+      nodeInfoReport.classVersionReports[idx++] = report;
     }
+  }
+
+  private void runFetchProtocolVersionInfo() throws SerialException {
+    System.out.println("Fetching protocols version info");
+    VersionReport report = requestApplicationCommand(
+            options.getNodeId(),
+            new VersionCommandBuilder().buildGetCommand(),
+            VersionCommandType.VERSION_REPORT,
+            options.getTimeout());
+    nodeInfoReport.protocolVersionReport = report;
   }
 
   public static void main(String... args) throws Exception {
-    ZWaveCLI.main("node", "class", "-d", "/dev/tty.usbmodem1421", "-n", "3");
+    ZWaveCLI.main("node", "info", "-d", "/dev/tty.usbmodem14201", "-n", "3", "-t", "5000", "-vp", "-vc");
+  }
+
+  public static class NodeInfoReport {
+    private ApplicationUpdateStatus applicationUpdateStatus;
+    private NodeInfo nodeInfo;
+    private VersionReport protocolVersionReport;
+    private VersionCommandClassReport[] classVersionReports;
   }
 }

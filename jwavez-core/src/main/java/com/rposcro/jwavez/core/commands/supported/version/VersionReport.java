@@ -4,7 +4,6 @@ import com.rposcro.jwavez.core.commands.enums.VersionCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.enums.ZWaveLibraryType;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.EncodableConstantsRegistry;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
@@ -21,6 +20,7 @@ public class VersionReport extends ZWaveSupportedCommand<VersionCommandType> {
 
     public VersionReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(VersionCommandType.VERSION_REPORT, sourceNodeId);
+        payload.skip(2);
         zWaveLibraryType = payload.nextUnsignedByte();
         zWaveProtocolVersion = payload.nextUnsignedByte();
         zWaveProtocolSubVersion = payload.nextUnsignedByte();
@@ -29,6 +29,6 @@ public class VersionReport extends ZWaveSupportedCommand<VersionCommandType> {
     }
 
     public ZWaveLibraryType getZWaveLibraryTypeEnum() {
-        return EncodableConstantsRegistry.optionalConstantOfCode(ZWaveLibraryType.class, (byte) zWaveLibraryType).orElse(null);
+        return ZWaveLibraryType.ofCodeOptional((byte) zWaveLibraryType).orElse(null);
     }
 }
