@@ -1,7 +1,10 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
+import com.rposcro.jwavez.core.commands.controlled.ManufacturerSpecificCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.VersionCommandBuilder;
+import com.rposcro.jwavez.core.commands.enums.ManufacturerSpecificCommandType;
 import com.rposcro.jwavez.core.commands.enums.VersionCommandType;
+import com.rposcro.jwavez.core.commands.supported.manufacturerspecific.ManufacturerSpecificReport;
 import com.rposcro.jwavez.core.commands.supported.version.VersionCommandClassReport;
 import com.rposcro.jwavez.core.commands.supported.version.VersionReport;
 import com.rposcro.jwavez.core.enums.CommandClass;
@@ -49,6 +52,9 @@ public class NodeInfoCommand extends AbstractAsyncBasedCommand {
     if (options.isCheckProtocolVersions()) {
       runFetchProtocolVersionInfo();
     }
+    if (options.isManufacturerSpecificInfo()) {
+      runFetchManufacturerSpecificInfo();
+    }
     printReport();
   }
 
@@ -82,6 +88,13 @@ public class NodeInfoCommand extends AbstractAsyncBasedCommand {
         System.out.println("  Application Version: " + nodeInfoReport.protocolVersionReport.getApplicationVersion());
         System.out.println("  Application Sub Version: " + nodeInfoReport.protocolVersionReport.getApplicationSubVersion());
         System.out.println();
+      }
+
+      if (nodeInfoReport.manufacturerSpecificReport != null) {
+        System.out.println("Manufacturer specific:");
+        System.out.println("  Manufacturer Id: " + String.format("0x%04X", nodeInfoReport.manufacturerSpecificReport.getManufacturerId()));
+        System.out.println("  Product Type Id: " + String.format("0x%04X", nodeInfoReport.manufacturerSpecificReport.getProductTypeId()));
+        System.out.println("  Product Id: " + String.format("0x%04X", nodeInfoReport.manufacturerSpecificReport.getProductId()));
       }
     } else {
       System.out.println("Node Class Info was not fetched!");
@@ -123,8 +136,18 @@ public class NodeInfoCommand extends AbstractAsyncBasedCommand {
     nodeInfoReport.protocolVersionReport = report;
   }
 
+  private void runFetchManufacturerSpecificInfo() throws SerialException {
+    System.out.println("Fetching manufacturer specific info");
+    ManufacturerSpecificReport report = requestApplicationCommand(
+            options.getNodeId(),
+            new ManufacturerSpecificCommandBuilder().buildGetCommand(),
+            ManufacturerSpecificCommandType.MANUFACTURER_SPECIFIC_REPORT,
+            options.getTimeout());
+    nodeInfoReport.manufacturerSpecificReport = report;
+  }
+
   public static void main(String... args) throws Exception {
-    ZWaveCLI.main("node", "info", "-d", "/dev/tty.usbmodem14201", "-n", "3", "-t", "5000", "-vp", "-vc");
+    ZWaveCLI.main("node", "info", "-d", "/dev/tty.usbmodem14201", "-n", "3", "-t", "5000", "-vp", "-vc", "-ms");
   }
 
   public static class NodeInfoReport {
@@ -132,5 +155,6 @@ public class NodeInfoCommand extends AbstractAsyncBasedCommand {
     private NodeInfo nodeInfo;
     private VersionReport protocolVersionReport;
     private VersionCommandClassReport[] classVersionReports;
+    private ManufacturerSpecificReport manufacturerSpecificReport;
   }
 }
