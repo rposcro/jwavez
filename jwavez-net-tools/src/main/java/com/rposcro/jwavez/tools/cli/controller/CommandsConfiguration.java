@@ -25,6 +25,7 @@ import com.rposcro.jwavez.tools.cli.options.node.NodeAssociationOptions;
 import com.rposcro.jwavez.tools.cli.options.node.NodeConfigurationReadOptions;
 import com.rposcro.jwavez.tools.cli.options.SUCOptions;
 import com.rposcro.jwavez.tools.cli.options.node.NodeConfigurationSetOptions;
+import com.rposcro.jwavez.tools.cli.options.node.NodeInfoOptions;
 import lombok.Getter;
 
 @Getter
@@ -105,8 +106,8 @@ public class CommandsConfiguration {
 
   private CommandTreeNode nodeCommand() {
     return new CommandTreeNode("node", "reads or sets configuration of nodes in network")
-        .addChild(new CommandTreeNode("class", "reads node dongleDevice/command class information")
-            .withCommandReference(NodeInfoCommand.class, DefaultNodeBasedOptions.OPTIONS))
+        .addChild(new CommandTreeNode("info", "reads node dongleDevice/command class information")
+            .withCommandReference(NodeInfoCommand.class, NodeInfoOptions.OPTIONS))
         .addChild(new CommandTreeNode("association", "manages node group associations")
             .addChild(new CommandTreeNode("info", "reads associations information from node")
                 .withCommandReference(NodeAssociationInfoCommand.class, DefaultNodeBasedOptions.OPTIONS))

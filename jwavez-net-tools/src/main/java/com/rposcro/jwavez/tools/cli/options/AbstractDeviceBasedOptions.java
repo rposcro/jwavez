@@ -33,9 +33,7 @@ public abstract class AbstractDeviceBasedOptions implements CommandOptions {
 
   private String resolveDeviceOption(CommandLine commandLine) throws CommandOptionsException {
     String device = commandLine.getOptionValue(OPT_DEVICE);
-    if (device == null && System.getenv(JWAVEZ_DEVICE_ENV) != null) {
-      device = System.getenv(JWAVEZ_DEVICE_ENV);
-    } else {
+    if (device == null && (device = System.getenv(JWAVEZ_DEVICE_ENV)) == null) {
       throw new CommandOptionsException("Missing device option (-d) or " + JWAVEZ_DEVICE_ENV + " env not found");
     }
 

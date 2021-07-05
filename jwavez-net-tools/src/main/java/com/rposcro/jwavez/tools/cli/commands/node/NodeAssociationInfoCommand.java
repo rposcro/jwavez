@@ -67,7 +67,7 @@ public class NodeAssociationInfoCommand extends AbstractNodeAssociationCommand {
 
   private int readGroupingsCount() throws SerialException {
     System.out.println("Checking association groups availabilities...");
-    AssociationGroupingsReport report = (AssociationGroupingsReport) requestZWCommand(
+    AssociationGroupingsReport report = (AssociationGroupingsReport) requestApplicationCommand(
         SendDataRequest.createSendDataRequest(
             options.getNodeId(),
             commandBuilder.buildGetSupportedGroupingsCommand(),

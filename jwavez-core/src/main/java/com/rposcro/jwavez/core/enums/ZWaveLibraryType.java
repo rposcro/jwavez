@@ -3,6 +3,8 @@ package com.rposcro.jwavez.core.enums;
 import com.rposcro.jwavez.core.utils.EncodableConstant;
 import com.rposcro.jwavez.core.utils.EncodableConstantsRegistry;
 
+import java.util.Optional;
+
 public enum ZWaveLibraryType implements EncodableConstant {
 
   NA_0(0),
@@ -19,11 +21,15 @@ public enum ZWaveLibraryType implements EncodableConstant {
   AV_DEVICE(11),
   ;
 
-  private ZWaveLibraryType(int code) {
+  ZWaveLibraryType(int code) {
     EncodableConstantsRegistry.registerConstant(this, (byte) code);
   }
 
   public static ZWaveLibraryType ofCode(byte code) {
     return EncodableConstantsRegistry.constantOfCode(ZWaveLibraryType.class, code);
+  }
+
+  public static Optional<ZWaveLibraryType> ofCodeOptional(byte code) {
+    return EncodableConstantsRegistry.optionalConstantOfCode(ZWaveLibraryType.class, code);
   }
 }

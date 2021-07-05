@@ -18,7 +18,8 @@ public class VersionCommandClassReport extends ZWaveSupportedCommand<VersionComm
     private final short commandClassVersion;
 
     public VersionCommandClassReport(ImmutableBuffer payload, NodeId sourceNodeId) {
-        super(VersionCommandType.VERSION_REPORT, sourceNodeId);
+        super(VersionCommandType.VERSION_COMMAND_CLASS_REPORT, sourceNodeId);
+        payload.skip(2);
         commandClass = CommandClass.ofCode(payload.nextByte());
         commandClassVersion = payload.nextUnsignedByte();
     }

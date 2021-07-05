@@ -15,12 +15,12 @@ public final class CommandTypesRegistry {
     return CommandTypesRegistry.constantOfCode(commandClass, code);
   }
 
-  static void registerConstant(CommandType constant, int code) {
-    Map<Byte, CommandType> codeToTypeMap = typesPerCode.computeIfAbsent(constant.getCommandClass(), (clazz) -> new HashMap<>());
-    codeToTypeMap.put((byte) code, constant);
+  static void registerConstant(CommandType commandType, int code) {
+    Map<Byte, CommandType> codeToTypeMap = typesPerCode.computeIfAbsent(commandType.getCommandClass(), (clazz) -> new HashMap<>());
+    codeToTypeMap.put((byte) code, commandType);
 
-    Map<CommandType, Byte> typeToCodeMap = codesPerType.computeIfAbsent(constant.getClass(), (clazz) -> new HashMap<>());
-    typeToCodeMap.put(constant, (byte) code);
+    Map<CommandType, Byte> typeToCodeMap = codesPerType.computeIfAbsent(commandType.getClass(), (clazz) -> new HashMap<>());
+    typeToCodeMap.put(commandType, (byte) code);
   }
 
   static <T extends CommandType> T constantOfCode(CommandClass commandClass, byte code) {

@@ -8,9 +8,9 @@ import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationRep
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
-import com.rposcro.jwavez.tools.cli.commands.AbstractSendDataBasedCommand;
+import com.rposcro.jwavez.tools.cli.commands.AbstractAsyncBasedCommand;
 
-public abstract class AbstractNodeConfigurationCommand extends AbstractSendDataBasedCommand {
+public abstract class AbstractNodeConfigurationCommand extends AbstractAsyncBasedCommand {
 
   protected ConfigurationCommandBuilder configurationCommandBuilder;
 
@@ -29,7 +29,7 @@ public abstract class AbstractNodeConfigurationCommand extends AbstractSendDataB
   }
 
   protected ConfigurationReport readConfiguration(NodeId hostId, int parameterNumber, long timeout) throws SerialException {
-    ZWaveSupportedCommand command = requestZWCommand(
+    ZWaveSupportedCommand command = requestApplicationCommand(
         SendDataRequest.createSendDataRequest(
             hostId,
             configurationCommandBuilder.buildGetParameterCommand(parameterNumber),
