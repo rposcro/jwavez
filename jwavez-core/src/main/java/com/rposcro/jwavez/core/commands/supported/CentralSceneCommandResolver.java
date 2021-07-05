@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.core.commands.supported;
 
-import com.rposcro.jwavez.core.commands.enums.CentralSceneCommandType;
+import com.rposcro.jwavez.core.commands.types.CentralSceneCommandType;
 import com.rposcro.jwavez.core.commands.supported.centralscene.CentralSceneNotification;
 import com.rposcro.jwavez.core.commands.supported.centralscene.CentralSceneSupportedReport;
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
 

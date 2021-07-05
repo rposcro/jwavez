@@ -1,6 +1,6 @@
-package com.rposcro.jwavez.core.commands.enums;
+package com.rposcro.jwavez.core.commands.types;
 
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 
 public interface CommandType {
 

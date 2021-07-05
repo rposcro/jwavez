@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.core.utils;
 
-import com.rposcro.jwavez.core.model.enums.BitLength;
+import com.rposcro.jwavez.core.constants.BitLength;
 
 public class BytesUtil {
 

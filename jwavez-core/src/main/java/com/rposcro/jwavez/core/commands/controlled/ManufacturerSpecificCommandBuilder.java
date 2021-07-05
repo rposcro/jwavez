@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.core.commands.controlled;
 
-import com.rposcro.jwavez.core.commands.enums.ManufacturerSpecificCommandType;
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.commands.types.ManufacturerSpecificCommandType;
+import com.rposcro.jwavez.core.classes.CommandClass;
 
 public class ManufacturerSpecificCommandBuilder {
 

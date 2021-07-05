@@ -3,7 +3,7 @@ package com.rposcro.jwavez.core.commands;
 import com.rposcro.jwavez.core.commands.supported.SupportedCommandResolversRegistry;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommandResolver;
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;

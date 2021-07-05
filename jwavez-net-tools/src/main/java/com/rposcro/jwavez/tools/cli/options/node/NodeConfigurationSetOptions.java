@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.cli.options.node;
 
-import com.rposcro.jwavez.core.model.enums.BitLength;
+import com.rposcro.jwavez.core.constants.BitLength;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.CommandOptions;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.core.enums;
+package com.rposcro.jwavez.core.classes;
 
 import java.util.HashMap;
 import java.util.Map;

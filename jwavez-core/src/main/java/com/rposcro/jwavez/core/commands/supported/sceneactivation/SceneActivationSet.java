@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.core.commands.supported.sceneactivation;
 
-import com.rposcro.jwavez.core.commands.enums.SceneActivationCommandType;
+import com.rposcro.jwavez.core.commands.types.SceneActivationCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;

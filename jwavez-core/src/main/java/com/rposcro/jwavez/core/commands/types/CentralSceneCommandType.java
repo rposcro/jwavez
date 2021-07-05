@@ -1,6 +1,6 @@
-package com.rposcro.jwavez.core.commands.enums;
+package com.rposcro.jwavez.core.commands.types;
 
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 
 @CommandTypeEnum(commandClass = CommandClass.CMD_CLASS_CENTRAL_SCENE)
 public enum CentralSceneCommandType implements CommandType {

@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
-import static com.rposcro.jwavez.core.commands.enums.ConfigurationCommandType.CONFIGURATION_REPORT;
+import static com.rposcro.jwavez.core.commands.types.ConfigurationCommandType.CONFIGURATION_REPORT;
 
 import com.rposcro.jwavez.core.commands.controlled.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;

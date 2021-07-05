@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.core.commands.supported;
 
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.utils.PackageScanner;
-import java.util.List;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;

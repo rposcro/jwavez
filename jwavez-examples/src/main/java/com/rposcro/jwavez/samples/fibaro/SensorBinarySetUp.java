@@ -4,7 +4,7 @@ import static com.rposcro.jwavez.serial.frames.requests.SendDataRequest.createSe
 
 import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.ConfigurationCommandBuilder;
-import com.rposcro.jwavez.core.commands.enums.ConfigurationCommandType;
+import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
 import com.rposcro.jwavez.core.model.NodeId;

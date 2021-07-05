@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.core.commands.controlled;
 
-import com.rposcro.jwavez.core.commands.enums.SwitchBinaryCommandType;
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.commands.types.SwitchBinaryCommandType;
+import com.rposcro.jwavez.core.classes.CommandClass;
 
 public class SwitchBinaryCommandBuilder {
 

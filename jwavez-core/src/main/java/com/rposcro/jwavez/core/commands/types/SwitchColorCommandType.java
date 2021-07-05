@@ -1,6 +1,6 @@
-package com.rposcro.jwavez.core.commands.enums;
+package com.rposcro.jwavez.core.commands.types;
 
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 
 @CommandTypeEnum(commandClass = CommandClass.CMD_CLASS_SWITCH_COLOR)
 public enum SwitchColorCommandType implements CommandType {

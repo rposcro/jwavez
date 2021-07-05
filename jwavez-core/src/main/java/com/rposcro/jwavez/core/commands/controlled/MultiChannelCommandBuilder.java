@@ -1,8 +1,8 @@
 package com.rposcro.jwavez.core.commands.controlled;
 
-import com.rposcro.jwavez.core.enums.CommandClass;
-import com.rposcro.jwavez.core.enums.SpecificDeviceClass;
-import com.rposcro.jwavez.core.commands.enums.MultiChannelCommandType;
+import com.rposcro.jwavez.core.classes.CommandClass;
+import com.rposcro.jwavez.core.classes.SpecificDeviceClass;
+import com.rposcro.jwavez.core.commands.types.MultiChannelCommandType;
 
 public class MultiChannelCommandBuilder {
 

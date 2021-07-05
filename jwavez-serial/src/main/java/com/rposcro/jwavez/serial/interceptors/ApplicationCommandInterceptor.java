@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.serial.interceptors;
 
 import com.rposcro.jwavez.core.commands.SupportedCommandParser;
-import com.rposcro.jwavez.core.commands.enums.CommandType;
+import com.rposcro.jwavez.core.commands.types.CommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
 import com.rposcro.jwavez.core.handlers.SupportedCommandHandler;

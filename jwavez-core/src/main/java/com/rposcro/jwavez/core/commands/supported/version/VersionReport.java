@@ -1,8 +1,8 @@
 package com.rposcro.jwavez.core.commands.supported.version;
 
-import com.rposcro.jwavez.core.commands.enums.VersionCommandType;
+import com.rposcro.jwavez.core.commands.types.VersionCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
-import com.rposcro.jwavez.core.enums.ZWaveLibraryType;
+import com.rposcro.jwavez.core.constants.ZWaveLibraryType;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
 import lombok.Getter;

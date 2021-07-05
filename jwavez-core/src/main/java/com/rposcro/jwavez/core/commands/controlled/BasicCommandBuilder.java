@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.core.commands.controlled;
 
-import com.rposcro.jwavez.core.commands.enums.BasicCommandType;
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.commands.types.BasicCommandType;
+import com.rposcro.jwavez.core.classes.CommandClass;
 
 public class BasicCommandBuilder {
 

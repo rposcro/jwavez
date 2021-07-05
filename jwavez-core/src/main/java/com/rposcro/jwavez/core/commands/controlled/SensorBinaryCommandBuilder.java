@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.core.commands.controlled;
 
-import com.rposcro.jwavez.core.enums.CommandClass;
-import com.rposcro.jwavez.core.commands.enums.SensorBinaryCommandType;
+import com.rposcro.jwavez.core.classes.CommandClass;
+import com.rposcro.jwavez.core.commands.types.SensorBinaryCommandType;
 
 public class SensorBinaryCommandBuilder {
 

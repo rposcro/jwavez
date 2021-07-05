@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.tools.cli.commands;
 
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
-import com.rposcro.jwavez.core.commands.enums.CommandType;
+import com.rposcro.jwavez.core.commands.types.CommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;

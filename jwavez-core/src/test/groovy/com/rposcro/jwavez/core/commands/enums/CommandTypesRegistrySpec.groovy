@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.core.commands.enums
+package com.rposcro.jwavez.core.commands.types
 
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException
 

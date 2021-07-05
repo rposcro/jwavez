@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.core.model.enums;
+package com.rposcro.jwavez.core.constants;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

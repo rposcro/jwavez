@@ -2,12 +2,12 @@ package com.rposcro.jwavez.tools.cli.commands.node;
 
 import com.rposcro.jwavez.core.commands.controlled.ManufacturerSpecificCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.VersionCommandBuilder;
-import com.rposcro.jwavez.core.commands.enums.ManufacturerSpecificCommandType;
-import com.rposcro.jwavez.core.commands.enums.VersionCommandType;
+import com.rposcro.jwavez.core.commands.types.ManufacturerSpecificCommandType;
+import com.rposcro.jwavez.core.commands.types.VersionCommandType;
 import com.rposcro.jwavez.core.commands.supported.manufacturerspecific.ManufacturerSpecificReport;
 import com.rposcro.jwavez.core.commands.supported.version.VersionCommandClassReport;
 import com.rposcro.jwavez.core.commands.supported.version.VersionReport;
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.SerialException;

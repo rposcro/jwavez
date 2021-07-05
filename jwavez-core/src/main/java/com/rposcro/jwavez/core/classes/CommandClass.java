@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.core.enums;
+package com.rposcro.jwavez.core.classes;
 
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.utils.EncodableConstantsRegistry;

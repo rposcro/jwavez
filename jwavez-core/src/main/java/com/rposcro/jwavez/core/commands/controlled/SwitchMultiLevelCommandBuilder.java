@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.core.commands.controlled;
 
-import static com.rposcro.jwavez.core.commands.enums.SwitchMultiLevelCommandType.*;
-import static com.rposcro.jwavez.core.enums.CommandClass.CMD_CLASS_SWITCH_MULTILEVEL;
+import static com.rposcro.jwavez.core.commands.types.SwitchMultiLevelCommandType.*;
+import static com.rposcro.jwavez.core.classes.CommandClass.CMD_CLASS_SWITCH_MULTILEVEL;
 
 public class SwitchMultiLevelCommandBuilder {
 

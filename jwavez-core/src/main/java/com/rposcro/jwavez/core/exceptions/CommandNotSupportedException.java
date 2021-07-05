@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.core.exceptions;
 
-import com.rposcro.jwavez.core.commands.enums.CommandType;
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.commands.types.CommandType;
+import com.rposcro.jwavez.core.classes.CommandClass;
 import lombok.Getter;
 
 @Getter

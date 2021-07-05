@@ -1,6 +1,6 @@
-package com.rposcro.jwavez.core.commands.enums;
+package com.rposcro.jwavez.core.commands.types;
 
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;

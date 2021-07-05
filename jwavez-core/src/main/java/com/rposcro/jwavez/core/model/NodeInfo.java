@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.core.model;
 
-import com.rposcro.jwavez.core.enums.BasicDeviceClass;
-import com.rposcro.jwavez.core.enums.CommandClass;
-import com.rposcro.jwavez.core.enums.GenericDeviceClass;
-import com.rposcro.jwavez.core.enums.SpecificDeviceClass;
+import com.rposcro.jwavez.core.classes.BasicDeviceClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
+import com.rposcro.jwavez.core.classes.GenericDeviceClass;
+import com.rposcro.jwavez.core.classes.SpecificDeviceClass;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

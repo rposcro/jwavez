@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.core.commands.supported;
 
-import com.rposcro.jwavez.core.commands.enums.VersionCommandType;
+import com.rposcro.jwavez.core.commands.types.VersionCommandType;
 import com.rposcro.jwavez.core.commands.supported.version.VersionCommandClassReport;
 import com.rposcro.jwavez.core.commands.supported.version.VersionReport;
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
 

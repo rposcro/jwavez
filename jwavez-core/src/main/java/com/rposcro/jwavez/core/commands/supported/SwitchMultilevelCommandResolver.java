@@ -1,8 +1,8 @@
 package com.rposcro.jwavez.core.commands.supported;
 
-import com.rposcro.jwavez.core.commands.enums.SwitchMultiLevelCommandType;
+import com.rposcro.jwavez.core.commands.types.SwitchMultiLevelCommandType;
 import com.rposcro.jwavez.core.commands.supported.switchmultilevel.SwitchMultilevelReport;
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
 

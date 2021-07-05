@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.core.enums;
+package com.rposcro.jwavez.core.constants;
 
 import com.rposcro.jwavez.core.utils.EncodableConstant;
 import com.rposcro.jwavez.core.utils.EncodableConstantsRegistry;

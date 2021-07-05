@@ -1,8 +1,8 @@
 package com.rposcro.jwavez.core.commands.controlled;
 
-import com.rposcro.jwavez.core.enums.CommandClass;
-import com.rposcro.jwavez.core.commands.enums.ConfigurationCommandType;
-import com.rposcro.jwavez.core.model.enums.BitLength;
+import com.rposcro.jwavez.core.classes.CommandClass;
+import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
+import com.rposcro.jwavez.core.constants.BitLength;
 import com.rposcro.jwavez.core.utils.BytesUtil;
 
 public class ConfigurationCommandBuilder {

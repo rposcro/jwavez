@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.core.commands.controlled;
 
-import com.rposcro.jwavez.core.commands.enums.SwitchColorCommandType;
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.commands.types.SwitchColorCommandType;
+import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.exceptions.CommandBuilderException;
 
 public class SwitchColorCommandBuilder {

@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.core.commands.supported;
 
-import com.rposcro.jwavez.core.commands.enums.SwitchColorCommandType;
+import com.rposcro.jwavez.core.commands.types.SwitchColorCommandType;
 import com.rposcro.jwavez.core.commands.supported.switchcolor.SwitchColorReport;
 import com.rposcro.jwavez.core.commands.supported.switchcolor.SwitchColorSupportedReport;
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
 
