@@ -5,7 +5,7 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeConfigurationReadOptions;
-import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
+import com.rposcro.jwavez.tools.utils.ProcedureUtil;
 import java.util.ArrayList;
 import java.util.List;
 

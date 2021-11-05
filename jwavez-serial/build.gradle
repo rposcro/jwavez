@@ -3,6 +3,7 @@
  */
 
 plugins {
+    id 'java-library'
     id 'com.jwavez.java-conventions'
 }
 

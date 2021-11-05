@@ -2,8 +2,8 @@ package com.rposcro.jwavez.samples.fibaro;
 
 import static com.rposcro.jwavez.serial.frames.requests.SendDataRequest.createSendDataRequest;
 
-import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
-import com.rposcro.jwavez.core.commands.controlled.ConfigurationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.AssociationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;

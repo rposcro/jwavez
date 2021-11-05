@@ -2,7 +2,7 @@ package com.rposcro.jwavez.tools.cli.commands.node;
 
 import static com.rposcro.jwavez.core.commands.types.AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT;
 
-import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationGroupingsReport;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
@@ -10,7 +10,7 @@ import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
-import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
+import com.rposcro.jwavez.tools.utils.ProcedureUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

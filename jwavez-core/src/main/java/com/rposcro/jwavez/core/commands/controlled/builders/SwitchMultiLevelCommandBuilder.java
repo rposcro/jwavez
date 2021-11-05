@@ -1,4 +1,6 @@
-package com.rposcro.jwavez.core.commands.controlled;
+package com.rposcro.jwavez.core.commands.controlled.builders;
+
+import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 
 import static com.rposcro.jwavez.core.commands.types.SwitchMultiLevelCommandType.*;
 import static com.rposcro.jwavez.core.classes.CommandClass.CMD_CLASS_SWITCH_MULTILEVEL;

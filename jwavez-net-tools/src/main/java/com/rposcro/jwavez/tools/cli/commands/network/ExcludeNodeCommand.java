@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.cli.commands.Command;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceTimeoutBasedOptions;
-import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
+import com.rposcro.jwavez.tools.utils.ProcedureUtil;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;

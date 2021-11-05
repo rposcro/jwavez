@@ -1,6 +1,11 @@
-package com.rposcro.jwavez.core.commands.controlled;
+package com.rposcro.jwavez.core.commands.controlled.builders;
 
 import com.rposcro.jwavez.core.classes.CommandClass;
+import com.rposcro.jwavez.core.commands.controlled.builders.AssociationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.ConfigurationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.MultiChannelCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.SensorBinaryCommandBuilder;
+
 import java.util.Map;
 
 public class ZWaveControlledCommandBuilder {

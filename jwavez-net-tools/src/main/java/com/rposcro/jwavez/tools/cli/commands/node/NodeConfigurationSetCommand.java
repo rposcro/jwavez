@@ -3,7 +3,7 @@ package com.rposcro.jwavez.tools.cli.commands.node;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeConfigurationSetOptions;
-import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
+import com.rposcro.jwavez.tools.utils.ProcedureUtil;
 
 public class NodeConfigurationSetCommand extends AbstractNodeConfigurationCommand {
 

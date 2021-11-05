@@ -4,7 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class AbstractExample {
 
-  public static final String DEFAULT_DEVICE = "/dev/cu.usbmodem14201";
+  public static final String DEFAULT_DEVICE = "/dev/cu.usbmodem14101";
   public static final String ENV_NAME = "JWAVEZ_DEVICE";
 
   private AtomicInteger flowId = new AtomicInteger(1);

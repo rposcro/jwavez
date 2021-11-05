@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.samples.fibaro;
 
-import com.rposcro.jwavez.core.commands.controlled.SwitchColorCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.SwitchColorCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.samples.AbstractExample;
@@ -60,7 +60,7 @@ public class SetRGBWColor extends AbstractExample implements AutoCloseable {
 
   public static void main(String[] args) throws Exception {
     try (
-          SetRGBWColor setColorApp = new SetRGBWColor(5);
+          SetRGBWColor setColorApp = new SetRGBWColor(7);
     ) {
       setColorApp.switchColor(0, 0, 0, 0);
 //      setColorApp.switchColor(0, 0, 0, 255);
