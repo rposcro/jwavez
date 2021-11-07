@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.shell.commands;
 
-import com.rposcro.jwavez.tools.shell.ShellContext;
+import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellCommandGroup;
 import org.springframework.shell.standard.ShellComponent;
@@ -9,11 +9,11 @@ import org.springframework.shell.standard.ShellMethod;
 import java.io.File;
 
 @ShellComponent
-@ShellCommandGroup("Generic")
+@ShellCommandGroup(CommandGroup.GENERIC)
 public class ContextCommands {
 
     @Autowired
-    private ShellContext shellContext;
+    private JWaveZShellContext shellContext;
 
     @ShellMethod(value = "Shows context value", key="show")
     public String show(String propertyName) {
@@ -23,7 +23,7 @@ public class ContextCommands {
             }
             return "Current device is " + shellContext.getDevice();
         } else if ("scope".equals(propertyName)) {
-            return "Current working scope is " + shellContext.getWorkingScope().getScopePath();
+            return "Current working scope is " + shellContext.getShellScope().getScopePath();
         }
 
         return "Don't know what '" + propertyName + "' is ;)";

@@ -15,7 +15,7 @@ import com.rposcro.jwavez.serial.frames.responses.MemoryGetIdResponse;
 import com.rposcro.jwavez.tools.cli.commands.Command;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.NetworkLearnOptions;
-import com.rposcro.jwavez.tools.utils.ProcedureUtil;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;

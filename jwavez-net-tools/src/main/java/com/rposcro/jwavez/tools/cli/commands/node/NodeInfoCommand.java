@@ -18,7 +18,7 @@ import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.commands.AbstractAsyncBasedCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.NodeInfoOptions;
-import com.rposcro.jwavez.tools.utils.ProcedureUtil;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;

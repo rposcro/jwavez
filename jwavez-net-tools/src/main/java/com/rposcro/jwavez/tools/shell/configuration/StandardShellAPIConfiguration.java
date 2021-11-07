@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.shell.configuration;
 
-import com.rposcro.jwavez.tools.shell.ShellContext;
+import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.spring.DynamicMethodTargetRegistrar;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -42,7 +42,7 @@ public class StandardShellAPIConfiguration {
     }
 
     @Bean
-    public MethodTargetRegistrar standardMethodTargetResolver(ShellContext shellContext, ApplicationContext applicationContext) {
+    public MethodTargetRegistrar standardMethodTargetResolver(JWaveZShellContext shellContext, ApplicationContext applicationContext) {
         return DynamicMethodTargetRegistrar.builder()
                 .applicationContext(applicationContext)
                 .shellContext(shellContext)

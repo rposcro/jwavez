@@ -1,6 +1,7 @@
 package com.rposcro.jwavez.tools.shell.spring;
 
-import com.rposcro.jwavez.tools.shell.ShellContext;
+import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
+import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import lombok.Builder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -36,15 +37,15 @@ import java.util.stream.Stream;
  */
 public class DynamicMethodTargetRegistrar implements MethodTargetRegistrar {
 
-    private static final String[] GROUPS_ALWAYS_ON = { "Built-In Commands", "Generic" };
+    private static final String[] GROUPS_ALWAYS_ON = { "Built-In Commands", CommandGroup.GENERIC };
 
     private ApplicationContext applicationContext;
-    private ShellContext shellContext;
+    private JWaveZShellContext shellContext;
 
   //  private Map<String, MethodTarget> commands;
 
     @Builder
-    public DynamicMethodTargetRegistrar(ApplicationContext applicationContext, ShellContext shellContext) {
+    public DynamicMethodTargetRegistrar(ApplicationContext applicationContext, JWaveZShellContext shellContext) {
         this.applicationContext = applicationContext;
         this.shellContext = shellContext;
     }
@@ -75,7 +76,7 @@ public class DynamicMethodTargetRegistrar implements MethodTargetRegistrar {
     }
 
     private boolean isGroupAllowedForCurrentScope(String group) {
-        if (shellContext.getWorkingScope().getName().equalsIgnoreCase(group)) {
+        if (shellContext.getShellScope().name().equalsIgnoreCase(group)) {
             return true;
         }
         return Stream.of(GROUPS_ALWAYS_ON).anyMatch(groupOn -> groupOn.equals(group));

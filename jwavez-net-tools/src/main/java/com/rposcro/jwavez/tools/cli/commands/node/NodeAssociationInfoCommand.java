@@ -10,7 +10,7 @@ import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.node.DefaultNodeBasedOptions;
-import com.rposcro.jwavez.tools.utils.ProcedureUtil;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

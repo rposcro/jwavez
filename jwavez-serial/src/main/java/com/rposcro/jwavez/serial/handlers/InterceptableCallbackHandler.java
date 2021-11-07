@@ -43,7 +43,9 @@ public class InterceptableCallbackHandler implements Consumer<ViewBuffer> {
     try {
       bufferInterceptors.forEach(interceptor -> interceptor.intercept(frameBuffer));
       ZWaveCallback callback = parser.parseCallbackFrame(frameBuffer);
-      callbackInterceptors.forEach(interceptor -> interceptor.intercept(callback));
+      callbackInterceptors.
+
+              forEach(interceptor -> interceptor.intercept(callback));
     } catch(FrameParseException e) {
       log.warn("Frame parse failed: {}", BufferUtil.bufferToString(frameBuffer));
       log.debug(e.getMessage(), e);

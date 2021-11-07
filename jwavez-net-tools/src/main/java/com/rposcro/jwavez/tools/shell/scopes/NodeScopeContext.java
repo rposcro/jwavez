@@ -7,17 +7,18 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
+import static com.rposcro.jwavez.tools.shell.scopes.ShellScope.NODE;
 
 @Component
 @Scope(SCOPE_SINGLETON)
-public class NodeScope extends WorkingScope {
+public class NodeScopeContext extends ScopeContext {
 
     @Getter
     @Setter
-    private int currentNodeId;
+    private int currentNodeId = 1;
 
     @Autowired
-    public NodeScope(TopScope topScope) {
-        super("node", topScope);
+    public NodeScopeContext(TopScopeContext topScope) {
+        super(NODE);
     }
 }

@@ -5,13 +5,14 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_SINGLETON;
+import static com.rposcro.jwavez.tools.shell.scopes.ShellScope.DONGLE;
 
 @Component
 @Scope(SCOPE_SINGLETON)
-public class NetworkScope extends WorkingScope {
+public class DongleScopeContext extends ScopeContext {
 
     @Autowired
-    public NetworkScope(TopScope topScope) {
-        super("network", topScope);
+    public DongleScopeContext(TopScopeContext topScope) {
+        super(DONGLE);
     }
 }

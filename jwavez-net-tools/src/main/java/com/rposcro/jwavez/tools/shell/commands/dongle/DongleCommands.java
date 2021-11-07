@@ -1,8 +1,10 @@
-package com.rposcro.jwavez.tools.shell.commands;
+package com.rposcro.jwavez.tools.shell.commands.dongle;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.shell.ShellContext;
+import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
+import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.DongleInformation;
+import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.DongleCheckService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.Availability;
@@ -13,11 +15,11 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellMethodAvailability;
 
 @ShellComponent
-@ShellCommandGroup("Dongle")
+@ShellCommandGroup(CommandGroup.DONGLE)
 public class DongleCommands {
 
     @Autowired
-    private ShellContext shellContext;
+    private JWaveZShellContext shellContext;
 
     @Autowired
     private DongleCheckService dongleCheckService;
@@ -42,7 +44,7 @@ public class DongleCommands {
     @ShellMethodAvailability
     public Availability checkAvailability() {
 
-        if (!"dongle".equals(shellContext.getWorkingScope().getName())) {
+        if (ShellScope.DONGLE != shellContext.getScopeContext().getScope()) {
             return Availability.unavailable("Command not available in current scope");
         }
 

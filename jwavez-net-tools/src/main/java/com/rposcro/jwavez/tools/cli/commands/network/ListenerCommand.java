@@ -18,7 +18,7 @@ import com.rposcro.jwavez.serial.utils.FrameUtil;
 import com.rposcro.jwavez.tools.cli.commands.AbstractAsyncBasedCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceBasedOptions;
-import com.rposcro.jwavez.tools.utils.ProcedureUtil;
+import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
