@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.shell.jline.PromptProvider;
 
+import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -34,7 +35,11 @@ public class JWaveZShellConfiguration {
     public JWaveZShellContext shellContext(TopScopeContext topScope) {
         String device = System.getenv(JWAVEZ_DEVICE_ENV);
         if (device == null) {
-            System.out.println("Note! No device detected!");
+            if (new File("/dev/cu.usbmodem14101").exists()) {
+                device = "/dev/cu.usbmodem14101";
+            } else {
+                System.out.println("Note! No device detected!");
+            }
         }
 
         JWaveZShellContext shellContext = JWaveZShellContext.builder()

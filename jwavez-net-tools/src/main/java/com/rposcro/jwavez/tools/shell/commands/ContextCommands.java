@@ -23,7 +23,7 @@ public class ContextCommands {
             }
             return "Current device is " + shellContext.getDevice();
         } else if ("scope".equals(propertyName)) {
-            return "Current working scope is " + shellContext.getShellScope().getScopePath();
+            return "Current working scope is " + shellContext.getShellScope().                          getScopePath();
         }
 
         return "Don't know what '" + propertyName + "' is ;)";

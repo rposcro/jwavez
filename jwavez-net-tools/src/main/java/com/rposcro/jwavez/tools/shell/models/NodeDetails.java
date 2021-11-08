@@ -7,11 +7,14 @@ import com.rposcro.jwavez.core.classes.SpecificDeviceClass;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class NodeDetails {
 
     private int nodeId;
@@ -33,6 +36,8 @@ public class NodeDetails {
     private CommandClassMeta[] commandClasses;
 
     @Getter
+    @Setter
+    @NoArgsConstructor
     @AllArgsConstructor
     public static class CommandClassMeta {
         private CommandClass commandClass;

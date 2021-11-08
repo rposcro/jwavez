@@ -45,6 +45,10 @@ public class SerialControllerManager {
         }
     }
 
+    public void releaseAllHooks() throws SerialPortException {
+        closeControllers();
+    }
+
     private BasicSynchronousController acquireBasicSynchronousController() throws SerialPortException {
         if (basicSynchronousController == null) {
             closeControllers();
