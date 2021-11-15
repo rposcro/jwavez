@@ -1,7 +1,6 @@
 package com.rposcro.jwavez.tools.shell.models;
 
 import com.rposcro.jwavez.core.classes.BasicDeviceClass;
-import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.classes.GenericDeviceClass;
 import com.rposcro.jwavez.core.classes.SpecificDeviceClass;
 import lombok.AllArgsConstructor;
@@ -15,10 +14,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class NodeDetails {
-
-    private int nodeId;
-    private String nodeMemo;
+public class NodeProductInformation {
 
     private int manufacturerId;
     private int productTypeId;
@@ -33,14 +29,6 @@ public class NodeDetails {
     private BasicDeviceClass basicDeviceClass;
     private GenericDeviceClass genericDeviceClass;
     private SpecificDeviceClass specificDeviceClass;
-    private CommandClassMeta[] commandClasses;
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class CommandClassMeta {
-        private CommandClass commandClass;
-        private int version;
-    }
+    private CommandClassMeta[] commandClasses;
 }

@@ -15,10 +15,14 @@ public class NodeScopeContext extends ScopeContext {
 
     @Getter
     @Setter
-    private int currentNodeId = 1;
+    private Integer currentNodeId;
 
     @Autowired
     public NodeScopeContext(TopScopeContext topScope) {
         super(NODE);
+    }
+
+    public boolean isAnyNodeSelected() {
+        return currentNodeId != null;
     }
 }

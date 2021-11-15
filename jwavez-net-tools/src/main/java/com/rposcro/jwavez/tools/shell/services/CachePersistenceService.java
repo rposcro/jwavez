@@ -2,7 +2,7 @@ package com.rposcro.jwavez.tools.shell.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.rposcro.jwavez.tools.shell.models.NodeDetails;
+import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
@@ -47,7 +47,7 @@ public class CachePersistenceService {
         }
     }
 
-    public void persistNodesDetails(Collection<NodeDetails> nodeDetailsCollection) {
+    public void persistNodesDetails(Collection<NodeInformation> nodeDetailsCollection) {
         if (isPersistenceAvailable()) {
             try {
                 objectMapper.writeValue(nodeDetailsFile, nodeDetailsCollection);
@@ -57,11 +57,11 @@ public class CachePersistenceService {
         }
     }
 
-    public Collection<NodeDetails> restoreNodeDetails() {
+    public Collection<NodeInformation> restoreNodeDetails() {
         if (isPersistenceAvailable()) {
             try {
-                List<NodeDetails> nodeDetails = objectMapper.readValue(
-                        nodeDetailsFile, new TypeReference<List<NodeDetails>>() { });
+                List<NodeInformation> nodeDetails = objectMapper.readValue(
+                        nodeDetailsFile, new TypeReference<List<NodeInformation>>() { });
                 return nodeDetails;
             } catch (IOException e) {
                 log.error("Failed to restore node details collection!", e);

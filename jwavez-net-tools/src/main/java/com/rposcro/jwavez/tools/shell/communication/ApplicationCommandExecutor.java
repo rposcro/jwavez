@@ -3,6 +3,7 @@ package com.rposcro.jwavez.tools.shell.communication;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.types.CommandType;
+import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
@@ -32,10 +33,17 @@ public class ApplicationCommandExecutor {
 
     @Builder
     public ApplicationCommandExecutor(String device) throws SerialPortException {
+        ApplicationCommandInterceptor appCmdInterceptor = ApplicationCommandInterceptor.builder()
+                .skipUnsupportedCallbacks(true)
+                .supportBroadcasts(false)
+                .supportMulticasts(false)
+                .supportedCommandDispatcher(new SupportedCommandDispatcher())
+                .build();
+        appCmdInterceptor.registerAllCommandsHandler(this::handleApplicationCommand);
+
         InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
         callbackHandler.addCallbackInterceptor(this::handleSerialCommand);
-        callbackHandler.addCallbackInterceptor(new ApplicationCommandInterceptor()
-                .registerAllCommandsHandler(this::handleApplicationCommand));
+        callbackHandler.addCallbackInterceptor(appCmdInterceptor);
 
         this.controller = GeneralAsynchronousController.builder()
                 .dongleDevice(device)

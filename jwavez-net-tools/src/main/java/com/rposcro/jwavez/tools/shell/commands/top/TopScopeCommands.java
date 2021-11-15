@@ -4,6 +4,7 @@ import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.scopes.NodeScopeContext;
 import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
+import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import com.rposcro.jwavez.tools.shell.services.ScopeSwitchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -22,6 +23,9 @@ public class TopScopeCommands {
     private ScopeSwitchService scopeSwitchService;
 
     @Autowired
+    private NodeInformationCache nodeInformationCache;
+
+    @Autowired
     private NodeScopeContext nodeScopeContext;
 
     @ShellMethod(value = "Changes working scope to Dongle", key="dongle")
@@ -35,10 +39,14 @@ public class TopScopeCommands {
     }
 
     @ShellMethod(value = "Changes working scope to Node", key="node")
-    public String switchToNodeScope(@ShellOption(defaultValue = "1") int nodeId) {
+    public String switchToNodeScope(@ShellOption(defaultValue = ShellOption.NULL) Integer nodeId) {
         switchToScope(ShellScope.NODE);
-        nodeScopeContext.setCurrentNodeId(nodeId);
-        return "Scope changed to " + ShellScope.NODE + " with node id " + nodeId;
+        String message = "Scope changed to " + ShellScope.NODE;
+        if (nodeId != null && nodeInformationCache.isNodeKnown(nodeId)) {
+            nodeScopeContext.setCurrentNodeId(nodeId);
+            message += "\nSelected node is " + nodeId;
+        }
+        return message;
     }
 
     private String switchToScope(ShellScope requestedScope) {
