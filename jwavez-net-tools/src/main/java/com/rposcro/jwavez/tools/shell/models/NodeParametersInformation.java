@@ -1,5 +1,8 @@
 package com.rposcro.jwavez.tools.shell.models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -15,6 +18,15 @@ public class NodeParametersInformation {
     public NodeParametersInformation() {
         this.parameterMetas = new ArrayList<>();
         this.parameterValues = new HashMap<>();
+    }
+
+    @JsonCreator
+    public NodeParametersInformation(
+            @JsonProperty("parameterMetas") List<ParameterMeta> parameterMetas,
+            @JsonProperty("parameterValues") Map<Integer, Integer> parameterValues) {
+        this();
+        this.parameterMetas.addAll(parameterMetas);
+        this.parameterValues.putAll(parameterValues);
     }
 
     public boolean isParameterDefined(int paramNumber) {

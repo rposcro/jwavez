@@ -45,6 +45,13 @@ public enum ShellScope {
         }
     }
 
+    public ShellScope getChildByPathName(String pathName) {
+        return children.stream()
+                .filter(scope -> scope.pathName.equals(pathName))
+                .findFirst()
+                .orElse(null);
+    }
+
     public boolean hasChild(ShellScope child) {
         return children.stream().anyMatch(scope -> scope == child);
     }

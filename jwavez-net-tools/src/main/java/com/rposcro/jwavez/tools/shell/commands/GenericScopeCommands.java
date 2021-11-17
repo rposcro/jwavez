@@ -19,8 +19,8 @@ public class GenericScopeCommands {
     @Autowired
     private ScopeSwitchService scopeSwitchService;
 
-    @ShellMethod(value = "Changes current working scope", key="scope")
-    public String showCurrentScope(@ShellOption(defaultValue = ShellOption.NULL) String scopeName) {
+    @ShellMethod(value = "Show or change current working scope", key="scope")
+    public String manageCurrentScope(@ShellOption(defaultValue = ShellOption.NULL) String scopeName) {
 
         if (scopeName == null) {
             return "Current working scope is " + shellContext.getShellScope().getScopePath();
@@ -33,6 +33,8 @@ public class GenericScopeCommands {
                     shellContext.getShellScope() : shellContext.getShellScope().getParent();
         } else if (isTopScopeRequested(scopeName)) {
             requiredScope = ShellScope.TOP;
+        } else {
+            requiredScope = parseScopePath(scopeName);
         }
 
         if (requiredScope != null) {
@@ -40,7 +42,33 @@ public class GenericScopeCommands {
             return "Current scope changed to " + shellContext.getShellScope().getScopePath();
         }
 
-        throw new IllegalArgumentException("Cannot switch scope to " + scopeName);
+        return "Cannot switch scope to " + scopeName;
+    }
+
+    private ShellScope parseScopePath(String scopeName) {
+        try {
+            String[] pathNames;
+
+            if (scopeName.startsWith("/")) {
+                pathNames = scopeName.split("/");
+            } else {
+                pathNames = new String[] { scopeName };
+            }
+
+            ShellScope scope = ShellScope.TOP;
+            for (String pathName: pathNames) {
+                if (!"".equals(pathName)) {
+                    scope = scope.getChildByPathName(pathName);
+                    if (scope == null) {
+                        return null;
+                    }
+                }
+            }
+            return scope;
+        } catch(Exception e) {
+        }
+
+        return null;
     }
 
     private boolean isParentScopeRequested(String scopeName) {

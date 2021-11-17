@@ -170,9 +170,9 @@ public class NodeParameterCommands {
         String line;
 
         if (parameterMeta == null) {
-            line = "Param " + paramNumber + ": param unknown";
+            line = "Param " + paramNumber + ": <param unknown>";
         } else if (paramValue == null) {
-            line = "Param " + paramNumber + ": value unknown";
+            line = "Param " + paramNumber + ": <value unknown>";
         } else {
             line = String.format("Param %s: %0" + (parameterMeta.getSizeInBits() / 4) + "x", paramNumber, paramValue);
         }
@@ -185,13 +185,13 @@ public class NodeParameterCommands {
         String line;
 
         if (parameterMeta == null) {
-            line = "Param " + parameterMeta.getNumber() + ": param unknown";
+            line = "Param " + parameterMeta.getNumber() + ": <param unknown>";
         } else {
-            line = String.format("Param %s:\n  size in bits: %s\n  memo: %s\n  value: %0" + parameterMeta.getSizeInBits() / 4 + "x",
+            line = String.format("Param %s:\n  size in bits: %s\n  memo: %s\n  value: %s",
                     parameterMeta.getNumber(),
                     parameterMeta.getSizeInBits(),
                     parameterMeta.getMemo(),
-                    paramValue != null ? "" + paramValue : "value unknown"
+                    paramValue != null ? "" + String.format("%0" + (parameterMeta.getSizeInBits() / 4) + "x", paramValue) : "<value unknown>"
             );
         }
 

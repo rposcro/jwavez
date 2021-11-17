@@ -13,6 +13,7 @@ public class CommonBeansConfiguration {
         ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.configure(SerializationFeature.FLUSH_AFTER_WRITE_VALUE, true);
         objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+        //objectMapper.registerModule(new ParameterNamesModule());
         return objectMapper;
     }
 }

@@ -18,7 +18,10 @@ import com.rposcro.jwavez.serial.frames.responses.GetRFPowerLevelResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetSUCNodeIdResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetVersionResponse;
 import com.rposcro.jwavez.serial.frames.responses.MemoryGetIdResponse;
+import com.rposcro.jwavez.tools.shell.models.DongleDeviceInformation;
 import com.rposcro.jwavez.tools.shell.models.DongleInformation;
+import com.rposcro.jwavez.tools.shell.models.DongleNetworkInformation;
+import com.rposcro.jwavez.tools.shell.models.DongleRoleInformation;
 import com.rposcro.jwavez.tools.utils.SerialFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,19 +33,81 @@ public class DongleCheckService {
     private SerialControllerManager controllerManager;
 
     public DongleInformation collectDongleInformation() throws SerialException {
+        GetSUCNodeIdResponse sucNodeIdResponse = askForSUCId();
+        GetInitDataResponse getInitDataResponse = askForInitialData();
+        MemoryGetIdResponse memoryGetIdResponse = askForNetworkIds();
+        GetControllerCapabilitiesResponse getControllerCapabilitiesResponse = askForControllerCapabilities();
+        GetCapabilitiesResponse getCapabilitiesResponse = askForDongleCapabilities();
+        GetLibraryTypeResponse getLibraryTypeResponse = askForLibraryType();
+        GetVersionResponse getVersionResponse = askForVersion();
+
         return DongleInformation.builder()
-                .sucNodeIdResponse(askForSUCId())
-                .capabilitiesResponse(askForDongleCapabilities())
-                .controllerCapabilitiesResponse(askForControllerCapabilities())
-                .initDataResponse(askForInitialData())
-                .memoryGetIdResponse(askForNetworkIds())
-                .libraryTypeResponse(askForLibraryType())
-                .versionResponse(askForVersion())
-                .rfPowerLevelResponse(askForRFPowerLevel())
+                .dongleNetworkInformation(createNetworkInformation(memoryGetIdResponse, getInitDataResponse, sucNodeIdResponse))
+                .dongleRoleInformation(createRoleInformation(memoryGetIdResponse, getControllerCapabilitiesResponse))
+                .dongleDeviceInformation(createDeviceInformation(
+                        getCapabilitiesResponse, getInitDataResponse, getLibraryTypeResponse, getVersionResponse))
                 .build();
     }
 
-    public GetLibraryTypeResponse askForLibraryType() throws SerialException {
+    public DongleNetworkInformation collectDongleNetworkInformation() throws SerialException {
+        GetSUCNodeIdResponse sucNodeIdResponse = askForSUCId();
+        GetInitDataResponse getInitDataResponse = askForInitialData();
+        MemoryGetIdResponse memoryGetIdResponse = askForNetworkIds();
+        return createNetworkInformation(memoryGetIdResponse, getInitDataResponse, sucNodeIdResponse);
+    }
+
+    private DongleDeviceInformation createDeviceInformation(
+            GetCapabilitiesResponse getCapabilitiesResponse,
+            GetInitDataResponse getInitDataResponse,
+            GetLibraryTypeResponse getLibraryTypeResponse,
+            GetVersionResponse getVersionResponse
+    ) {
+        return DongleDeviceInformation.builder()
+                .manufacturerId(getCapabilitiesResponse.getManufacturerId())
+                .productType(getCapabilitiesResponse.getManufacturerProductType())
+                .productId(getCapabilitiesResponse.getManufacturerProductId())
+                .appVersion(getCapabilitiesResponse.getSerialAppVersion())
+                .appRevision(getCapabilitiesResponse.getSerialAppRevision())
+                .serialCommandIds(getCapabilitiesResponse.getSerialCommands().stream().mapToInt(Integer::intValue).toArray())
+                .chipType(getInitDataResponse.getChipType())
+                .chipVersion(getInitDataResponse.getChipVersion())
+                .version(getInitDataResponse.getVersion())
+                .capabilities(getInitDataResponse.getCapabilities())
+                .libraryType(getLibraryTypeResponse.getLibraryType())
+                .versionResponse(getVersionResponse.getVersion())
+                .dataResponse(getVersionResponse.getResponseData())
+                .build();
+    }
+
+    private DongleRoleInformation createRoleInformation(
+            MemoryGetIdResponse memoryGetIdResponse,
+            GetControllerCapabilitiesResponse controllerCapabilitiesResponse
+    ) {
+        return DongleRoleInformation.builder()
+                .dongleNodeId(memoryGetIdResponse.getNodeId().getId())
+                .isRealPrimary(controllerCapabilitiesResponse.isRealPrimary())
+                .isSecondary(controllerCapabilitiesResponse.isSecondary())
+                .isSUC(controllerCapabilitiesResponse.isSUC())
+                .isSIS(controllerCapabilitiesResponse.isSIS())
+                .isOnOtherNetwork(controllerCapabilitiesResponse.isOnOtherNetwork())
+                .build();
+    }
+
+    private DongleNetworkInformation createNetworkInformation(
+            MemoryGetIdResponse memoryGetIdResponse,
+            GetInitDataResponse getInitDataResponse,
+            GetSUCNodeIdResponse sucNodeIdResponse
+    ) {
+        DongleNetworkInformation.builder()
+                .networkId(memoryGetIdResponse.getHomeId())
+                .dongleNodeId(memoryGetIdResponse.getNodeId().getId())
+                .sucNodeId(sucNodeIdResponse.getSucNodeId().getId())
+                .nodeIds(getInitDataResponse.getNodes().stream().mapToInt(id -> (int) id.getId()).toArray())
+                .build();
+        return null;
+    }
+
+    private GetLibraryTypeResponse askForLibraryType() throws SerialException {
         SerialFunction<BasicSynchronousController, GetLibraryTypeResponse> function = (controller) -> {
             GetLibraryTypeResponse response = controller.requestResponseFlow(GetLibraryTypeRequest.createLibraryTypeRequest());
             return response;
@@ -50,7 +115,7 @@ public class DongleCheckService {
         return controllerManager.runBasicSynchronousFunction(function);
     }
 
-    public GetRFPowerLevelResponse askForRFPowerLevel() throws SerialException {
+    private GetRFPowerLevelResponse askForRFPowerLevel() throws SerialException {
         SerialFunction<BasicSynchronousController, GetRFPowerLevelResponse> function = (controller) -> {
             GetRFPowerLevelResponse response = controller.requestResponseFlow(GetRFPowerLevelRequest.createGetRFPowerLevelRequest());
             return response;
@@ -58,7 +123,7 @@ public class DongleCheckService {
         return controllerManager.runBasicSynchronousFunction(function);
     }
 
-    public GetVersionResponse askForVersion() throws SerialException {
+    private GetVersionResponse askForVersion() throws SerialException {
         SerialFunction<BasicSynchronousController, GetVersionResponse> function = (controller) -> {
             GetVersionResponse response = controller.requestResponseFlow(GetVersionRequest.createGetVersionRequest());
             return response;
@@ -66,7 +131,7 @@ public class DongleCheckService {
         return controllerManager.runBasicSynchronousFunction(function);
     }
 
-    public MemoryGetIdResponse askForNetworkIds() throws SerialException {
+    private MemoryGetIdResponse askForNetworkIds() throws SerialException {
         SerialFunction<BasicSynchronousController, MemoryGetIdResponse> function = (controller) -> {
             MemoryGetIdResponse response = controller.requestResponseFlow(MemoryGetIdRequest.createMemoryGetIdRequest());
             return response;
@@ -74,7 +139,7 @@ public class DongleCheckService {
         return controllerManager.runBasicSynchronousFunction(function);
     }
 
-    public GetSUCNodeIdResponse askForSUCId() throws SerialException {
+    private GetSUCNodeIdResponse askForSUCId() throws SerialException {
         SerialFunction<BasicSynchronousController, GetSUCNodeIdResponse> function = (controller) -> {
             GetSUCNodeIdResponse response = controller.requestResponseFlow(GetSUCNodeIdRequest.createGetSUCNodeIdRequest());
             return response;
@@ -82,7 +147,7 @@ public class DongleCheckService {
         return controllerManager.runBasicSynchronousFunction(function);
     }
 
-    public GetControllerCapabilitiesResponse askForControllerCapabilities() throws SerialException {
+    private GetControllerCapabilitiesResponse askForControllerCapabilities() throws SerialException {
         SerialFunction<BasicSynchronousController, GetControllerCapabilitiesResponse> function = (controller) -> {
             GetControllerCapabilitiesResponse response = controller.requestResponseFlow(GetControllerCapabilitiesRequest.createGetControllerCapabiltiesRequest());
             return response;
@@ -90,7 +155,7 @@ public class DongleCheckService {
         return controllerManager.runBasicSynchronousFunction(function);
     }
 
-    public GetCapabilitiesResponse askForDongleCapabilities() throws SerialException {
+    private GetCapabilitiesResponse askForDongleCapabilities() throws SerialException {
         SerialFunction<BasicSynchronousController, GetCapabilitiesResponse> function = (controller) -> {
             GetCapabilitiesResponse response = controller.requestResponseFlow(GetCapabilitiesRequest.createGetCapabilitiesRequest());
             return response;
@@ -98,7 +163,7 @@ public class DongleCheckService {
         return controllerManager.runBasicSynchronousFunction(function);
     }
 
-    public GetInitDataResponse askForInitialData() throws SerialException {
+    private GetInitDataResponse askForInitialData() throws SerialException {
         SerialFunction<BasicSynchronousController, GetInitDataResponse> function = (controller) -> {
             GetInitDataResponse response = controller.requestResponseFlow(GetInitDataRequest.createGetInitDataRequest());
             return response;

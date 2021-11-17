@@ -26,7 +26,7 @@ public class ContextCommands {
             return "Current working scope is " + shellContext.getShellScope().                          getScopePath();
         }
 
-        return "Don't know what '" + propertyName + "' is ;)";
+        return "Don't know what '" + propertyName + "' is, chose from {device|scope}";
     }
 
     @ShellMethod(value = "About")

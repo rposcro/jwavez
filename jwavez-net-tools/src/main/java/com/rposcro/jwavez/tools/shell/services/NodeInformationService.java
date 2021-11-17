@@ -35,7 +35,7 @@ public class NodeInformationService {
         nodeInformation.setNodeId(nodeId);
         nodeInformation.setNodeMemo("Node " + nodeId);
         nodeInformationCache.cacheNodeDetails(nodeInformation);
-        return  nodeInformation;
+        return nodeInformation;
     }
 
     public NodeInformation discoverSameDevice(int probeNodeId) {
