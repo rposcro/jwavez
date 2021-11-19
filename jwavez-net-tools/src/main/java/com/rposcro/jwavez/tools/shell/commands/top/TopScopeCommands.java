@@ -39,7 +39,7 @@ public class TopScopeCommands {
     }
 
     @ShellMethod(value = "Changes working scope to Node", key="node")
-    public String switchToNodeScope(@ShellOption(defaultValue = ShellOption.NULL) Integer nodeId) {
+    public String switchToNodeScope(@ShellOption(value = { "--node-id", "-id" }, defaultValue = ShellOption.NULL) Integer nodeId) {
         switchToScope(ShellScope.NODE);
         String message = "Scope changed to " + ShellScope.NODE;
         if (nodeId != null && nodeInformationCache.isNodeKnown(nodeId)) {

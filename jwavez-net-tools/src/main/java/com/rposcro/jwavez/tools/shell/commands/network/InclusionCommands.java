@@ -41,7 +41,7 @@ public class InclusionCommands {
     private ConsoleAccessor console;
 
     @ShellMethod(value = "Include new node into network", key="include")
-    public String includeNode(@ShellOption(defaultValue = "60") int timeout) throws SerialException {
+    public String includeNode(@ShellOption(value = { "--timeout", "-to" }, defaultValue = "60") int timeout) throws SerialException {
         if (timeout > 60) {
             return "Maximum timeout value is 60 seconds";
         }
@@ -50,13 +50,31 @@ public class InclusionCommands {
         Integer addedNodeId = networkManagementService.runInclusionMode(timeout * 1000);
 
         if (addedNodeId != null) {
-            console.flushLine("Added new node: " + addedNodeId + "\n");
+            console.flushLine("Added new node into network: " + addedNodeId + "\n");
             console.flushLine("Fetching node information...\n");
             NodeInformation nodeInformation = nodeInformationService.fetchNodeInformation(addedNodeId);
             nodeInformationCache.persist();
             return "\nNode information:\n" + nodeInformationFormatter.formatVerboseNodeInfo(nodeInformation);
         } else {
             return String.format("No node detected to include");
+        }
+    }
+
+    @ShellMethod(value = "Exclude node from network", key="exclude")
+    public String excludeNode(@ShellOption(value = { "--timeout", "-to" }, defaultValue = "60") int timeout) throws SerialException {
+        if (timeout > 60) {
+            return "Maximum timeout value is 60 seconds";
+        }
+
+        console.flushLine("Entering node exclusion mode, cancel is not possible unless time is out: " + timeout + "[s]");
+        Integer removedNodeId = networkManagementService.runExclusionMode(timeout * 1000);
+
+        if (removedNodeId != null) {
+            nodeInformationCache.removeNodeDetails(removedNodeId);
+            nodeInformationCache.persist();
+            return "Removed node from network: " + removedNodeId + "\n";
+        } else {
+            return String.format("No node detected to exclude");
         }
     }
 

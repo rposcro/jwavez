@@ -9,6 +9,7 @@ import com.rposcro.jwavez.core.commands.supported.version.VersionReport;
 import com.rposcro.jwavez.core.commands.types.ManufacturerSpecificCommandType;
 import com.rposcro.jwavez.core.commands.types.VersionCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationUpdateCallback;
@@ -20,6 +21,9 @@ import com.rposcro.jwavez.tools.utils.SerialUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 public class NodeInformationService {
 
@@ -30,59 +34,50 @@ public class NodeInformationService {
     private NodeInformationCache nodeInformationCache;
 
     public NodeInformation fetchNodeInformation(int nodeId) throws SerialException {
-        NodeInformation nodeInformation = getOrConstructNodeInformation(nodeId);
+        NodeInformation nodeInformation = new NodeInformation();
         nodeInformation.setProductInformation(fetchProductInformation(nodeId));
         nodeInformation.setNodeId(nodeId);
         nodeInformation.setNodeMemo("Node " + nodeId);
-        nodeInformationCache.cacheNodeDetails(nodeInformation);
         return nodeInformation;
     }
 
-    public NodeInformation discoverSameDevice(int probeNodeId) {
-        NodeProductInformation probeProduct = nodeInformationCache.getNodeDetails(probeNodeId).getProductInformation();
-        NodeInformation sameProductNode = nodeInformationCache.getOrderedNodeList().stream()
-                .filter(node ->
-                    node.getNodeId() != probeNodeId
-                    && probeProduct.getManufacturerId() == node.getProductInformation().getManufacturerId()
-                    && probeProduct.getProductId() == node.getProductInformation().getProductId()
-                    && probeProduct.getProductTypeId() == node.getProductInformation().getProductTypeId()
-                    && probeProduct.getZWaveProtocolVersion() == node.getProductInformation().getZWaveProtocolVersion()
-                    && probeProduct.getZWaveProtocolSubVersion() == node.getProductInformation().getZWaveProtocolSubVersion()
-                    && probeProduct.getZWaveLibraryType() == node.getProductInformation().getZWaveLibraryType()
-                    && probeProduct.getApplicationVersion() == node.getProductInformation().getApplicationVersion()
-                    && probeProduct.getApplicationSubVersion() == node.getProductInformation().getApplicationSubVersion())
-                .findFirst()
-                .orElse(null);
-        return sameProductNode;
+    public boolean pingNode(int nodeId) {
+        try {
+            fetchVersionReport(new NodeId(nodeId));
+            return true;
+        } catch(SerialException e) {
+            return false;
+        }
+    }
+
+    public List<NodeInformation> findMatchingNodes(int probeNodeId) {
+        NodeInformation probeNode = nodeInformationCache.getNodeDetails(probeNodeId);
+        List<NodeInformation> sameProductNodes = nodeInformationCache.getOrderedNodeList().stream()
+                .filter(node -> nodesMatch(probeNode, node))
+                .collect(Collectors.toList());
+        return sameProductNodes;
+    }
+
+    public boolean nodesMatch(NodeInformation node1, NodeInformation node2) {
+        NodeProductInformation product1 = node1.getProductInformation();
+        NodeProductInformation product2 = node2.getProductInformation();
+        return node1.getNodeId() != node2.getNodeId()
+                && product1.getManufacturerId() == product2.getManufacturerId()
+                && product1.getProductId() == product2.getProductId()
+                && product1.getProductTypeId() == product2.getProductTypeId()
+                && product1.getZWaveProtocolVersion() == product2.getZWaveProtocolVersion()
+                && product1.getZWaveProtocolSubVersion() == product2.getZWaveProtocolSubVersion()
+                && product1.getZWaveLibraryType() == product2.getZWaveLibraryType()
+                && product1.getApplicationVersion() == product2.getApplicationVersion()
+                && product1.getApplicationSubVersion() == product2.getApplicationSubVersion();
     }
 
     private NodeProductInformation fetchProductInformation(int nodeId) throws SerialException {
         final NodeId nodeID = new NodeId(nodeId);
-
-        ApplicationUpdateCallback nodeInfoCallback = serialControllerManager.runApplicationCommandFunction((executor ->
-                executor.requestZWCallback(
-                        RequestNodeInfoRequest.createRequestNodeInfoRequest(nodeID),
-                        SerialCommand.APPLICATION_UPDATE,
-                        SerialUtils.DEFAULT_TIMEOUT)
-        ));
-
-        ManufacturerSpecificReport manufacturerReport = serialControllerManager.runApplicationCommandFunction((executor ->
-                executor.requestApplicationCommand(
-                        nodeID,
-                        new ManufacturerSpecificCommandBuilder().buildGetCommand(),
-                        ManufacturerSpecificCommandType.MANUFACTURER_SPECIFIC_REPORT,
-                        SerialUtils.DEFAULT_TIMEOUT)
-        ));
-
-        VersionReport versionReport = serialControllerManager.runApplicationCommandFunction((executor ->
-                executor.requestApplicationCommand(
-                        nodeID,
-                        new VersionCommandBuilder().buildGetCommand(),
-                        VersionCommandType.VERSION_REPORT,
-                        SerialUtils.DEFAULT_TIMEOUT)
-        ));
-
-        CommandClassMeta[] cmdClassMetas = fetchCommandClassMetadata(nodeID, nodeInfoCallback.getNodeInfo().getCommandClasses());
+        NodeInfo nodeInfo = fetchNodeInfo(nodeID);
+        ManufacturerSpecificReport manufacturerReport = fetchManufacturerSpecificReport(nodeID);
+        VersionReport versionReport = fetchVersionReport(nodeID);
+        CommandClassMeta[] cmdClassMetas = fetchCommandClassMetadata(nodeID, nodeInfo.getCommandClasses());
 
         return NodeProductInformation.builder()
                 .manufacturerId(manufacturerReport.getManufacturerId())
@@ -93,19 +88,41 @@ public class NodeInformationService {
                 .zWaveProtocolSubVersion(versionReport.getZWaveProtocolSubVersion())
                 .applicationVersion(versionReport.getApplicationVersion())
                 .applicationSubVersion(versionReport.getApplicationSubVersion())
-                .basicDeviceClass(nodeInfoCallback.getNodeInfo().getBasicDeviceClass())
-                .genericDeviceClass(nodeInfoCallback.getNodeInfo().getGenericDeviceClass())
-                .specificDeviceClass(nodeInfoCallback.getNodeInfo().getSpecificDeviceClass())
+                .basicDeviceClass(nodeInfo.getBasicDeviceClass())
+                .genericDeviceClass(nodeInfo.getGenericDeviceClass())
+                .specificDeviceClass(nodeInfo.getSpecificDeviceClass())
                 .commandClasses(cmdClassMetas)
                 .build();
     }
 
-    private NodeInformation getOrConstructNodeInformation(int nodeId) {
-        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
-        if (nodeInformation == null) {
-            nodeInformation = new NodeInformation();
-        }
-        return nodeInformation;
+    private NodeInfo fetchNodeInfo(NodeId nodeID) throws SerialException {
+        ApplicationUpdateCallback callback = serialControllerManager.runApplicationCommandFunction((executor ->
+                executor.requestZWCallback(
+                        RequestNodeInfoRequest.createRequestNodeInfoRequest(nodeID),
+                        SerialCommand.APPLICATION_UPDATE,
+                        SerialUtils.DEFAULT_TIMEOUT)
+        ));
+        return callback.getNodeInfo();
+    }
+
+    private ManufacturerSpecificReport fetchManufacturerSpecificReport(NodeId nodeID) throws SerialException {
+        return serialControllerManager.runApplicationCommandFunction((executor ->
+                executor.requestApplicationCommand(
+                        nodeID,
+                        new ManufacturerSpecificCommandBuilder().buildGetCommand(),
+                        ManufacturerSpecificCommandType.MANUFACTURER_SPECIFIC_REPORT,
+                        SerialUtils.DEFAULT_TIMEOUT)
+        ));
+    }
+
+    private VersionReport fetchVersionReport(NodeId nodeID) throws SerialException {
+        return serialControllerManager.runApplicationCommandFunction((executor ->
+                executor.requestApplicationCommand(
+                        nodeID,
+                        new VersionCommandBuilder().buildGetCommand(),
+                        VersionCommandType.VERSION_REPORT,
+                        SerialUtils.DEFAULT_TIMEOUT)
+        ));
     }
 
     private CommandClassMeta[] fetchCommandClassMetadata(NodeId nodeID, CommandClass[] commandClasses)

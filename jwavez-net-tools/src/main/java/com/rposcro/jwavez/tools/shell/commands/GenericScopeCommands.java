@@ -20,13 +20,13 @@ public class GenericScopeCommands {
     private ScopeSwitchService scopeSwitchService;
 
     @ShellMethod(value = "Show or change current working scope", key="scope")
-    public String manageCurrentScope(@ShellOption(defaultValue = ShellOption.NULL) String scopeName) {
+    public String manageCurrentScope(@ShellOption(value = { "--scope-name", "-sn" }, defaultValue = ShellOption.NULL) String scopeName) {
 
         if (scopeName == null) {
             return "Current working scope is " + shellContext.getShellScope().getScopePath();
         }
 
-        ShellScope requiredScope = null;
+        ShellScope requiredScope;
 
         if (isParentScopeRequested(scopeName)) {
             requiredScope = shellContext.getShellScope() == ShellScope.TOP ?

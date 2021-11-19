@@ -47,6 +47,10 @@ public class NodeInformationCache {
         this.nodeInformationMap.put(nodeDetails.getNodeId(), nodeDetails);
     }
 
+    public NodeInformation removeNodeDetails(int nodeId) {
+        return this.nodeInformationMap.remove(nodeId);
+    }
+
     public void persist() {
         cachePersistenceService.persistNodesDetails(nodeInformationMap.values());
     }

@@ -3,6 +3,7 @@ package com.rposcro.jwavez.tools.shell.services;
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.controllers.BasicSynchronousController;
 import com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkController;
+import com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetworkController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
@@ -26,6 +27,7 @@ public class SerialControllerManager {
     private BasicSynchronousController basicSynchronousController;
     private ApplicationCommandExecutor applicationCommandExecutor;
     private AddNodeToNetworkController addNodeToNetworkController;
+    private RemoveNodeFromNetworkController removeNodeFromNetworkController;
     private Semaphore shareLocked = new Semaphore(1);
 
     public <T> T runBasicSynchronousFunction(SerialFunction<BasicSynchronousController, T> function) throws SerialException {
@@ -33,6 +35,9 @@ public class SerialControllerManager {
             acquireLock();
             BasicSynchronousController controller = acquireBasicSynchronousController();
             return function.execute(controller);
+        } catch(SerialException e) {
+            closeControllers();
+            throw e;
         } finally {
             releaseLock();
         }
@@ -43,6 +48,9 @@ public class SerialControllerManager {
             acquireLock();
             ApplicationCommandExecutor executor = acquireApplicationCommandExecutor();
             return function.execute(executor);
+        } catch(SerialException e) {
+            closeControllers();
+            throw e;
         } finally {
             releaseLock();
         }
@@ -53,9 +61,21 @@ public class SerialControllerManager {
             acquireLock();
             AddNodeToNetworkController controller = acquireAddNodeToNetworkController(timeoutInMilliseconds);
             NodeInfo nodeInfo = controller.listenForNodeToAdd().orElse(null);
-            closeControllers();
             return nodeInfo;
         } finally {
+            closeControllers();
+            releaseLock();
+        }
+    }
+
+    public NodeInfo runNodeExclusion(long timeoutInMilliseconds) throws SerialException {
+        try {
+            acquireLock();
+            RemoveNodeFromNetworkController controller = acquireRemoveNodeToNetworkController(timeoutInMilliseconds);
+            NodeInfo nodeInfo = controller.listenForNodeToRemove().orElse(null);
+            return nodeInfo;
+        } finally {
+            closeControllers();
             releaseLock();
         }
     }
@@ -95,6 +115,18 @@ public class SerialControllerManager {
         return addNodeToNetworkController;
     }
 
+    private RemoveNodeFromNetworkController acquireRemoveNodeToNetworkController(long timeoutInMilliseconds) throws SerialPortException {
+        if (removeNodeFromNetworkController == null) {
+            closeControllers();
+            this.removeNodeFromNetworkController = RemoveNodeFromNetworkController.builder()
+                    .dongleDevice(shellContext.getDevice())
+                    .waitForTouchTimeout(timeoutInMilliseconds)
+                    .build()
+                    .connect();
+        }
+        return removeNodeFromNetworkController;
+    }
+
     private void releaseLock() {
         shareLocked.release();
     }
@@ -119,6 +151,11 @@ public class SerialControllerManager {
         if (addNodeToNetworkController != null) {
             addNodeToNetworkController.close();
             addNodeToNetworkController = null;
+        }
+
+        if (removeNodeFromNetworkController != null) {
+            removeNodeFromNetworkController.close();
+            removeNodeFromNetworkController = null;
         }
 
         try {

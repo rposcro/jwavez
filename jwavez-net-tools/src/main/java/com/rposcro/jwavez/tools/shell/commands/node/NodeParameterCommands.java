@@ -43,7 +43,11 @@ public class NodeParameterCommands {
     private NumberRangeParser numberRangeParser;
 
     @ShellMethod(value = "Define node parameter", key = { "param define", "pd" })
-    public String defineParameter(int paramNumber, int sizeInBytes, String paramMemo) {
+    public String defineParameter(
+            @ShellOption(value = { "--param-number", "-pn" }) int paramNumber,
+            @ShellOption(value = { "--param-memo", "-memo" }) String paramMemo,
+            @ShellOption(value = { "--size-in-bytes", "-sib" }) int sizeInBytes
+    ) {
         int nodeId = nodeScopeContext.getCurrentNodeId();
         int sizeInBits = sizeInBytes * 8;
         nodeParameterService.updateOrCreateMeta(nodeId, paramNumber, sizeInBits, paramMemo);
@@ -52,28 +56,31 @@ public class NodeParameterCommands {
                 , nodeId, paramNumber, sizeInBits, paramMemo);
     }
 
-    @ShellMethod(value = "Define node parameter", key = { "param discover" })
-    public String discoverParameters(@ShellOption(defaultValue = "false") boolean clone) {
-        int nodeId = nodeScopeContext.getCurrentNodeId();
-        NodeInformation currentNode = nodeInformationCache.getNodeDetails(nodeId);
-        NodeInformation discoveredNode = nodeInformationService.discoverSameDevice(nodeId);
+    @ShellMethod(value = "Clone node parameters from given node to current", key = { "param clone" })
+    public String cloneParameters(
+            @ShellOption(value = { "--node-id", "-id" }) int sourceNodeId
+    ) {
+        int currentNodeId = nodeScopeContext.getCurrentNodeId();
+        NodeInformation currentNode = nodeInformationCache.getNodeDetails(currentNodeId);
+        NodeInformation sourceNode = nodeInformationCache.getNodeDetails(sourceNodeId);
 
-        if (discoveredNode != null) {
-            String message = "Discovered similar node, id: " + discoveredNode.getNodeId() + ": " + discoveredNode.getNodeMemo();
-            if (clone) {
-                nodeParameterService.cloneParametersMetas(discoveredNode.getNodeId(), nodeId);
-                message += "\nParameters definitions cloned to current node!";
+        if (sourceNode != null) {
+            if (nodeInformationService.nodesMatch(currentNode, sourceNode)) {
+                nodeParameterService.cloneParametersMetas(sourceNodeId, currentNodeId);
+                nodeInformationCache.persist();
+                return "Parameters definitions cloned to current node";
             } else {
-                message += "\nChose --clone to copy definitions to current node " + nodeId + ": " + currentNode.getNodeMemo();
+                return "Node " + sourceNodeId + " doesn't match the current one, cannot clone from it";
             }
-            return message;
         } else {
-            return "There is no node similar to " + nodeId + " on the network" ;
+            return "Node " + sourceNodeId + " is unknown, cannot clone from it";
         }
     }
 
     @ShellMethod(value = "Delete node parameter definition", key = { "param delete" })
-    public String deleteParameterDefinitionAndValue(int paramNumber) throws SerialException {
+    public String deleteParameterDefinitionAndValue(
+            @ShellOption(value = { "--param-number", "-pn" }) int paramNumber
+    ) throws SerialException {
         int nodeId = nodeScopeContext.getCurrentNodeId();
         NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
         if (nodeInformation.getParametersInformation().removeParameterMeta(paramNumber) != null) {
@@ -85,7 +92,10 @@ public class NodeParameterCommands {
     }
 
     @ShellMethod(value = "Print parameter(s)", key = { "param print", "pp" })
-    public String printParametersDetails(@ShellOption(defaultValue = ShellOption.NULL) String paramNumbersRange, @ShellOption(defaultValue = "false") boolean verbose) {
+    public String printParametersDetails(
+            @ShellOption(value = { "--param-numbers", "-pns" }, defaultValue = ShellOption.NULL) String paramNumbersRange,
+            @ShellOption(defaultValue = "false") boolean verbose
+    ) {
         try {
             int[] paramNumbers = parseParamNumbersArgument(paramNumbersRange);
             StringBuffer paramDetails = new StringBuffer();
@@ -100,8 +110,10 @@ public class NodeParameterCommands {
         }
     }
 
-    @ShellMethod(value = "Fetch parameter(s) value", key = { "param fetch", "pf" })
-    public String fetchParametersValues(@ShellOption(defaultValue = ShellOption.NULL) String paramNumbersRange) throws SerialException {
+    @ShellMethod(value = "Learn about parameter(s) value", key = { "param learn", "pl" })
+    public String fetchParametersValues(
+            @ShellOption(value = { "--param-numbers", "-pns" }, defaultValue = ShellOption.NULL) String paramNumbersRange
+    ) throws SerialException {
         try {
             int[] paramNumbers = parseParamNumbersArgument(paramNumbersRange);
             int nodeId = nodeScopeContext.getCurrentNodeId();
@@ -122,31 +134,38 @@ public class NodeParameterCommands {
     }
 
     @ShellMethod(value = "Set parameter value", key = { "param set", "ps" })
-    public String setParameterValues(int paramNumber, long value) throws SerialException {
+    public String setParameterValues(
+            @ShellOption(value = { "--param-number", "-pn" }) int paramNumber,
+            @ShellOption(value = { "--param-value", "-pv" }) long paramValue
+    ) throws SerialException {
         int nodeId = nodeScopeContext.getCurrentNodeId();
         NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
 
         if (!nodeInformation.getParametersInformation().isParameterDefined(paramNumber)) {
             return "Parameter " + paramNumber + " is not known for node " + nodeId;
         }
-        nodeParameterService.sendParameterValue(nodeId, paramNumber, value);
+        nodeParameterService.sendParameterValue(nodeId, paramNumber, paramValue);
         int newValue = nodeParameterService.fetchParameterValue(nodeId, paramNumber);
 
-        if (newValue == value) {
-            return String.format("Parameter %s of node %s is now %04x", paramNumber, nodeId, value);
+        if (newValue == paramValue) {
+            return String.format("Parameter %s of node %s is now %04x", paramNumber, nodeId, paramValue);
         } else {
             return "Something went wrong and parameter value has not been changed";
         }
     }
 
-    @ShellMethodAvailability(value = { "param fetch, param set" })
+    @ShellMethodAvailability(value = { "param learn", "param set" })
     public Availability checkRemoteAvailability() {
+        if (!nodeScopeContext.isAnyNodeSelected()) {
+            return Availability.unavailable("No node is selected in the working context, try to select or fetch one");
+        }
+
         return shellContext.getDevice() != null ?
                 Availability.available() :
                 Availability.unavailable("ZWave dongle device is not specified");
     }
 
-    @ShellMethodAvailability({ "param define", "param discover", "param delete", "param print" })
+    @ShellMethodAvailability({ "param clone", "param define", "param delete", "param print" })
     public Availability checkLocalAvailability() {
         return nodeScopeContext.isAnyNodeSelected() ?
                 Availability.available() :

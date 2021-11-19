@@ -7,7 +7,7 @@ import com.rposcro.jwavez.tools.shell.formatters.DongleInformationFormatter;
 import com.rposcro.jwavez.tools.shell.models.DongleInformation;
 import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
-import com.rposcro.jwavez.tools.shell.services.DongleCheckService;
+import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
 import com.rposcro.jwavez.tools.shell.services.DongleManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.Availability;
@@ -24,7 +24,7 @@ public class DongleCommands {
     private JWaveZShellContext shellContext;
 
     @Autowired
-    private DongleCheckService dongleCheckService;
+    private DongleInformationService dongleInformationService;
 
     @Autowired
     private DongleManagementService dongleManagementService;
@@ -35,10 +35,10 @@ public class DongleCommands {
     @Autowired
     private ConsoleAccessor console;
 
-    @ShellMethod(value = "Shows current dongle information", key="info")
+    @ShellMethod(value = "Show current dongle information", key="info")
     public String showInfo() throws SerialException {
-        DongleInformation dongleInformation = dongleCheckService.collectDongleInformation();
-        return String.format("** Network Information\n%s\n\n"
+        DongleInformation dongleInformation = dongleInformationService.collectDongleInformation();
+        return String.format("\n** Network Information\n%s\n\n"
                 + "** Dongle Role Information\n%s\n\n"
                 + "** Device Information\n%s\n\n"
                 + "** Functions\n%s\n"

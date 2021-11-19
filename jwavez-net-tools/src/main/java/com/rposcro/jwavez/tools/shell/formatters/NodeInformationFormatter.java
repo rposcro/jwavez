@@ -10,6 +10,12 @@ import java.util.stream.Stream;
 @Service
 public class NodeInformationFormatter {
 
+    public String formatShortNodeInfo(NodeInformation nodeInformation) {
+        return String.format("Node id: %s\nMemo: %s\n",
+                nodeInformation.getNodeId(),
+                nodeInformation.getNodeMemo());
+    }
+
     public String formatVerboseNodeInfo(NodeInformation nodeInformation) {
         NodeProductInformation productInformation = nodeInformation.getProductInformation();
         return String.format("Node id: %s\n"

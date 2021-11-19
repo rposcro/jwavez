@@ -27,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DongleCheckService {
+public class DongleInformationService {
 
     @Autowired
     private SerialControllerManager controllerManager;
@@ -98,13 +98,12 @@ public class DongleCheckService {
             GetInitDataResponse getInitDataResponse,
             GetSUCNodeIdResponse sucNodeIdResponse
     ) {
-        DongleNetworkInformation.builder()
+        return DongleNetworkInformation.builder()
                 .networkId(memoryGetIdResponse.getHomeId())
                 .dongleNodeId(memoryGetIdResponse.getNodeId().getId())
                 .sucNodeId(sucNodeIdResponse.getSucNodeId().getId())
                 .nodeIds(getInitDataResponse.getNodes().stream().mapToInt(id -> (int) id.getId()).toArray())
                 .build();
-        return null;
     }
 
     private GetLibraryTypeResponse askForLibraryType() throws SerialException {

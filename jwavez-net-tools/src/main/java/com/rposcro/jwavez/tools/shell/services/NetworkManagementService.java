@@ -15,4 +15,9 @@ public class NetworkManagementService {
         NodeInfo nodeInfo = serialControllerManager.runNodeInclusion(timeoutInMilliseconds);
         return nodeInfo == null ? null : (int) nodeInfo.getId().getId();
     }
+
+    public Integer runExclusionMode(long timeoutInMilliseconds) throws SerialException {
+        NodeInfo nodeInfo = serialControllerManager.runNodeExclusion(timeoutInMilliseconds);
+        return nodeInfo == null ? null : (int) nodeInfo.getId().getId();
+    }
 }

@@ -14,13 +14,13 @@ import java.util.stream.Stream;
 public class DongleInformationFormatter {
 
     public String formatNetworkInfo(DongleNetworkInformation dongleNetworkInformation) {
-        String nodes = Stream.of(dongleNetworkInformation.getNodeIds())
-                .map(nodeId -> "" + nodeId)
+        String nodes = Arrays.stream(dongleNetworkInformation.getNodeIds())
+                .mapToObj(nodeId -> String.format("%02X", nodeId))
                 .collect(Collectors.joining(", "));
         return String.format(
-                "Network id: %04x\n"
-                        + "Dongle node id: %02x\n"
-                        + "SUC node id: %02X\n"
+                "Network id: 0x%04X\n"
+                        + "Dongle node id: 0x%02X\n"
+                        + "SUC node id: 0x%02X\n"
                         + "Nodes: %s"
                 , dongleNetworkInformation.getNetworkId()
                 , dongleNetworkInformation.getDongleNodeId()
@@ -31,7 +31,7 @@ public class DongleInformationFormatter {
 
     public String formatRoleInfo(DongleRoleInformation dongleRoleInformation) {
         return String.format(
-                "Dongle Node Id: %02x\n"
+                "Dongle Node Id: 0x%02X\n"
                         + "Is real primary: %s\n"
                         + "Is secondary: %s\n"
                         + "Is SUC: %s\n"
@@ -48,18 +48,18 @@ public class DongleInformationFormatter {
 
     public String formatDeviceInfo(DongleDeviceInformation dongleDeviceInformation) {
         return String.format(
-                "Manufacturer id: %04x\n"
-                        + "Product type: %04x\n"
-                        + "Product id: %04x\n"
-                        + "Chip type: %02x\n"
-                        + "Chip version: %02x\n"
-                        + "App version: %02x\n"
-                        + "App revision: %02x\n"
-                        + "Library type: %02x\n"
-                        + "Version: %02x\n"
-                        + "Capabilities: %02x\n"
+                "Manufacturer id: 0x%04X\n"
+                        + "Product type: 0x%04X\n"
+                        + "Product id: 0x%04X\n"
+                        + "Chip type: 0x%02X\n"
+                        + "Chip version: 0x%02X\n"
+                        + "App version: 0x%02X\n"
+                        + "App revision: 0x%02X\n"
+                        + "Library type: %s\n"
+                        + "Version: 0x%02X\n"
+                        + "Capabilities: 0x%02X\n"
                         + "Version Response: %s\n"
-                        + "Response Data: %02x\n"
+                        + "Version Response Data: 0x%02X"
                 , dongleDeviceInformation.getManufacturerId()
                 , dongleDeviceInformation.getProductType()
                 , dongleDeviceInformation.getProductId()
@@ -81,7 +81,7 @@ public class DongleInformationFormatter {
                     try {
                         return SerialCommand.ofCode((byte) code);
                     } catch(IllegalArgumentException e) {
-                        return String.format("UNKNOWN(%02x)", code);
+                        return String.format("UNKNOWN(0x%02X)", code);
                     }})
                 .collect(Collectors.toList())
         );

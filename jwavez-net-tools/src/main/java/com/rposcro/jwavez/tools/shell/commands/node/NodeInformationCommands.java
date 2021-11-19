@@ -35,52 +35,19 @@ public class NodeInformationCommands {
     @Autowired
     private NodeInformationFormatter nodeInformationFormatter;
 
-    @ShellMethod(value = "Fetch node information and select it", key = { "fetch" })
-    public String fetchNodeInformation(int nodeId) throws SerialException {
+    @ShellMethod(value = "Learn about node on network and select it", key = { "learn" })
+    public String fetchNodeInformation(@ShellOption(value = { "--node-id", "-id" }) int nodeId) throws SerialException {
         NodeInformation nodeInformation = nodeInformationService.fetchNodeInformation(nodeId);
+        nodeInformationCache.cacheNodeDetails(nodeInformation);
         nodeInformationCache.persist();
         nodeScopeContext.setCurrentNodeId(nodeId);
-        return nodeInformationFormatter.formatVerboseNodeInfo(nodeInformation);
+        return "\n" + nodeInformationFormatter.formatVerboseNodeInfo(nodeInformation);
     }
 
-    @ShellMethod(value = "Shows current node information", key = { "info" })
-    public String showNodeInformation(@ShellOption(defaultValue = "false") boolean verbose) {
-        int nodeId = nodeScopeContext.getCurrentNodeId();
-        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
-        return verbose ? nodeInformationFormatter.formatVerboseNodeInfo(nodeInformation) : formatShortNodeInfo(nodeInformation);
-    }
-
-    @ShellMethod(value = "Shows or sets node memo", key = "memo")
-    public String nodeMemo(@ShellOption(defaultValue = ShellOption.NULL) String memo) throws SerialException {
-        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeScopeContext.getCurrentNodeId());
-
-        if (memo == null) {
-            return "Memo for node " + nodeScopeContext.getCurrentNodeId() + " is: " + nodeInformation.getNodeMemo() + "\n";
-        }
-
-        nodeInformation.setNodeMemo(memo);
-        nodeInformationCache.persist();
-        return "Memo for node " + nodeScopeContext.getCurrentNodeId() + " changed to: " + memo + "\n";
-    }
-
-    @ShellMethodAvailability(value = { "fetch" })
+    @ShellMethodAvailability(value = { "learn" })
     public Availability checkRemoteAvailability() {
         return shellContext.getDevice() != null ?
                 Availability.available() :
                 Availability.unavailable("ZWave dongle device is not specified");
     }
-
-    @ShellMethodAvailability({ "info", "memo" })
-    public Availability checkLocalAvailability() {
-        return nodeScopeContext.isAnyNodeSelected() ?
-                Availability.available() :
-                Availability.unavailable("No node is selected in the working context, try to select or fetch one");
-    }
-
-    private String formatShortNodeInfo(NodeInformation nodeInformation) {
-        return String.format("Node id: %s\nMemo: %s\n",
-                nodeInformation.getNodeId(),
-                nodeInformation.getNodeMemo());
-    }
-
 }

@@ -25,8 +25,12 @@ public class NodeParametersInformation {
             @JsonProperty("parameterMetas") List<ParameterMeta> parameterMetas,
             @JsonProperty("parameterValues") Map<Integer, Integer> parameterValues) {
         this();
-        this.parameterMetas.addAll(parameterMetas);
-        this.parameterValues.putAll(parameterValues);
+        if (parameterMetas != null) {
+            this.parameterMetas.addAll(parameterMetas);
+        }
+        if (parameterValues != null) {
+            this.parameterValues.putAll(parameterValues);
+        }
     }
 
     public boolean isParameterDefined(int paramNumber) {
