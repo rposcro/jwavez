@@ -88,7 +88,7 @@ public class SerialControllerManager {
         if (basicSynchronousController == null) {
             closeControllers();
             basicSynchronousController = BasicSynchronousController.builder()
-                    .dongleDevice(shellContext.getDevice())
+                    .dongleDevice(shellContext.getDongleDevicePath())
                     .build()
                     .connect();
         }
@@ -98,7 +98,7 @@ public class SerialControllerManager {
     private ApplicationCommandExecutor acquireApplicationCommandExecutor() throws SerialPortException {
         if (applicationCommandExecutor == null) {
             closeControllers();
-            this.applicationCommandExecutor = new ApplicationCommandExecutor(shellContext.getDevice());
+            this.applicationCommandExecutor = new ApplicationCommandExecutor(shellContext.getDongleDevicePath());
         }
         return applicationCommandExecutor;
     }
@@ -107,7 +107,7 @@ public class SerialControllerManager {
         if (addNodeToNetworkController == null) {
             closeControllers();
             this.addNodeToNetworkController = AddNodeToNetworkController.builder()
-                    .dongleDevice(shellContext.getDevice())
+                    .dongleDevice(shellContext.getDongleDevicePath())
                     .waitForTouchTimeout(timeoutInMilliseconds)
                     .build()
                     .connect();
@@ -119,7 +119,7 @@ public class SerialControllerManager {
         if (removeNodeFromNetworkController == null) {
             closeControllers();
             this.removeNodeFromNetworkController = RemoveNodeFromNetworkController.builder()
-                    .dongleDevice(shellContext.getDevice())
+                    .dongleDevice(shellContext.getDongleDevicePath())
                     .waitForTouchTimeout(timeoutInMilliseconds)
                     .build()
                     .connect();

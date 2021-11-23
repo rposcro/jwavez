@@ -18,6 +18,8 @@ import com.rposcro.jwavez.serial.frames.responses.GetRFPowerLevelResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetSUCNodeIdResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetVersionResponse;
 import com.rposcro.jwavez.serial.frames.responses.MemoryGetIdResponse;
+import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
+import com.rposcro.jwavez.tools.shell.models.DongleCommandInformation;
 import com.rposcro.jwavez.tools.shell.models.DongleDeviceInformation;
 import com.rposcro.jwavez.tools.shell.models.DongleInformation;
 import com.rposcro.jwavez.tools.shell.models.DongleNetworkInformation;
@@ -26,11 +28,16 @@ import com.rposcro.jwavez.tools.utils.SerialFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 @Service
 public class DongleInformationService {
 
     @Autowired
     private SerialControllerManager controllerManager;
+
+    @Autowired
+    private JWaveZShellContext shellContext;
 
     public DongleInformation collectDongleInformation() throws SerialException {
         GetSUCNodeIdResponse sucNodeIdResponse = askForSUCId();
@@ -46,6 +53,7 @@ public class DongleInformationService {
                 .dongleRoleInformation(createRoleInformation(memoryGetIdResponse, getControllerCapabilitiesResponse))
                 .dongleDeviceInformation(createDeviceInformation(
                         getCapabilitiesResponse, getInitDataResponse, getLibraryTypeResponse, getVersionResponse))
+                .dongleCommandInformation(createCommandInformation(getCapabilitiesResponse))
                 .build();
     }
 
@@ -54,6 +62,23 @@ public class DongleInformationService {
         GetInitDataResponse getInitDataResponse = askForInitialData();
         MemoryGetIdResponse memoryGetIdResponse = askForNetworkIds();
         return createNetworkInformation(memoryGetIdResponse, getInitDataResponse, sucNodeIdResponse);
+    }
+
+    public boolean matchesCurrentDongle(DongleDeviceInformation dongleDeviceInformation) {
+        DongleDeviceInformation currentDeviceInformation = shellContext.getDongleInformation().getDongleDeviceInformation();
+        return currentDeviceInformation.getCapabilities() == dongleDeviceInformation.getCapabilities()
+                && currentDeviceInformation.getDataResponse() == dongleDeviceInformation.getDataResponse()
+                && currentDeviceInformation.getVersionResponse().equals(dongleDeviceInformation.getVersionResponse())
+                && currentDeviceInformation.getChipType() == dongleDeviceInformation.getChipType()
+                && currentDeviceInformation.getChipVersion() == dongleDeviceInformation.getChipVersion()
+                && currentDeviceInformation.getAppVersion() == dongleDeviceInformation.getAppVersion()
+                && currentDeviceInformation.getAppRevision() == dongleDeviceInformation.getAppRevision()
+                && currentDeviceInformation.getVersion() == dongleDeviceInformation.getVersion()
+                && currentDeviceInformation.getManufacturerId() == dongleDeviceInformation.getManufacturerId()
+                && currentDeviceInformation.getLibraryType() == dongleDeviceInformation.getLibraryType()
+                && currentDeviceInformation.getProductId() == dongleDeviceInformation.getProductId()
+                && currentDeviceInformation.getProductType() == dongleDeviceInformation.getProductType()
+                ;
     }
 
     private DongleDeviceInformation createDeviceInformation(
@@ -68,7 +93,6 @@ public class DongleInformationService {
                 .productId(getCapabilitiesResponse.getManufacturerProductId())
                 .appVersion(getCapabilitiesResponse.getSerialAppVersion())
                 .appRevision(getCapabilitiesResponse.getSerialAppRevision())
-                .serialCommandIds(getCapabilitiesResponse.getSerialCommands().stream().mapToInt(Integer::intValue).toArray())
                 .chipType(getInitDataResponse.getChipType())
                 .chipVersion(getInitDataResponse.getChipVersion())
                 .version(getInitDataResponse.getVersion())
@@ -76,6 +100,12 @@ public class DongleInformationService {
                 .libraryType(getLibraryTypeResponse.getLibraryType())
                 .versionResponse(getVersionResponse.getVersion())
                 .dataResponse(getVersionResponse.getResponseData())
+                .build();
+    }
+
+    private DongleCommandInformation createCommandInformation(GetCapabilitiesResponse getCapabilitiesResponse) {
+        return DongleCommandInformation.builder()
+                .supportedSerialCommandIds(getCapabilitiesResponse.getSerialCommands().stream().mapToInt(Integer::intValue).toArray())
                 .build();
     }
 

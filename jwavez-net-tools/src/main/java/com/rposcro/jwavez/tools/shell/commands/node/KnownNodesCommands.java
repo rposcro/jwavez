@@ -68,7 +68,6 @@ public class KnownNodesCommands {
         NodeInformation nodeInformation = findNodeInformation(nodeIdArg);
         if (nodeInformation != null) {
             nodeInformation.setNodeMemo(nodeMemo);
-            nodeInformationCache.persist();
             return "Memo changed\n" + nodeInformationFormatter.formatShortNodeInfo(nodeInformation);
         } else {
             return String.format("Node %s is unknown, try to fetch it first", nodeIdArg);
@@ -77,13 +76,12 @@ public class KnownNodesCommands {
 
     @ShellMethod(value = "Remove node from known list", key = { "remove" })
     public String removeNodeInformation(@ShellOption({ "--node-id", "-id" }) int nodeId) {
-        NodeInformation nodeInformation = nodeInformationCache.removeNodeDetails(nodeId);
+        NodeInformation nodeInformation = nodeInformationCache.removeNodeInformation(nodeId);
         if (nodeScopeContext.isAnyNodeSelected() && nodeScopeContext.getCurrentNodeId() == nodeId) {
             nodeScopeContext.setCurrentNodeId(null);
         }
 
         if (nodeInformation != null) {
-            nodeInformationCache.persist();
             return String.format("Node %s (%s) removed from cache", nodeId, nodeInformation.getNodeMemo());
         } else {
             return "Node id " + nodeId + " was not in cache";
@@ -91,17 +89,17 @@ public class KnownNodesCommands {
     }
 
     @ShellMethod(value = "Match current node with others in cache", key = { "match" })
-    public String matchNodeInCache(@ShellOption({ "--node-id", "-id" }) int nodeId) {
+    public String matchNodeInCache() {
         int currentNodeId = nodeScopeContext.getCurrentNodeId();
-        NodeInformation currentNode = nodeInformationCache.getNodeDetails(nodeId);
-        List<NodeInformation> discoveredNodes = nodeInformationService.findMatchingNodes(nodeId);
+        NodeInformation currentNode = nodeInformationCache.getNodeDetails(currentNodeId);
+        List<NodeInformation> discoveredNodes = nodeInformationService.findMatchingNodes(currentNodeId);
         if (discoveredNodes.isEmpty()) {
             return String.format("No similar devices discovered for current node %s (%s)", currentNodeId, currentNode.getNodeMemo());
         } else {
-            StringBuffer message = new StringBuffer(String.format("Discovered nodes similar to current %s (%s)",
+            StringBuffer message = new StringBuffer(String.format("Discovered nodes similar to current %s (%s)\n\n",
                     currentNodeId, currentNode.getNodeMemo()));
             discoveredNodes.stream().forEach(
-                    node -> message.append(String.format("Id: %s (%s) with %s parameters",
+                    node -> message.append(String.format("Id: %s (%s) with %s parameters\n",
                             node.getNodeId(), node.getNodeMemo(), node.getParametersInformation().getParameterMetas().size()))
             );
             return message.toString();

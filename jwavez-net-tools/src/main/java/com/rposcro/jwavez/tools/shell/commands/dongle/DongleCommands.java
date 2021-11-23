@@ -37,7 +37,7 @@ public class DongleCommands {
 
     @ShellMethod(value = "Show current dongle information", key="info")
     public String showInfo() throws SerialException {
-        DongleInformation dongleInformation = dongleInformationService.collectDongleInformation();
+        DongleInformation dongleInformation = shellContext.getDongleInformation();
         return String.format("\n** Network Information\n%s\n\n"
                 + "** Dongle Role Information\n%s\n\n"
                 + "** Device Information\n%s\n\n"
@@ -45,7 +45,7 @@ public class DongleCommands {
                 , dongleInformationFormatter.formatNetworkInfo(dongleInformation.getDongleNetworkInformation())
                 , dongleInformationFormatter.formatRoleInfo(dongleInformation.getDongleRoleInformation())
                 , dongleInformationFormatter.formatDeviceInfo(dongleInformation.getDongleDeviceInformation())
-                , dongleInformationFormatter.formatFunctionsInfo(dongleInformation.getDongleDeviceInformation().getSerialCommandIds())
+                , dongleInformationFormatter.formatFunctionsInfo(dongleInformation.getDongleCommandInformation().getSupportedSerialCommandIds())
         );
     }
 
@@ -73,7 +73,7 @@ public class DongleCommands {
             return Availability.unavailable("Command not available in current scope");
         }
 
-        return shellContext.getDevice() != null ?
+        return shellContext.getDongleDevicePath() != null ?
                 Availability.available() :
                 Availability.unavailable("ZWave dongle device is not specified");
     }

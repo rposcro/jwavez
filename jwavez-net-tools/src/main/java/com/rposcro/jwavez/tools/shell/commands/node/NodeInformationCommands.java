@@ -38,15 +38,14 @@ public class NodeInformationCommands {
     @ShellMethod(value = "Learn about node on network and select it", key = { "learn" })
     public String fetchNodeInformation(@ShellOption(value = { "--node-id", "-id" }) int nodeId) throws SerialException {
         NodeInformation nodeInformation = nodeInformationService.fetchNodeInformation(nodeId);
-        nodeInformationCache.cacheNodeDetails(nodeInformation);
-        nodeInformationCache.persist();
+        nodeInformationCache.cacheNodeInformation(nodeInformation);
         nodeScopeContext.setCurrentNodeId(nodeId);
         return "\n" + nodeInformationFormatter.formatVerboseNodeInfo(nodeInformation);
     }
 
     @ShellMethodAvailability(value = { "learn" })
     public Availability checkRemoteAvailability() {
-        return shellContext.getDevice() != null ?
+        return shellContext.getDongleDevicePath() != null ?
                 Availability.available() :
                 Availability.unavailable("ZWave dongle device is not specified");
     }

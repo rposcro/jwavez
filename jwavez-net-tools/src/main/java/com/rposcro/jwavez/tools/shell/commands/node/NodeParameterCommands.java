@@ -51,7 +51,6 @@ public class NodeParameterCommands {
         int nodeId = nodeScopeContext.getCurrentNodeId();
         int sizeInBits = sizeInBytes * 8;
         nodeParameterService.updateOrCreateMeta(nodeId, paramNumber, sizeInBits, paramMemo);
-        nodeParameterService.persistParameters(nodeId);
         return String.format("Parameter defined:\n  node id: %s\n  number: %s\n  size in bits: %s\n  memo: %s"
                 , nodeId, paramNumber, sizeInBits, paramMemo);
     }
@@ -67,7 +66,6 @@ public class NodeParameterCommands {
         if (sourceNode != null) {
             if (nodeInformationService.nodesMatch(currentNode, sourceNode)) {
                 nodeParameterService.cloneParametersMetas(sourceNodeId, currentNodeId);
-                nodeInformationCache.persist();
                 return "Parameters definitions cloned to current node";
             } else {
                 return "Node " + sourceNodeId + " doesn't match the current one, cannot clone from it";
@@ -125,7 +123,6 @@ public class NodeParameterCommands {
                 paramDetails.append(formatParamVerboseLine(nodeInformation, number));
                 paramDetails.append('\n');
             }
-            nodeParameterService.persistParameters(nodeId);
             return paramDetails.toString();
 
         } catch(ParseException e) {
@@ -160,7 +157,7 @@ public class NodeParameterCommands {
             return Availability.unavailable("No node is selected in the working context, try to select or fetch one");
         }
 
-        return shellContext.getDevice() != null ?
+        return shellContext.getDongleDevicePath() != null ?
                 Availability.available() :
                 Availability.unavailable("ZWave dongle device is not specified");
     }

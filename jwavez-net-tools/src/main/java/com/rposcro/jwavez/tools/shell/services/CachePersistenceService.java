@@ -2,6 +2,7 @@ package com.rposcro.jwavez.tools.shell.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,9 @@ public class CachePersistenceService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JWaveZShellContext shellContext;
 
     private String baseDir;
     private File nodeDetailsFile;

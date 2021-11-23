@@ -1,11 +1,17 @@
 package com.rposcro.jwavez.tools.shell.models;
 
 import com.rposcro.jwavez.serial.model.LibraryType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class DongleDeviceInformation {
 
     private int manufacturerId;
@@ -20,5 +26,4 @@ public class DongleDeviceInformation {
     private LibraryType libraryType;
     private String versionResponse;
     private short dataResponse;
-    private int[] serialCommandIds;
 }

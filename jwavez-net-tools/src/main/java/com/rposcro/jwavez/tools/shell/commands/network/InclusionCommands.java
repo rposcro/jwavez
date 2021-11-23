@@ -53,7 +53,7 @@ public class InclusionCommands {
             console.flushLine("Added new node into network: " + addedNodeId + "\n");
             console.flushLine("Fetching node information...\n");
             NodeInformation nodeInformation = nodeInformationService.fetchNodeInformation(addedNodeId);
-            nodeInformationCache.persist();
+            nodeInformationCache.cacheNodeInformation(nodeInformation);
             return "\nNode information:\n" + nodeInformationFormatter.formatVerboseNodeInfo(nodeInformation);
         } else {
             return String.format("No node detected to include");
@@ -70,8 +70,7 @@ public class InclusionCommands {
         Integer removedNodeId = networkManagementService.runExclusionMode(timeout * 1000);
 
         if (removedNodeId != null) {
-            nodeInformationCache.removeNodeDetails(removedNodeId);
-            nodeInformationCache.persist();
+            nodeInformationCache.removeNodeInformation(removedNodeId);
             return "Removed node from network: " + removedNodeId + "\n";
         } else {
             return String.format("No node detected to exclude");
@@ -85,7 +84,7 @@ public class InclusionCommands {
             return Availability.unavailable("Command not available in current scope");
         }
 
-        return shellContext.getDevice() != null ?
+        return shellContext.getDongleDevicePath() != null ?
                 Availability.available() :
                 Availability.unavailable("ZWave dongle device is not specified");
     }

@@ -1,11 +1,9 @@
 package com.rposcro.jwavez.tools.shell.services;
 
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -18,16 +16,7 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 @Scope(SCOPE_SINGLETON)
 public class NodeInformationCache {
 
-    @Autowired
-    private CachePersistenceService cachePersistenceService;
-
     private Map<Integer, NodeInformation> nodeInformationMap = new HashMap<>();
-
-    @PostConstruct
-    public void setupCache() {
-        cachePersistenceService.restoreNodeDetails()
-                .forEach(node -> nodeInformationMap.put(node.getNodeId(), node));
-    }
 
     public boolean isNodeKnown(int nodeId) {
         return nodeInformationMap.containsKey(nodeId);
@@ -43,15 +32,15 @@ public class NodeInformationCache {
         return nodeInformationMap.get(nodeId);
     }
 
-    public void cacheNodeDetails(NodeInformation nodeDetails) {
+    public void cacheNodeInformation(NodeInformation nodeDetails) {
         this.nodeInformationMap.put(nodeDetails.getNodeId(), nodeDetails);
     }
 
-    public NodeInformation removeNodeDetails(int nodeId) {
+    public NodeInformation removeNodeInformation(int nodeId) {
         return this.nodeInformationMap.remove(nodeId);
     }
 
-    public void persist() {
-        cachePersistenceService.persistNodesDetails(nodeInformationMap.values());
+    public void clearCache() {
+        this.nodeInformationMap.clear();
     }
 }

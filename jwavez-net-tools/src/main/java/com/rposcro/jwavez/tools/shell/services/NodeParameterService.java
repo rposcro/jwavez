@@ -70,8 +70,4 @@ public class NodeParameterService {
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;
         });
     }
-
-    public void persistParameters(int nodeId) {
-        nodeInformationCache.persist();
-    }
 }
