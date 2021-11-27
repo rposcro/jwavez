@@ -13,7 +13,7 @@ import java.util.Map;
 public class NodeParametersInformation {
 
     private final List<ParameterMeta> parameterMetas;
-    private final Map<Integer, Integer> parameterValues;
+    private final Map<Integer, Long> parameterValues;
 
     public NodeParametersInformation() {
         this.parameterMetas = new ArrayList<>();
@@ -23,7 +23,7 @@ public class NodeParametersInformation {
     @JsonCreator
     public NodeParametersInformation(
             @JsonProperty("parameterMetas") List<ParameterMeta> parameterMetas,
-            @JsonProperty("parameterValues") Map<Integer, Integer> parameterValues) {
+            @JsonProperty("parameterValues") Map<Integer, Long> parameterValues) {
         this();
         if (parameterMetas != null) {
             this.parameterMetas.addAll(parameterMetas);
@@ -33,12 +33,16 @@ public class NodeParametersInformation {
         }
     }
 
-    public boolean isParameterDefined(int paramNumber) {
-        return findParameterMeta(paramNumber) != null;
-    }
-
     public List<ParameterMeta> getParameterMetas() {
         return Collections.unmodifiableList(parameterMetas);
+    }
+
+    public Map<Integer, Long> getParameterValues() {
+        return Collections.unmodifiableMap(parameterValues);
+    }
+
+    public boolean isParameterDefined(int paramNumber) {
+        return findParameterMeta(paramNumber) != null;
     }
 
     public ParameterMeta findParameterMeta(int paramNumber) {
@@ -65,15 +69,15 @@ public class NodeParametersInformation {
         return existingParameterMeta;
     }
 
-    public Integer findParameterValue(int paramNumber) {
+    public Long findParameterValue(int paramNumber) {
         return parameterValues.get(paramNumber);
     }
 
-    public Integer setParameterValue(int paramNumber, int paramValue) {
+    public Long setParameterValue(int paramNumber, long paramValue) {
         return parameterValues.put(paramNumber, paramValue);
     }
 
-    public Integer removeParameterValue(int paramNumber) {
+    public Long removeParameterValue(int paramNumber) {
         return parameterValues.remove(paramNumber);
     }
 

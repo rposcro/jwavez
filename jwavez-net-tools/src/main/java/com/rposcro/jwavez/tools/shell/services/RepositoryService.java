@@ -43,7 +43,7 @@ public class RepositoryService {
         objectMapper.writeValue(repositoryFile, repositoryModel);
     }
 
-    public void openRepository(String repositoryName) throws IOException {
+    public boolean openRepository(String repositoryName) throws IOException {
         File repositoryFile = repositoryFile(repositoryName);
         RepositoryFile repositoryModel = objectMapper.readValue(repositoryFile, RepositoryFile.class);
 
@@ -53,9 +53,20 @@ public class RepositoryService {
             repositoryModel.getNodes().stream().forEach(
                     nodeInformation -> nodeInformationCache.cacheNodeInformation(nodeInformation)
             );
+            return true;
         } else {
-            throw new IllegalStateException("Repository doesn't match current device!");
+            return false;
         }
+    }
+
+    public void openRepositoryWithoutCheck(String repositoryName) throws IOException {
+        File repositoryFile = repositoryFile(repositoryName);
+        RepositoryFile repositoryModel = objectMapper.readValue(repositoryFile, RepositoryFile.class);
+        shellContext.setRepositoryName(repositoryName);
+        nodeInformationCache.clearCache();
+        repositoryModel.getNodes().stream().forEach(
+                nodeInformation -> nodeInformationCache.cacheNodeInformation(nodeInformation)
+        );
     }
 
     public void detachRepository() {

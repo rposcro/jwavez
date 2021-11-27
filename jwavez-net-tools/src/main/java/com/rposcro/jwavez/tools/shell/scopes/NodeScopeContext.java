@@ -25,4 +25,10 @@ public class NodeScopeContext extends ScopeContext {
     public boolean isAnyNodeSelected() {
         return currentNodeId != null;
     }
+
+    @Override
+    public String formatContext() {
+        return currentNodeId != null ?
+            "Selected node is: " + currentNodeId + "\n" : "No node is currently selected\n";
+    }
 }

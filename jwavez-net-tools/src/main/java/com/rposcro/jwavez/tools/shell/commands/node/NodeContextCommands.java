@@ -28,13 +28,6 @@ public class NodeContextCommands {
     @Autowired
     private NodeInformationFormatter nodeInformationFormatter;
 
-    @ShellMethod(value = "Print current working context information", key = "pwc")
-    public String showCurrentNodeId() {
-        String selNodeIdInfo = nodeScopeContext.isAnyNodeSelected() ?
-                "Selected node is: " + nodeScopeContext.getCurrentNodeId() : "No node is currently selected";
-        return "Current working scope is: " + shellContext.getShellScope().getScopePath() + "\n" + selNodeIdInfo;
-    }
-
     @ShellMethod(value = "Select known node", key = { "select", "sel" })
     public String selectCurrentNodeId(@ShellOption(value = { "--node-id", "-id" }) int nodeId) {
         NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);

@@ -55,7 +55,7 @@ public class NodeParameterCommands {
                 , nodeId, paramNumber, sizeInBits, paramMemo);
     }
 
-    @ShellMethod(value = "Clone node parameters from given node to current", key = { "param clone" })
+    @ShellMethod(value = "Clone node parameters definitions from given node to current", key = { "param clone" })
     public String cloneParameters(
             @ShellOption(value = { "--node-id", "-id" }) int sourceNodeId
     ) {
@@ -131,7 +131,7 @@ public class NodeParameterCommands {
     }
 
     @ShellMethod(value = "Set parameter value", key = { "param set", "ps" })
-    public String setParameterValues(
+    public String setParameterValue(
             @ShellOption(value = { "--param-number", "-pn" }) int paramNumber,
             @ShellOption(value = { "--param-value", "-pv" }) long paramValue
     ) throws SerialException {
@@ -141,10 +141,9 @@ public class NodeParameterCommands {
         if (!nodeInformation.getParametersInformation().isParameterDefined(paramNumber)) {
             return "Parameter " + paramNumber + " is not known for node " + nodeId;
         }
-        nodeParameterService.sendParameterValue(nodeId, paramNumber, paramValue);
-        int newValue = nodeParameterService.fetchParameterValue(nodeId, paramNumber);
 
-        if (newValue == paramValue) {
+        boolean success = nodeParameterService.sendParameterValue(nodeId, paramNumber, paramValue);
+        if (success) {
             return String.format("Parameter %s of node %s is now %04x", paramNumber, nodeId, paramValue);
         } else {
             return "Something went wrong and parameter value has not been changed";
@@ -182,7 +181,7 @@ public class NodeParameterCommands {
 
     private String formatParamValueLine(NodeInformation nodeInformation, int paramNumber) {
         ParameterMeta parameterMeta = nodeInformation.getParametersInformation().findParameterMeta(paramNumber);
-        Integer paramValue = nodeInformation.getParametersInformation().findParameterValue(paramNumber);
+        Long paramValue = nodeInformation.getParametersInformation().findParameterValue(paramNumber);
         String line;
 
         if (parameterMeta == null) {
@@ -190,24 +189,24 @@ public class NodeParameterCommands {
         } else if (paramValue == null) {
             line = "Param " + paramNumber + ": <value unknown>";
         } else {
-            line = String.format("Param %s: %0" + (parameterMeta.getSizeInBits() / 4) + "x", paramNumber, paramValue);
+            line = String.format("Param %s: %0" + (parameterMeta.getSizeInBits() / 4) + "X", paramNumber, paramValue);
         }
         return line;
     }
 
     private String formatParamVerboseLine(NodeInformation nodeInformation, int paramNumber) {
         ParameterMeta parameterMeta = nodeInformation.getParametersInformation().findParameterMeta(paramNumber);
-        Integer paramValue = nodeInformation.getParametersInformation().findParameterValue(paramNumber);
+        Long paramValue = nodeInformation.getParametersInformation().findParameterValue(paramNumber);
         String line;
 
         if (parameterMeta == null) {
-            line = "Param " + parameterMeta.getNumber() + ": <param unknown>";
+            line = "Param " + paramNumber + ": <param unknown>";
         } else {
             line = String.format("Param %s:\n  size in bits: %s\n  memo: %s\n  value: %s",
                     parameterMeta.getNumber(),
                     parameterMeta.getSizeInBits(),
                     parameterMeta.getMemo(),
-                    paramValue != null ? "" + String.format("%0" + (parameterMeta.getSizeInBits() / 4) + "x", paramValue) : "<value unknown>"
+                    paramValue != null ? String.format("%0" + (parameterMeta.getSizeInBits() / 4) + "X", paramValue) : "<value unknown>"
             );
         }
 

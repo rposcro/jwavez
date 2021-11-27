@@ -26,18 +26,16 @@ public class ContextCommands {
     @Autowired
     private RepositoryService repositoryService;
 
-    @ShellMethod(value = "Show context value {device, scope}", key="show")
-    public String show(@ShellOption(value = { "--property-name", "-pname" }) String propertyName) {
-        if ("device".equals(propertyName)) {
-            if (shellContext.getDongleDevicePath() == null) {
-                return "No current device is set";
-            }
-            return "Current device is " + shellContext.getDongleDevicePath();
-        } else if ("scope".equals(propertyName)) {
-            return "Current working scope is " + shellContext.getShellScope().getScopePath();
-        }
-
-        return "Don't know what '" + propertyName + "' is, chose from {device|scope}";
+    @ShellMethod(value = "Print current context information", key = "pwc")
+    public String printContextInformation() {
+        StringBuffer message = new StringBuffer();
+        message.append("Current working scope is " + shellContext.getShellScope().getScopePath()).append("\n");
+        message.append(shellContext.isDeviceReady() ?
+                "Current device is " + shellContext.getDongleDevicePath() : "No device is ready").append("\n");
+        message.append(shellContext.isRepositoryOpened() ?
+                "Current repository is " + shellContext.getRepositoryName() : "No repository is opened").append("\n");
+        message.append(shellContext.getScopeContext().formatContext());
+        return message.toString();
     }
 
     @ShellMethod(value = "About")

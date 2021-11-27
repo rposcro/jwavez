@@ -11,4 +11,8 @@ public abstract class ScopeContext {
     public ShellScope getScope() {
         return this.shellScope;
     }
+
+    public String formatContext() {
+        return "";
+    }
 }

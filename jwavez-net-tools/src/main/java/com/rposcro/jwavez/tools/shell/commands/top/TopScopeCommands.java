@@ -2,6 +2,8 @@ package com.rposcro.jwavez.tools.shell.commands.top;
 
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
+import com.rposcro.jwavez.tools.shell.formatters.NodeInformationFormatter;
+import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import com.rposcro.jwavez.tools.shell.scopes.NodeScopeContext;
 import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
@@ -26,6 +28,9 @@ public class TopScopeCommands {
     private NodeInformationCache nodeInformationCache;
 
     @Autowired
+    private NodeInformationFormatter nodeInformationFormatter;
+
+    @Autowired
     private NodeScopeContext nodeScopeContext;
 
     @ShellMethod(value = "Changes working scope to Dongle", key="dongle")
@@ -44,7 +49,8 @@ public class TopScopeCommands {
         String message = "Scope changed to " + ShellScope.NODE;
         if (nodeId != null && nodeInformationCache.isNodeKnown(nodeId)) {
             nodeScopeContext.setCurrentNodeId(nodeId);
-            message += "\nSelected node is " + nodeId;
+            NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
+            message += "\nNode selection changed\n" + nodeInformationFormatter.formatShortNodeInfo(nodeInformation) + "\n";
         }
         return message;
     }

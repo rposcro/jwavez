@@ -22,6 +22,15 @@ public class RepositoryCommands {
     @Autowired
     private RepositoryService repositoryService;
 
+    @ShellMethod(value = "Show current repository", key={ "repository", "repo" })
+    public String showRepository() {
+        if (shellContext.isRepositoryOpened()) {
+            return "Current repository is " + shellContext.getRepositoryName();
+        } else {
+            return "No repository is currently opened";
+        }
+    }
+
     @ShellMethod(value = "Create new repository", key={ "repository create", "repo create" })
     public String createRepository(
             @ShellOption(value = { "--repository-name", "-rn" }) String repositoryName
@@ -38,8 +47,14 @@ public class RepositoryCommands {
     public String openRepository(
             @ShellOption(value = { "--repository-name", "-rn" }) String repositoryName
     ) throws IOException {
-        repositoryService.openRepository(repositoryName);
-        return "Repository " + repositoryName + " opened";
+        if (!shellContext.isDeviceReady()) {
+            repositoryService.openRepositoryWithoutCheck(repositoryName);
+            return "Repository " + repositoryName + " opened\nNo device is ready so persistence won't be possible!";
+        } else if (repositoryService.openRepository(repositoryName)) {
+            return "Repository " + repositoryName + " opened";
+        } else {
+            return "Repository " + repositoryName + " doesn't match current device, cannot open";
+        }
     }
 
     @ShellMethod(value = "Persist repository", key={ "repository persist", "repo persist" })

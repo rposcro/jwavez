@@ -12,8 +12,10 @@ public class NodeInformation {
 
     private NodeProductInformation productInformation;
     private NodeParametersInformation parametersInformation;
+    private NodeAssociationsInformation associationsInformation;
 
     public NodeInformation() {
         this.parametersInformation = new NodeParametersInformation();
+        this.associationsInformation = new NodeAssociationsInformation();
     }
 }

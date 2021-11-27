@@ -44,8 +44,7 @@ public class NodeParameterService {
         });
     }
 
-
-    public Integer fetchParameterValue(int nodeId, int paramNumber) throws SerialException {
+    public Long fetchParameterValue(int nodeId, int paramNumber) throws SerialException {
         final NodeId nodeID = new NodeId(nodeId);
         ConfigurationReport configurationReport = serialControllerManager.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
@@ -55,19 +54,31 @@ public class NodeParameterService {
                         SerialUtils.DEFAULT_TIMEOUT)
         ));
 
-        int paramValue = configurationReport.getValue();
+        long paramValue = ((long) configurationReport.getValue()) & 0xffffffff;
         nodeInformationCache.getNodeDetails(nodeId).getParametersInformation().setParameterValue(paramNumber, paramValue);
         return paramValue;
     }
 
-    public void sendParameterValue(int nodeId, int paramNumber, long paramValue) throws SerialException {
+    public boolean sendParameterValue(int nodeId, int paramNumber, long requestedValue) throws SerialException {
         final NodeId nodeID = new NodeId(nodeId);
         final ParameterMeta parameterMeta = nodeInformationCache.getNodeDetails(nodeId).getParametersInformation().findParameterMeta(paramNumber);
-        serialControllerManager.runBasicSynchronousFunction((executor) -> {
+        boolean sendResult = serialControllerManager.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = new ConfigurationCommandBuilder()
-                    .buildSetParameterCommand(paramNumber, (int) paramValue, BitLength.ofBytesNumber(parameterMeta.getSizeInBytes()));
+                    .buildSetParameterCommand(paramNumber, (int) requestedValue, BitLength.ofBytesNumber(parameterMeta.getSizeInBytes()));
             SendDataCallback callback = executor.requestCallbackFlow(SendDataRequest.createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;
         });
+
+        if (sendResult) {
+            long fetchedValue = fetchParameterValue(nodeId, paramNumber);
+            if (fetchedValue == requestedValue) {
+                nodeInformationCache.getNodeDetails(nodeId).getParametersInformation().setParameterValue(paramNumber, requestedValue);
+                return true;
+            }
+        } else {
+            throw new SerialException("Failed to deliver parameter set command to node!");
+        }
+
+        return false;
     }
 }
