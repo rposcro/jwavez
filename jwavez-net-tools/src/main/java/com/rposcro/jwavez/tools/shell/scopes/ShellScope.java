@@ -10,7 +10,8 @@ public enum ShellScope {
     TOP(null),
     DONGLE(TOP),
     NETWORK(TOP),
-    NODE(TOP);
+    NODE(TOP),
+    TALK(TOP);
 
     @Getter
     private ShellScope parent;

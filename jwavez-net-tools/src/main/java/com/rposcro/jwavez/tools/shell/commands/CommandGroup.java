@@ -7,4 +7,5 @@ public interface CommandGroup {
     String DONGLE = "Dongle";
     String NETWORK = "Network";
     String NODE = "Node";
+    String TALK = "Talk";
 }

@@ -26,9 +26,8 @@ public class SwitchColorCommandBuilder {
     int pairLen = values.length / 2;
     buffer[2] = (byte) pairLen;
     int bufIdx = 3;
-    for (int idx = 0; idx < pairLen; idx++) {
-      buffer[bufIdx++] = values[idx * 2];
-      buffer[bufIdx++] = values[(idx  * 2) + 1];
+    for (int idx = 0; idx < values.length; idx++) {
+      buffer[bufIdx++] = values[idx];
     }
     buffer[bufIdx] = duration;
     return new ZWaveControlledCommand(buffer);

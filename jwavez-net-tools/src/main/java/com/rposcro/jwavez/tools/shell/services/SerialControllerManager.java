@@ -36,9 +36,9 @@ public class SerialControllerManager {
             BasicSynchronousController controller = acquireBasicSynchronousController();
             return function.execute(controller);
         } catch(SerialException e) {
-            closeControllers();
             throw e;
         } finally {
+            closeControllers();
             releaseLock();
         }
     }
@@ -49,9 +49,9 @@ public class SerialControllerManager {
             ApplicationCommandExecutor executor = acquireApplicationCommandExecutor();
             return function.execute(executor);
         } catch(SerialException e) {
-            closeControllers();
             throw e;
         } finally {
+            closeControllers();
             releaseLock();
         }
     }

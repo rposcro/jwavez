@@ -16,6 +16,7 @@ public class SwitchColorReport extends ZWaveSupportedCommand<SwitchColorCommandT
 
     public SwitchColorReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(SwitchColorCommandType.SWITCH_COLOR_REPORT, sourceNodeId);
+        payload.skip(2);
         colorComponentId = payload.nextUnsignedByte();
         colorValue = payload.nextUnsignedByte();
     }
