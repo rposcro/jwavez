@@ -16,9 +16,11 @@ import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandInterceptor;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
+import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import com.rposcro.jwavez.tools.utils.SerialUtils;
 import lombok.Builder;
+import lombok.NonNull;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +34,7 @@ public class ApplicationCommandExecutor {
     private SerialCommand expectedSerialCommand;
 
     @Builder
-    public ApplicationCommandExecutor(String device) throws SerialPortException {
+    public ApplicationCommandExecutor(@NonNull String device, Long timeoutMillis) throws SerialPortException {
         ApplicationCommandInterceptor appCmdInterceptor = ApplicationCommandInterceptor.builder()
                 .skipUnsupportedCallbacks(true)
                 .supportBroadcasts(false)
@@ -48,6 +50,10 @@ public class ApplicationCommandExecutor {
         this.controller = GeneralAsynchronousController.builder()
                 .dongleDevice(device)
                 .callbackHandler(callbackHandler)
+                .timeoutMillis(timeoutMillis != null ? timeoutMillis : SerialUtils.DEFAULT_TIMEOUT)
+                .rxTxConfiguration(RxTxConfiguration.builder()
+                        .requestRetriesMaxCount(0)
+                        .build())
                 .build()
                 .connect();
     }

@@ -3,6 +3,8 @@ package com.rposcro.jwavez.core.classes;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.utils.EncodableConstantsRegistry;
 import com.rposcro.jwavez.core.utils.EncodableConstant;
+import lombok.Getter;
+
 import java.util.Optional;
 
 public enum CommandClass implements EncodableConstant {
@@ -89,12 +91,20 @@ public enum CommandClass implements EncodableConstant {
   CMD_CLASS_SENSOR_ALARM(0x9C),
   CMD_CLASS_SILENCE_ALARM(0x9D),
   CMD_CLASS_SENSOR_CONFIGURATION(0x9E),
-  CMD_CLASS_MARK(0xEF),
+  CMD_CLASS_MARK(0xEF, true),
   CMD_CLASS_NON_INTEROPERABLE(0xF0),
   CMD_CLASS_ALL(-1),
     ;
 
-  private CommandClass(int code) {
+  @Getter
+  private boolean marker;
+
+  CommandClass(int code) {
+    this(code, false);
+  }
+
+  CommandClass(int code, boolean marker) {
+    this.marker = marker;
     EncodableConstantsRegistry.registerConstant(this, (byte) code);
   }
 

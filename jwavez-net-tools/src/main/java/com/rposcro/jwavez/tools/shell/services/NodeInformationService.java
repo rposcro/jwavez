@@ -130,14 +130,18 @@ public class NodeInformationService {
         CommandClassMeta[] metas = new CommandClassMeta[commandClasses.length];
         for(int i = 0; i < commandClasses.length; i++) {
             CommandClass commandClass = commandClasses[i];
-            VersionCommandClassReport versionReport = serialControllerManager.runApplicationCommandFunction((executor ->
-                    executor.requestApplicationCommand(
-                            nodeID,
-                            new VersionCommandBuilder().buildCommandClassGetCommand(commandClass),
-                            VersionCommandType.VERSION_COMMAND_CLASS_REPORT,
-                            SerialUtils.DEFAULT_TIMEOUT)
-            ));
-            metas[i] = new CommandClassMeta(commandClass, versionReport.getCommandClassVersion());
+            if (commandClass.isMarker()) {
+                metas[i] = new CommandClassMeta(commandClass, -1);
+            } else {
+                VersionCommandClassReport versionReport = serialControllerManager.runApplicationCommandFunction((executor ->
+                        executor.requestApplicationCommand(
+                                nodeID,
+                                new VersionCommandBuilder().buildCommandClassGetCommand(commandClass),
+                                VersionCommandType.VERSION_COMMAND_CLASS_REPORT,
+                                SerialUtils.DEFAULT_TIMEOUT)
+                ));
+                metas[i] = new CommandClassMeta(commandClass, versionReport.getCommandClassVersion());
+            }
         }
         return metas;
     }

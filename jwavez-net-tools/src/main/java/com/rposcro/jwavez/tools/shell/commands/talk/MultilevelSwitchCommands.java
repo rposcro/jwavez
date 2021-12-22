@@ -31,7 +31,7 @@ public class MultilevelSwitchCommands {
     public String executeMultilevelGet(int nodeId) throws SerialException {
         ZWaveControlledCommand command = new SwitchMultiLevelCommandBuilder().buildGetCommand();
         SwitchMultilevelReport report = talkCommunicationService.requestTalk(nodeId, command, SwitchMultiLevelCommandType.SWITCH_MULTILEVEL_REPORT);
-        return String.format(String.format("Multilevel report for node %s\nCurrent value: %s, Target value: %s, Duration: %s"
+        return String.format(String.format("Multilevel report for node %s\nCurrent value: %s, Target value: %s, Duration: %s\n"
                 , nodeId, report.getCurrentValue(), report.getTargetValue(), report.getDuration()
         ));
     }

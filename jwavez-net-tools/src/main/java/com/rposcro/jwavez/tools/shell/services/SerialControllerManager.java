@@ -9,6 +9,7 @@ import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.communication.ApplicationCommandExecutor;
 import com.rposcro.jwavez.tools.utils.SerialFunction;
+import com.rposcro.jwavez.tools.utils.SerialUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -44,9 +45,14 @@ public class SerialControllerManager {
     }
 
     public <T> T runApplicationCommandFunction(SerialFunction<ApplicationCommandExecutor, T> function) throws SerialException {
+        return runApplicationCommandFunction(function, SerialUtils.DEFAULT_TIMEOUT);
+    }
+
+    public <T> T runApplicationCommandFunction(SerialFunction<ApplicationCommandExecutor, T> function, long timeoutMillis
+    ) throws SerialException {
         try {
             acquireLock();
-            ApplicationCommandExecutor executor = acquireApplicationCommandExecutor();
+            ApplicationCommandExecutor executor = acquireApplicationCommandExecutor(timeoutMillis);
             return function.execute(executor);
         } catch(SerialException e) {
             throw e;
@@ -95,10 +101,13 @@ public class SerialControllerManager {
         return basicSynchronousController;
     }
 
-    private ApplicationCommandExecutor acquireApplicationCommandExecutor() throws SerialPortException {
+    private ApplicationCommandExecutor acquireApplicationCommandExecutor(long timeoutMillis) throws SerialPortException {
         if (applicationCommandExecutor == null) {
             closeControllers();
-            this.applicationCommandExecutor = new ApplicationCommandExecutor(shellContext.getDongleDevicePath());
+            this.applicationCommandExecutor = ApplicationCommandExecutor.builder()
+                    .device(shellContext.getDongleDevicePath())
+                    .timeoutMillis(timeoutMillis)
+                    .build();
         }
         return applicationCommandExecutor;
     }

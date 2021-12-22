@@ -89,7 +89,7 @@ public class SwitchColorCommands {
         try {
             ColorMode mode = ColorMode.valueOf(colorMode.toUpperCase());
             if (!COLOR_PATTERN.matcher(colorValue).matches()) {
-                return "Wrong color value, use hexadecimal notation of right length";
+                return "Wrong color value, use hexadecimal notation of correct length";
             }
             if (colorValue.length() / 2 != mode.componentsCount) {
                 return "Wrong color value, found " + (colorValue.length() / 2)

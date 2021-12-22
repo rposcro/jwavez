@@ -135,6 +135,13 @@ public class RxTxRouter {
       } catch(InterruptedException e) {
       }
     }
+
+    try {
+      serialPort.disconnect();
+    } catch(SerialPortException e) {
+      log.error("Shutting down port after reconnection failed unsuccessful!", e);
+    }
+
     throw new FatalSerialException("Reconnection to serial port failed after %s retries!", retryCount);
   }
 
