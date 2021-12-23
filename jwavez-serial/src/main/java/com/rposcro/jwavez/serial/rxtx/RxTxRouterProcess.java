@@ -78,7 +78,10 @@ public class RxTxRouterProcess implements Runnable {
           executeSynchronous(this::runOnce);
           Thread.sleep(configuration.getRouterPollDelay());
         }
-      } catch (Exception e) {
+      } catch(InterruptedException e) {
+        log.error("RxTx router process brutally interrupted, stop enforced!", e);
+        stopRequested = true;
+      } catch(Exception e) {
         log.error("Unexpected exception occurred, trying to reconnect!", e);
         rxTxRouter.reconnectPort();
       }

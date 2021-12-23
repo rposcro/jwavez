@@ -57,10 +57,10 @@ public class ApplicationCommandInterceptor implements CallbackInterceptor {
             ApplicationCommandHandlerCallback commandCallback = (ApplicationCommandHandlerCallback) callback;
             if (isCastSupported(commandCallback)) {
                 if (skipUnsupportedCallbacks) {
-                    try {
+                    if (supportedCommandParser.isCommandSupported(ImmutableBuffer.overBuffer(commandCallback.getCommandPayload()))) {
                         parseAndDispatchCallback(commandCallback);
-                    } catch (CommandNotSupportedException e) {
-                        log.warn("Skipped unsupported command: " + e.getCommandClass() + " " + e.getCommandType());
+                    } else {
+                        log.warn("Skipped unsupported command");
                     }
                 } else {
                     parseAndDispatchCallback(commandCallback);

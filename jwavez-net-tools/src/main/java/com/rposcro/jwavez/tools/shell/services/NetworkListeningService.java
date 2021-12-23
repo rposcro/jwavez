@@ -50,7 +50,8 @@ public class NetworkListeningService {
         }).start();
     }
 
-    public void stopListening() throws SerialException {
+    public void stopListening() {
+        console.flushLine("\nListener stop requested ...");
         semaphore.release();
     }
 
