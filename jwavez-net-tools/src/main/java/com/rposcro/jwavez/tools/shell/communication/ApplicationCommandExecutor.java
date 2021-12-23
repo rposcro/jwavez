@@ -21,11 +21,13 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import com.rposcro.jwavez.tools.utils.SerialUtils;
 import lombok.Builder;
 import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+@Slf4j
 public class ApplicationCommandExecutor {
 
     private GeneralAsynchronousController controller;
@@ -119,7 +121,7 @@ public class ApplicationCommandExecutor {
         if (command.getCommandType() == expectedCommandType) {
             futureCommand.complete(command);
         } else {
-            System.out.printf("Skipped application command %s %s from %s\n",
+            log.info("Skipped application command %s %s from %s\n",
                     command.getCommandClass(),
                     command.getCommandType(),
                     command.getSourceNodeId().getId());

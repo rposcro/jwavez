@@ -47,12 +47,13 @@ public class KnownNodesCommands {
             return "No node selected, --node-id needs to be provided";
         }
 
-        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeIdArg);
+        int nodeId = nodeIdArg != null ? nodeIdArg : nodeScopeContext.getCurrentNodeId();
+        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
         if (nodeInformation != null) {
             return verbose ? nodeInformationFormatter.formatVerboseNodeInfo(nodeInformation)
                     : nodeInformationFormatter.formatShortNodeInfo(nodeInformation);
         } else {
-            return String.format("Node %s is unknown, try to fetch it first", nodeIdArg);
+            return String.format("Node %s is unknown, try to fetch it first", nodeId);
         }
     }
 

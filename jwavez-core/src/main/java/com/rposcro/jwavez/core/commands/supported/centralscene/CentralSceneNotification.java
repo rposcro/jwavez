@@ -17,6 +17,7 @@ public class CentralSceneNotification extends ZWaveSupportedCommand<CentralScene
 
     public CentralSceneNotification(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(CentralSceneCommandType.CENTRAL_SCENE_NOTIFICATION, sourceNodeId);
+        payload.skip(2);
         sequenceNumber = payload.nextUnsignedByte();
         keyAttributes = payload.nextUnsignedByte();
         sceneNumber = payload.nextUnsignedByte();
