@@ -24,7 +24,7 @@ import org.springframework.shell.standard.ValueProvider;
  * Potentially to be removed when a better solution is provided by the Shell framework.
  */
 @Configuration
-public class StandardShellAPIConfiguration {
+public class SpringShellAPIConfiguration {
 
     @Bean
     public ValueProvider commandValueProvider(@Lazy CommandRegistry commandRegistry) {
