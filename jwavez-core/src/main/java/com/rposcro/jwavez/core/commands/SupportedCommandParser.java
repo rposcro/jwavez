@@ -24,6 +24,11 @@ public class SupportedCommandParser {
     return (T) commandResolver.resolve(payload, sourceNodeId);
   }
 
+  public boolean isCommandSupported(ImmutableBuffer payload) {
+    CommandClass commandClass = CommandClass.ofCode(payload.getByte(0));
+    return supportedCommandsRegistry.isCommandClassSupported(commandClass);
+  }
+
   public static SupportedCommandParser defaultParser() {
     if (DEFAULT_PARSER == null) {
       DEFAULT_PARSER = SupportedCommandParser.builder()

@@ -26,6 +26,10 @@ public final class SupportedCommandResolversRegistry {
         .orElseThrow(() -> new CommandNotSupportedException(commandClass));
   }
 
+  public boolean isCommandClassSupported(CommandClass commandClass) {
+    return resolverMap.containsKey(commandClass);
+  }
+
   public static SupportedCommandResolversRegistry instance() {
     if (instance == null) {
       instance = new SupportedCommandResolversRegistry();
