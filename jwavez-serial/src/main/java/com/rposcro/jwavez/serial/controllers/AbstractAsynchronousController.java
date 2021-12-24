@@ -37,8 +37,9 @@ public abstract class AbstractAsynchronousController<T extends AbstractAsynchron
     try {
       rxTxRouterProcess.stop();
       if (selfExecutor) {
+        executorService.shutdown();
         try {
-          if (!executorService.awaitTermination(rxTxConfiguration.getRouterPollDelay() * 2, TimeUnit.MILLISECONDS)) {
+          if (!executorService.awaitTermination(rxTxConfiguration.getRouterPollDelay() * 4, TimeUnit.MILLISECONDS)) {
             executorService.shutdownNow();
           }
         } catch(InterruptedException e) {
