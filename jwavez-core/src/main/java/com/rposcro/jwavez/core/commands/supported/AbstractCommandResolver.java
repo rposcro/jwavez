@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.core.commands.supported;
 
-import com.rposcro.jwavez.core.commands.enums.CommandType;
-import com.rposcro.jwavez.core.commands.enums.CommandTypesRegistry;
+import com.rposcro.jwavez.core.commands.types.CommandType;
+import com.rposcro.jwavez.core.commands.types.CommandTypesRegistry;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;

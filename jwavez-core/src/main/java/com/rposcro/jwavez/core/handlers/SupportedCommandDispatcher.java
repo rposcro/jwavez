@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.core.handlers;
 
-import com.rposcro.jwavez.core.commands.enums.CommandType;
+import com.rposcro.jwavez.core.commands.types.CommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import java.util.HashMap;
 import java.util.LinkedList;

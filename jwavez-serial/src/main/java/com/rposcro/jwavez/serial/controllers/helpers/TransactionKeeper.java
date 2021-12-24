@@ -34,7 +34,6 @@ public class TransactionKeeper<T extends TransactionState> {
     this.failed = false;
   }
 
-
   public void transitAndSchedule(T state, SerialRequest transitRequest) {
     executeSynchronous(() -> this.doTransit(state, transitRequest));
   }

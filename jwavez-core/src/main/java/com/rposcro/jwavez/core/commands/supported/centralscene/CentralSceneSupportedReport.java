@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.core.commands.supported.centralscene;
 
-import com.rposcro.jwavez.core.commands.enums.CentralSceneCommandType;
+import com.rposcro.jwavez.core.commands.types.CentralSceneCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;

@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.core.commands.supported;
 
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
-import com.rposcro.jwavez.core.commands.enums.AssociationCommandType;
+import com.rposcro.jwavez.core.commands.types.AssociationCommandType;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationGroupingsReport;
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
 import java.util.HashMap;

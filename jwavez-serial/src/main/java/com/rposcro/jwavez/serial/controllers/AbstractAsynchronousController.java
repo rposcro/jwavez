@@ -11,6 +11,7 @@ import com.rposcro.jwavez.serial.rxtx.port.NeuronRoboticsSerialPort;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +37,14 @@ public abstract class AbstractAsynchronousController<T extends AbstractAsynchron
     try {
       rxTxRouterProcess.stop();
       if (selfExecutor) {
-        executorService.shutdownNow();
+        executorService.shutdown();
+        try {
+          if (!executorService.awaitTermination(rxTxConfiguration.getRouterPollDelay() * 4, TimeUnit.MILLISECONDS)) {
+            executorService.shutdownNow();
+          }
+        } catch(InterruptedException e) {
+          throw new SerialPortException("Interrupted while detaching from  serial port!", e);
+        }
       }
     } finally {
       super.close();

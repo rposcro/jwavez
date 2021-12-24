@@ -1,11 +1,10 @@
 package com.rposcro.jwavez.samples.nodes;
 
-import com.rposcro.jwavez.core.commands.controlled.ConfigurationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.samples.AbstractExample;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
-import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
 import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;

@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.core.commands.supported.configuration;
 
-import com.rposcro.jwavez.core.commands.enums.ConfigurationCommandType;
+import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;

@@ -8,7 +8,7 @@ public final class ZWaveControlledCommand {
   @Getter
   private ImmutableBuffer payloadBuffer;
 
-  ZWaveControlledCommand(byte... commnadPayload) {
+  public ZWaveControlledCommand(byte... commnadPayload) {
     this.payloadBuffer = ImmutableBuffer.overBuffer(commnadPayload, 0, commnadPayload.length);
   }
 

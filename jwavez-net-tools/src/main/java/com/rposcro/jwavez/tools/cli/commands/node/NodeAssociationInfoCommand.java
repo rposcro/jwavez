@@ -1,8 +1,8 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
-import static com.rposcro.jwavez.core.commands.enums.AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT;
+import static com.rposcro.jwavez.core.commands.types.AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT;
 
-import com.rposcro.jwavez.core.commands.controlled.AssociationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationGroupingsReport;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.serial.exceptions.SerialException;

@@ -6,5 +6,4 @@ rootProject.name = 'jwavez'
 include(':jwavez-core')
 include(':jwavez-serial')
 include(':jwavez-examples')
-include(':jwavez-serial-probe')
 include(':jwavez-net-tools')

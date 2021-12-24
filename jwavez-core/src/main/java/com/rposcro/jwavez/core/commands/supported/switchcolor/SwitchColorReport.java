@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.core.commands.supported.switchcolor;
 
-import com.rposcro.jwavez.core.commands.enums.SwitchColorCommandType;
+import com.rposcro.jwavez.core.commands.types.SwitchColorCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
@@ -16,6 +16,7 @@ public class SwitchColorReport extends ZWaveSupportedCommand<SwitchColorCommandT
 
     public SwitchColorReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(SwitchColorCommandType.SWITCH_COLOR_REPORT, sourceNodeId);
+        payload.skip(2);
         colorComponentId = payload.nextUnsignedByte();
         colorValue = payload.nextUnsignedByte();
     }

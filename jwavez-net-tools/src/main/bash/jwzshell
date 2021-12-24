@@ -1,0 +1,6 @@
+#!/bin/bash
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+LIBS=$SCRIPT_DIR/jwavez-net-tools.jar
+
+java -jar $LIBS

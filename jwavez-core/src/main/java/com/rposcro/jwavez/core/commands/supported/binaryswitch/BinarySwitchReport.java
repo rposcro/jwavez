@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.core.commands.supported.binaryswitch;
 
-import com.rposcro.jwavez.core.commands.enums.SwitchBinaryCommandType;
+import com.rposcro.jwavez.core.commands.types.SwitchBinaryCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
-import com.rposcro.jwavez.core.enums.CommandClass;
-import com.rposcro.jwavez.core.enums.CommandClassVersion;
+import com.rposcro.jwavez.core.classes.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClassVersion;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;

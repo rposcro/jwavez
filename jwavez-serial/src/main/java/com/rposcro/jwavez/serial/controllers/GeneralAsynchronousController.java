@@ -39,6 +39,7 @@ public class GeneralAsynchronousController extends AbstractAsynchronousControlle
 
   private Semaphore controllerLock;
 
+  private long timeoutMillis;
   private InboundFrameParser parser;
   private InboundFrameValidator validator;
   private RequestCallbackFlowHelper callbackFlowHelper;
@@ -119,10 +120,12 @@ public class GeneralAsynchronousController extends AbstractAsynchronousControlle
   @Builder
   private static GeneralAsynchronousController build(
       @NonNull String dongleDevice,
+      long timeoutMillis,
       RxTxConfiguration rxTxConfiguration,
       ExecutorService executorService,
       Consumer<ViewBuffer> responseHandler,
       Consumer<ViewBuffer> callbackHandler) {
+
     GeneralAsynchronousController instance = new GeneralAsynchronousController();
     instance.helpWithBuild(dongleDevice, rxTxConfiguration, instance::handleResponse, instance::handleCallback, executorService);
 
@@ -133,6 +136,7 @@ public class GeneralAsynchronousController extends AbstractAsynchronousControlle
     instance.parser = InboundFrameParser.defaultParser();
     instance.validator = InboundFrameValidator.defaultValidator();
     instance.controllerLock = new Semaphore(1);
+    instance.timeoutMillis = timeoutMillis;
     return instance;
   }
 }

@@ -1,8 +1,8 @@
 package com.rposcro.jwavez.core.commands.supported;
 
-import com.rposcro.jwavez.core.commands.enums.BasicCommandType;
+import com.rposcro.jwavez.core.commands.types.BasicCommandType;
 import com.rposcro.jwavez.core.commands.supported.basic.BasicSet;
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
 import java.util.HashMap;

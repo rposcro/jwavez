@@ -19,6 +19,12 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
+/**
+ * This controller is used to run inclusion process on a dongle device. Under regular conditions, inclusion process
+ * should be treated as an atomic not incorruptible flow, which implies the controller should be closed after each
+ * inclusion session. When another session is required, new controller instance should be created and used for the
+ * purpose.
+ */
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AddNodeToNetworkController extends AbstractInclusionController<AddNodeToNetworkFlowState, AddNodeToNetworkController> {

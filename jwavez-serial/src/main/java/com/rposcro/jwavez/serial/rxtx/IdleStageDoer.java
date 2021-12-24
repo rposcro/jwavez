@@ -11,7 +11,9 @@ import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import java.util.function.Consumer;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Builder
 public class IdleStageDoer {
 
@@ -30,7 +32,11 @@ public class IdleStageDoer {
   private IdleStageResult consumeFrame(ViewBuffer frameView) throws SerialPortException {
     if (frameView.get(FRAME_OFFSET_CATEGORY) == CATEGORY_SOF && frameView.get(FRAME_OFFSET_TYPE) == TYPE_REQ) {
       outboundStream.writeACK();
-      callbackHandler.accept(frameView);
+      try {
+        callbackHandler.accept(frameView);
+      } catch(Throwable t) {
+        log.error("Callback handler thrown forbidden exception!", t);
+      }
       return IdleStageResult.RESULT_CALLBACK_HANDLED;
     } else {
       processException();

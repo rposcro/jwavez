@@ -14,7 +14,9 @@ import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import java.util.function.Consumer;
 import lombok.Builder;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Builder
 public class ResponseStageDoer {
 
@@ -53,7 +55,11 @@ public class ResponseStageDoer {
   private ResponseStageResult receiveSOF(ViewBuffer frameBuffer, byte expectedCommand) throws SerialPortException {
     if (frameBuffer.get(FRAME_OFFSET_TYPE) == TYPE_RES && frameBuffer.get(FRAME_OFFSET_COMMAND) == expectedCommand) {
       outboundStream.writeACK();
-      responseHandler.accept(frameBuffer);
+      try {
+        responseHandler.accept(frameBuffer);
+      } catch(Throwable t) {
+        log.error("Response handler thrown forbidden exception!", t);
+      }
       return ResponseStageResult.RESULT_OK;
     } else {
       processException();

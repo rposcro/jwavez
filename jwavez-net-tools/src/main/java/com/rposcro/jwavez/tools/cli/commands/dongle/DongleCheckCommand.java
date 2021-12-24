@@ -21,7 +21,6 @@ import com.rposcro.jwavez.serial.frames.responses.GetVersionResponse;
 import com.rposcro.jwavez.serial.frames.responses.MemoryGetIdResponse;
 import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.commands.AbstractSyncBasedCommand;
-import com.rposcro.jwavez.tools.cli.exceptions.CommandExecutionException;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DongleCheckOptions;
 import com.rposcro.jwavez.tools.cli.utils.ProcedureUtil;

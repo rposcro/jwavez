@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.core.commands.supported;
 
-import com.rposcro.jwavez.core.enums.CommandClass;
+import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.utils.PackageScanner;
-import java.util.List;
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -24,6 +24,10 @@ public final class SupportedCommandResolversRegistry {
   public ZWaveSupportedCommandResolver findResolver(CommandClass commandClass) {
     return Optional.ofNullable(resolverMap.get(commandClass))
         .orElseThrow(() -> new CommandNotSupportedException(commandClass));
+  }
+
+  public boolean isCommandClassSupported(CommandClass commandClass) {
+    return resolverMap.containsKey(commandClass);
   }
 
   public static SupportedCommandResolversRegistry instance() {
