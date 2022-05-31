@@ -10,7 +10,7 @@ public enum SwitchBinaryCommandType implements CommandType {
   BINARY_SWITCH_REPORT(0x03),
   ;
 
-  private SwitchBinaryCommandType(int code) {
+  SwitchBinaryCommandType(int code) {
     CommandTypesRegistry.registerConstant(this, code);
   }
 }

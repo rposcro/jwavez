@@ -120,7 +120,7 @@ public class SwitchColorCommands {
     private final static byte GREEN = 3;
     private final static byte BLUE = 4;
 
-    private static enum ColorMode {
+    private enum ColorMode {
         RGB(3, RED, GREEN, BLUE),
         RGBWW(4, RED, GREEN, BLUE, WARM_WHITE),
         RGBWC(4, RED, GREEN, BLUE, COLD_WHITE);

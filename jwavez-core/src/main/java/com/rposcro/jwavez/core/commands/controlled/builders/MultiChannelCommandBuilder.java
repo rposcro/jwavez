@@ -29,4 +29,14 @@ public class MultiChannelCommandBuilder {
         searchedSpecificDevice.getGenericDeviceClass().getCode(),
         searchedSpecificDevice.getCode());
   }
+
+  public ZWaveControlledCommand encapsulateCommand(byte sourceEndpoint, byte destinationEndpoint, ZWaveControlledCommand command) {
+    byte[] payload = new byte[4 + command.getPayload().getLength()];
+    payload[0] = CommandClass.CMD_CLASS_MULTI_CHANNEL.getCode();
+    payload[1] = MultiChannelCommandType.MULTI_CHANNEL_CMD_ENCAP.getCode();
+    payload[2] = sourceEndpoint;
+    payload[3] = destinationEndpoint;
+    command.getPayload().cloneBytes(payload, 4);
+    return new ZWaveControlledCommand(payload);
+  }
 }

@@ -14,12 +14,7 @@ repositories {
 }
 
 group = 'com.jwavez'
-<<<<<<< Updated upstream
 version = '1.2.1-SNAPSHOT'
-java.sourceCompatibility = JavaVersion.VERSION_1_8
-=======
-version = '1.2.0'
->>>>>>> Stashed changes
 
 publishing {
     publications {
