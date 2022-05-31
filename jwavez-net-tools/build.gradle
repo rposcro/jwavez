@@ -1,7 +1,6 @@
 plugins {
     id 'org.springframework.boot' version '2.5.8'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
-    id 'java'
     id 'application'
     id 'com.jwavez.java-conventions'
 }
@@ -11,14 +10,27 @@ apply {
     'io.spring.dependency-management'
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-}
-
 ext {
     springShellVersion = '2.0.1.RELEASE'
     jacksonVersion = '2.11.4'
     commonsCliVersion = '1.4'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+jar {
+    duplicatesStrategy = "exclude"
+    manifest {
+        attributes (
+                "Implementation-Title": "JWaveZ Net Tools",
+                "Implementation-Version": archiveVersion,
+                "Main-Class": "com.rposcro.jwavez.tools.shell.JWaveZShell"
+        )
+    }
 }
 
 dependencies {
@@ -36,17 +48,6 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jacksonVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-}
-
-jar {
-    duplicatesStrategy = "exclude"
-    manifest {
-        attributes (
-                "Implementation-Title": "JWaaveZ Net Tools",
-                "Implementation-Version": archiveVersion,
-                "Main-Class": "com.rposcro.jwavez.tools.shell.JWaveZShell"
-        )
-    }
 }
 
 task _packCreateDir {

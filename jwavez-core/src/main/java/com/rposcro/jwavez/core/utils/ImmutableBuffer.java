@@ -116,6 +116,10 @@ public final class ImmutableBuffer {
     return cloned;
   }
 
+  public void cloneBytes(byte[] toArray, int toOffset) {
+    System.arraycopy(data, offset, toArray, toOffset, length);
+  }
+
   public static ImmutableBuffer overBuffer(byte[] buffer) {
     return overBuffer(buffer, 0, buffer.length);
   }
