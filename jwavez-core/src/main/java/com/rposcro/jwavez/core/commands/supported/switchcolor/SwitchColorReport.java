@@ -20,4 +20,11 @@ public class SwitchColorReport extends ZWaveSupportedCommand<SwitchColorCommandT
         colorComponentId = payload.nextUnsignedByte();
         colorValue = payload.nextUnsignedByte();
     }
+
+    @Override
+    public String asNiceString() {
+        return String.format("%s colorComponentId(%02x) colorValue(%02x)",
+                super.asNiceString(), colorComponentId, colorValue
+        );
+    }
 }

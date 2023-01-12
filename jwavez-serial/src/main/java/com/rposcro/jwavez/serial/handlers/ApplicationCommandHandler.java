@@ -10,14 +10,14 @@ import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationCommandHandlerCallback;
 import com.rposcro.jwavez.serial.model.FrameCast;
+import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
 import com.rposcro.jwavez.serial.rxtx.SerialFrameConstants;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
-import java.util.function.Consumer;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class ApplicationCommandHandler implements Consumer<ViewBuffer> {
+public class ApplicationCommandHandler implements CallbackHandler {
 
   private final static byte APP_COMMAND_CODE = SerialCommand.APPLICATION_COMMAND_HANDLER.getCode();
 

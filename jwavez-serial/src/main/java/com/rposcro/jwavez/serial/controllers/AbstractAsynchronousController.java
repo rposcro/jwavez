@@ -13,6 +13,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+
+import com.rposcro.jwavez.serial.utils.FrameUtil;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -82,12 +84,14 @@ public abstract class AbstractAsynchronousController<T extends AbstractAsynchron
   private void handleResponse(ViewBuffer frameBuffer) {
     if (log.isDebugEnabled()) {
       log.debug("Response frame received: {}", BufferUtil.bufferToString(frameBuffer));
+      log.debug(FrameUtil.asFineString(frameBuffer));
     }
   }
 
   private void handleCallback(ViewBuffer frameBuffer) {
     if (log.isDebugEnabled()) {
       log.debug("Callback frame received: {}", BufferUtil.bufferToString(frameBuffer));
+      log.debug(FrameUtil.asFineString(frameBuffer));
     }
   }
 }

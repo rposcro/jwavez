@@ -16,7 +16,7 @@ public class ViewBuffer {
     this.buffer = buffer;
     this.offset = buffer.position();
     this.position = 0;
-    this.length = 0;
+    this.length = buffer.limit();
   }
 
   protected void setViewRange(int offset, int length) {

@@ -1,19 +1,18 @@
 package com.rposcro.jwavez.serial.handlers;
 
-import static com.rposcro.jwavez.serial.utils.BufferUtil.bufferToString;
-
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.exceptions.FrameException;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
+import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
-import java.util.function.Consumer;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class LastResponseHolder implements Consumer<ViewBuffer> {
+public class LastResponseHolder implements ResponseHandler {
 
   private InboundFrameParser parser;
   private InboundFrameValidator validator;
@@ -40,15 +39,11 @@ public class LastResponseHolder implements Consumer<ViewBuffer> {
 
   @Override
   public void accept(ViewBuffer frameBuffer) {
-    if (log.isDebugEnabled()) {
-      log.debug("ZWaveResponse frame received: {}", bufferToString(frameBuffer));
-    }
-
     lastException = null;
     lastResponse = null;
 
     if (!validator.validate(frameBuffer)) {
-      lastException = new FrameException("Inbound frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
+      lastException = new FrameException("Inbound response frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
     }
 
     try {

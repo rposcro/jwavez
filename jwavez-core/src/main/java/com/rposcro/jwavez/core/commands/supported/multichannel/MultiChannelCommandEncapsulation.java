@@ -42,4 +42,18 @@ public class MultiChannelCommandEncapsulation extends ZWaveSupportedCommand<Mult
       encapsulatedCommandPayload[i] = payload.next();
     }
   }
+
+  @Override
+  public String asNiceString() {
+    return String.format("%s(%02x) srcNode(0x02x) sourceEndpointId(0x02x) destinationEndpointId(0x02x)"
+            + " destinationAsBitMask(%s) encapsulatedCommandClass(%s) encapsulatedCommandCode(0x02x)",
+            getCommandType().getCode(),
+            getSourceNodeId().getId(),
+            sourceEndpointId,
+            destinationEndpointId,
+            destinationAsBitMask,
+            encapsulatedCommandClass,
+            encapsulatedCommandCode
+    );
+  }
 }

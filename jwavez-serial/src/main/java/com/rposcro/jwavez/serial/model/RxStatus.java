@@ -12,7 +12,11 @@ public class RxStatus {
   private boolean foreignHomeId;
   private FrameCast frameCast;
 
+  private byte statusValue;
+
   public RxStatus(byte status) {
+    statusValue = status;
+
     routedBusy = (status & 0x01) > 0;
     lowPower = (status & 0x02) > 0;
     exploreFrame = (status & 0x18) == 0x10;

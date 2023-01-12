@@ -3,7 +3,6 @@ package com.rposcro.jwavez.serial.interceptors;
 import com.rposcro.jwavez.core.commands.SupportedCommandParser;
 import com.rposcro.jwavez.core.commands.types.CommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
-import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
 import com.rposcro.jwavez.core.handlers.SupportedCommandHandler;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
@@ -60,7 +59,7 @@ public class ApplicationCommandInterceptor implements CallbackInterceptor {
                     if (supportedCommandParser.isCommandSupported(ImmutableBuffer.overBuffer(commandCallback.getCommandPayload()))) {
                         parseAndDispatchCallback(commandCallback);
                     } else {
-                        log.warn("Skipped unsupported command");
+                        log.warn("Skipped unsupported application command");
                     }
                 } else {
                     parseAndDispatchCallback(commandCallback);
@@ -69,7 +68,7 @@ public class ApplicationCommandInterceptor implements CallbackInterceptor {
                 log.debug("Skipped {} callback", commandCallback.getRxStatus().getFrameCast());
             }
         } else if (log.isDebugEnabled()) {
-            log.debug("Skipped frame: {}", callback.getSerialCommand());
+            log.debug("Skipped callback frame: {}", callback.getSerialCommand());
         }
     }
 

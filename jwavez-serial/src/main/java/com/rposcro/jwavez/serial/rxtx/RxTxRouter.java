@@ -10,14 +10,12 @@ import com.rposcro.jwavez.serial.exceptions.RxTxException;
 import com.rposcro.jwavez.serial.exceptions.StreamTimeoutException;
 import com.rposcro.jwavez.serial.exceptions.StreamMalformedException;
 import com.rposcro.jwavez.serial.exceptions.StreamFlowException;
-import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.exceptions.StreamException;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import java.nio.ByteBuffer;
 import java.util.concurrent.Semaphore;
-import java.util.function.Consumer;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,8 +41,8 @@ public class RxTxRouter {
   public RxTxRouter(
       RxTxConfiguration configuration,
       SerialPort serialPort,
-      Consumer<ViewBuffer> responseHandler,
-      Consumer<ViewBuffer> callbackHandler)  {
+      ResponseHandler responseHandler,
+      CallbackHandler callbackHandler)  {
     this();
     this.configuration = orDefault(configuration, RxTxConfiguration::defaultConfiguration);
     this.serialPort = serialPort;

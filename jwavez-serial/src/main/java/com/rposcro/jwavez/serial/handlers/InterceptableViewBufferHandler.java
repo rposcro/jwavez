@@ -2,11 +2,13 @@ package com.rposcro.jwavez.serial.handlers;
 
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.interceptors.ViewBufferInterceptor;
+import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
+import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
-public class InterceptableViewBufferHandler implements Consumer<ViewBuffer> {
+public class InterceptableViewBufferHandler implements CallbackHandler, ResponseHandler {
 
   private List<ViewBufferInterceptor> interceptors;
 

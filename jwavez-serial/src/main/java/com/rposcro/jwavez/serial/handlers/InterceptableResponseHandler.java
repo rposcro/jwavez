@@ -10,14 +10,14 @@ import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.interceptors.ResponseInterceptor;
 import com.rposcro.jwavez.serial.interceptors.ViewBufferInterceptor;
+import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class InterceptableResponseHandler implements Consumer<ViewBuffer> {
+public class InterceptableResponseHandler implements ResponseHandler {
 
   private InboundFrameValidator validator;
   private InboundFrameParser parser;
@@ -35,9 +35,9 @@ public class InterceptableResponseHandler implements Consumer<ViewBuffer> {
   @Override
   public void accept(ViewBuffer frameBuffer) {
     if (frameBuffer.get(FRAME_OFFSET_TYPE) != TYPE_RES || !validator.validate(frameBuffer)) {
-      log.warn("Frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
+      log.warn("Response frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
     } else if (log.isDebugEnabled()) {
-      log.debug("Frame received: {}", BufferUtil.bufferToString(frameBuffer));
+      log.debug("Response frame received: {}", BufferUtil.bufferToString(frameBuffer));
     }
 
     try {
@@ -45,7 +45,7 @@ public class InterceptableResponseHandler implements Consumer<ViewBuffer> {
       ZWaveResponse response = parser.parseResponseFrame(frameBuffer);
       responseInterceptors.forEach(interceptor -> interceptor.intercept(response));
     } catch(FrameParseException e) {
-      log.warn("Frame parse failed: {}", BufferUtil.bufferToString(frameBuffer));
+      log.warn("Response frame parse failed: {}", BufferUtil.bufferToString(frameBuffer));
     }
   }
 

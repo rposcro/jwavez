@@ -19,4 +19,11 @@ public class SceneActivationSet extends ZWaveSupportedCommand<SceneActivationCom
     sceneId = payload.getUnsignedByte(2);
     dimminingDuration = payload.getUnsignedByte(3);
   }
+
+  @Override
+  public String asNiceString() {
+    return String.format("%s sceneId(%02x) dimminingDuration(%02x)",
+            super.asNiceString(), sceneId, dimminingDuration
+    );
+  }
 }
