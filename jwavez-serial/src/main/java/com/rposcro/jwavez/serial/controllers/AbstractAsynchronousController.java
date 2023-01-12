@@ -5,6 +5,8 @@ import static com.rposcro.jwavez.core.utils.ObjectsUtil.orDefault;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.controllers.helpers.CallbackFlowIdDispatcher;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
+import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
+import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.RxTxRouterProcess;
 import com.rposcro.jwavez.serial.rxtx.port.NeuronRoboticsSerialPort;
@@ -12,7 +14,6 @@ import com.rposcro.jwavez.serial.utils.BufferUtil;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 import com.rposcro.jwavez.serial.utils.FrameUtil;
 import lombok.NonNull;
@@ -56,8 +57,8 @@ public abstract class AbstractAsynchronousController<T extends AbstractAsynchron
   protected void helpWithBuild(
       @NonNull String dongleDevice,
       RxTxConfiguration rxTxConfiguration,
-      Consumer<ViewBuffer> responseHandler,
-      Consumer<ViewBuffer> callbackHandler,
+      ResponseHandler responseHandler,
+      CallbackHandler callbackHandler,
       ExecutorService executorService) {
     this.dongleDevice = dongleDevice;
     this.serialPort = new NeuronRoboticsSerialPort();
