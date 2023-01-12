@@ -11,6 +11,7 @@ import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationCommandHandlerCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
+import com.rposcro.jwavez.serial.utils.FrameUtil;
 import com.rposcro.jwavez.tools.utils.BeanPropertiesFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,11 +63,11 @@ public class NetworkListeningService {
 
     private void handleSerialCallback(ViewBuffer viewBuffer) {
         console.flushLine("\nCallback frame received");
-        console.flushLine(BufferUtil.bufferToString(viewBuffer));
+        console.flushLine(FrameUtil.asFineString(viewBuffer));
 
         try {
             ZWaveCallback callback = serialFrameParser.parseCallbackFrame(viewBuffer);
-            console.flushLine(String.format("%s (%02X)", callback.getSerialCommand(), callback.getSerialCommand().getCode()));
+            console.flushLine(callback.asFineString());
             if (callback.getSerialCommand() == SerialCommand.APPLICATION_COMMAND_HANDLER) {
                 handleApplicationCommandHandler(callback);
             }
@@ -83,7 +84,7 @@ public class NetworkListeningService {
 
         if (supportedCommandParser.isCommandSupported(payload)) {
             ZWaveSupportedCommand command = supportedCommandParser.parseCommand(payload, appCmdCallback.getSourceNodeId());
-            console.flushLine(String.format("sourceNode: %02X\ncmdClass: %s\ncmdType: %s",
+            console.flushLine(String.format("sourceNode: %02x\ncmdClass: %s\ncmdType: %s",
                     command.getSourceNodeId().getId(), command.getCommandClass(), command.getCommandType()));
             try {
                 console.flushLine(propertiesFormatter.collectBeanProperties(command).entrySet().stream()
@@ -93,7 +94,7 @@ public class NetworkListeningService {
                 console.flushLine("<Failed to display command properties>");
             }
         } else {
-            console.flushLine(String.format("Unsupported command class: %02X", payload.getByte(0)));
+            console.flushLine(String.format("Unsupported command class: %02x", payload.getByte(0)));
         }
     }
 }

@@ -65,17 +65,17 @@ public class ApplicationCommandInterceptor implements CallbackInterceptor {
                     parseAndDispatchCallback(commandCallback);
                 }
             } else {
-                log.debug("Skipped {} callback", commandCallback.getRxStatus().getFrameCast());
+                log.debug("Skipped {} callback, cast not supported", commandCallback.getRxStatus().getFrameCast());
             }
         } else if (log.isDebugEnabled()) {
-            log.debug("Skipped callback frame: {}", callback.getSerialCommand());
+            log.debug("Skipped callback frame: {}", callback.asFineString());
         }
     }
 
     private void parseAndDispatchCallback(ApplicationCommandHandlerCallback commandCallback) {
-      ZWaveSupportedCommand command = supportedCommandParser.parseCommand(
-              ImmutableBuffer.overBuffer(commandCallback.getCommandPayload()), commandCallback.getSourceNodeId());
-      supportedCommandDispatcher.dispatchCommand(command);
+        ZWaveSupportedCommand command = supportedCommandParser.parseCommand(
+                ImmutableBuffer.overBuffer(commandCallback.getCommandPayload()), commandCallback.getSourceNodeId());
+        supportedCommandDispatcher.dispatchCommand(command);
     }
 
     private boolean isCastSupported(ApplicationCommandHandlerCallback callback) {

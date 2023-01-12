@@ -12,6 +12,8 @@ import com.rposcro.jwavez.serial.frames.callbacks.FlowCallback;
 import com.rposcro.jwavez.serial.frames.responses.SolicitedCallbackResponse;
 import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.handlers.LastResponseHolder;
+import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
+import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.SerialFrameConstants;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
@@ -24,7 +26,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
 
 import com.rposcro.jwavez.serial.utils.FrameUtil;
 import lombok.AccessLevel;
@@ -48,8 +49,8 @@ public class GeneralAsynchronousController extends AbstractAsynchronousControlle
   private InboundFrameValidator validator;
   private RequestCallbackFlowHelper callbackFlowHelper;
   private LastResponseHolder lastResponseHandler;
-  private Optional<Consumer<ViewBuffer>> customResponseHandler;
-  private Optional<Consumer<ViewBuffer>> customCallbackHandler;
+  private Optional<ResponseHandler> customResponseHandler;
+  private Optional<CallbackHandler> customCallbackHandler;
 
   private byte expectedCallbackFlowId;
   private byte expectedCommandCode;
@@ -139,8 +140,8 @@ public class GeneralAsynchronousController extends AbstractAsynchronousControlle
       long timeoutMillis,
       RxTxConfiguration rxTxConfiguration,
       ExecutorService executorService,
-      Consumer<ViewBuffer> responseHandler,
-      Consumer<ViewBuffer> callbackHandler) {
+      ResponseHandler responseHandler,
+      CallbackHandler callbackHandler) {
 
     GeneralAsynchronousController instance = new GeneralAsynchronousController();
     instance.helpWithBuild(dongleDevice, rxTxConfiguration, instance::handleResponse, instance::handleCallback, executorService);

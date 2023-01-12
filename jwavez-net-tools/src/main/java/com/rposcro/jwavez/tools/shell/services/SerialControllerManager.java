@@ -8,6 +8,7 @@ import com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkControlle
 import com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetworkController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
+import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.communication.ApplicationCommandExecutor;
 import com.rposcro.jwavez.tools.utils.SerialFunction;
@@ -50,7 +51,7 @@ public class SerialControllerManager {
 
     public <T> T runGeneralAsynchronousFunction(
             SerialFunction<GeneralAsynchronousController, T> function,
-            Consumer<ViewBuffer> callbackHandler
+            CallbackHandler callbackHandler
     ) throws SerialException {
         try {
             acquireLock();
@@ -120,7 +121,7 @@ public class SerialControllerManager {
     }
 
     private GeneralAsynchronousController acquireGeneralAsynchronousController(
-            Consumer<ViewBuffer> callbackHandler
+            CallbackHandler callbackHandler
     ) throws SerialException {
         if (generalAsynchronousController == null) {
             closeControllers();

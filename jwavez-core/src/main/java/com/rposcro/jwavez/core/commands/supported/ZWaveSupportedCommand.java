@@ -22,8 +22,8 @@ public abstract class ZWaveSupportedCommand<C extends CommandType> {
   }
 
   public String asNiceString() {
-    return String.format("%s(%02x) srcNode(0x02x)",
-           commandType, commandType.getCode(), sourceNodeId.getId()
+    return String.format("%s(%02x) srcNode(%02x)",
+           commandType.name(), commandType.getCode(), sourceNodeId.getId()
     );
   }
 }
