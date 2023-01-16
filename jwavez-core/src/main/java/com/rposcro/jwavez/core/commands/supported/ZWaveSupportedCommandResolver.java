@@ -11,6 +11,7 @@ public interface ZWaveSupportedCommandResolver<T extends CommandType> {
   ZWaveSupportedCommand resolve(ImmutableBuffer payloadBuffer, NodeId sourceNodeId);
 
   Set<T> supportedCommands();
+
   default CommandClass supportedCommandClass() {
     return this.getClass().getAnnotation(SupportedCommandResolver.class).commandClass();
   }

@@ -38,12 +38,7 @@ public final class ImmutableBuffer {
   }
 
   public int getDoubleWord(int index) {
-    checkIndex(index + 3);
-    long value = ((long)(data[offset + index] & 0xFF)) << 24;
-    value |= ((long)(data[offset + index + 1] & 0xFF)) << 16;
-    value |= ((long)(data[offset + index + 2] & 0xFF)) << 8;
-    value |= ((long)(data[offset + index + 3] & 0xFF));
-    return (int) value;
+    return (int) getUnsignedDoubleWord(index);
   }
 
   public short getUnsignedByte(int index) {
@@ -54,6 +49,15 @@ public final class ImmutableBuffer {
   public int getUnsignedWord(int index) {
     checkIndex(index + 1);
     return ((data[offset + index] & 0xFF) << 8) | (data[offset + index + 1] & 0xFF);
+  }
+
+  public long getUnsignedDoubleWord(int index) {
+    checkIndex(index + 3);
+    long value = ((long)(data[offset + index] & 0xFF)) << 24;
+    value |= ((long)(data[offset + index + 1] & 0xFF)) << 16;
+    value |= ((long)(data[offset + index + 2] & 0xFF)) << 8;
+    value |= ((long)(data[offset + index + 3] & 0xFF));
+    return value;
   }
 
   public int available() {
