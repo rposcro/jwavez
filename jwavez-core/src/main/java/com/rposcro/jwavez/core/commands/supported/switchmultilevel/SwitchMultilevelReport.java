@@ -23,4 +23,11 @@ public class SwitchMultilevelReport extends ZWaveSupportedCommand<SwitchMultiLev
             duration = payload.nextUnsignedByte();
         }
     }
+
+    @Override
+    public String asNiceString() {
+        return String.format("%s currentValue(%02x) tagetValue(%02x) duration(%02x)",
+                super.asNiceString(), currentValue, targetValue, duration
+        );
+    }
 }

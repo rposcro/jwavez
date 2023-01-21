@@ -5,8 +5,8 @@ import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.types.CommandType;
 import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
 import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
-import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
@@ -18,6 +18,7 @@ import com.rposcro.jwavez.serial.interceptors.ApplicationCommandInterceptor;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
+import com.rposcro.jwavez.serial.utils.BufferUtil;
 import com.rposcro.jwavez.tools.utils.SerialUtils;
 import lombok.Builder;
 import lombok.NonNull;
@@ -31,9 +32,10 @@ import java.util.concurrent.TimeoutException;
 public class ApplicationCommandExecutor {
 
     private GeneralAsynchronousController controller;
-    private CompletableFuture<Object> futureCommand;
+    private CompletableFuture<ApplicationCommandResult> futureCommand;
+
     private CommandType expectedCommandType;
-    private SerialCommand expectedSerialCommand;
+    private ApplicationCommandResult.ApplicationCommandResultBuilder resultBuilder = ApplicationCommandResult.builder();
 
     @Builder
     public ApplicationCommandExecutor(@NonNull String device, Long timeoutMillis) throws SerialPortException {
@@ -46,12 +48,14 @@ public class ApplicationCommandExecutor {
         appCmdInterceptor.registerAllCommandsHandler(this::handleApplicationCommand);
 
         InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
-        callbackHandler.addCallbackInterceptor(this::handleSerialCommand);
+        callbackHandler.addViewBufferInterceptor(this::interceptSerialCallbackBuffer);
+        callbackHandler.addCallbackInterceptor(this::interceptSerialCallback);
         callbackHandler.addCallbackInterceptor(appCmdInterceptor);
 
         this.controller = GeneralAsynchronousController.builder()
                 .dongleDevice(device)
                 .callbackHandler(callbackHandler)
+                .responseHandler(this::handleSerialResponse)
                 .timeoutMillis(timeoutMillis != null ? timeoutMillis : SerialUtils.DEFAULT_TIMEOUT)
                 .rxTxConfiguration(RxTxConfiguration.builder()
                         .requestRetriesMaxCount(0)
@@ -64,34 +68,30 @@ public class ApplicationCommandExecutor {
         this.controller.close();
     }
 
-    public <T extends ZWaveCallback> T requestZWCallback(SerialRequest request, SerialCommand expectedCallbackCommand, long timeout)
-            throws SerialException {
-        try {
-            setFlowMode(expectedCallbackCommand);
-            futureCommand = new CompletableFuture<>();
-            controller.requestResponseFlow(request);
-            return (T) futureCommand.get(timeout, TimeUnit.MILLISECONDS);
-        } catch(TimeoutException e) {
-            throw new FlowException("Request failed due to timeout");
-        } catch(Exception e) {
-            throw new FlowException("Unexpected exception occurred");
-        } finally {
-            resetFlow();
-        }
+    public <T extends ZWaveSupportedCommand> ApplicationCommandResult<T> requestApplicationCommand(
+            NodeId nodeId,
+            ZWaveControlledCommand applicationCommand,
+            long timeout) throws SerialException {
+        SerialRequest request = SendDataRequest.createSendDataRequest(nodeId, applicationCommand, SerialUtils.nextFlowId());
+        return requestApplicationCommand(request, null, timeout);
     }
 
-    public <T extends ZWaveSupportedCommand> T requestApplicationCommand(
-            NodeId nodeId, ZWaveControlledCommand applicationCommand, CommandType expectedReturnedCommandType, long timeout)
-            throws SerialException {
-
+    public <T extends ZWaveSupportedCommand> ApplicationCommandResult<T> requestApplicationCommand(
+            NodeId nodeId,
+            ZWaveControlledCommand applicationCommand,
+            CommandType expectedReturnedCommandType,
+            long timeout) throws SerialException {
         SerialRequest request = SendDataRequest.createSendDataRequest(nodeId, applicationCommand, SerialUtils.nextFlowId());
         return requestApplicationCommand(request, expectedReturnedCommandType, timeout);
     }
 
-    private <T extends ZWaveSupportedCommand> T requestApplicationCommand(SerialRequest request, CommandType expectedCommandType, long timeout)
-            throws SerialException {
+    private <T extends ZWaveSupportedCommand> ApplicationCommandResult<T> requestApplicationCommand(
+            SerialRequest request,
+            CommandType expectedCommandType,
+            long timeout)
+    throws SerialException {
         try {
-            setFlowMode(expectedCommandType);
+            initExecutionContext(expectedCommandType);
             this.futureCommand = new CompletableFuture<>();
 
             SendDataCallback callback = controller.requestCallbackFlow(request);
@@ -100,46 +100,45 @@ public class ApplicationCommandExecutor {
             }
 
             try {
-                return (T) futureCommand.get(timeout, TimeUnit.MILLISECONDS);
+                return futureCommand.get(timeout, TimeUnit.MILLISECONDS);
             } catch(TimeoutException e) {
                 throw new FlowException("Request failed due to timeout");
             } catch(Exception e) {
                 throw new FlowException("Unexpected exception occurred");
             }
         } finally {
-            resetFlow();
+            cancelExecutionContext();
         }
     }
 
-    private void handleSerialCommand(ZWaveCallback callback) {
-        if (callback.getSerialCommand() == expectedSerialCommand) {
-            futureCommand.complete(callback);
-        }
+    private void handleSerialResponse(ViewBuffer responseBuffer) {
+        resultBuilder.serialResponsePayload(responseBuffer.copyBytes());
+    }
+
+    private void interceptSerialCallback(ZWaveCallback callback) {
+        resultBuilder.serialCallback(callback);
+    }
+
+    private void interceptSerialCallbackBuffer(ViewBuffer callbackBuffer) {
+        resultBuilder.serialCallbackPayload(callbackBuffer.copyBytes());
     }
 
     private void handleApplicationCommand(ZWaveSupportedCommand command) {
-        if (command.getCommandType() == expectedCommandType) {
-            futureCommand.complete(command);
+        if (expectedCommandType == null || expectedCommandType == command.getCommandType()) {
+            resultBuilder.acquiredSupportedCommand(command);
+            futureCommand.complete(resultBuilder.build());
         } else {
-            log.info("Skipped application command %s %s from %s\n",
-                    command.getCommandClass(),
-                    command.getCommandType(),
-                    command.getSourceNodeId().getId());
+            log.info("Skipped application command: %s", command.asNiceString());
         }
     }
 
-    private void setFlowMode(CommandType commandType) {
+    private void initExecutionContext(CommandType commandType) {
         this.expectedCommandType = commandType;
-        this.expectedSerialCommand = null;
+        this.resultBuilder = ApplicationCommandResult.builder();
     }
 
-    private void setFlowMode(SerialCommand serialCommand) {
+    private void cancelExecutionContext() {
         this.expectedCommandType = null;
-        this.expectedSerialCommand = serialCommand;
-    }
-
-    private void resetFlow() {
-        this.expectedCommandType = null;
-        this.expectedSerialCommand = null;
+        this.resultBuilder = null;
     }
 }

@@ -44,8 +44,8 @@ public class ApplicationStartedListener implements ApplicationListener<Applicati
     private String determineDevice() {
         String device = System.getenv(JWAVEZ_DEVICE_ENV);
         if (device == null) {
-            if (new File("/dev/cu.usbmodem14101").exists()) {
-                device = "/dev/cu.usbmodem14101";
+            if (new File("/dev/cu.usbmodem21201").exists()) {
+                device = "/dev/cu.usbmodem21201";
             } else {
                 System.out.println("Note! No device detected!");
             }

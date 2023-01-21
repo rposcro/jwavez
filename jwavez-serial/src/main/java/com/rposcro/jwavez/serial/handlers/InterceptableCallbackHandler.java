@@ -10,14 +10,14 @@ import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.interceptors.CallbackInterceptor;
 import com.rposcro.jwavez.serial.interceptors.ViewBufferInterceptor;
+import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class InterceptableCallbackHandler implements Consumer<ViewBuffer> {
+public class InterceptableCallbackHandler implements CallbackHandler {
 
   private InboundFrameValidator validator;
   private InboundFrameParser parser;
@@ -35,19 +35,17 @@ public class InterceptableCallbackHandler implements Consumer<ViewBuffer> {
   @Override
   public void accept(ViewBuffer frameBuffer) {
     if (frameBuffer.get(FRAME_OFFSET_TYPE) != TYPE_REQ || !validator.validate(frameBuffer)) {
-      log.warn("Frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
+      log.warn("Callback Frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
     } else if (log.isDebugEnabled()) {
-      log.debug("Frame received: {}", BufferUtil.bufferToString(frameBuffer));
+      log.debug("Callback Frame received: {}", BufferUtil.bufferToString(frameBuffer));
     }
 
     try {
       bufferInterceptors.forEach(interceptor -> interceptor.intercept(frameBuffer));
       ZWaveCallback callback = parser.parseCallbackFrame(frameBuffer);
-      callbackInterceptors.
-
-              forEach(interceptor -> interceptor.intercept(callback));
+      callbackInterceptors.forEach(interceptor -> interceptor.intercept(callback));
     } catch(FrameParseException e) {
-      log.warn("Frame parse failed: {}", BufferUtil.bufferToString(frameBuffer));
+      log.warn("Callback Frame parse failed: {}", BufferUtil.bufferToString(frameBuffer));
       log.debug(e.getMessage(), e);
     }
   }

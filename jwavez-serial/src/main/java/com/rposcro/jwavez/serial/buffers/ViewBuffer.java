@@ -16,7 +16,7 @@ public class ViewBuffer {
     this.buffer = buffer;
     this.offset = buffer.position();
     this.position = 0;
-    this.length = 0;
+    this.length = buffer.limit();
   }
 
   protected void setViewRange(int offset, int length) {
@@ -45,6 +45,14 @@ public class ViewBuffer {
     byte[] bytes = new byte[length];
     for (int i = 0; i < length; i++) {
       bytes[i] = get();
+    }
+    return bytes;
+  }
+
+  public byte[] copyBytes() {
+    byte[] bytes = new byte[length];
+    for (int i = 0; i < length; i++) {
+      bytes[i] = get(i);
     }
     return bytes;
   }

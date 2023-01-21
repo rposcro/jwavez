@@ -22,4 +22,11 @@ public class CentralSceneNotification extends ZWaveSupportedCommand<CentralScene
         keyAttributes = payload.nextUnsignedByte();
         sceneNumber = payload.nextUnsignedByte();
     }
+
+    @Override
+    public String asNiceString() {
+        return String.format("%s sequenceNumber(%02x) keyAttributes(%02x) sceneNumber(%02x)",
+                super.asNiceString(), sequenceNumber, keyAttributes, sequenceNumber
+        );
+    }
 }

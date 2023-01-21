@@ -17,4 +17,11 @@ public class BasicSet extends ZWaveSupportedCommand<BasicCommandType> {
     super(BasicCommandType.BASIC_SET, sourceNodeId);
     value = payload.getUnsignedByte(2);
   }
+
+  @Override
+  public String asNiceString() {
+    return String.format("%s value(%02x)",
+            super.asNiceString(), value
+    );
+  }
 }

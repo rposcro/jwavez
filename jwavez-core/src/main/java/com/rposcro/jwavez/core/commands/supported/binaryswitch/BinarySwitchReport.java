@@ -44,4 +44,11 @@ public class BinarySwitchReport extends ZWaveSupportedCommand<SwitchBinaryComman
       );
     }
   }
+
+  @Override
+  public String asNiceString() {
+    return String.format("%s version(%s), value(%02x) targetValues(%02x) duration(%02x)",
+            super.asNiceString(), version, value, targetValue, duration
+    );
+  }
 }

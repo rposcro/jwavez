@@ -23,7 +23,7 @@ public class ResponseStageDoer {
   private FrameInboundStream inboundStream;
   private FrameOutboundStream outboundStream;
   private RxTxConfiguration configuration;
-  private Consumer<ViewBuffer> responseHandler;
+  private ResponseHandler responseHandler;
 
   public ResponseStageResult acquireResponse(byte expectedCommand) throws RxTxException {
     long timeoutPoint = System.currentTimeMillis() + configuration.getFrameResponseTimeout();

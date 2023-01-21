@@ -5,5 +5,5 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 @FunctionalInterface
 public interface SerialFunction<A, R> {
 
-  R execute(A argument) throws SerialException;
+    R execute(A argument) throws SerialException;
 }

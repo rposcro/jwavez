@@ -19,7 +19,7 @@ public class IdleStageDoer {
 
   private FrameInboundStream inboundStream;
   private FrameOutboundStream outboundStream;
-  private Consumer<ViewBuffer> callbackHandler;
+  private CallbackHandler callbackHandler;
 
   public IdleStageResult checkInbound() throws RxTxException {
     ViewBuffer frameView = inboundStream.nextFrame();

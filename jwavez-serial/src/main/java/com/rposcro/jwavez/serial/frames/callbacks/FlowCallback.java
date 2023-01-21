@@ -15,4 +15,9 @@ public abstract class FlowCallback extends ZWaveCallback {
     frameBuffer.position(FRAME_OFFSET_PAYLOAD);
     callbackFlowId = frameBuffer.get();
   }
+
+  public String asFineString() {
+    return String.format("%s(%02x) clbckId(%02x)",
+            getSerialCommand().name(), getSerialCommand().getCode(), callbackFlowId);
+  }
 }

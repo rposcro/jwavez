@@ -18,4 +18,10 @@ public class SendDataCallback extends FlowCallback {
     this.transmitCompletionStatus = TransmitCompletionStatus.ofCode(frameBuffer.get());
     this.statusReportPresent = frameBuffer.remaining() > 1;
   }
+
+  public String asFineString() {
+    return String.format("%s(%02x) clbckId(%02x) %s(%02x)",
+            getSerialCommand().name(), getSerialCommand().getCode(), getCallbackFlowId(),
+            transmitCompletionStatus, transmitCompletionStatus.getCode());
+  }
 }

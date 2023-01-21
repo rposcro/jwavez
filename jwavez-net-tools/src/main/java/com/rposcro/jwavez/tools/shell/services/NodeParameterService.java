@@ -10,6 +10,7 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
 import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
+import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import com.rposcro.jwavez.tools.shell.models.ParameterMeta;
 import com.rposcro.jwavez.tools.utils.SerialUtils;
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class NodeParameterService {
 
     @Autowired
-    private SerialControllerManager serialControllerManager;
+    private SerialCommunicationService serialCommunicationService;
 
     @Autowired
     private NodeInformationCache nodeInformationCache;
@@ -46,13 +47,13 @@ public class NodeParameterService {
 
     public Long fetchParameterValue(int nodeId, int paramNumber) throws SerialException {
         final NodeId nodeID = new NodeId(nodeId);
-        ConfigurationReport configurationReport = serialControllerManager.runApplicationCommandFunction((executor ->
+        ConfigurationReport configurationReport = (ConfigurationReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
                         nodeID,
                         new ConfigurationCommandBuilder().buildGetParameterCommand(paramNumber),
                         ConfigurationCommandType.CONFIGURATION_REPORT,
                         SerialUtils.DEFAULT_TIMEOUT)
-        ));
+        )).getAcquiredSupportedCommand();
 
         long paramValue = ((long) configurationReport.getValue()) & 0xffffffff;
         nodeInformationCache.getNodeDetails(nodeId).getParametersInformation().setParameterValue(paramNumber, paramValue);
@@ -62,7 +63,7 @@ public class NodeParameterService {
     public boolean sendParameterValue(int nodeId, int paramNumber, long requestedValue) throws SerialException {
         final NodeId nodeID = new NodeId(nodeId);
         final ParameterMeta parameterMeta = nodeInformationCache.getNodeDetails(nodeId).getParametersInformation().findParameterMeta(paramNumber);
-        boolean sendResult = serialControllerManager.runBasicSynchronousFunction((executor) -> {
+        boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = new ConfigurationCommandBuilder()
                     .buildSetParameterCommand(paramNumber, (int) requestedValue, BitLength.ofBytesNumber(parameterMeta.getSizeInBytes()));
             SendDataCallback callback = executor.requestCallbackFlow(SendDataRequest.createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));

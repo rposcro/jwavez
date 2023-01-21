@@ -11,4 +11,6 @@ public interface CommandType {
   default byte getCode() {
     return CommandTypesRegistry.codeOfType(this);
   }
+
+  String name();
 }
