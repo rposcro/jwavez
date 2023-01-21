@@ -49,6 +49,14 @@ public class ViewBuffer {
     return bytes;
   }
 
+  public byte[] copyBytes() {
+    byte[] bytes = new byte[length];
+    for (int i = 0; i < length; i++) {
+      bytes[i] = get(i);
+    }
+    return bytes;
+  }
+
   public boolean hasRemaining() {
     return position < length;
   }

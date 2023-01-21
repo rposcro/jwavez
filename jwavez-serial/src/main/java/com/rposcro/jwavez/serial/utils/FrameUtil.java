@@ -84,7 +84,7 @@ public class FrameUtil {
     String payloadString = IntStream.range(FRAME_OFFSET_PAYLOAD, buffer.length() - 1)
             .mapToObj(idx -> format("%02x", buffer.get(idx)))
             .collect(Collectors.joining(" "));
-    frameString.append("Payload(" + payloadString + ") ");
+    frameString.append("Payload[" + payloadString + "] ");
 
     frameString.append(format("CRC(%02x)", buffer.get(buffer.length() - 1)));
 

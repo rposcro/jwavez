@@ -3,7 +3,7 @@ package com.rposcro.jwavez.tools.utils;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 
 @FunctionalInterface
-public interface SerialProcedure {
+public interface SerialProducer<R> {
 
-    void execute() throws SerialException;
+    R execute() throws SerialException;
 }

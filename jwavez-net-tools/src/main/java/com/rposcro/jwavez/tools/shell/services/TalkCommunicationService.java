@@ -8,6 +8,8 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
 import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
+import com.rposcro.jwavez.tools.shell.communication.ApplicationCommandResult;
+import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
 import com.rposcro.jwavez.tools.utils.SerialUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,27 +18,35 @@ import org.springframework.stereotype.Service;
 public class TalkCommunicationService {
 
     @Autowired
-    private SerialControllerManager serialControllerManager;
+    private SerialCommunicationService serialCommunicationService;
 
     public <T extends ZWaveSupportedCommand> T requestTalk(
             int nodeId, ZWaveControlledCommand commandToSend, CommandType expectedResponseType
     ) throws SerialException {
-        NodeId nodeID = new NodeId(nodeId);
-        ZWaveSupportedCommand responseCommand = serialControllerManager.runApplicationCommandFunction((executor ->
+        ZWaveSupportedCommand responseCommand = serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
-                        nodeID,
+                        new NodeId(nodeId),
                         commandToSend,
                         expectedResponseType,
                         SerialUtils.DEFAULT_TIMEOUT)
-        ));
+        )).getAcquiredSupportedCommand();
         return (T) responseCommand;
     }
 
+    public ApplicationCommandResult<ZWaveSupportedCommand> requestTalk(int nodeId, byte[] payload) throws SerialException {
+        ZWaveControlledCommand commandToSend = new ZWaveControlledCommand(payload);
+        return serialCommunicationService.runApplicationCommandFunction((executor ->
+                executor.requestApplicationCommand(
+                        new NodeId(nodeId),
+                        commandToSend,
+                        SerialUtils.DEFAULT_TIMEOUT)
+        ));
+    }
+
     public boolean sendCommand(int nodeId, ZWaveControlledCommand commandToSend) throws SerialException {
-        NodeId nodeID = new NodeId(nodeId);
-        boolean sendResult = serialControllerManager.runBasicSynchronousFunction((executor) -> {
+        boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             SendDataCallback callback = executor.requestCallbackFlow(SendDataRequest.createSendDataRequest(
-                    nodeID, commandToSend, SerialUtils.nextFlowId()));
+                    new NodeId(nodeId), commandToSend, SerialUtils.nextFlowId()));
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;
         });
         return sendResult;

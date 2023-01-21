@@ -34,7 +34,7 @@ public class ApplicationCommandHandlerCallback extends ZWaveCallback {
   }
 
   public String asFineString() {
-    return String.format("APPLICATION_COMMAND_HANDLER(%02x) rxStatus(%02x) srcNode(%02x) CmdLen(%02x) Payload(%s)",
+    return String.format("APPLICATION_COMMAND_HANDLER(%02x) rxStatus(%02x) srcNode(%02x) CmdLen(%02x) Payload[%s]",
             SerialCommand.APPLICATION_COMMAND_HANDLER.getCode(),
             rxStatus.getStatusValue(),
             sourceNodeId.getId(),

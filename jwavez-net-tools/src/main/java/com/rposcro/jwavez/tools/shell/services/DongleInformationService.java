@@ -19,6 +19,7 @@ import com.rposcro.jwavez.serial.frames.responses.GetSUCNodeIdResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetVersionResponse;
 import com.rposcro.jwavez.serial.frames.responses.MemoryGetIdResponse;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
+import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
 import com.rposcro.jwavez.tools.shell.models.DongleCommandInformation;
 import com.rposcro.jwavez.tools.shell.models.DongleDeviceInformation;
 import com.rposcro.jwavez.tools.shell.models.DongleInformation;
@@ -32,7 +33,7 @@ import org.springframework.stereotype.Service;
 public class DongleInformationService {
 
     @Autowired
-    private SerialControllerManager controllerManager;
+    private SerialCommunicationService controllerManager;
 
     @Autowired
     private JWaveZShellContext shellContext;

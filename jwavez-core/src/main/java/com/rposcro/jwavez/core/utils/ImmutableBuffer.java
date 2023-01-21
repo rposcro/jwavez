@@ -120,6 +120,13 @@ public final class ImmutableBuffer {
     return cloned;
   }
 
+  public byte[] cloneRemainingBytes() {
+    int remaining = length - position;
+    byte[] cloned = new byte[remaining];
+    System.arraycopy(data, offset + position, cloned, 0, remaining);
+    return cloned;
+  }
+
   public void cloneBytes(byte[] toArray, int toOffset) {
     System.arraycopy(data, offset, toArray, toOffset, length);
   }

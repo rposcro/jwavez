@@ -14,6 +14,7 @@ import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationUpdateCallback;
 import com.rposcro.jwavez.serial.frames.requests.RequestNodeInfoRequest;
+import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
 import com.rposcro.jwavez.tools.shell.models.CommandClassMeta;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import com.rposcro.jwavez.tools.shell.models.NodeProductInformation;
@@ -28,7 +29,7 @@ import java.util.stream.Collectors;
 public class NodeInformationService {
 
     @Autowired
-    private SerialControllerManager serialControllerManager;
+    private SerialCommunicationService serialCommunicationService;
 
     @Autowired
     private NodeInformationCache nodeInformationCache;
@@ -96,7 +97,7 @@ public class NodeInformationService {
     }
 
     private NodeInfo fetchNodeInfo(NodeId nodeID) throws SerialException {
-        ApplicationUpdateCallback callback = serialControllerManager.runApplicationCommandFunction((executor ->
+        ApplicationUpdateCallback callback = serialCommunicationService.runSerialCallbackFunction((executor ->
                 executor.requestZWCallback(
                         RequestNodeInfoRequest.createRequestNodeInfoRequest(nodeID),
                         SerialCommand.APPLICATION_UPDATE,
@@ -106,23 +107,23 @@ public class NodeInformationService {
     }
 
     private ManufacturerSpecificReport fetchManufacturerSpecificReport(NodeId nodeID) throws SerialException {
-        return serialControllerManager.runApplicationCommandFunction((executor ->
+        return (ManufacturerSpecificReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
                         nodeID,
                         new ManufacturerSpecificCommandBuilder().buildGetCommand(),
                         ManufacturerSpecificCommandType.MANUFACTURER_SPECIFIC_REPORT,
                         SerialUtils.DEFAULT_TIMEOUT)
-        ));
+        )).getAcquiredSupportedCommand();
     }
 
     private VersionReport fetchVersionReport(NodeId nodeID) throws SerialException {
-        return serialControllerManager.runApplicationCommandFunction((executor ->
+        return (VersionReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
                         nodeID,
                         new VersionCommandBuilder().buildGetCommand(),
                         VersionCommandType.VERSION_REPORT,
                         SerialUtils.DEFAULT_TIMEOUT)
-        ));
+        )).getAcquiredSupportedCommand();
     }
 
     private CommandClassMeta[] fetchCommandClassMetadata(NodeId nodeID, CommandClass[] commandClasses)
@@ -133,13 +134,13 @@ public class NodeInformationService {
             if (commandClass.isMarker()) {
                 metas[i] = new CommandClassMeta(commandClass, -1);
             } else {
-                VersionCommandClassReport versionReport = serialControllerManager.runApplicationCommandFunction((executor ->
+                VersionCommandClassReport versionReport = (VersionCommandClassReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                         executor.requestApplicationCommand(
                                 nodeID,
                                 new VersionCommandBuilder().buildCommandClassGetCommand(commandClass),
                                 VersionCommandType.VERSION_COMMAND_CLASS_REPORT,
                                 SerialUtils.DEFAULT_TIMEOUT)
-                ));
+                )).getAcquiredSupportedCommand();
                 metas[i] = new CommandClassMeta(commandClass, versionReport.getCommandClassVersion());
             }
         }

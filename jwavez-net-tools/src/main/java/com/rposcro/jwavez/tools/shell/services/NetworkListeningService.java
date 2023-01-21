@@ -2,6 +2,8 @@ package com.rposcro.jwavez.tools.shell.services;
 
 import com.rposcro.jwavez.core.commands.SupportedCommandParser;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
+import com.rposcro.jwavez.core.commands.supported.multichannel.MultiChannelCommandEncapsulation;
+import com.rposcro.jwavez.core.commands.types.MultiChannelCommandType;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
@@ -10,8 +12,8 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationCommandHandlerCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
-import com.rposcro.jwavez.serial.utils.BufferUtil;
 import com.rposcro.jwavez.serial.utils.FrameUtil;
+import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
 import com.rposcro.jwavez.tools.utils.BeanPropertiesFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,8 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
+import static com.rposcro.jwavez.core.classes.CommandClass.CMD_CLASS_MULTI_CHANNEL;
+
 @Slf4j
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -31,11 +35,13 @@ public class NetworkListeningService {
     private ConsoleAccessor console;
 
     @Autowired
-    private SerialControllerManager serialControllerManager;
+    private SupportedCommandParser supportedCommandParser;
+
+    @Autowired
+    private SerialCommunicationService serialCommunicationService;
 
     private final BeanPropertiesFormatter propertiesFormatter = new BeanPropertiesFormatter();
     private final InboundFrameParser serialFrameParser = new InboundFrameParser();
-    private final SupportedCommandParser supportedCommandParser = SupportedCommandParser.defaultParser();
     private final Semaphore semaphore = new Semaphore(1);
 
     public void startListening() throws SerialException {
@@ -45,11 +51,11 @@ public class NetworkListeningService {
 
         new Thread(() -> {
             try {
-                serialControllerManager.runGeneralAsynchronousFunction(controller -> {
+                serialCommunicationService.runGeneralAsynchronousFunction(controller -> {
                     semaphore.acquireUninterruptibly();
                     semaphore.release();
                     return null;
-                }, this::handleSerialCallback);
+                }, this::treatSerialCallback);
             } catch(SerialException e) {
                 throw new RuntimeException(e);
             }
@@ -61,7 +67,7 @@ public class NetworkListeningService {
         semaphore.release();
     }
 
-    private void handleSerialCallback(ViewBuffer viewBuffer) {
+    private void treatSerialCallback(ViewBuffer viewBuffer) {
         console.flushLine("\nCallback frame received");
         console.flushLine(FrameUtil.asFineString(viewBuffer));
 
@@ -69,7 +75,7 @@ public class NetworkListeningService {
             ZWaveCallback callback = serialFrameParser.parseCallbackFrame(viewBuffer);
             console.flushLine(callback.asFineString());
             if (callback.getSerialCommand() == SerialCommand.APPLICATION_COMMAND_HANDLER) {
-                handleApplicationCommandHandler(callback);
+                treatApplicationCommandHandler(callback);
             }
         } catch(FrameParseException e) {
             console.flushLine("Failed to parse callback frame: " + e.getMessage());
@@ -78,23 +84,33 @@ public class NetworkListeningService {
         console.flushLine("EOF");
     }
 
-    private void handleApplicationCommandHandler(ZWaveCallback callback) {
+    private void treatApplicationCommandHandler(ZWaveCallback callback) {
         ApplicationCommandHandlerCallback appCmdCallback = (ApplicationCommandHandlerCallback) callback;
         ImmutableBuffer payload = ImmutableBuffer.overBuffer(appCmdCallback.getCommandPayload());
 
         if (supportedCommandParser.isCommandSupported(payload)) {
             ZWaveSupportedCommand command = supportedCommandParser.parseCommand(payload, appCmdCallback.getSourceNodeId());
-            console.flushLine(String.format("sourceNode: %02x\ncmdClass: %s\ncmdType: %s",
-                    command.getSourceNodeId().getId(), command.getCommandClass(), command.getCommandType()));
-            try {
-                console.flushLine(propertiesFormatter.collectBeanProperties(command).entrySet().stream()
-                        .map(entry -> String.format("%s: %s", entry.getKey(), entry.getValue()))
-                        .collect(Collectors.joining("\n")));
-            } catch(Exception e) {
-                console.flushLine("<Failed to display command properties>");
+            console.flushLine(command.asNiceString());
+            if (isEncapsulation(command)) {
+                treatMultiChannelEncapsulation((MultiChannelCommandEncapsulation) command);
             }
         } else {
             console.flushLine(String.format("Unsupported command class: %02x", payload.getByte(0)));
         }
+    }
+
+    private void treatMultiChannelEncapsulation(MultiChannelCommandEncapsulation encapsulation) {
+        ImmutableBuffer payload = ImmutableBuffer.overBuffer(encapsulation.getEncapsulatedCommandPayload());
+
+        if (supportedCommandParser.isCommandSupported(payload)) {
+            console.flushLine(supportedCommandParser.parseCommand(payload, encapsulation.getSourceNodeId()).asNiceString());
+        } else {
+            console.flushLine(String.format("Unsupported encapsulated command class: %02x", payload.getByte(0)));
+        }
+    }
+
+    private boolean isEncapsulation(ZWaveSupportedCommand command) {
+        return command.getCommandClass() == CMD_CLASS_MULTI_CHANNEL
+                && command.getCommandType() == MultiChannelCommandType.MULTI_CHANNEL_CMD_ENCAP;
     }
 }

@@ -11,10 +11,15 @@ import lombok.ToString;
 @ToString
 public class AssociationGroupingsReport extends ZWaveSupportedCommand<AssociationCommandType> {
 
-  private short groupsCount;
+    private short groupsCount;
 
-  public AssociationGroupingsReport(ImmutableBuffer payload, NodeId sourceNodeId) {
-    super(AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT, sourceNodeId);
-    groupsCount = payload.getUnsignedByte(2);
-  }
+    public AssociationGroupingsReport(ImmutableBuffer payload, NodeId sourceNodeId) {
+        super(AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT, sourceNodeId);
+        groupsCount = payload.getUnsignedByte(2);
+    }
+
+    @Override
+    public String asNiceString() {
+        return String.format("%s groupsCnt(%02x)", super.asNiceString(), getGroupsCount());
+    }
 }

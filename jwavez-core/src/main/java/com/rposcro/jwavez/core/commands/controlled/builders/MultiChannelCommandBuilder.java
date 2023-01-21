@@ -7,7 +7,7 @@ import com.rposcro.jwavez.core.commands.types.MultiChannelCommandType;
 
 public class MultiChannelCommandBuilder {
 
-  public ZWaveControlledCommand buildGet() {
+  public ZWaveControlledCommand buildMultiInstanceGet() {
     return new ZWaveControlledCommand(CommandClass.CMD_CLASS_MULTI_CHANNEL.getCode(), MultiChannelCommandType.MULTI_INSTANCE_GET.getCode());
   }
 
