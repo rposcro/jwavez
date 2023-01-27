@@ -1,15 +1,22 @@
 package com.rposcro.jwavez.tools.shell.commands.node;
 
+import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.AssociationGroupMeta;
+import com.rposcro.jwavez.tools.shell.models.CommandClassMeta;
+import com.rposcro.jwavez.tools.shell.models.EndPointAddress;
+import com.rposcro.jwavez.tools.shell.models.NodeAddress;
+import com.rposcro.jwavez.tools.shell.models.NodeAssociationsInformation;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import com.rposcro.jwavez.tools.shell.scopes.NodeScopeContext;
+import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.shell.services.NodeAssociationService;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
-import com.rposcro.jwavez.tools.shell.services.NodeInformationService;
+import com.rposcro.jwavez.tools.shell.services.NodeMultiChannelAssociationService;
 import com.rposcro.jwavez.tools.shell.services.NumberRangeParser;
+import com.rposcro.jwavez.tools.utils.SerialFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -21,6 +28,9 @@ import org.springframework.shell.standard.ShellOption;
 import java.text.ParseException;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static java.lang.String.format;
 
 @ShellComponent
 @ShellCommandGroup(CommandGroup.NODE)
@@ -30,63 +40,22 @@ public class NodeAssociationCommands {
     private JWaveZShellContext shellContext;
 
     @Autowired
+    private ConsoleAccessor console;
+
+    @Autowired
     private NodeScopeContext nodeScopeContext;
 
     @Autowired
     private NodeInformationCache nodeInformationCache;
 
     @Autowired
-    private NodeInformationService nodeInformationService;
+    private NodeAssociationService associationService;
 
     @Autowired
-    private NodeAssociationService nodeAssociationService;
+    private NodeMultiChannelAssociationService multiChannelAssociationService;
 
     @Autowired
     private NumberRangeParser numberRangeParser;
-
-    @ShellMethod(value = "Define node association group", key = { "association define", "ad" })
-    public String defineAssociationGroup(
-            @ShellOption(value = { "--group-id", "-gi" }) int associationGroupId,
-            @ShellOption(value = { "--group-memo", "-memo" }) String associationGroupMemo
-    ) {
-        int nodeId = nodeScopeContext.getCurrentNodeId();
-        nodeAssociationService.updateOrCreateMeta(nodeId, associationGroupId, associationGroupMemo);
-        return String.format("Association group defined:\n  node id: %s\n  group id: %s\n  memo: %s"
-                , nodeId, associationGroupId, associationGroupMemo);
-    }
-
-    @ShellMethod(value = "Clone node association groups definitions from given node to current", key = { "association clone" })
-    public String cloneAssociationGroups(
-            @ShellOption(value = { "--node-id", "-id" }) int sourceNodeId
-    ) {
-        int currentNodeId = nodeScopeContext.getCurrentNodeId();
-        NodeInformation currentNode = nodeInformationCache.getNodeDetails(currentNodeId);
-        NodeInformation sourceNode = nodeInformationCache.getNodeDetails(sourceNodeId);
-
-        if (sourceNode != null) {
-            if (nodeInformationService.nodesMatch(currentNode, sourceNode)) {
-                nodeAssociationService.cloneGroupMetas(sourceNodeId, currentNodeId);
-                return "Association groups definitions cloned to current node";
-            } else {
-                return "Node " + sourceNodeId + " doesn't match the current one, cannot clone from it";
-            }
-        } else {
-            return "Node " + sourceNodeId + " is unknown, cannot clone from it";
-        }
-    }
-
-    @ShellMethod(value = "Delete node association group definition", key = { "association delete" })
-    public String deleteAssociationGroupDefinitionAndValues(
-            @ShellOption(value = { "--group-id", "-gi" }) int associationGroupId
-    ) {
-        int nodeId = nodeScopeContext.getCurrentNodeId();
-        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
-        if (nodeAssociationService.removeGroup(nodeId, associationGroupId) != null) {
-            return "Association group " + associationGroupId + " deleted";
-        } else {
-            return "Unknown association group " + associationGroupId;
-        }
-    }
 
     @ShellMethod(value = "Print association group(s)", key = { "association print", "ap" })
     public String printAssociationGroupDetails(
@@ -103,7 +72,7 @@ public class NodeAssociationCommands {
             }
             return groupDetails.toString();
         } catch(ParseException e) {
-            return "Cannot parse argument: " + groupIdRange;
+            return "Cannot parse argument: " + groupIdRange + "\n";
         }
     }
 
@@ -118,55 +87,47 @@ public class NodeAssociationCommands {
 
             StringBuffer groupDetails = new StringBuffer();
             for (int groupId: groupIds) {
-                nodeAssociationService.fetchGroupAssociations(nodeId, groupId);
+                if (supportsMultiChannel(nodeInformation)) {
+                    multiChannelAssociationService.fetchMultiChannelAssociations(nodeId, groupId);
+                } else {
+                    associationService.fetchGroupAssociations(nodeId, groupId);
+                }
                 groupDetails.append(formatVerboseLine(nodeInformation, groupId));
                 groupDetails.append('\n');
             }
             return groupDetails.toString();
 
         } catch(ParseException e) {
-            return "Cannot parse argument: " + groupIdsRange;
+            return "Cannot parse argument: " + groupIdsRange + "\n";
         }
     }
 
     @ShellMethod(value = "Add association to given group", key = { "association add", "aa" })
     public String addAssociation(
             @ShellOption(value = { "--group-id", "-gi" }) int groupId,
-            @ShellOption(value = { "--assoc-node-id", "-ani" }) int nodeIdToAssociate
+            @ShellOption(value = { "--destination-id", "-di" }) String destinationId
     ) throws SerialException {
-        int nodeId = nodeScopeContext.getCurrentNodeId();
-        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
-
-        if (!nodeInformation.getAssociationsInformation().isGroupDefined(groupId)) {
-            return "Association group " + groupId + " is not known for node " + nodeId;
-        }
-
-        boolean success = nodeAssociationService.sendAddAssociation(nodeId, groupId, nodeIdToAssociate);
-        if (success) {
-            return String.format("Node %02X added to association group %02X", nodeIdToAssociate, groupId);
-        } else {
-            return "Something went wrong and node has not been added to association group";
-        }
+        NodeInformation nodeInformation = executeAssociationAction(
+                "add",
+                groupId,
+                destinationId,
+                nodeId -> associationService.sendAddAssociation(nodeId, groupId, Integer.parseInt(destinationId)),
+                nodeId -> multiChannelAssociationService.sendAddAssociation(nodeId, groupId, new EndPointAddress(destinationId)));
+        return formatValueLine(nodeInformation, groupId) + "\n";
     }
 
     @ShellMethod(value = "Remove association from given group", key = { "association remove", "ar" })
     public String removeAssociation(
             @ShellOption(value = { "--group-id", "-gi" }) int groupId,
-            @ShellOption(value = { "--assoc-node-id", "-ani" }) int nodeIdToRemove
+            @ShellOption(value = { "--destination-id", "-di" }) String destinationId
     ) throws SerialException {
-        int nodeId = nodeScopeContext.getCurrentNodeId();
-        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
-
-        if (!nodeInformation.getAssociationsInformation().isGroupDefined(groupId)) {
-            return "Association group " + groupId + " is not known for node " + nodeId;
-        }
-
-        boolean success = nodeAssociationService.sendRemoveAssociation(nodeId, groupId, nodeIdToRemove);
-        if (success) {
-            return String.format("Node %02X removed from association group %02X", nodeIdToRemove, groupId);
-        } else {
-            return "Something went wrong and node has not been removed from association group";
-        }
+        NodeInformation nodeInformation = executeAssociationAction(
+                "remove",
+                groupId,
+                destinationId,
+                nodeId -> associationService.sendRemoveAssociation(nodeId, groupId, Integer.parseInt(destinationId)),
+                nodeId -> multiChannelAssociationService.sendRemoveAssociation(nodeId, groupId, new EndPointAddress(destinationId)));
+        return formatValueLine(nodeInformation, groupId) + "\n";
     }
 
     @ShellMethodAvailability(value = { "association learn", "association add", "association remove" })
@@ -180,11 +141,52 @@ public class NodeAssociationCommands {
                 Availability.unavailable("ZWave dongle device is not specified");
     }
 
-    @ShellMethodAvailability({ "association clone", "association define", "association delete", "association print" })
+    @ShellMethodAvailability({ "association print" })
     public Availability checkLocalAvailability() {
         return nodeScopeContext.isAnyNodeSelected() ?
                 Availability.available() :
                 Availability.unavailable("No node is selected in the working context, try to select or fetch one");
+    }
+
+    private NodeInformation executeAssociationAction(
+            String actionName,
+            int groupId,
+            String destinationId,
+            SerialFunction<Integer, Boolean> associationAction,
+            SerialFunction<Integer, Boolean> mchAssociationAction)
+    throws SerialException {
+        int nodeId = nodeScopeContext.getCurrentNodeId();
+        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
+        boolean success;
+
+        if (!nodeInformation.getAssociationsInformation().isGroupDefined(groupId)) {
+            console.flushLine(format("Association group %02x is not known for node %02x", groupId, nodeId));
+            success = false;
+        }
+
+        if (EndPointAddress.isCorrectAddress(destinationId)) {
+            if (!supportsMultiChannel(nodeInformation)) {
+                console.flushLine(format("Node %02x doesn't support multi channel associations!", nodeId));
+                success = false;
+            } else {
+                success = mchAssociationAction.execute(nodeId);
+            }
+        } else if (NodeAddress.isCorrectAddress(destinationId)) {
+            success = associationAction.execute(nodeId);
+        } else {
+            console.flushLine(format("Invalid destination address format: %s", destinationId));
+            success = false;
+        }
+
+        if (success) {
+            console.flushLine(format("Action %s successfully completed on group %s", actionName, groupId));
+        } else {
+            console.flushLine(format("Something went wrong and %s action was not completed on association group %02x",
+                    actionName, groupId
+            ));
+        }
+
+        return nodeInformation;
     }
 
     private int[] parseGroupIdsArgument(String groupIdsRange) throws ParseException {
@@ -198,43 +200,52 @@ public class NodeAssociationCommands {
         }
     }
 
+    private boolean supportsMultiChannel(NodeInformation nodeInformation) {
+        return Stream.of(nodeInformation.getProductInformation().getCommandClasses())
+                .map(CommandClassMeta::getCommandClass)
+                .anyMatch(cmdClass -> CommandClass.CMD_CLASS_MULTI_CHANNEL_ASSOCIATION == cmdClass);
+    }
+
     private String formatValueLine(NodeInformation nodeInformation, int groupId) {
         AssociationGroupMeta groupMeta = nodeInformation.getAssociationsInformation().findGroupMeta(groupId);
-        List<Integer> associations = nodeInformation.getAssociationsInformation().findAssociations(groupId);
+        NodeAssociationsInformation associations = nodeInformation.getAssociationsInformation();
         String line;
 
         if (groupMeta == null) {
-            line = String.format("Association group %02X: <group unknown>", groupId);
-        } else if (associations == null) {
-            line = String.format("Association group %02X: <nodes unknown>", groupId);
+            line = format("Association group %02x: <group unknown>", groupId);
         } else {
-            line = String.format("Association group %02X: %s",
+            line = format("Association group %02x: [ %s ], [ %s ]",
                     groupId,
-                    associations != null ?
-                            associations.stream().map(nodeId -> String.format("%02X", nodeId)).collect(Collectors.joining(", "))
-                            : "<nodes unknown>"
-            );
+                    formatNodesList(associations.findNodeAssociations(groupId)),
+                    formatEndPointsList(associations.findEndPointAssociations(groupId)));
         }
+
         return line;
     }
 
     private String formatVerboseLine(NodeInformation nodeInformation, int groupId) {
         AssociationGroupMeta groupMeta = nodeInformation.getAssociationsInformation().findGroupMeta(groupId);
-        List<Integer> associations = nodeInformation.getAssociationsInformation().findAssociations(groupId);
+        NodeAssociationsInformation associations = nodeInformation.getAssociationsInformation();
         String line;
 
         if (groupMeta == null) {
-            line = "Association group " + groupId + ": <group unknown>";
+            line = format("Association group %02x: <group unknown>", groupId);
         } else {
-            line = String.format("Association group %s:\n  memo: %s\n  nodes: %s",
+            line = format("Association group %02x:\n  memo: %s\n  nodes: [ %s ]\n  endPoints: [ %s ]",
                     groupMeta.getGroupId(),
                     groupMeta.getMemo(),
-                    associations != null ?
-                            associations.stream().map(nodeId -> String.format("%02X", nodeId)).collect(Collectors.joining(", "))
-                            : "<nodes unknown>"
-            );
+                    formatNodesList(associations.findNodeAssociations(groupId)),
+                    formatEndPointsList(associations.findEndPointAssociations(groupId)));
         }
 
         return line;
+    }
+
+    private String formatNodesList(List<Integer> nodes) {
+        return nodes.stream().map(id -> format("%02x", id)).collect(Collectors.joining(", "));
+    }
+
+    private String formatEndPointsList(List<EndPointAddress> nodes) {
+        return nodes.stream().map(EndPointAddress::getAddress).collect(Collectors.joining(", "));
     }
 }

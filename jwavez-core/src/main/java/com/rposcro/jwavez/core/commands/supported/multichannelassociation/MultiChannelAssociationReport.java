@@ -9,6 +9,9 @@ import com.rposcro.jwavez.core.utils.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 @Getter
 @ToString
 public class MultiChannelAssociationReport extends ZWaveSupportedCommand<MultiChannelAssociationCommandType> {
@@ -59,5 +62,17 @@ public class MultiChannelAssociationReport extends ZWaveSupportedCommand<MultiCh
         }
 
         return endPoints;
+    }
+
+    @Override
+    public String asNiceString() {
+        return String.format("%s groupId(%02x) maxNodesCnt(%02x) reportsToFollow(%02x) nodes[%s] endPoints[%s]",
+                super.asNiceString(),
+                getGroupId(),
+                getMaxNodesCountSupported(),
+                getReportsToFollow(),
+                Stream.of(nodeIds).map(nodeId -> String.format("%02x", nodeId.getId())).collect(Collectors.joining(", ")),
+                Stream.of(endPointIds).map(epId -> String.format("%02x-%02x", epId.getNodeId(), epId.getEndPointId())).collect(Collectors.joining(", "))
+        );
     }
 }

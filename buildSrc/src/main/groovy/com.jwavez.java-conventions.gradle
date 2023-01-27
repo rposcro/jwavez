@@ -13,9 +13,6 @@ repositories {
     }
 }
 
-group = 'com.jwavez'
-version = '1.2.2'
-
 publishing {
     publications {
         maven(MavenPublication) {
@@ -33,8 +30,16 @@ dependencies {
     testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
     testImplementation 'org.codehaus.groovy:groovy-all:2.4.6'
 
+    testImplementation "org.junit.jupiter:junit-jupiter:5.8.2"
+    testImplementation "org.mockito:mockito-core:2.+"
+    testImplementation "org.mockito:mockito-junit-jupiter:2.+"
+
     compileOnly 'org.projectlombok:lombok:1.18.20'
     annotationProcessor 'org.projectlombok:lombok:1.18.20'
     testCompileOnly 'org.projectlombok:lombok:1.18.20'
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+}
+
+test {
+    useJUnitPlatform()
 }
