@@ -67,8 +67,18 @@ task _packCopyArchives(type: Copy) {
     into "$buildDir/jwz"
 }
 
-task pack {
+task _packZipArchives(type: Zip) {
     dependsOn _packCopyArchives
+    archiveFileName = "jwz.zip"
+    destinationDirectory = buildDir
+
+    from("$buildDir") {
+        include "jwz/*"
+    }
+}
+
+task pack {
+    dependsOn _packZipArchives
 }
 
 task deployLocal(type: Copy) {
