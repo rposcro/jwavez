@@ -21,4 +21,12 @@ public class BytesUtil {
                 .mapToObj(idx -> format("%02x", buffer[idx]))
                 .collect(Collectors.joining(" "));
     }
+
+    public static byte[] toByteArray(int[] values) {
+        byte[] bytes = new byte[values.length];
+        for (int idx = 0; idx < values.length; idx++) {
+            bytes[idx] = (byte) values[idx];
+        }
+        return bytes;
+    }
 }

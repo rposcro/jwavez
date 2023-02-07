@@ -2,7 +2,8 @@ package com.rposcro.jwavez.tools.cli.commands.node;
 
 import static com.rposcro.jwavez.core.commands.types.AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT;
 
-import com.rposcro.jwavez.core.commands.controlled.builders.AssociationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.association.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationGroupingsReport;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
@@ -23,7 +24,7 @@ public class NodeAssociationInfoCommand extends AbstractNodeAssociationCommand {
   @Override
   public void configure(String[] args) throws CommandOptionsException {
     options = new DefaultNodeBasedOptions(args);
-    commandBuilder = new AssociationCommandBuilder();
+    commandBuilder = ZWaveControlledCommandBuilder.associationCommandBuilder();
   }
 
   @Override
@@ -67,10 +68,10 @@ public class NodeAssociationInfoCommand extends AbstractNodeAssociationCommand {
 
   private int readGroupingsCount() throws SerialException {
     System.out.println("Checking association groups availabilities...");
-    AssociationGroupingsReport report = (AssociationGroupingsReport) requestApplicationCommand(
+    AssociationGroupingsReport report = requestApplicationCommand(
         SendDataRequest.createSendDataRequest(
             options.getNodeId(),
-            commandBuilder.buildGetSupportedGroupingsCommand(),
+            commandBuilder.v1().buildGetSupportedGroupingsCommand(),
             nextFlowId()),
         ASSOCIATION_GROUPINGS_REPORT,
         options.getTimeout());

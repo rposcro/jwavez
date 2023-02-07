@@ -2,8 +2,8 @@ package com.rposcro.jwavez.samples.fibaro;
 
 import static com.rposcro.jwavez.serial.frames.requests.SendDataRequest.createSendDataRequest;
 
-import com.rposcro.jwavez.core.commands.controlled.builders.AssociationCommandBuilder;
-import com.rposcro.jwavez.core.commands.controlled.builders.ConfigurationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilderV1;
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
@@ -39,10 +39,10 @@ public class SensorBinarySetUp extends AbstractExample implements AutoCloseable 
   private byte callbackFlowId;
   private final NodeId addresseeId;
   private final GeneralAsynchronousController controller;
-  private final ConfigurationCommandBuilder commandBuilder;
+  private final ConfigurationCommandBuilderV1 commandBuilder;
 
   public SensorBinarySetUp(int nodeId, String device) throws SerialPortException {
-    this.commandBuilder = new ConfigurationCommandBuilder();
+    this.commandBuilder = ZWaveControlledCommandBuilder.configurationCommandBuilder().v1();
     this.addresseeId = new NodeId((byte) nodeId);
     this.callbackFlowId = nextFlowId();
 
@@ -74,58 +74,58 @@ public class SensorBinarySetUp extends AbstractExample implements AutoCloseable 
 
   private void setMonostableModeForBothInputs() throws Exception {
     sendWithResponse("Set input 1 as monostable",
-        createSendDataRequest(addresseeId, commandBuilder.buildSetParameterCommand(PARAM_NUM_IN_TYPE_1, INPUT_TYPE_MONOSTABLE), nextFlowId()));
+        createSendDataRequest(addresseeId, commandBuilder.buildSetByteParameterCommand(PARAM_NUM_IN_TYPE_1, INPUT_TYPE_MONOSTABLE), nextFlowId()));
     sendWithCallback("Check input 1 type",
         createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(PARAM_NUM_IN_TYPE_1), nextFlowId()));
     sendWithResponse("Set input 2 as monostable",
-        createSendDataRequest(addresseeId, commandBuilder.buildSetParameterCommand(PARAM_NUM_IN_TYPE_2, INPUT_TYPE_MONOSTABLE), nextFlowId()));
+        createSendDataRequest(addresseeId, commandBuilder.buildSetByteParameterCommand(PARAM_NUM_IN_TYPE_2, INPUT_TYPE_MONOSTABLE), nextFlowId()));
     sendWithCallback("Check input 2 type",
         createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(PARAM_NUM_IN_TYPE_2), nextFlowId()));
   }
 
   private void setNOModeForBothInputs() throws Exception {
     sendWithResponse("Set input 1 as NO",
-        createSendDataRequest(addresseeId, commandBuilder.buildSetParameterCommand(PARAM_NUM_IN_TYPE_1, INPUT_TYPE_NO), nextFlowId()));
+        createSendDataRequest(addresseeId, commandBuilder.buildSetByteParameterCommand(PARAM_NUM_IN_TYPE_1, INPUT_TYPE_NO), nextFlowId()));
     sendWithCallback("Check input 1 type",
         createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(PARAM_NUM_IN_TYPE_1), nextFlowId()));
     sendWithResponse("Set input 2 as NO",
-        createSendDataRequest(addresseeId, commandBuilder.buildSetParameterCommand(PARAM_NUM_IN_TYPE_2, INPUT_TYPE_NO), nextFlowId()));
+        createSendDataRequest(addresseeId, commandBuilder.buildSetByteParameterCommand(PARAM_NUM_IN_TYPE_2, INPUT_TYPE_NO), nextFlowId()));
     sendWithCallback("Check input 2 type",
         createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(PARAM_NUM_IN_TYPE_2), nextFlowId()));
   }
 
   private void setFrameGenericForBothInputs() throws Exception {
     sendWithResponse("Set input 1 as generic alarm",
-        createSendDataRequest(addresseeId, commandBuilder.buildSetParameterCommand(PARAM_NUM_CTRL_FRM_1, CTRL_FRM_GENERIC), nextFlowId()));
+        createSendDataRequest(addresseeId, commandBuilder.buildSetByteParameterCommand(PARAM_NUM_CTRL_FRM_1, CTRL_FRM_GENERIC), nextFlowId()));
     sendWithCallback("Check alarm 1 type",
         createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(PARAM_NUM_CTRL_FRM_1), nextFlowId()));
     sendWithResponse("Set input 2 as generic alarm",
-        createSendDataRequest(addresseeId, commandBuilder.buildSetParameterCommand(PARAM_NUM_CTRL_FRM_2, CTRL_FRM_GENERIC), nextFlowId()));
+        createSendDataRequest(addresseeId, commandBuilder.buildSetByteParameterCommand(PARAM_NUM_CTRL_FRM_2, CTRL_FRM_GENERIC), nextFlowId()));
     sendWithCallback("Check alarm 2 type",
         createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(PARAM_NUM_CTRL_FRM_2), nextFlowId()));
   }
 
   private void setFrameBasicSetForBothInputs() throws Exception {
     sendWithResponse("Set input 1 as basic set alarm",
-        createSendDataRequest(addresseeId, commandBuilder.buildSetParameterCommand(PARAM_NUM_CTRL_FRM_1, CTRL_FRM_BASIC_SET), nextFlowId()));
+        createSendDataRequest(addresseeId, commandBuilder.buildSetByteParameterCommand(PARAM_NUM_CTRL_FRM_1, CTRL_FRM_BASIC_SET), nextFlowId()));
     sendWithCallback("Check alarm 1 type",
         createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(PARAM_NUM_CTRL_FRM_1), nextFlowId()));
     sendWithResponse("Set input 2 as basic set alarm",
-        createSendDataRequest(addresseeId, commandBuilder.buildSetParameterCommand(PARAM_NUM_CTRL_FRM_2, CTRL_FRM_BASIC_SET), nextFlowId()));
+        createSendDataRequest(addresseeId, commandBuilder.buildSetByteParameterCommand(PARAM_NUM_CTRL_FRM_2, CTRL_FRM_BASIC_SET), nextFlowId()));
     sendWithCallback("Check alarm 2 type",
         createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(PARAM_NUM_CTRL_FRM_2), nextFlowId()));
   }
 
   private void enableSceneActivationCommand() throws Exception {
     sendWithResponse("Enable scene activation",
-        createSendDataRequest(addresseeId, commandBuilder.buildSetParameterCommand(PARAM_NUM_SCENE_ACTIVATION, SCENE_ACTIVATION_ENABLED), nextFlowId()));
+        createSendDataRequest(addresseeId, commandBuilder.buildSetByteParameterCommand(PARAM_NUM_SCENE_ACTIVATION, SCENE_ACTIVATION_ENABLED), nextFlowId()));
     sendWithCallback("Check scene activation",
         createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(PARAM_NUM_SCENE_ACTIVATION), nextFlowId()));
   }
 
   private void associateMainController() throws Exception {
     sendWithResponse("Associate main controller (1)",
-        createSendDataRequest(addresseeId, new AssociationCommandBuilder().buildSetCommand(3, 1), nextFlowId()));
+        createSendDataRequest(addresseeId, ZWaveControlledCommandBuilder.associationCommandBuilder().v1().buildSetCommand(3, 1), nextFlowId()));
   }
 
   private void sendWithCallback(String message, SerialRequest request) throws Exception {

@@ -2,8 +2,9 @@ package com.rposcro.jwavez.samples.fibaro;
 
 import static com.rposcro.jwavez.serial.frames.requests.SendDataRequest.createSendDataRequest;
 
-import com.rposcro.jwavez.core.commands.controlled.builders.AssociationCommandBuilder;
-import com.rposcro.jwavez.core.commands.controlled.builders.ConfigurationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.association.AssociationCommandBuilderV1;
+import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilderV1;
 import com.rposcro.jwavez.core.commands.types.AssociationCommandType;
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
@@ -114,7 +115,7 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
   }
 
   private void learnAssociations() throws Exception {
-    AssociationCommandBuilder commandBuilder = new AssociationCommandBuilder();
+    AssociationCommandBuilderV1 commandBuilder = ZWaveControlledCommandBuilder.associationCommandBuilder().v1();
     send("Get supported groupings", createSendDataRequest(addresseeId, commandBuilder.buildGetSupportedGroupingsCommand(), nextFlowId()));
     send("Get group 1", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(1), nextFlowId()));
     send("Get group 2", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(2), nextFlowId()));
@@ -123,7 +124,7 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
 
   private void learnConfiguration() throws Exception {
     log.debug("Checking rxTxConfiguration");
-    ConfigurationCommandBuilder commandBuilder = new ConfigurationCommandBuilder();
+    ConfigurationCommandBuilderV1 commandBuilder = ZWaveControlledCommandBuilder.configurationCommandBuilder().v1();
     for (int paramNumber = 1; paramNumber <= 14; paramNumber++) {
       send("Send get parameter " + paramNumber, createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(paramNumber), nextFlowId()));
     }

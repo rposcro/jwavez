@@ -2,7 +2,8 @@ package com.rposcro.jwavez.tools.cli.commands.node;
 
 import static com.rposcro.jwavez.core.commands.types.AssociationCommandType.ASSOCIATION_REPORT;
 
-import com.rposcro.jwavez.core.commands.controlled.builders.AssociationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.association.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
@@ -16,7 +17,7 @@ public abstract class AbstractNodeAssociationCommand extends AbstractAsyncBasedC
   protected AssociationCommandBuilder associationCommandBuilder;
 
   protected AbstractNodeAssociationCommand() {
-    associationCommandBuilder = new AssociationCommandBuilder();
+    associationCommandBuilder = ZWaveControlledCommandBuilder.associationCommandBuilder();
   }
 
   protected void checkGroupAssociations(NodeId hostNodeId, int groupId, long timeout) {
@@ -30,10 +31,10 @@ public abstract class AbstractNodeAssociationCommand extends AbstractAsyncBasedC
   }
 
   protected AssociationReport readGroupAssociations(NodeId addresseeNodeId, int groupId, long timeout) throws SerialException {
-    AssociationReport report = (AssociationReport) requestApplicationCommand(
+    AssociationReport report = requestApplicationCommand(
         SendDataRequest.createSendDataRequest(
             addresseeNodeId,
-            associationCommandBuilder.buildGetCommand(groupId),
+            associationCommandBuilder.v1().buildGetCommand(groupId),
             nextFlowId()),
         ASSOCIATION_REPORT,
         timeout);

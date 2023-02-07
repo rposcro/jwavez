@@ -2,7 +2,8 @@ package com.rposcro.jwavez.tools.cli.commands.node;
 
 import static com.rposcro.jwavez.core.commands.types.ConfigurationCommandType.CONFIGURATION_REPORT;
 
-import com.rposcro.jwavez.core.commands.controlled.builders.ConfigurationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
 import com.rposcro.jwavez.core.model.NodeId;
@@ -15,7 +16,7 @@ public abstract class AbstractNodeConfigurationCommand extends AbstractAsyncBase
   protected ConfigurationCommandBuilder configurationCommandBuilder;
 
   protected AbstractNodeConfigurationCommand() {
-    configurationCommandBuilder = new ConfigurationCommandBuilder();
+    configurationCommandBuilder = ZWaveControlledCommandBuilder.configurationCommandBuilder();
   }
 
   protected void checkConfiguration(NodeId hostNodeId, int parameterNumber, long timeout) {
@@ -32,7 +33,7 @@ public abstract class AbstractNodeConfigurationCommand extends AbstractAsyncBase
     ZWaveSupportedCommand command = requestApplicationCommand(
         SendDataRequest.createSendDataRequest(
             hostId,
-            configurationCommandBuilder.buildGetParameterCommand(parameterNumber),
+            configurationCommandBuilder.v1().buildGetParameterCommand(parameterNumber),
             nextFlowId()),
         CONFIGURATION_REPORT,
         timeout);

@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.tools.shell.services;
 
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
-import com.rposcro.jwavez.core.commands.controlled.builders.ConfigurationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.constants.BitLength;
@@ -50,7 +50,7 @@ public class NodeParameterService {
         ConfigurationReport configurationReport = (ConfigurationReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
                         nodeID,
-                        new ConfigurationCommandBuilder().buildGetParameterCommand(paramNumber),
+                        ZWaveControlledCommandBuilder.configurationCommandBuilder().v1().buildGetParameterCommand(paramNumber),
                         ConfigurationCommandType.CONFIGURATION_REPORT,
                         SerialUtils.DEFAULT_TIMEOUT)
         )).getAcquiredSupportedCommand();
@@ -64,7 +64,7 @@ public class NodeParameterService {
         final NodeId nodeID = new NodeId(nodeId);
         final ParameterMeta parameterMeta = nodeInformationCache.getNodeDetails(nodeId).getParametersInformation().findParameterMeta(paramNumber);
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
-            ZWaveControlledCommand command = new ConfigurationCommandBuilder()
+            ZWaveControlledCommand command = ZWaveControlledCommandBuilder.configurationCommandBuilder().v1()
                     .buildSetParameterCommand(paramNumber, (int) requestedValue, BitLength.ofBytesNumber(parameterMeta.getSizeInBytes()));
             SendDataCallback callback = executor.requestCallbackFlow(SendDataRequest.createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;

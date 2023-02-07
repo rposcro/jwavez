@@ -26,6 +26,6 @@ public class NodeAssociationRemoveCommand extends AbstractNodeAssociationCommand
     connect(options);
     processSendDataRequest(
         options.getNodeId(),
-        associationCommandBuilder.buildRemoveCommand(options.getAssociationGroupId(), options.getAssociationNodeId()));
+        associationCommandBuilder.v1().buildRemoveCommand(options.getAssociationGroupId(), options.getAssociationNodeId()));
   }
 }

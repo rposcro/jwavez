@@ -26,6 +26,6 @@ public class NodeConfigurationSetCommand extends AbstractNodeConfigurationComman
     connect(options);
     processSendDataRequest(
         options.getNodeId(),
-        configurationCommandBuilder.buildSetParameterCommand(options.getParameterNumber(), options.getParameterValue(), options.getParameterSize()));
+        configurationCommandBuilder.v1().buildSetParameterCommand(options.getParameterNumber(), options.getParameterValue(), options.getParameterSize()));
   }
 }

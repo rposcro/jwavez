@@ -1,7 +1,6 @@
 package com.rposcro.jwavez.tools.shell.services;
 
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
-import com.rposcro.jwavez.core.commands.controlled.builders.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.builders.MultiChannelAssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.multichannelassociation.MultiChannelAssociationReport;
 import com.rposcro.jwavez.core.commands.types.MultiChannelAssociationCommandType;
