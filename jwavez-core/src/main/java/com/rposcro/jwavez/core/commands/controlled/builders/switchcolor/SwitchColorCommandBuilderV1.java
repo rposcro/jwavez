@@ -1,18 +1,26 @@
-package com.rposcro.jwavez.core.commands.controlled.builders;
+package com.rposcro.jwavez.core.commands.controlled.builders.switchcolor;
 
+import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.types.SwitchColorCommandType;
-import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.exceptions.CommandBuilderException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
-public class SwitchColorCommandBuilder {
+@NoArgsConstructor(access = AccessLevel.MODULE)
+public class SwitchColorCommandBuilderV1 {
 
   public ZWaveControlledCommand buildSupportedGetCommand() {
-    return new ZWaveControlledCommand(CommandClass.CMD_CLASS_SWITCH_COLOR.getCode(), SwitchColorCommandType.SWITCH_COLOR_SUPPORTED_GET.getCode());
+    return new ZWaveControlledCommand(
+            CommandClass.CMD_CLASS_SWITCH_COLOR.getCode(),
+            SwitchColorCommandType.SWITCH_COLOR_SUPPORTED_GET.getCode());
   }
 
   public ZWaveControlledCommand buildGetCommand(byte componentId) {
-    return new ZWaveControlledCommand(CommandClass.CMD_CLASS_SWITCH_COLOR.getCode(), SwitchColorCommandType.SWITCH_COLOR_GET.getCode(), componentId);
+    return new ZWaveControlledCommand(
+            CommandClass.CMD_CLASS_SWITCH_COLOR.getCode(),
+            SwitchColorCommandType.SWITCH_COLOR_GET.getCode(),
+            componentId);
   }
 
   public ZWaveControlledCommand buildSetCommand(byte duration, byte... values) {

@@ -1,9 +1,11 @@
-package com.rposcro.jwavez.core.commands.controlled.builders;
+package com.rposcro.jwavez.core.commands.controlled.builders.multichannelassociation;
 
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.constants.ZWaveConstants;
 import com.rposcro.jwavez.core.model.EndPointId;
 import com.rposcro.jwavez.core.model.NodeId;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import static com.rposcro.jwavez.core.classes.CommandClass.CMD_CLASS_MULTI_CHANNEL_ASSOCIATION;
 import static com.rposcro.jwavez.core.commands.types.MultiChannelAssociationCommandType.MULTI_CHANNEL_ASSOCIATION_GET;
@@ -11,22 +13,8 @@ import static com.rposcro.jwavez.core.commands.types.MultiChannelAssociationComm
 import static com.rposcro.jwavez.core.commands.types.MultiChannelAssociationCommandType.MULTI_CHANNEL_ASSOCIATION_REMOVE;
 import static com.rposcro.jwavez.core.commands.types.MultiChannelAssociationCommandType.MULTI_CHANNEL_ASSOCIATION_SET;
 
-public class MultiChannelAssociationCommandBuilder {
-
-    public ZWaveControlledCommand buildGetSupportedGroupingsCommand() {
-        return new ZWaveControlledCommand(
-                CMD_CLASS_MULTI_CHANNEL_ASSOCIATION.getCode(),
-                MULTI_CHANNEL_ASSOCIATION_GROUPINGS_GET.getCode()
-        );
-    }
-
-    public ZWaveControlledCommand buildGetCommand(int groupNumber) {
-        return new ZWaveControlledCommand(
-                CMD_CLASS_MULTI_CHANNEL_ASSOCIATION.getCode(),
-                MULTI_CHANNEL_ASSOCIATION_GET.getCode(),
-                (byte) groupNumber
-        );
-    }
+@NoArgsConstructor(access = AccessLevel.MODULE)
+public class MultiChannelAssociationCommandBuilderV2 {
 
     public ZWaveControlledCommand buildSetCommand(int groupNumber, NodeId... nodeIds) {
         return buildSetCommand(groupNumber, nodeIds, null);
@@ -46,6 +34,18 @@ public class MultiChannelAssociationCommandBuilder {
         fillEndPointIds(buffer, offset, endPointIds);
 
         return new ZWaveControlledCommand(buffer);
+    }
+
+    public ZWaveControlledCommand buildGetCommand(int groupNumber) {
+        return buildGetCommand((byte) groupNumber);
+    }
+
+    public ZWaveControlledCommand buildGetCommand(byte groupNumber) {
+        return new ZWaveControlledCommand(
+                CMD_CLASS_MULTI_CHANNEL_ASSOCIATION.getCode(),
+                MULTI_CHANNEL_ASSOCIATION_GET.getCode(),
+                groupNumber
+        );
     }
 
     public ZWaveControlledCommand buildRemoveAllAssociationsCommand() {
@@ -81,6 +81,13 @@ public class MultiChannelAssociationCommandBuilder {
         fillEndPointIds(buffer, offset, endPointIds);
 
         return new ZWaveControlledCommand(buffer);
+    }
+
+    public ZWaveControlledCommand buildGetSupportedGroupingsCommand() {
+        return new ZWaveControlledCommand(
+                CMD_CLASS_MULTI_CHANNEL_ASSOCIATION.getCode(),
+                MULTI_CHANNEL_ASSOCIATION_GROUPINGS_GET.getCode()
+        );
     }
 
     private int fillNodeIds(byte[] buffer, int offset, NodeId[] nodeIds) {

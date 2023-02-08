@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.samples.fibaro;
 
-import com.rposcro.jwavez.core.commands.controlled.builders.SwitchColorCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
+import com.rposcro.jwavez.core.commands.controlled.builders.switchcolor.SwitchColorCommandBuilder;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.samples.AbstractExample;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
@@ -43,7 +43,7 @@ public class SetRGBWColor extends AbstractExample implements AutoCloseable {
   public void switchColor(int red, int green, int blue, int white) {
     try {
       System.out.println("Sending color switch request");
-      ZWaveControlledCommand command  = new SwitchColorCommandBuilder().buildSetWarmRGBWCommand(
+      ZWaveControlledCommand command  = new SwitchColorCommandBuilder().v1().buildSetWarmRGBWCommand(
               (byte) red, (byte) green, (byte) blue, (byte) white, (byte) 1);
       SerialRequest request = SendDataRequest.createSendDataRequest(addresseeId, command, callbackFlowId);
       controller.requestCallbackFlow(request);

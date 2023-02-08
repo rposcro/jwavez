@@ -6,11 +6,11 @@ import lombok.Builder;
 
 @Builder
 @AllArgsConstructor
-public class JwzCommands {
+public class JwzApplicationCommands {
 
     private JwzControlledCommandFactory controlledCommandFactory;
 
-    public JwzCommands() {
+    public JwzApplicationCommands() {
         this.controlledCommandFactory = new JwzControlledCommandFactory();
     }
 
