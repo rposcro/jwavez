@@ -1,10 +1,10 @@
-package com.rposcro.jwavez.core.commands.controlled.builders;
+package com.rposcro.jwavez.core.commands.controlled.builders.powerlevel;
 
 import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.types.PowerLevelCommandType;
 
-public class PowerLevelCommandBuilder {
+public class PowerLevelCommandBuilderV1 {
 
   public ZWaveControlledCommand buildGetCommand() {
     return new ZWaveControlledCommand(CommandClass.CMD_CLASS_POWERLEVEL.getCode(), PowerLevelCommandType.POWER_LEVEL_GET.getCode());

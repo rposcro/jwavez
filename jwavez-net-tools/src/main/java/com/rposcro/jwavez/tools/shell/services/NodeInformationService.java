@@ -1,8 +1,7 @@
 package com.rposcro.jwavez.tools.shell.services;
 
 import com.rposcro.jwavez.core.classes.CommandClass;
-import com.rposcro.jwavez.core.commands.controlled.builders.ManufacturerSpecificCommandBuilder;
-import com.rposcro.jwavez.core.commands.controlled.builders.VersionCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.manufacturerspecific.ManufacturerSpecificReport;
 import com.rposcro.jwavez.core.commands.supported.version.VersionCommandClassReport;
 import com.rposcro.jwavez.core.commands.supported.version.VersionReport;
@@ -110,7 +109,7 @@ public class NodeInformationService {
         return (ManufacturerSpecificReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
                         nodeID,
-                        new ManufacturerSpecificCommandBuilder().buildGetCommand(),
+                        ZWaveControlledCommandBuilder.manufacturerSpecificCommandBuilder().v1().buildGetCommand(),
                         ManufacturerSpecificCommandType.MANUFACTURER_SPECIFIC_REPORT,
                         SerialUtils.DEFAULT_TIMEOUT)
         )).getAcquiredSupportedCommand();
@@ -120,7 +119,7 @@ public class NodeInformationService {
         return (VersionReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
                         nodeID,
-                        new VersionCommandBuilder().buildGetCommand(),
+                        ZWaveControlledCommandBuilder.versionCommandBuilder().v1().buildGetCommand(),
                         VersionCommandType.VERSION_REPORT,
                         SerialUtils.DEFAULT_TIMEOUT)
         )).getAcquiredSupportedCommand();
@@ -137,7 +136,7 @@ public class NodeInformationService {
                 VersionCommandClassReport versionReport = (VersionCommandClassReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                         executor.requestApplicationCommand(
                                 nodeID,
-                                new VersionCommandBuilder().buildCommandClassGetCommand(commandClass),
+                                ZWaveControlledCommandBuilder.versionCommandBuilder().v1().buildCommandClassGetCommand(commandClass),
                                 VersionCommandType.VERSION_COMMAND_CLASS_REPORT,
                                 SerialUtils.DEFAULT_TIMEOUT)
                 )).getAcquiredSupportedCommand();

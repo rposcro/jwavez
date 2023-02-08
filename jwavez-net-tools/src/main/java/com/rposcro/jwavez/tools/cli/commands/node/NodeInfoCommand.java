@@ -1,8 +1,7 @@
 package com.rposcro.jwavez.tools.cli.commands.node;
 
-import com.rposcro.jwavez.core.commands.controlled.builders.ManufacturerSpecificCommandBuilder;
-import com.rposcro.jwavez.core.commands.controlled.builders.VersionCommandBuilder;
-import com.rposcro.jwavez.core.commands.types.ManufacturerSpecificCommandType;
+import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
+ import com.rposcro.jwavez.core.commands.types.ManufacturerSpecificCommandType;
 import com.rposcro.jwavez.core.commands.types.VersionCommandType;
 import com.rposcro.jwavez.core.commands.supported.manufacturerspecific.ManufacturerSpecificReport;
 import com.rposcro.jwavez.core.commands.supported.version.VersionCommandClassReport;
@@ -119,7 +118,7 @@ public class NodeInfoCommand extends AbstractAsyncBasedCommand {
     for (CommandClass commandClass: nodeInfoReport.nodeInfo.getCommandClasses()) {
       VersionCommandClassReport report = requestApplicationCommand(
               options.getNodeId(),
-              new VersionCommandBuilder().buildCommandClassGetCommand(commandClass),
+              ZWaveControlledCommandBuilder.versionCommandBuilder().v1().buildCommandClassGetCommand(commandClass),
               VersionCommandType.VERSION_COMMAND_CLASS_REPORT,
               options.getTimeout());
       nodeInfoReport.classVersionReports[idx++] = report;
@@ -130,7 +129,7 @@ public class NodeInfoCommand extends AbstractAsyncBasedCommand {
     System.out.println("Fetching protocols version info");
     VersionReport report = requestApplicationCommand(
             options.getNodeId(),
-            new VersionCommandBuilder().buildGetCommand(),
+            ZWaveControlledCommandBuilder.versionCommandBuilder().v1().buildGetCommand(),
             VersionCommandType.VERSION_REPORT,
             options.getTimeout());
     nodeInfoReport.protocolVersionReport = report;
@@ -140,7 +139,7 @@ public class NodeInfoCommand extends AbstractAsyncBasedCommand {
     System.out.println("Fetching manufacturer specific info");
     ManufacturerSpecificReport report = requestApplicationCommand(
             options.getNodeId(),
-            new ManufacturerSpecificCommandBuilder().buildGetCommand(),
+            ZWaveControlledCommandBuilder.manufacturerSpecificCommandBuilder().v1().buildGetCommand(),
             ManufacturerSpecificCommandType.MANUFACTURER_SPECIFIC_REPORT,
             options.getTimeout());
     nodeInfoReport.manufacturerSpecificReport = report;
