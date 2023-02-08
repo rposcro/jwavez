@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class EndPointAddressJsonTest {
 
     @ParameterizedTest
-    @ValueSource(strings = { "93-150", "197-255" })
+    @ValueSource(strings = {"93-150", "197-255"})
     public void testSerialization(String testValue) throws Exception {
         EndPointAddress address = new EndPointAddress(testValue);
         String expected = String.format("\"%s\"", testValue);
@@ -18,7 +18,7 @@ public class EndPointAddressJsonTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "1-13", "240-50", "93-150", "197-255" })
+    @ValueSource(strings = {"1-13", "240-50", "93-150", "197-255"})
     public void testDeserialization(String testValue) throws Exception {
         String json = String.format("\"%s\"", testValue);
         int expectedNode = Integer.parseInt(testValue.substring(0, testValue.indexOf('-')));
@@ -31,7 +31,7 @@ public class EndPointAddressJsonTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "1-13", "240-50", "93-150", "197-255" })
+    @ValueSource(strings = {"1-13", "240-50", "93-150", "197-255"})
     public void testNumericConstruction(String testValue) throws Exception {
         byte expectedNode = (byte) Integer.parseInt(testValue.substring(0, testValue.indexOf('-')));
         byte expectedEndPoint = (byte) Integer.parseInt(testValue.substring(testValue.indexOf('-') + 1));

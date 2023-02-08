@@ -8,30 +8,30 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class RemoveNodeFromNetworkRequest extends ZWaveRequest {
 
-  private static final int REMOVE_NETWORK_WIDE_OPTION = 0x40;
+    private static final int REMOVE_NETWORK_WIDE_OPTION = 0x40;
 
-  public static SerialRequest createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode mode, byte callbackFlowId, boolean networkWide) {
-    FrameBuffer buffer = startUpFrameBuffer(FRAME_CONTROL_SIZE + 2, REMOVE_NODE_FROM_NETWORK)
-        .put((byte) (mode.getCode() | (networkWide ? REMOVE_NETWORK_WIDE_OPTION : 0x00)))
-        .put(callbackFlowId)
-        .putCRC();
-    return SerialRequest.builder()
-        .responseExpected(false)
-        .frameData(buffer)
-        .serialCommand(REMOVE_NODE_FROM_NETWORK)
-        .callbackFlowId(callbackFlowId)
-        .build();
-  }
+    public static SerialRequest createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode mode, byte callbackFlowId, boolean networkWide) {
+        FrameBuffer buffer = startUpFrameBuffer(FRAME_CONTROL_SIZE + 2, REMOVE_NODE_FROM_NETWORK)
+                .put((byte) (mode.getCode() | (networkWide ? REMOVE_NETWORK_WIDE_OPTION : 0x00)))
+                .put(callbackFlowId)
+                .putCRC();
+        return SerialRequest.builder()
+                .responseExpected(false)
+                .frameData(buffer)
+                .serialCommand(REMOVE_NODE_FROM_NETWORK)
+                .callbackFlowId(callbackFlowId)
+                .build();
+    }
 
-  public static SerialRequest createStartRemoveAnyNodeRequest(byte callbackFlowId) {
-    return createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_ANY, callbackFlowId, true);
-  }
+    public static SerialRequest createStartRemoveAnyNodeRequest(byte callbackFlowId) {
+        return createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_ANY, callbackFlowId, true);
+    }
 
-  public static SerialRequest createStopTransactionRequest(byte callbackFlowId) {
-    return createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_STOP, callbackFlowId, true);
-  }
+    public static SerialRequest createStopTransactionRequest(byte callbackFlowId) {
+        return createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_STOP, callbackFlowId, true);
+    }
 
-  public static SerialRequest createFinalTransactionRequest() {
-    return createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_STOP, (byte) 0, true);
-  }
+    public static SerialRequest createFinalTransactionRequest() {
+        return createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode.REMOVE_NODE_STOP, (byte) 0, true);
+    }
 }

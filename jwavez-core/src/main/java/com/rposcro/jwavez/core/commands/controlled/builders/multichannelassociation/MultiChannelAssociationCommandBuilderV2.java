@@ -92,7 +92,7 @@ public class MultiChannelAssociationCommandBuilderV2 {
 
     private int fillNodeIds(byte[] buffer, int offset, NodeId[] nodeIds) {
         if (nodeIds != null && nodeIds.length > 0) {
-            for (NodeId nodeId: nodeIds) {
+            for (NodeId nodeId : nodeIds) {
                 buffer[offset++] = nodeId.getId();
             }
         }
@@ -102,7 +102,7 @@ public class MultiChannelAssociationCommandBuilderV2 {
     private int fillEndPointIds(byte[] buffer, int offset, EndPointId[] endPointIds) {
         if (endPointIds != null && endPointIds.length > 0) {
             buffer[offset++] = ZWaveConstants.MULTI_CHANNEL_ASSOCIATION_SET_MARKER;
-            for (EndPointId endPointId: endPointIds) {
+            for (EndPointId endPointId : endPointIds) {
                 buffer[offset++] = endPointId.getNodeId();
                 buffer[offset++] = endPointId.getEndPointId();
             }

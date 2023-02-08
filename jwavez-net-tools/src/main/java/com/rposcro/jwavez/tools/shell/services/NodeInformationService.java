@@ -52,7 +52,7 @@ public class NodeInformationService {
         try {
             fetchVersionReport(new NodeId(nodeId));
             return true;
-        } catch(SerialException e) {
+        } catch (SerialException e) {
             return false;
         }
     }
@@ -135,7 +135,7 @@ public class NodeInformationService {
     private CommandClassMeta[] fetchCommandClassMetadata(NodeId nodeID, CommandClass[] commandClasses)
             throws SerialException {
         CommandClassMeta[] metas = new CommandClassMeta[commandClasses.length];
-        for(int i = 0; i < commandClasses.length; i++) {
+        for (int i = 0; i < commandClasses.length; i++) {
             CommandClass commandClass = commandClasses[i];
             if (commandClass.isMarker()) {
                 metas[i] = new CommandClassMeta(commandClass, -1);

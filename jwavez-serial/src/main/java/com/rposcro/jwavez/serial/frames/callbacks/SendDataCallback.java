@@ -10,18 +10,18 @@ import lombok.Getter;
 @CallbackFrameModel(function = SerialCommand.SEND_DATA)
 public class SendDataCallback extends FlowCallback {
 
-  private TransmitCompletionStatus transmitCompletionStatus;
-  private boolean statusReportPresent;
+    private TransmitCompletionStatus transmitCompletionStatus;
+    private boolean statusReportPresent;
 
-  public SendDataCallback(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-    this.transmitCompletionStatus = TransmitCompletionStatus.ofCode(frameBuffer.get());
-    this.statusReportPresent = frameBuffer.remaining() > 1;
-  }
+    public SendDataCallback(ViewBuffer frameBuffer) {
+        super(frameBuffer);
+        this.transmitCompletionStatus = TransmitCompletionStatus.ofCode(frameBuffer.get());
+        this.statusReportPresent = frameBuffer.remaining() > 1;
+    }
 
-  public String asFineString() {
-    return String.format("%s(%02x) clbckId(%02x) %s(%02x)",
-            getSerialCommand().name(), getSerialCommand().getCode(), getCallbackFlowId(),
-            transmitCompletionStatus, transmitCompletionStatus.getCode());
-  }
+    public String asFineString() {
+        return String.format("%s(%02x) clbckId(%02x) %s(%02x)",
+                getSerialCommand().name(), getSerialCommand().getCode(), getCallbackFlowId(),
+                transmitCompletionStatus, transmitCompletionStatus.getCode());
+    }
 }

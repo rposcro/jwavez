@@ -8,21 +8,21 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class MemoryGetIdExample extends AbstractExample {
 
-  private void runExample(String device) throws SerialException {
-    try (BasicSynchronousController controller = BasicSynchronousController.builder()
-        .dongleDevice(device)
-        .build()
-        .connect();) {
+    private void runExample(String device) throws SerialException {
+        try (BasicSynchronousController controller = BasicSynchronousController.builder()
+                .dongleDevice(device)
+                .build()
+                .connect();) {
 
-      SerialRequest request = MemoryGetIdRequest.createMemoryGetIdRequest();
-      MemoryGetIdResponse response = controller.requestResponseFlow(request);
+            SerialRequest request = MemoryGetIdRequest.createMemoryGetIdRequest();
+            MemoryGetIdResponse response = controller.requestResponseFlow(request);
 
-      System.out.printf("Home Id: %02x\n", response.getHomeId());
-      System.out.printf("Node Id: %02x\n", response.getNodeId().getId());
+            System.out.printf("Home Id: %02x\n", response.getHomeId());
+            System.out.printf("Node Id: %02x\n", response.getNodeId().getId());
+        }
     }
-  }
 
-  public static void main(String... args) throws SerialException {
-    new MemoryGetIdExample().runExample(System.getProperty("zwave.dongleDevice", DEFAULT_DEVICE));
-  }
+    public static void main(String... args) throws SerialException {
+        new MemoryGetIdExample().runExample(System.getProperty("zwave.dongleDevice", DEFAULT_DEVICE));
+    }
 }

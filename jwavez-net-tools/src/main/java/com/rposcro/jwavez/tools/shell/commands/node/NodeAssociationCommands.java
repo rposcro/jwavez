@@ -57,28 +57,28 @@ public class NodeAssociationCommands {
     @Autowired
     private NumberRangeParser numberRangeParser;
 
-    @ShellMethod(value = "Print association group(s)", key = { "association print", "ap" })
+    @ShellMethod(value = "Print association group(s)", key = {"association print", "ap"})
     public String printAssociationGroupDetails(
-            @ShellOption(value = { "--gropup-ids", "-gis" }, defaultValue = ShellOption.NULL) String groupIdRange,
+            @ShellOption(value = {"--gropup-ids", "-gis"}, defaultValue = ShellOption.NULL) String groupIdRange,
             @ShellOption(defaultValue = "false") boolean verbose
     ) {
         try {
             int[] groupIds = parseGroupIdsArgument(groupIdRange);
             StringBuffer groupDetails = new StringBuffer();
             NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeScopeContext.getCurrentNodeId());
-            for (int groupId: groupIds) {
-                groupDetails.append(verbose ? formatVerboseLine(nodeInformation, groupId) :  formatValueLine(nodeInformation, groupId));
+            for (int groupId : groupIds) {
+                groupDetails.append(verbose ? formatVerboseLine(nodeInformation, groupId) : formatValueLine(nodeInformation, groupId));
                 groupDetails.append('\n');
             }
             return groupDetails.toString();
-        } catch(ParseException e) {
+        } catch (ParseException e) {
             return "Cannot parse argument: " + groupIdRange + "\n";
         }
     }
 
-    @ShellMethod(value = "Learn about group associations", key = { "association learn", "al" })
+    @ShellMethod(value = "Learn about group associations", key = {"association learn", "al"})
     public String fetchGroupAssociations(
-            @ShellOption(value = { "--group-ids", "-gis" }, defaultValue = ShellOption.NULL) String groupIdsRange
+            @ShellOption(value = {"--group-ids", "-gis"}, defaultValue = ShellOption.NULL) String groupIdsRange
     ) throws SerialException {
         try {
             int[] groupIds = parseGroupIdsArgument(groupIdsRange);
@@ -86,7 +86,7 @@ public class NodeAssociationCommands {
             NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
 
             StringBuffer groupDetails = new StringBuffer();
-            for (int groupId: groupIds) {
+            for (int groupId : groupIds) {
                 if (supportsMultiChannel(nodeInformation)) {
                     multiChannelAssociationService.fetchMultiChannelAssociations(nodeId, groupId);
                 } else {
@@ -97,15 +97,15 @@ public class NodeAssociationCommands {
             }
             return groupDetails.toString();
 
-        } catch(ParseException e) {
+        } catch (ParseException e) {
             return "Cannot parse argument: " + groupIdsRange + "\n";
         }
     }
 
-    @ShellMethod(value = "Add association to given group", key = { "association add", "aa" })
+    @ShellMethod(value = "Add association to given group", key = {"association add", "aa"})
     public String addAssociation(
-            @ShellOption(value = { "--group-id", "-gi" }) int groupId,
-            @ShellOption(value = { "--destination-id", "-di" }) String destinationId
+            @ShellOption(value = {"--group-id", "-gi"}) int groupId,
+            @ShellOption(value = {"--destination-id", "-di"}) String destinationId
     ) throws SerialException {
         NodeInformation nodeInformation = executeAssociationAction(
                 "add",
@@ -116,10 +116,10 @@ public class NodeAssociationCommands {
         return formatValueLine(nodeInformation, groupId) + "\n";
     }
 
-    @ShellMethod(value = "Remove association from given group", key = { "association remove", "ar" })
+    @ShellMethod(value = "Remove association from given group", key = {"association remove", "ar"})
     public String removeAssociation(
-            @ShellOption(value = { "--group-id", "-gi" }) int groupId,
-            @ShellOption(value = { "--destination-id", "-di" }) String destinationId
+            @ShellOption(value = {"--group-id", "-gi"}) int groupId,
+            @ShellOption(value = {"--destination-id", "-di"}) String destinationId
     ) throws SerialException {
         NodeInformation nodeInformation = executeAssociationAction(
                 "remove",
@@ -130,7 +130,7 @@ public class NodeAssociationCommands {
         return formatValueLine(nodeInformation, groupId) + "\n";
     }
 
-    @ShellMethodAvailability(value = { "association learn", "association add", "association remove" })
+    @ShellMethodAvailability(value = {"association learn", "association add", "association remove"})
     public Availability checkRemoteAvailability() {
         if (!nodeScopeContext.isAnyNodeSelected()) {
             return Availability.unavailable("No node is selected in the working context, try to select or fetch one");
@@ -141,7 +141,7 @@ public class NodeAssociationCommands {
                 Availability.unavailable("ZWave dongle device is not specified");
     }
 
-    @ShellMethodAvailability({ "association print" })
+    @ShellMethodAvailability({"association print"})
     public Availability checkLocalAvailability() {
         return nodeScopeContext.isAnyNodeSelected() ?
                 Availability.available() :
@@ -154,7 +154,7 @@ public class NodeAssociationCommands {
             String destinationId,
             SerialFunction<Integer, Boolean> associationAction,
             SerialFunction<Integer, Boolean> mchAssociationAction)
-    throws SerialException {
+            throws SerialException {
         int nodeId = nodeScopeContext.getCurrentNodeId();
         NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
         boolean success;

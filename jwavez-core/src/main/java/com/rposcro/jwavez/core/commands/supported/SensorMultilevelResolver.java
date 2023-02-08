@@ -19,16 +19,16 @@ import static com.rposcro.jwavez.core.commands.types.SensorMultilevelCommandType
 @SupportedCommandResolver(commandClass = CommandClass.CMD_CLASS_SENSOR_MULTILEVEL)
 public class SensorMultilevelResolver extends AbstractCommandResolver<SensorMultilevelCommandType> {
 
-  private static Map<SensorMultilevelCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
+    private static Map<SensorMultilevelCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
 
-  static {
-    suppliersPerCommandType = new HashMap<>();
-    suppliersPerCommandType.put(SENSOR_MULTILEVEL_REPORT, SensorMultilevelReport::new);
-    suppliersPerCommandType.put(SENSOR_MULTILEVEL_SUPPORTED_SENSOR_REPORT, SensorMultilevelSupportedSensorReport::new);
-    suppliersPerCommandType.put(SENSOR_MULTILEVEL_SUPPORTED_SCALE_REPORT, SensorMultilevelSupportedScaleReport::new);
-  }
+    static {
+        suppliersPerCommandType = new HashMap<>();
+        suppliersPerCommandType.put(SENSOR_MULTILEVEL_REPORT, SensorMultilevelReport::new);
+        suppliersPerCommandType.put(SENSOR_MULTILEVEL_SUPPORTED_SENSOR_REPORT, SensorMultilevelSupportedSensorReport::new);
+        suppliersPerCommandType.put(SENSOR_MULTILEVEL_SUPPORTED_SCALE_REPORT, SensorMultilevelSupportedScaleReport::new);
+    }
 
-  public SensorMultilevelResolver() {
-    super(suppliersPerCommandType);
-  }
+    public SensorMultilevelResolver() {
+        super(suppliersPerCommandType);
+    }
 }

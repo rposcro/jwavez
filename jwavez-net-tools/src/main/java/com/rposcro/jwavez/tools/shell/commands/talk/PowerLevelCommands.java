@@ -30,18 +30,18 @@ public class PowerLevelCommands {
     @Autowired
     private PowerLevelCommandBuilder powerLevelCommandBuilder;
 
-    @ShellMethod(value = "Request power level report", key = { "powerlevel report", "pl report" })
-    public String executePowerLevelReport(@ShellOption(value = { "--node-id", "-id" }) int nodeId) throws SerialException {
+    @ShellMethod(value = "Request power level report", key = {"powerlevel report", "pl report"})
+    public String executePowerLevelReport(@ShellOption(value = {"--node-id", "-id"}) int nodeId) throws SerialException {
         ZWaveControlledCommand command = powerLevelCommandBuilder.v1().buildGetCommand();
         PowerLevelReport powerLevelReport = talkCommunicationService.requestTalk(nodeId, command, PowerLevelCommandType.POWER_LEVEL_REPORT);
         return String.format("Power level reported: 0x%02X, timeout is: %s[s]\n", powerLevelReport.getPowerLevel(), powerLevelReport.getTimeout());
     }
 
-    @ShellMethod(value = "Power level set request", key = { "powerlevel set", "pl set" })
+    @ShellMethod(value = "Power level set request", key = {"powerlevel set", "pl set"})
     public String executePowerLevelSet(
-            @ShellOption(value = { "--node-id", "-id" }) int nodeId,
-            @ShellOption(value = { "--power-level", "-pl" }) int powerLevel,
-            @ShellOption(value = { "--level-timeout", "-lt" }) int powerLevelTimeout
+            @ShellOption(value = {"--node-id", "-id"}) int nodeId,
+            @ShellOption(value = {"--power-level", "-pl"}) int powerLevel,
+            @ShellOption(value = {"--level-timeout", "-lt"}) int powerLevelTimeout
     ) throws SerialException {
         ZWaveControlledCommand command = powerLevelCommandBuilder.v1()
                 .buildSetCommand((byte) powerLevel, (byte) powerLevelTimeout);

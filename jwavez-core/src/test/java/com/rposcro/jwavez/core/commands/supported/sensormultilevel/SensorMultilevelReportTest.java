@@ -14,7 +14,7 @@ public class SensorMultilevelReportTest {
 
     @Test
     public void testReport1() {
-        byte[] payload = new byte[] {
+        byte[] payload = new byte[]{
                 0x31, 0x05, 0x01, 0x22, 0x00, (byte) 0xe5
         };
 

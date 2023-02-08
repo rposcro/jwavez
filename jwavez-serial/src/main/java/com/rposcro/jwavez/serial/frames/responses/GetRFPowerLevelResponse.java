@@ -11,10 +11,10 @@ import lombok.Getter;
 @ResponseFrameModel(function = SerialCommand.RF_POWER_LEVEL_GET)
 public class GetRFPowerLevelResponse extends ZWaveResponse {
 
-  private byte powerLevel;
+    private byte powerLevel;
 
-  public GetRFPowerLevelResponse(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-    this.powerLevel = frameBuffer.get(FRAME_OFFSET_PAYLOAD);
-  }
+    public GetRFPowerLevelResponse(ViewBuffer frameBuffer) {
+        super(frameBuffer);
+        this.powerLevel = frameBuffer.get(FRAME_OFFSET_PAYLOAD);
+    }
 }

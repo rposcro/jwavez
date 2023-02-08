@@ -18,7 +18,7 @@ public class EncapsulationBuilder {
     public ZWaveControlledCommand encapsulateCommand(ZWaveControlledCommand command, String encapsulationParameter) {
         if (!PARAMETER_PATTERN.matcher(encapsulationParameter).matches()) {
             throw new IllegalArgumentException("Incorrect encapsulation parameter: '" + encapsulationParameter
-            + "'. The pattern is '<sourceEndpointNumber>,<destinationEndpointNumber>', must match regex: [0-9]+,[0-9]+)");
+                    + "'. The pattern is '<sourceEndpointNumber>,<destinationEndpointNumber>', must match regex: [0-9]+,[0-9]+)");
         }
         int delimiterIndex = encapsulationParameter.indexOf(',');
         int sourceEndpoint = Integer.parseInt(encapsulationParameter.substring(0, delimiterIndex));

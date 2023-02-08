@@ -7,36 +7,36 @@ import lombok.Builder;
 
 public class ControllerInformationRequests extends AbstractFrameRequests {
 
-  @Builder
-  public ControllerInformationRequests(BufferDispatcher bufferDispatcher) {
-    super(bufferDispatcher);
-  }
+    @Builder
+    public ControllerInformationRequests(BufferDispatcher bufferDispatcher) {
+        super(bufferDispatcher);
+    }
 
-  public SerialRequest getCapabilitiesRequest() {
-    return commandRequest(SerialCommand.GET_CAPABILITIES, true);
-  }
+    public SerialRequest getCapabilitiesRequest() {
+        return commandRequest(SerialCommand.GET_CAPABILITIES, true);
+    }
 
-  public SerialRequest getControllerCapabilitiesRequest() {
-    return commandRequest(SerialCommand.GET_CONTROLLER_CAPABILITIES, true);
-  }
+    public SerialRequest getControllerCapabilitiesRequest() {
+        return commandRequest(SerialCommand.GET_CONTROLLER_CAPABILITIES, true);
+    }
 
-  public SerialRequest getLibraryTypeRequest() {
-    return commandRequest(SerialCommand.GET_LIBRARY_TYPE, true);
-  }
+    public SerialRequest getLibraryTypeRequest() {
+        return commandRequest(SerialCommand.GET_LIBRARY_TYPE, true);
+    }
 
-  public SerialRequest getVersionRequest() {
-    return commandRequest(SerialCommand.GET_VERSION, true);
-  }
+    public SerialRequest getVersionRequest() {
+        return commandRequest(SerialCommand.GET_VERSION, true);
+    }
 
-  public SerialRequest memoryGetIdRequest() {
-    return commandRequest(SerialCommand.MEMORY_GET_ID, true);
-  }
+    public SerialRequest memoryGetIdRequest() {
+        return commandRequest(SerialCommand.MEMORY_GET_ID, true);
+    }
 
-  public SerialRequest getInitDataRequest() {
-    return commandRequest(SerialCommand.GET_INIT_DATA, true);
-  }
+    public SerialRequest getInitDataRequest() {
+        return commandRequest(SerialCommand.GET_INIT_DATA, true);
+    }
 
-  public SerialRequest getRFPowerLevelRequest() {
-    return commandRequest(SerialCommand.RF_POWER_LEVEL_GET, true);
-  }
+    public SerialRequest getRFPowerLevelRequest() {
+        return commandRequest(SerialCommand.RF_POWER_LEVEL_GET, true);
+    }
 }

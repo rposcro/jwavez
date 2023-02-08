@@ -40,7 +40,7 @@ public class AssociationCommandBuilderV1 {
     }
 
     public ZWaveControlledCommand buildRemoveCommand(int groupNumber, int... nodeIds) {
-      return buildRemoveCommand((byte) groupNumber, toByteArray(nodeIds));
+        return buildRemoveCommand((byte) groupNumber, toByteArray(nodeIds));
     }
 
     public ZWaveControlledCommand buildRemoveCommand(byte groupNumber, byte... nodeIds) {

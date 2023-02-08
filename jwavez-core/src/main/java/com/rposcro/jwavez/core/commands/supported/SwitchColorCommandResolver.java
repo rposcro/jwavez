@@ -14,15 +14,15 @@ import java.util.function.BiFunction;
 @SupportedCommandResolver(commandClass = CommandClass.CMD_CLASS_SWITCH_COLOR)
 public class SwitchColorCommandResolver extends AbstractCommandResolver<SwitchColorCommandType> {
 
-  private static Map<SwitchColorCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
+    private static Map<SwitchColorCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
 
-  static {
-    suppliersPerCommandType = new HashMap<>();
-    suppliersPerCommandType.put(SwitchColorCommandType.SWITCH_COLOR_SUPPORTED_REPORT, SwitchColorSupportedReport::new);
-    suppliersPerCommandType.put(SwitchColorCommandType.SWITCH_COLOR_REPORT, SwitchColorReport::new);
-  }
+    static {
+        suppliersPerCommandType = new HashMap<>();
+        suppliersPerCommandType.put(SwitchColorCommandType.SWITCH_COLOR_SUPPORTED_REPORT, SwitchColorSupportedReport::new);
+        suppliersPerCommandType.put(SwitchColorCommandType.SWITCH_COLOR_REPORT, SwitchColorReport::new);
+    }
 
-  public SwitchColorCommandResolver() {
-    super(suppliersPerCommandType);
-  }
+    public SwitchColorCommandResolver() {
+        super(suppliersPerCommandType);
+    }
 }

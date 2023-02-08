@@ -6,5 +6,5 @@ import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 @FunctionalInterface
 public interface TransitionMethod<H, C extends ZWaveCallback, T extends TransactionState> {
 
-  void transit(H handler, C callback, T newState);
+    void transit(H handler, C callback, T newState);
 }

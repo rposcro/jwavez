@@ -55,7 +55,7 @@ public class NetworkListeningService {
                     semaphore.release();
                     return null;
                 }, this::treatSerialCallback);
-            } catch(SerialException e) {
+            } catch (SerialException e) {
                 throw new RuntimeException(e);
             }
         }).start();
@@ -76,7 +76,7 @@ public class NetworkListeningService {
             if (callback.getSerialCommand() == SerialCommand.APPLICATION_COMMAND_HANDLER) {
                 treatApplicationCommandHandler(callback);
             }
-        } catch(FrameParseException e) {
+        } catch (FrameParseException e) {
             console.flushLine("Failed to parse callback frame: " + e.getMessage());
         }
 

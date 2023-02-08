@@ -8,6 +8,7 @@ public class SwitchMultiLevelCommandBuilder {
     public SwitchMultiLevelCommandBuilderV1 v1() {
         return this.builderV1;
     }
+
     public SwitchMultiLevelCommandBuilderV2 v2() {
         return this.builderV2;
     }

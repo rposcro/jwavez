@@ -5,18 +5,18 @@ import lombok.Getter;
 
 public final class ZWaveControlledCommand {
 
-  @Getter
-  private ImmutableBuffer payloadBuffer;
+    @Getter
+    private ImmutableBuffer payloadBuffer;
 
-  public ZWaveControlledCommand(byte... commandPayload) {
-    this.payloadBuffer = ImmutableBuffer.overBuffer(commandPayload, 0, commandPayload.length);
-  }
+    public ZWaveControlledCommand(byte... commandPayload) {
+        this.payloadBuffer = ImmutableBuffer.overBuffer(commandPayload, 0, commandPayload.length);
+    }
 
-  public int getPayloadLength() {
-    return this.payloadBuffer.getLength();
-  }
+    public int getPayloadLength() {
+        return this.payloadBuffer.getLength();
+    }
 
-  public ImmutableBuffer getPayload() {
-    return this.payloadBuffer;
-  }
+    public ImmutableBuffer getPayload() {
+        return this.payloadBuffer;
+    }
 }

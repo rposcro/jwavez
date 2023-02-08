@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class NodeAddressJsonTest {
 
     @ParameterizedTest
-    @ValueSource(shorts = { 93, 197, 255 })
+    @ValueSource(shorts = {93, 197, 255})
     public void testSerialization(short testValue) throws Exception {
         NodeAddress addressByNumber = new NodeAddress((byte) testValue);
         NodeAddress addressByString = new NodeAddress("" + testValue);
@@ -23,7 +23,7 @@ public class NodeAddressJsonTest {
     }
 
     @ParameterizedTest
-    @ValueSource(shorts = { 93, 237 })
+    @ValueSource(shorts = {93, 237})
     public void testDeserialization(short testValue) throws Exception {
 
         String json = String.format("\"%s\"", "" + testValue);

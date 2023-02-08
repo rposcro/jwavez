@@ -6,17 +6,17 @@ import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
 
 public class SupportedCommandsConfiguration {
 
-  public SupportedCommandResolversRegistry supportedCommandResolversRegistry() {
-    return SupportedCommandResolversRegistry.instance();
-  }
+    public SupportedCommandResolversRegistry supportedCommandResolversRegistry() {
+        return SupportedCommandResolversRegistry.instance();
+    }
 
-  public JwzSupportedCommandParser inboundCommandParser() {
-    return JwzSupportedCommandParser.builder()
-        .supportedCommandsRegistry(supportedCommandResolversRegistry())
-        .build();
-  }
+    public JwzSupportedCommandParser inboundCommandParser() {
+        return JwzSupportedCommandParser.builder()
+                .supportedCommandsRegistry(supportedCommandResolversRegistry())
+                .build();
+    }
 
-  public SupportedCommandDispatcher supportedCommandDispatcher() {
-    return new SupportedCommandDispatcher();
-  }
+    public SupportedCommandDispatcher supportedCommandDispatcher() {
+        return new SupportedCommandDispatcher();
+    }
 }

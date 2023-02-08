@@ -4,5 +4,5 @@ import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 
 public interface SupportedCommandHandler<T extends ZWaveSupportedCommand> {
 
-  void handleCommand(T command);
+    void handleCommand(T command);
 }

@@ -11,10 +11,10 @@ import lombok.Getter;
 @ResponseFrameModel(function = SerialCommand.GET_PROTOCOL_STATUS)
 public class GetProtocolStatusResponse extends ZWaveResponse {
 
-  private byte returnValue;
+    private byte returnValue;
 
-  public GetProtocolStatusResponse(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-    this.returnValue = frameBuffer.get(FRAME_OFFSET_PAYLOAD);
-  }
+    public GetProtocolStatusResponse(ViewBuffer frameBuffer) {
+        super(frameBuffer);
+        this.returnValue = frameBuffer.get(FRAME_OFFSET_PAYLOAD);
+    }
 }

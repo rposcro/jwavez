@@ -12,15 +12,15 @@ import lombok.ToString;
 @ToString
 public class PowerLevelReport extends ZWaveSupportedCommand<PowerLevelCommandType> {
 
-  private CommandClassVersion version;
-  private short powerLevel;
-  private short timeout;
+    private CommandClassVersion version;
+    private short powerLevel;
+    private short timeout;
 
-  public PowerLevelReport(ImmutableBuffer payload, NodeId sourceNodeId) {
-    super(PowerLevelCommandType.POWER_LEVEL_REPORT, sourceNodeId);
-    version = CommandClassVersion.V1;
-    payload.skip(2);
-    powerLevel = payload.nextUnsignedByte();
-    timeout = payload.nextUnsignedByte();
-  }
+    public PowerLevelReport(ImmutableBuffer payload, NodeId sourceNodeId) {
+        super(PowerLevelCommandType.POWER_LEVEL_REPORT, sourceNodeId);
+        version = CommandClassVersion.V1;
+        payload.skip(2);
+        powerLevel = payload.nextUnsignedByte();
+        timeout = payload.nextUnsignedByte();
+    }
 }

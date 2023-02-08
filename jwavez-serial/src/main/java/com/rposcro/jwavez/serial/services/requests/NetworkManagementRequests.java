@@ -12,42 +12,42 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class NetworkManagementRequests extends AbstractFrameRequests {
 
-  public NetworkManagementRequests(BufferDispatcher bufferDispatcher) {
-    super(bufferDispatcher);
-  }
+    public NetworkManagementRequests(BufferDispatcher bufferDispatcher) {
+        super(bufferDispatcher);
+    }
 
-  public SerialRequest setLocalSUCNodeIdRequest(NodeId localControllerId, boolean enableSucAndSis) {
-    FrameBuffer buffer = frameBuffer(SerialCommand.SET_SUC_NODE_ID, FRAME_CONTROL_SIZE + 5);
-    buffer.put(localControllerId.getId())
-        .put(booleanByte(enableSucAndSis))
-        .put(booleanByte(false))
-        .put(booleanByte(enableSucAndSis))
-        .put((byte) 0x00)
-        .put(frameCRC(buffer.asByteBuffer()));
-    return commandRequest(buffer, true);
-  }
+    public SerialRequest setLocalSUCNodeIdRequest(NodeId localControllerId, boolean enableSucAndSis) {
+        FrameBuffer buffer = frameBuffer(SerialCommand.SET_SUC_NODE_ID, FRAME_CONTROL_SIZE + 5);
+        buffer.put(localControllerId.getId())
+                .put(booleanByte(enableSucAndSis))
+                .put(booleanByte(false))
+                .put(booleanByte(enableSucAndSis))
+                .put((byte) 0x00)
+                .put(frameCRC(buffer.asByteBuffer()));
+        return commandRequest(buffer, true);
+    }
 
-  public SerialRequest setSUCNodeIdRequest(NodeId localControllerId, boolean enableSucAndSis, byte callbackFlowId) {
-    FrameBuffer buffer = frameBuffer(SerialCommand.SET_SUC_NODE_ID, FRAME_CONTROL_SIZE + 5);
-    buffer.put(localControllerId.getId())
-        .put(booleanByte(enableSucAndSis))
-        .put(booleanByte(false))
-        .put(booleanByte(enableSucAndSis))
-        .put(callbackFlowId)
-        .put(frameCRC(buffer.asByteBuffer()));
-    return commandRequest(buffer, true);
-  }
+    public SerialRequest setSUCNodeIdRequest(NodeId localControllerId, boolean enableSucAndSis, byte callbackFlowId) {
+        FrameBuffer buffer = frameBuffer(SerialCommand.SET_SUC_NODE_ID, FRAME_CONTROL_SIZE + 5);
+        buffer.put(localControllerId.getId())
+                .put(booleanByte(enableSucAndSis))
+                .put(booleanByte(false))
+                .put(booleanByte(enableSucAndSis))
+                .put(callbackFlowId)
+                .put(frameCRC(buffer.asByteBuffer()));
+        return commandRequest(buffer, true);
+    }
 
-  public SerialRequest sendSUCIdRequest(NodeId addresseeId, byte callbackFlowId) {
-    FrameBuffer buffer = frameBuffer(SerialCommand.SET_SUC_NODE_ID, FRAME_CONTROL_SIZE + 3);
-    buffer.put(addresseeId.getId())
-        .put(defaultTransmitOptions())
-        .put(callbackFlowId)
-        .put(frameCRC(buffer.asByteBuffer()));
-    return commandRequest(buffer, true);
-  }
+    public SerialRequest sendSUCIdRequest(NodeId addresseeId, byte callbackFlowId) {
+        FrameBuffer buffer = frameBuffer(SerialCommand.SET_SUC_NODE_ID, FRAME_CONTROL_SIZE + 3);
+        buffer.put(addresseeId.getId())
+                .put(defaultTransmitOptions())
+                .put(callbackFlowId)
+                .put(frameCRC(buffer.asByteBuffer()));
+        return commandRequest(buffer, true);
+    }
 
-  private byte defaultTransmitOptions() {
-    return (byte) (TransmitOption.TRANSMIT_OPTION_ACK.getCode() | TransmitOption.TRANSMIT_OPTION_AUTO_ROUTE.getCode());
-  }
+    private byte defaultTransmitOptions() {
+        return (byte) (TransmitOption.TRANSMIT_OPTION_ACK.getCode() | TransmitOption.TRANSMIT_OPTION_AUTO_ROUTE.getCode());
+    }
 }

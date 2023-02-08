@@ -33,11 +33,11 @@ public class ElasticTalkCommands {
     @Autowired
     private TalkCommunicationService talkCommunicationService;
 
-    @ShellMethod(value = "Sends application command payload", key = { "send" })
+    @ShellMethod(value = "Sends application command payload", key = {"send"})
     public String sendApplicationCommand(
-            @ShellOption(value = { "--node-id", "-id" }) int nodeId,
-            @ShellOption(value = { "--payload", "-py" }) String payload)
-    throws SerialException {
+            @ShellOption(value = {"--node-id", "-id"}) int nodeId,
+            @ShellOption(value = {"--payload", "-py"}) String payload)
+            throws SerialException {
         byte[] payloadBytes = parsePayload(payload);
         console.flushLine(format("Sending application command to " + nodeId));
 
@@ -55,7 +55,7 @@ public class ElasticTalkCommands {
             try {
                 console.flushLine("Encapsulated application command: " +
                         extractEncapsulatedCommand((MultiChannelCommandEncapsulation) acquiredCommand).asNiceString());
-            } catch(Exception e) {
+            } catch (Exception e) {
                 console.flushLine("Encapsulated application command: Failed to parse");
             }
         }

@@ -13,6 +13,7 @@ public class ConfigurationCommandBuilder {
     public ConfigurationCommandBuilderV2 v2() {
         return this.builderV2;
     }
+
     public ConfigurationCommandBuilderV3 v3() {
         return this.builderV3;
     }

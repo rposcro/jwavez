@@ -15,45 +15,45 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LastCallbackHolder implements CallbackHandler {
 
-  private InboundFrameParser parser;
-  private InboundFrameValidator validator;
+    private InboundFrameParser parser;
+    private InboundFrameValidator validator;
 
-  private ZWaveCallback lastCallback;
-  private FrameException lastException;
+    private ZWaveCallback lastCallback;
+    private FrameException lastException;
 
-  public LastCallbackHolder() {
-    this.validator = new InboundFrameValidator();
-    this.parser = new InboundFrameParser();
-  }
-
-  public ZWaveCallback get() throws FrameException {
-    try {
-      if (lastException != null) {
-        throw lastException;
-      }
-      return lastCallback;
-    } finally {
-      lastException = null;
-      lastCallback = null;
-    }
-  }
-
-  @Override
-  public void accept(ViewBuffer frameBuffer) {
-    lastException = null;
-    lastCallback = null;
-
-    if (!validator.validate(frameBuffer)) {
-      lastException = new FrameException("Inbound callback frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
+    public LastCallbackHolder() {
+        this.validator = new InboundFrameValidator();
+        this.parser = new InboundFrameParser();
     }
 
-    try {
-      lastCallback = parser.parseCallbackFrame(frameBuffer);
-      if (log.isDebugEnabled()) {
-        log.debug(FrameUtil.asFineString(frameBuffer));
-      }
-    } catch(FrameParseException e) {
-      this.lastException = e;
+    public ZWaveCallback get() throws FrameException {
+        try {
+            if (lastException != null) {
+                throw lastException;
+            }
+            return lastCallback;
+        } finally {
+            lastException = null;
+            lastCallback = null;
+        }
     }
-  }
+
+    @Override
+    public void accept(ViewBuffer frameBuffer) {
+        lastException = null;
+        lastCallback = null;
+
+        if (!validator.validate(frameBuffer)) {
+            lastException = new FrameException("Inbound callback frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
+        }
+
+        try {
+            lastCallback = parser.parseCallbackFrame(frameBuffer);
+            if (log.isDebugEnabled()) {
+                log.debug(FrameUtil.asFineString(frameBuffer));
+            }
+        } catch (FrameParseException e) {
+            this.lastException = e;
+        }
+    }
 }

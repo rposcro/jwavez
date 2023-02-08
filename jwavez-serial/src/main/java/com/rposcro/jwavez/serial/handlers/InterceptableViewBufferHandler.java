@@ -10,19 +10,19 @@ import java.util.List;
 
 public class InterceptableViewBufferHandler implements CallbackHandler, ResponseHandler {
 
-  private List<ViewBufferInterceptor> interceptors;
+    private List<ViewBufferInterceptor> interceptors;
 
-  public InterceptableViewBufferHandler() {
-    this.interceptors = new ArrayList<>();
-  }
+    public InterceptableViewBufferHandler() {
+        this.interceptors = new ArrayList<>();
+    }
 
-  @Override
-  public void accept(ViewBuffer viewBuffer) {
-    interceptors.forEach(interceptor -> interceptor.intercept(viewBuffer));
-  }
+    @Override
+    public void accept(ViewBuffer viewBuffer) {
+        interceptors.forEach(interceptor -> interceptor.intercept(viewBuffer));
+    }
 
-  public InterceptableViewBufferHandler addInterceptor(ViewBufferInterceptor interceptor) {
-    interceptors.add(interceptor);
-    return this;
-  }
+    public InterceptableViewBufferHandler addInterceptor(ViewBufferInterceptor interceptor) {
+        interceptors.add(interceptor);
+        return this;
+    }
 }

@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class GetLibraryTypeRequest extends ZWaveRequest {
 
-  public static SerialRequest createLibraryTypeRequest() {
-    return nonPayloadRequest(GET_LIBRARY_TYPE);
-  }
+    public static SerialRequest createLibraryTypeRequest() {
+        return nonPayloadRequest(GET_LIBRARY_TYPE);
+    }
 }

@@ -22,7 +22,7 @@ public class RepositoryCommands {
     @Autowired
     private RepositoryService repositoryService;
 
-    @ShellMethod(value = "Show current repository", key={ "repository", "repo" })
+    @ShellMethod(value = "Show current repository", key = {"repository", "repo"})
     public String showRepository() {
         if (shellContext.isRepositoryOpened()) {
             return "Current repository is " + shellContext.getRepositoryName();
@@ -31,9 +31,9 @@ public class RepositoryCommands {
         }
     }
 
-    @ShellMethod(value = "Create new repository", key={ "repository create", "repo create" })
+    @ShellMethod(value = "Create new repository", key = {"repository create", "repo create"})
     public String createRepository(
-            @ShellOption(value = { "--repository-name", "-rn" }) String repositoryName
+            @ShellOption(value = {"--repository-name", "-rn"}) String repositoryName
     ) throws IOException {
         if (repositoryService.repositoryExists(repositoryName)) {
             return "Repository " + repositoryName + " already exists, cannot override!";
@@ -43,9 +43,9 @@ public class RepositoryCommands {
         return "Repository " + repositoryName + " created";
     }
 
-    @ShellMethod(value = "Open repository", key={ "repository open", "repo open" })
+    @ShellMethod(value = "Open repository", key = {"repository open", "repo open"})
     public String openRepository(
-            @ShellOption(value = { "--repository-name", "-rn" }) String repositoryName
+            @ShellOption(value = {"--repository-name", "-rn"}) String repositoryName
     ) throws IOException {
         if (!shellContext.isDeviceReady()) {
             repositoryService.openRepositoryWithoutCheck(repositoryName);
@@ -57,20 +57,20 @@ public class RepositoryCommands {
         }
     }
 
-    @ShellMethod(value = "Persist repository", key={ "repository persist", "repo persist" })
+    @ShellMethod(value = "Persist repository", key = {"repository persist", "repo persist"})
     public String persistRepository() throws IOException {
         repositoryService.persistRepository();
         return "Repository " + shellContext.getRepositoryName() + " persisted";
     }
 
-    @ShellMethodAvailability(value = { "repository create" })
+    @ShellMethodAvailability(value = {"repository create"})
     public Availability checkRepositoryCreateAvailability() {
         return shellContext.isDeviceReady() ?
                 Availability.available() :
                 Availability.unavailable("no ZWave dongle device is ready");
     }
 
-    @ShellMethodAvailability(value = { "repository persist" })
+    @ShellMethodAvailability(value = {"repository persist"})
     public Availability checkRepositoryPersistAvailability() {
         if (!shellContext.isDeviceReady()) {
             return Availability.unavailable("no ZWave dongle device is ready");

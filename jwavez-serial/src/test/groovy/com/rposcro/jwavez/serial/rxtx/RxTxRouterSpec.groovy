@@ -96,11 +96,11 @@ class RxTxRouterSpec extends Specification {
         receivedCallbackData.isEmpty();
 
         where:
-        inboundData                                 | _
-        [[], [ACK]]                                 | _
-        [[], [ACK], whateverData]                   | _
-        [[], [ACK] + whateverData]                  | _
-        [[], [ACK, NAK]]                            | _
+        inboundData                | _
+        [[], [ACK]]                | _
+        [[], [ACK], whateverData]  | _
+        [[], [ACK] + whateverData] | _
+        [[], [ACK, NAK]]           | _
     }
 
     @Unroll
@@ -109,9 +109,9 @@ class RxTxRouterSpec extends Specification {
         def outboundData = requestData + [ACK];
         def controller = constructRouter(inboundData);
         def frameRequest = SerialRequest.builder()
-            .frameData(frameBufferFromData(requestData))
-            .responseExpected(true)
-            .build();
+                .frameData(frameBufferFromData(requestData))
+                .responseExpected(true)
+                .build();
 
         when:
         controller.enqueueRequest(frameRequest);
@@ -123,11 +123,11 @@ class RxTxRouterSpec extends Specification {
         receivedCallbackData.isEmpty();
 
         where:
-        inboundData                                                     | _
-        [[], [ACK], responseData]                                       | _
-        [[], [ACK] + responseData]                                      | _
-        [[], [ACK], responseData, whateverData]                         | _
-        [[], [ACK], responseData, [CAN]]                                | _
+        inboundData                             | _
+        [[], [ACK], responseData]               | _
+        [[], [ACK] + responseData]              | _
+        [[], [ACK], responseData, whateverData] | _
+        [[], [ACK], responseData, [CAN]]        | _
     }
 
     @Unroll
@@ -150,11 +150,11 @@ class RxTxRouterSpec extends Specification {
         receivedCallbackData == callbackData;
 
         where:
-        inboundData                                                             | _
-        [callbackData, [], [ACK], responseData]                                 | _
-        [callbackData, [], [ACK] + responseData]                                | _
-        [callbackData, [], [ACK], responseData, whateverData]                   | _
-        [callbackData, [], [ACK], responseData, [CAN]]                          | _
+        inboundData                                           | _
+        [callbackData, [], [ACK], responseData]               | _
+        [callbackData, [], [ACK] + responseData]              | _
+        [callbackData, [], [ACK], responseData, whateverData] | _
+        [callbackData, [], [ACK], responseData, [CAN]]        | _
     }
 
     @Unroll
@@ -227,23 +227,23 @@ class RxTxRouterSpec extends Specification {
         receivedCallbackData.isEmpty();
 
         where:
-        inboundData                                         | attempts  | expResponse
-        [[], [NAK], [], [ACK]]                              | 2         | false
-        [[], [NAK], [], [ACK], whateverData]                | 2         | false
-        [[], [NAK], [], [NAK], [], [ACK]]                   | 3         | false
-        [[], [CAN], [], [ACK]]                              | 2         | false
-        [[], [CAN], [], [CAN], [], [ACK]]                   | 3         | false
-        [[], [NAK], [], [CAN], [], [ACK]]                   | 3         | false
-        [[], [CAN], [], [NAK], [], [ACK]]                   | 3         | false
-        [[], [NAK], [], [ACK]]                              | 2         | false
-        [[], [NAK], [], [ACK], responseData]                | 2         | true
-        [[], [NAK], [], [ACK], responseData, whateverData]  | 2         | true
-        [[], [NAK], [], [NAK], [], [ACK], responseData]     | 3         | true
-        [[], [CAN], [], [ACK], responseData]                | 2         | true
-        [[], [CAN], [], [CAN], [], [ACK], responseData]     | 3         | true
-        [[], [NAK], [], [CAN], [], [ACK], responseData]     | 3         | true
-        [[], [CAN], [], [NAK], [], [ACK], responseData]     | 3         | true
-        [[], [NAK], [], [ACK], responseData]                | 2         | true
+        inboundData                                        | attempts | expResponse
+        [[], [NAK], [], [ACK]]                             | 2        | false
+        [[], [NAK], [], [ACK], whateverData]               | 2        | false
+        [[], [NAK], [], [NAK], [], [ACK]]                  | 3        | false
+        [[], [CAN], [], [ACK]]                             | 2        | false
+        [[], [CAN], [], [CAN], [], [ACK]]                  | 3        | false
+        [[], [NAK], [], [CAN], [], [ACK]]                  | 3        | false
+        [[], [CAN], [], [NAK], [], [ACK]]                  | 3        | false
+        [[], [NAK], [], [ACK]]                             | 2        | false
+        [[], [NAK], [], [ACK], responseData]               | 2        | true
+        [[], [NAK], [], [ACK], responseData, whateverData] | 2        | true
+        [[], [NAK], [], [NAK], [], [ACK], responseData]    | 3        | true
+        [[], [CAN], [], [ACK], responseData]               | 2        | true
+        [[], [CAN], [], [CAN], [], [ACK], responseData]    | 3        | true
+        [[], [NAK], [], [CAN], [], [ACK], responseData]    | 3        | true
+        [[], [CAN], [], [NAK], [], [ACK], responseData]    | 3        | true
+        [[], [NAK], [], [ACK], responseData]               | 2        | true
     }
 
     @Unroll
@@ -269,13 +269,13 @@ class RxTxRouterSpec extends Specification {
         receivedCallbackData.isEmpty();
 
         where:
-        inboundData                                                     | expResponse
-        [[], responseData, [], [], [ACK]]                               | false
-        [[], responseData, [], [], [ACK], whateverData]                 | false
-        [[], responseData, [], [], [ACK], callbackData]                 | false
-        [[], responseData, [], [], [ACK], callbackData, whateverData]   | false
-        [[], responseData, [], [], [ACK], responseData]                 | true
-        [[], responseData, [], [], [ACK], responseData, whateverData]   | true
+        inboundData                                                   | expResponse
+        [[], responseData, [], [], [ACK]]                             | false
+        [[], responseData, [], [], [ACK], whateverData]               | false
+        [[], responseData, [], [], [ACK], callbackData]               | false
+        [[], responseData, [], [], [ACK], callbackData, whateverData] | false
+        [[], responseData, [], [], [ACK], responseData]               | true
+        [[], responseData, [], [], [ACK], responseData, whateverData] | true
     }
 
     @Unroll
@@ -319,10 +319,10 @@ class RxTxRouterSpec extends Specification {
         thrown StreamMalformedException;
 
         where:
-        inboundData                             | expCallbackData
-        [whateverData]                          | []
-        [[], whateverData]                      | []
-        [callbackData, whateverData]            | callbackData
+        inboundData                  | expCallbackData
+        [whateverData]               | []
+        [[], whateverData]           | []
+        [callbackData, whateverData] | callbackData
     }
 
     @Unroll
@@ -345,11 +345,11 @@ class RxTxRouterSpec extends Specification {
         thrown StreamMalformedException;
 
         where:
-        inboundData                             | _
-        [whateverData]                          | _
-        [[], whateverData]                      | _
-        [[ACK], whateverData]                   | _
-        [[ACK], [], whateverData]               | _
+        inboundData               | _
+        [whateverData]            | _
+        [[], whateverData]        | _
+        [[ACK], whateverData]     | _
+        [[ACK], [], whateverData] | _
     }
 
     @Unroll
@@ -370,10 +370,10 @@ class RxTxRouterSpec extends Specification {
         thrown StreamTimeoutException;
 
         where:
-        inboundData                             | expCallbackData
-        [partialData]                           | []
-        [[], partialData]                       | []
-        [callbackData, partialData]             | callbackData
+        inboundData                 | expCallbackData
+        [partialData]               | []
+        [[], partialData]           | []
+        [callbackData, partialData] | callbackData
     }
 
     @Unroll
@@ -396,13 +396,13 @@ class RxTxRouterSpec extends Specification {
         thrown StreamTimeoutException;
 
         where:
-        inboundData                                 | expResponseData
-        [partialData]                               | []
-        [[], partialData]                           | []
-        [[ACK], partialData]                        | []
-        [[ACK], [], partialData]                    | []
-        [[], [ACK], partialData]                    | []
-        [[ACK], responseData, [ACK], partialData]   | responseData
+        inboundData                               | expResponseData
+        [partialData]                             | []
+        [[], partialData]                         | []
+        [[ACK], partialData]                      | []
+        [[ACK], [], partialData]                  | []
+        [[], [ACK], partialData]                  | []
+        [[ACK], responseData, [ACK], partialData] | responseData
     }
 
     def repeatData(List<Integer> data, int repeats) {
@@ -412,14 +412,14 @@ class RxTxRouterSpec extends Specification {
     }
 
     def constructRouter(List<List<Integer>> inbounds) {
-        inbounds.forEach({series -> serialPort.addSeries(series)});
+        inbounds.forEach({ series -> serialPort.addSeries(series) });
         serialPort.reset();
 
         return RxTxRouter.builder()
-            .serialPort(serialPort)
-            .configuration(rxTxConfiguration)
-            .responseHandler(responseConsumer)
-            .callbackHandler(callbackConsumer)
-            .build();
+                .serialPort(serialPort)
+                .configuration(rxTxConfiguration)
+                .responseHandler(responseConsumer)
+                .callbackHandler(callbackConsumer)
+                .build();
     }
 }

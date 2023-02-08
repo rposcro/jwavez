@@ -8,50 +8,49 @@ import org.apache.commons.cli.ParseException;
 
 public class SUCOptions extends AbstractDeviceTimeoutBasedOptions {
 
-  private static final String OPT_READ = "r";
-  private static final String OPT_SET_OTHER = "so";
-  private static final String OPT_SET_THIS = "st";
+    private static final String OPT_READ = "r";
+    private static final String OPT_SET_OTHER = "so";
+    private static final String OPT_SET_THIS = "st";
 
-  public static final Options OPTIONS;
+    public static final Options OPTIONS;
 
-  static {
-    OPTIONS = CommandOptions.defaultDeviceTimeoutBasedOptions();
-    OptionGroup group = new OptionGroup()
-            .addOption(Option.builder(OPT_READ).longOpt("read").desc("reads suc id from this dongle").build())
-            .addOption(Option.builder(OPT_SET_THIS).longOpt("set-this").desc("sets this dongle as suc").build())
-            .addOption(Option.builder(OPT_SET_OTHER).longOpt("set-other").hasArg().type(Number.class).desc("sets suc id of other node").argName("node").build())
-    ;
-    group.setRequired(true);
-    OPTIONS.addOptionGroup(group);
-  }
-
-  private Action action;
-  private byte otherId;
-
-  public SUCOptions(String[] args) throws CommandOptionsException {
-    super(OPTIONS, args);
-    try {
-      this.action = commandLine.hasOption(OPT_READ) ? Action.READ :
-          commandLine.hasOption(OPT_SET_THIS) ? Action.SET_THIS : Action.SET_OTHER;
-      if (action == Action.SET_OTHER) {
-        this.otherId = ((Number) commandLine.getParsedOptionValue(OPT_SET_OTHER)).byteValue();
-      }
-    } catch(ParseException e) {
-      throw new CommandOptionsException(e.getMessage(), e);
+    static {
+        OPTIONS = CommandOptions.defaultDeviceTimeoutBasedOptions();
+        OptionGroup group = new OptionGroup()
+                .addOption(Option.builder(OPT_READ).longOpt("read").desc("reads suc id from this dongle").build())
+                .addOption(Option.builder(OPT_SET_THIS).longOpt("set-this").desc("sets this dongle as suc").build())
+                .addOption(Option.builder(OPT_SET_OTHER).longOpt("set-other").hasArg().type(Number.class).desc("sets suc id of other node").argName("node").build());
+        group.setRequired(true);
+        OPTIONS.addOptionGroup(group);
     }
-  }
 
-  public Action getAction() {
-    return this.action;
-  }
+    private Action action;
+    private byte otherId;
 
-  public byte getOtherId() {
-    return this.otherId;
-  }
+    public SUCOptions(String[] args) throws CommandOptionsException {
+        super(OPTIONS, args);
+        try {
+            this.action = commandLine.hasOption(OPT_READ) ? Action.READ :
+                    commandLine.hasOption(OPT_SET_THIS) ? Action.SET_THIS : Action.SET_OTHER;
+            if (action == Action.SET_OTHER) {
+                this.otherId = ((Number) commandLine.getParsedOptionValue(OPT_SET_OTHER)).byteValue();
+            }
+        } catch (ParseException e) {
+            throw new CommandOptionsException(e.getMessage(), e);
+        }
+    }
 
-  public static enum Action {
-    READ,
-    SET_THIS,
-    SET_OTHER
-  }
+    public Action getAction() {
+        return this.action;
+    }
+
+    public byte getOtherId() {
+        return this.otherId;
+    }
+
+    public static enum Action {
+        READ,
+        SET_THIS,
+        SET_OTHER
+    }
 }

@@ -31,17 +31,17 @@ public class KnownNodesCommands {
     @Autowired
     private NodeInformationFormatter nodeInformationFormatter;
 
-    @ShellMethod(value = "List known nodes", key = { "list", "ls" })
+    @ShellMethod(value = "List known nodes", key = {"list", "ls"})
     public String listKnownNodes() {
         return nodeInformationCache.getOrderedNodeList().stream()
                 .map(node -> "Id " + node.getNodeId() + ": " + node.getNodeMemo())
                 .collect(Collectors.joining("\n"));
     }
 
-    @ShellMethod(value = "Show known node information", key = { "info", "ni" })
+    @ShellMethod(value = "Show known node information", key = {"info", "ni"})
     public String showNodeInformation(
-            @ShellOption(value = { "--node-id", "-id" }, defaultValue = ShellOption.NULL) Integer nodeIdArg,
-            @ShellOption(value = { "--verbose", "-v" }, defaultValue = "false") boolean verbose
+            @ShellOption(value = {"--node-id", "-id"}, defaultValue = ShellOption.NULL) Integer nodeIdArg,
+            @ShellOption(value = {"--verbose", "-v"}, defaultValue = "false") boolean verbose
     ) {
         if (nodeIdArg == null && !nodeScopeContext.isAnyNodeSelected()) {
             return "No node selected, --node-id needs to be provided";
@@ -57,11 +57,11 @@ public class KnownNodesCommands {
         }
     }
 
-    @ShellMethod(value = "Set known node memo", key = { "memo" })
+    @ShellMethod(value = "Set known node memo", key = {"memo"})
     public String setNodeMemo(
-            @ShellOption(value = { "--node-memo", "-memo" }) String nodeMemo,
-            @ShellOption(value = { "--node-id", "-id" }, defaultValue = ShellOption.NULL) Integer nodeIdArg
-            ) {
+            @ShellOption(value = {"--node-memo", "-memo"}) String nodeMemo,
+            @ShellOption(value = {"--node-id", "-id"}, defaultValue = ShellOption.NULL) Integer nodeIdArg
+    ) {
         if (nodeIdArg == null && !nodeScopeContext.isAnyNodeSelected()) {
             return "No node selected, --node-id needs to be provided";
         }
@@ -75,8 +75,8 @@ public class KnownNodesCommands {
         }
     }
 
-    @ShellMethod(value = "Remove node from known list", key = { "remove" })
-    public String removeNodeInformation(@ShellOption({ "--node-id", "-id" }) int nodeId) {
+    @ShellMethod(value = "Remove node from known list", key = {"remove"})
+    public String removeNodeInformation(@ShellOption({"--node-id", "-id"}) int nodeId) {
         NodeInformation nodeInformation = nodeInformationCache.removeNodeInformation(nodeId);
         if (nodeScopeContext.isAnyNodeSelected() && nodeScopeContext.getCurrentNodeId() == nodeId) {
             nodeScopeContext.setCurrentNodeId(null);
@@ -89,7 +89,7 @@ public class KnownNodesCommands {
         }
     }
 
-    @ShellMethod(value = "Match current node with others in cache", key = { "match" })
+    @ShellMethod(value = "Match current node with others in cache", key = {"match"})
     public String matchNodeInCache() {
         int currentNodeId = nodeScopeContext.getCurrentNodeId();
         NodeInformation currentNode = nodeInformationCache.getNodeDetails(currentNodeId);

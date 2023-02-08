@@ -12,16 +12,16 @@ import lombok.Getter;
 @ResponseFrameModel(function = SerialCommand.SET_SUC_NODE_ID)
 public class SetSUCNodeIdResponse extends SolicitedCallbackResponse {
 
-  @Getter
-  private boolean requestAccepted;
+    @Getter
+    private boolean requestAccepted;
 
-  public SetSUCNodeIdResponse(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-    this.requestAccepted = FieldUtil.byteBoolean(frameBuffer.get(FRAME_OFFSET_PAYLOAD));
-  }
+    public SetSUCNodeIdResponse(ViewBuffer frameBuffer) {
+        super(frameBuffer);
+        this.requestAccepted = FieldUtil.byteBoolean(frameBuffer.get(FRAME_OFFSET_PAYLOAD));
+    }
 
-  @Override
-  public boolean isSolicitedCallbackToFollow() {
-    return requestAccepted;
-  }
+    @Override
+    public boolean isSolicitedCallbackToFollow() {
+        return requestAccepted;
+    }
 }

@@ -14,7 +14,7 @@ public class MeterReportTest {
 
     @Test
     public void testReport1() {
-        byte[] payload = new byte[] {
+        byte[] payload = new byte[]{
                 0x32, 0x02, 0x21, 0x44, 0x00, (byte) 0xaa, 0x07, 0x10, 0x01, 0x20, 0x01, 0x03, (byte) 0xff, (byte) 0xac
         };
 
@@ -36,7 +36,7 @@ public class MeterReportTest {
 
     @Test
     public void testReport2() {
-        byte[] payload = new byte[] {
+        byte[] payload = new byte[]{
                 0x32, 0x02, 0x21, 0x32, 0x50, 0x11, 0x34, 0x01, 0x66, (byte) 0xfe
         };
 

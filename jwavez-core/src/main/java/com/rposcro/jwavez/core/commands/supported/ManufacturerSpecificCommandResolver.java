@@ -13,14 +13,14 @@ import java.util.function.BiFunction;
 @SupportedCommandResolver(commandClass = CommandClass.CMD_CLASS_MANUFACTURER_SPECIFIC)
 public class ManufacturerSpecificCommandResolver extends AbstractCommandResolver<ManufacturerSpecificCommandType> {
 
-  private static Map<ManufacturerSpecificCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
+    private static Map<ManufacturerSpecificCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
 
-  static {
-    suppliersPerCommandType = new HashMap<>();
-    suppliersPerCommandType.put(ManufacturerSpecificCommandType.MANUFACTURER_SPECIFIC_REPORT, ManufacturerSpecificReport::new);
-  }
+    static {
+        suppliersPerCommandType = new HashMap<>();
+        suppliersPerCommandType.put(ManufacturerSpecificCommandType.MANUFACTURER_SPECIFIC_REPORT, ManufacturerSpecificReport::new);
+    }
 
-  public ManufacturerSpecificCommandResolver() {
-    super(suppliersPerCommandType);
-  }
+    public ManufacturerSpecificCommandResolver() {
+        super(suppliersPerCommandType);
+    }
 }

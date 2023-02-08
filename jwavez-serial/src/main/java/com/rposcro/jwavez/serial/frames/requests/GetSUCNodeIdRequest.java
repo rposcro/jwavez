@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class GetSUCNodeIdRequest extends ZWaveRequest {
 
-  public static SerialRequest createGetSUCNodeIdRequest() {
-    return nonPayloadRequest(GET_SUC_NODE_ID);
-  }
+    public static SerialRequest createGetSUCNodeIdRequest() {
+        return nonPayloadRequest(GET_SUC_NODE_ID);
+    }
 }

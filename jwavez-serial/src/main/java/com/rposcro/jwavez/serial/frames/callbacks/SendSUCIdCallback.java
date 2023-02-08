@@ -10,12 +10,12 @@ import lombok.Getter;
 @CallbackFrameModel(function = SerialCommand.SEND_SUC_ID)
 public class SendSUCIdCallback extends FlowCallback {
 
-  private TransmitCompletionStatus txStatus;
-  private boolean statusReportPresent;
+    private TransmitCompletionStatus txStatus;
+    private boolean statusReportPresent;
 
-  public SendSUCIdCallback(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-    this.txStatus = TransmitCompletionStatus.ofCode(frameBuffer.get());
-    this.statusReportPresent = frameBuffer.remaining() > 1;
-  }
+    public SendSUCIdCallback(ViewBuffer frameBuffer) {
+        super(frameBuffer);
+        this.txStatus = TransmitCompletionStatus.ofCode(frameBuffer.get());
+        this.statusReportPresent = frameBuffer.remaining() > 1;
+    }
 }

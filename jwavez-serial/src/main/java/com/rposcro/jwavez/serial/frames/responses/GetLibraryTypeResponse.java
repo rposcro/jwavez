@@ -12,10 +12,10 @@ import lombok.Getter;
 @ResponseFrameModel(function = SerialCommand.GET_LIBRARY_TYPE)
 public class GetLibraryTypeResponse extends ZWaveResponse {
 
-  private LibraryType libraryType;
+    private LibraryType libraryType;
 
-  public GetLibraryTypeResponse(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-    this.libraryType = LibraryType.ofCode(frameBuffer.get(FRAME_OFFSET_PAYLOAD));
-  }
+    public GetLibraryTypeResponse(ViewBuffer frameBuffer) {
+        super(frameBuffer);
+        this.libraryType = LibraryType.ofCode(frameBuffer.get(FRAME_OFFSET_PAYLOAD));
+    }
 }

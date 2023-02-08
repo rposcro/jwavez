@@ -7,15 +7,15 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class SetLearnModeRequest extends ZWaveRequest {
 
-  public static SerialRequest createSetLearnModeRequest(LearnMode learnMode, byte callbackFlowId) {
-    return SerialRequest.builder()
-        .responseExpected(false)
-        .serialCommand(SET_LEARN_MODE)
-        .frameData(startUpFrameBuffer(FRAME_CONTROL_SIZE + 2, SET_LEARN_MODE)
-            .put(learnMode.getCode())
-            .put(callbackFlowId)
-            .putCRC())
-        .callbackFlowId(callbackFlowId)
-        .build();
-  }
+    public static SerialRequest createSetLearnModeRequest(LearnMode learnMode, byte callbackFlowId) {
+        return SerialRequest.builder()
+                .responseExpected(false)
+                .serialCommand(SET_LEARN_MODE)
+                .frameData(startUpFrameBuffer(FRAME_CONTROL_SIZE + 2, SET_LEARN_MODE)
+                        .put(learnMode.getCode())
+                        .put(callbackFlowId)
+                        .putCRC())
+                .callbackFlowId(callbackFlowId)
+                .build();
+    }
 }

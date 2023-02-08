@@ -25,7 +25,7 @@ java {
 jar {
     duplicatesStrategy = "exclude"
     manifest {
-        attributes (
+        attributes(
                 "Implementation-Title": "JWaveZ Net Tools",
                 "Implementation-Version": archiveVersion,
                 "Main-Class": "com.rposcro.jwavez.tools.shell.JWaveZShell"

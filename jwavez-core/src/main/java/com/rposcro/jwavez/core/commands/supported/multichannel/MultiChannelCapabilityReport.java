@@ -14,25 +14,25 @@ import lombok.ToString;
 @ToString
 public class MultiChannelCapabilityReport extends ZWaveSupportedCommand<MultiChannelCommandType> {
 
-  private boolean endPointDynamic;
-  private byte endpointId;
-  private GenericDeviceClass genericDeviceClass;
-  private SpecificDeviceClass specificDeviceClass;
-  private CommandClass[] commandClasses;
+    private boolean endPointDynamic;
+    private byte endpointId;
+    private GenericDeviceClass genericDeviceClass;
+    private SpecificDeviceClass specificDeviceClass;
+    private CommandClass[] commandClasses;
 
-  public MultiChannelCapabilityReport(ImmutableBuffer payload, NodeId sourceNodeId) {
-    super(MultiChannelCommandType.MULTI_CHANNEL_CAPABILITY_REPORT, sourceNodeId);
-    payload.skip(2);
-    byte endpoint = payload.next();
-    endPointDynamic = (endpoint & 0x80) != 0;
-    endpointId = (byte) (endpoint & 0x7F);
-    genericDeviceClass = GenericDeviceClass.ofCode(payload.next());
-    specificDeviceClass = SpecificDeviceClass.ofCode(payload.next(), genericDeviceClass);
+    public MultiChannelCapabilityReport(ImmutableBuffer payload, NodeId sourceNodeId) {
+        super(MultiChannelCommandType.MULTI_CHANNEL_CAPABILITY_REPORT, sourceNodeId);
+        payload.skip(2);
+        byte endpoint = payload.next();
+        endPointDynamic = (endpoint & 0x80) != 0;
+        endpointId = (byte) (endpoint & 0x7F);
+        genericDeviceClass = GenericDeviceClass.ofCode(payload.next());
+        specificDeviceClass = SpecificDeviceClass.ofCode(payload.next(), genericDeviceClass);
 
-    int commandClassCount = payload.available();
-    commandClasses = new CommandClass[commandClassCount];
-    for (int i = 0; i < commandClassCount; i++) {
-      commandClasses[i] = CommandClass.optionalOfCode(payload.next()).orElse(CommandClass.CMD_CLASS_UNKNOWN);
+        int commandClassCount = payload.available();
+        commandClasses = new CommandClass[commandClassCount];
+        for (int i = 0; i < commandClassCount; i++) {
+            commandClasses[i] = CommandClass.optionalOfCode(payload.next()).orElse(CommandClass.CMD_CLASS_UNKNOWN);
+        }
     }
-  }
 }

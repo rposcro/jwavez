@@ -36,10 +36,10 @@ public class SwitchBinaryCommands {
     @Autowired
     private SwitchBinaryCommandBuilder switchBinaryCommandBuilder;
 
-    @ShellMethod(value = "Request binary report", key = { "switchbinary report", "sb report" })
+    @ShellMethod(value = "Request binary report", key = {"switchbinary report", "sb report"})
     public String executeBinaryReport(
-            @ShellOption(value = { "--node-id", "-id" }) int nodeId,
-            @ShellOption(value = { "--encapsulate", "-encap", "-ec" }, defaultValue = ShellOption.NULL) String encapsulationParameter
+            @ShellOption(value = {"--node-id", "-id"}) int nodeId,
+            @ShellOption(value = {"--encapsulate", "-encap", "-ec"}, defaultValue = ShellOption.NULL) String encapsulationParameter
     ) throws SerialException {
         ZWaveControlledCommand command = switchBinaryCommandBuilder.v1().buildGetCommand();
         short reportValue;
@@ -57,11 +57,11 @@ public class SwitchBinaryCommands {
         return String.format("Binary value reported: 0x%02X\n", reportValue);
     }
 
-    @ShellMethod(value = "Binary set request", key = { "switchbinary set", "sb set" })
+    @ShellMethod(value = "Binary set request", key = {"switchbinary set", "sb set"})
     public String executeBinarySet(
-            @ShellOption(value = { "--node-id", "-id" }) int nodeId,
-            @ShellOption(value = { "--binary-value", "-value" }) int binaryValue,
-            @ShellOption(value = { "--encapsulate", "-encap", "-ec" }, defaultValue = ShellOption.NULL) String encapsulationParameter
+            @ShellOption(value = {"--node-id", "-id"}) int nodeId,
+            @ShellOption(value = {"--binary-value", "-value"}) int binaryValue,
+            @ShellOption(value = {"--encapsulate", "-encap", "-ec"}, defaultValue = ShellOption.NULL) String encapsulationParameter
     ) throws SerialException {
         ZWaveControlledCommand command = switchBinaryCommandBuilder.v1().buildSetCommand((byte) binaryValue);
 

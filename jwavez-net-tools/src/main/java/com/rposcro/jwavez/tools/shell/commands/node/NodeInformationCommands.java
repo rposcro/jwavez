@@ -36,15 +36,15 @@ public class NodeInformationCommands {
     @Autowired
     private NodeInformationFormatter nodeInformationFormatter;
 
-    @ShellMethod(value = "Learn about node on network and select it", key = { "learn" })
-    public String fetchNodeInformation(@ShellOption(value = { "--node-id", "-id" }) int nodeId) throws SerialException {
+    @ShellMethod(value = "Learn about node on network and select it", key = {"learn"})
+    public String fetchNodeInformation(@ShellOption(value = {"--node-id", "-id"}) int nodeId) throws SerialException {
         NodeInformation nodeInformation = nodeInformationService.fetchNodeInformation(nodeId);
         nodeInformationCache.cacheNodeInformation(nodeInformation);
         nodeScopeContext.setCurrentNodeId(nodeId);
         return "\n" + nodeInformationFormatter.formatVerboseNodeInfo(nodeInformation);
     }
 
-    @ShellMethodAvailability(value = { "learn" })
+    @ShellMethodAvailability(value = {"learn"})
     public Availability checkRemoteAvailability() {
         return shellContext.getDongleDevicePath() != null ?
                 Availability.available() :

@@ -28,8 +28,8 @@ public class NodeContextCommands {
     @Autowired
     private NodeInformationFormatter nodeInformationFormatter;
 
-    @ShellMethod(value = "Select known node", key = { "select", "sel" })
-    public String selectCurrentNodeId(@ShellOption(value = { "--node-id", "-id" }) int nodeId) {
+    @ShellMethod(value = "Select known node", key = {"select", "sel"})
+    public String selectCurrentNodeId(@ShellOption(value = {"--node-id", "-id"}) int nodeId) {
         NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
         if (nodeInformation == null) {
             return String.format("Node %s is unknown, try to fetch it first", nodeId);

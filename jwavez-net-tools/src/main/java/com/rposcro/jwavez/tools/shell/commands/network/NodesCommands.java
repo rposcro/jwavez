@@ -44,7 +44,7 @@ public class NodesCommands {
     @Autowired
     private ConsoleAccessor console;
 
-    @ShellMethod(value = "Check consistency of nodes on the network", key={ "check nodes" })
+    @ShellMethod(value = "Check consistency of nodes on the network", key = {"check nodes"})
     public String checkNodes() throws SerialException {
         List<NodeInformation> cachedNodes = nodeInformationCache.getOrderedNodeList();
         console.flushLine(String.format("Cache holds information about %s node(s)", cachedNodes.size()));

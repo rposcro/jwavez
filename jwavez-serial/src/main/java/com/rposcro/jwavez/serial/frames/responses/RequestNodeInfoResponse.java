@@ -12,11 +12,11 @@ import lombok.Getter;
 @ResponseFrameModel(function = SerialCommand.REQUEST_NODE_INFO)
 public class RequestNodeInfoResponse extends ZWaveResponse {
 
-  @Getter
-  private boolean requestAccepted;
+    @Getter
+    private boolean requestAccepted;
 
-  public RequestNodeInfoResponse(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-    this.requestAccepted = FieldUtil.byteBoolean(frameBuffer.get(FRAME_OFFSET_PAYLOAD));
-  }
+    public RequestNodeInfoResponse(ViewBuffer frameBuffer) {
+        super(frameBuffer);
+        this.requestAccepted = FieldUtil.byteBoolean(frameBuffer.get(FRAME_OFFSET_PAYLOAD));
+    }
 }

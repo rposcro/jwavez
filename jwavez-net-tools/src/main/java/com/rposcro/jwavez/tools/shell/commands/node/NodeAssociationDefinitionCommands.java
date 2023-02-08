@@ -30,10 +30,10 @@ public class NodeAssociationDefinitionCommands {
     @Autowired
     private NodeAssociationDefinitionService definitionService;
 
-    @ShellMethod(value = "Define node association group", key = { "association define" })
+    @ShellMethod(value = "Define node association group", key = {"association define"})
     public String defineAssociationGroup(
-            @ShellOption(value = { "--group-id", "-gi" }) int associationGroupId,
-            @ShellOption(value = { "--group-memo", "-memo" }) String associationGroupMemo
+            @ShellOption(value = {"--group-id", "-gi"}) int associationGroupId,
+            @ShellOption(value = {"--group-memo", "-memo"}) String associationGroupMemo
     ) {
         int nodeId = nodeScopeContext.getCurrentNodeId();
         definitionService.updateOrCreateMeta(nodeId, associationGroupId, associationGroupMemo);
@@ -41,9 +41,9 @@ public class NodeAssociationDefinitionCommands {
                 , nodeId, associationGroupId, associationGroupMemo);
     }
 
-    @ShellMethod(value = "Clone node association groups definitions from given node to current", key = { "association clone" })
+    @ShellMethod(value = "Clone node association groups definitions from given node to current", key = {"association clone"})
     public String cloneAssociationGroups(
-            @ShellOption(value = { "--node-id", "-id" }) int sourceNodeId
+            @ShellOption(value = {"--node-id", "-id"}) int sourceNodeId
     ) {
         int currentNodeId = nodeScopeContext.getCurrentNodeId();
         NodeInformation currentNode = nodeInformationCache.getNodeDetails(currentNodeId);
@@ -61,9 +61,9 @@ public class NodeAssociationDefinitionCommands {
         }
     }
 
-    @ShellMethod(value = "Delete node association group definition", key = { "association delete" })
+    @ShellMethod(value = "Delete node association group definition", key = {"association delete"})
     public String deleteAssociationGroupDefinitionAndValues(
-            @ShellOption(value = { "--group-id", "-gi" }) int associationGroupId
+            @ShellOption(value = {"--group-id", "-gi"}) int associationGroupId
     ) {
         int nodeId = nodeScopeContext.getCurrentNodeId();
         NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);

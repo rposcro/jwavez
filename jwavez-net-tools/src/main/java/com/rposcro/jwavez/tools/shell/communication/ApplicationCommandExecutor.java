@@ -89,7 +89,7 @@ public class ApplicationCommandExecutor {
             SerialRequest request,
             CommandType expectedCommandType,
             long timeout)
-    throws SerialException {
+            throws SerialException {
         try {
             initExecutionContext(expectedCommandType);
             this.futureCommand = new CompletableFuture<>();
@@ -101,9 +101,9 @@ public class ApplicationCommandExecutor {
 
             try {
                 return futureCommand.get(timeout, TimeUnit.MILLISECONDS);
-            } catch(TimeoutException e) {
+            } catch (TimeoutException e) {
                 throw new FlowException("Request failed due to timeout");
-            } catch(Exception e) {
+            } catch (Exception e) {
                 throw new FlowException("Unexpected exception occurred");
             }
         } finally {

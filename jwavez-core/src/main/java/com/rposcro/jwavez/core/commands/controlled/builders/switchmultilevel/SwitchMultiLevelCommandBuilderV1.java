@@ -52,15 +52,15 @@ public class SwitchMultiLevelCommandBuilderV1 {
 
     public ZWaveControlledCommand buildStartLevelChangeCommand(boolean changeDown, boolean ignoreStartLevel, byte startLevel) {
         return new ZWaveControlledCommand(
-            CMD_CLASS_SWITCH_MULTILEVEL.getCode(),
-            SWITCH_MULTILEVEL_START_LEVEL_CHANGE.getCode(),
-            (byte) (0x00 | (changeDown ? 0x40 : 0x00) | (ignoreStartLevel ? 0x20 : 0x00)),
-            startLevel);
+                CMD_CLASS_SWITCH_MULTILEVEL.getCode(),
+                SWITCH_MULTILEVEL_START_LEVEL_CHANGE.getCode(),
+                (byte) (0x00 | (changeDown ? 0x40 : 0x00) | (ignoreStartLevel ? 0x20 : 0x00)),
+                startLevel);
     }
 
     public ZWaveControlledCommand buildStopLevelChangeCommand() {
         return new ZWaveControlledCommand(
-            CMD_CLASS_SWITCH_MULTILEVEL.getCode(),
-            SWITCH_MULTILEVEL_STOP_LEVEL_CHANGE.getCode());
+                CMD_CLASS_SWITCH_MULTILEVEL.getCode(),
+                SWITCH_MULTILEVEL_STOP_LEVEL_CHANGE.getCode());
     }
 }

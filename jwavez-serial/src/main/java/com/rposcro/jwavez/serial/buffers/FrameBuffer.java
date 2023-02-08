@@ -4,10 +4,10 @@ import java.nio.ByteBuffer;
 
 public interface FrameBuffer {
 
-  FrameBuffer put(byte data);
+    FrameBuffer put(byte data);
 
-  ByteBuffer asByteBuffer();
+    ByteBuffer asByteBuffer();
 
-  default void release() {
-  }
+    default void release() {
+    }
 }

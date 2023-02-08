@@ -19,8 +19,8 @@ public class GenericScopeCommands {
     @Autowired
     private ScopeSwitchService scopeSwitchService;
 
-    @ShellMethod(value = "Show or change current working scope", key="scope")
-    public String manageCurrentScope(@ShellOption(value = { "--scope-name", "-sn" }, defaultValue = ShellOption.NULL) String scopeName) {
+    @ShellMethod(value = "Show or change current working scope", key = "scope")
+    public String manageCurrentScope(@ShellOption(value = {"--scope-name", "-sn"}, defaultValue = ShellOption.NULL) String scopeName) {
 
         if (scopeName == null) {
             return "Current working scope is " + shellContext.getShellScope().getScopePath();
@@ -52,11 +52,11 @@ public class GenericScopeCommands {
             if (scopeName.startsWith("/")) {
                 pathNames = scopeName.split("/");
             } else {
-                pathNames = new String[] { scopeName };
+                pathNames = new String[]{scopeName};
             }
 
             ShellScope scope = ShellScope.TOP;
-            for (String pathName: pathNames) {
+            for (String pathName : pathNames) {
                 if (!"".equals(pathName)) {
                     scope = scope.getChildByPathName(pathName);
                     if (scope == null) {
@@ -65,7 +65,7 @@ public class GenericScopeCommands {
                 }
             }
             return scope;
-        } catch(Exception e) {
+        } catch (Exception e) {
         }
 
         return null;

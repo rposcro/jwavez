@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class GetInitDataRequest extends ZWaveRequest {
 
-  public static SerialRequest createGetInitDataRequest() {
-    return nonPayloadRequest(GET_INIT_DATA);
-  }
+    public static SerialRequest createGetInitDataRequest() {
+        return nonPayloadRequest(GET_INIT_DATA);
+    }
 }

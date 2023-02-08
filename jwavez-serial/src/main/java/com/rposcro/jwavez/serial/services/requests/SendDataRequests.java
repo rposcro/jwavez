@@ -13,32 +13,32 @@ import lombok.Builder;
 
 public class SendDataRequests extends AbstractFrameRequests {
 
-  @Builder
-  public SendDataRequests(BufferDispatcher bufferDispatcher) {
-    super(bufferDispatcher);
-  }
-
-  public SerialRequest SendDataRequestFrame(NodeId addresseeId, byte callbackFlowId, ZWaveControlledCommand zWaveCommand) {
-    FrameBuffer buffer = frameBuffer(SerialCommand.ADD_NODE_TO_NETWORK, FRAME_CONTROL_SIZE + 4 + zWaveCommand.getPayloadLength())
-        .put(addresseeId.getId())
-        .put((byte) zWaveCommand.getPayloadLength());
-
-    ImmutableBuffer payloadBuffer = zWaveCommand.getPayloadBuffer();
-    while (payloadBuffer.hasNext()) {
-      buffer.put(payloadBuffer.next());
+    @Builder
+    public SendDataRequests(BufferDispatcher bufferDispatcher) {
+        super(bufferDispatcher);
     }
 
-    buffer.put(defaultTransmitOptions())
-        .put(callbackFlowId)
-        .put(FrameUtil.frameCRC(buffer.asByteBuffer()));
+    public SerialRequest SendDataRequestFrame(NodeId addresseeId, byte callbackFlowId, ZWaveControlledCommand zWaveCommand) {
+        FrameBuffer buffer = frameBuffer(SerialCommand.ADD_NODE_TO_NETWORK, FRAME_CONTROL_SIZE + 4 + zWaveCommand.getPayloadLength())
+                .put(addresseeId.getId())
+                .put((byte) zWaveCommand.getPayloadLength());
 
-    return SerialRequest.builder()
-        .responseExpected(false)
-        .frameData(buffer)
-        .build();
-  }
+        ImmutableBuffer payloadBuffer = zWaveCommand.getPayloadBuffer();
+        while (payloadBuffer.hasNext()) {
+            buffer.put(payloadBuffer.next());
+        }
 
-  private static byte defaultTransmitOptions() {
-    return (byte) (TransmitOption.TRANSMIT_OPTION_ACK.getCode() | TransmitOption.TRANSMIT_OPTION_AUTO_ROUTE.getCode());
-  }
+        buffer.put(defaultTransmitOptions())
+                .put(callbackFlowId)
+                .put(FrameUtil.frameCRC(buffer.asByteBuffer()));
+
+        return SerialRequest.builder()
+                .responseExpected(false)
+                .frameData(buffer)
+                .build();
+    }
+
+    private static byte defaultTransmitOptions() {
+        return (byte) (TransmitOption.TRANSMIT_OPTION_ACK.getCode() | TransmitOption.TRANSMIT_OPTION_AUTO_ROUTE.getCode());
+    }
 }

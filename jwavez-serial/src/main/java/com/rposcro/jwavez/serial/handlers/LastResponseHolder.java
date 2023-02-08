@@ -14,42 +14,42 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class LastResponseHolder implements ResponseHandler {
 
-  private InboundFrameParser parser;
-  private InboundFrameValidator validator;
+    private InboundFrameParser parser;
+    private InboundFrameValidator validator;
 
-  private ZWaveResponse lastResponse;
-  private FrameException lastException;
+    private ZWaveResponse lastResponse;
+    private FrameException lastException;
 
-  public LastResponseHolder() {
-    this.validator = new InboundFrameValidator();
-    this.parser = new InboundFrameParser();
-  }
-
-  public ZWaveResponse get() throws FrameException {
-    try {
-      if (lastException != null) {
-        throw lastException;
-      }
-      return lastResponse;
-    } finally {
-      lastException = null;
-      lastResponse = null;
-    }
-  }
-
-  @Override
-  public void accept(ViewBuffer frameBuffer) {
-    lastException = null;
-    lastResponse = null;
-
-    if (!validator.validate(frameBuffer)) {
-      lastException = new FrameException("Inbound response frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
+    public LastResponseHolder() {
+        this.validator = new InboundFrameValidator();
+        this.parser = new InboundFrameParser();
     }
 
-    try {
-      lastResponse = parser.parseResponseFrame(frameBuffer);
-    } catch(FrameParseException e) {
-      this.lastException = e;
+    public ZWaveResponse get() throws FrameException {
+        try {
+            if (lastException != null) {
+                throw lastException;
+            }
+            return lastResponse;
+        } finally {
+            lastException = null;
+            lastResponse = null;
+        }
     }
-  }
+
+    @Override
+    public void accept(ViewBuffer frameBuffer) {
+        lastException = null;
+        lastResponse = null;
+
+        if (!validator.validate(frameBuffer)) {
+            lastException = new FrameException("Inbound response frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
+        }
+
+        try {
+            lastResponse = parser.parseResponseFrame(frameBuffer);
+        } catch (FrameParseException e) {
+            this.lastException = e;
+        }
+    }
 }

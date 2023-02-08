@@ -34,7 +34,7 @@ class RxTxRouterProcessSpec extends Specification {
     }
 
     def constructProcess(List<List<Integer>> inbounds) {
-        inbounds.forEach({series -> serialPort.addSeries(series)});
+        inbounds.forEach({ series -> serialPort.addSeries(series) });
         serialPort.reset();
 
         return RxTxRouterProcess.builder()

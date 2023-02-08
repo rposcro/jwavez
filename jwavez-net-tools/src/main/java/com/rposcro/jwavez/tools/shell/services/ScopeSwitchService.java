@@ -29,7 +29,7 @@ public class ScopeSwitchService {
         try {
             shellContext.setScopeContext(scopeContextMap.get(requiredScope));
             shell.gatherMethodTargets();
-        } catch(Exception e) {
+        } catch (Exception e) {
             shellContext.setScopeContext(currentScope);
             throw new RuntimeException("Failed to switch to expected scope!", e);
         }

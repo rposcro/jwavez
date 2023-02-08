@@ -9,9 +9,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.MODULE)
 public class SensorBinaryCommandBuilderV1 {
 
-  public ZWaveControlledCommand buildGetCommand() {
-    return new ZWaveControlledCommand(
-            CommandClass.CMD_CLASS_SENSOR_BINARY.getCode(),
-            SensorBinaryCommandType.SENSOR_BINARY_GET.getCode());
-  }
+    public ZWaveControlledCommand buildGetCommand() {
+        return new ZWaveControlledCommand(
+                CommandClass.CMD_CLASS_SENSOR_BINARY.getCode(),
+                SensorBinaryCommandType.SENSOR_BINARY_GET.getCode());
+    }
 }

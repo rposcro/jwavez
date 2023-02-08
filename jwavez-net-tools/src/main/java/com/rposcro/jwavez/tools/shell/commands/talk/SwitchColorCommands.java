@@ -39,8 +39,8 @@ public class SwitchColorCommands {
     @Autowired
     private SwitchColorCommandBuilder switchColorCommandBuilder;
 
-    @ShellMethod(value = "Request color report", key = { "switchcolor report", "sc report" })
-    public String executeColorReport(@ShellOption(value = { "--node-id", "-id" }) int nodeId) throws SerialException {
+    @ShellMethod(value = "Request color report", key = {"switchcolor report", "sc report"})
+    public String executeColorReport(@ShellOption(value = {"--node-id", "-id"}) int nodeId) throws SerialException {
         ZWaveControlledCommand command = switchColorCommandBuilder.v1().buildSupportedGetCommand();
         SwitchColorSupportedReport supportedReport = talkCommunicationService.requestTalk(nodeId, command, SwitchColorCommandType.SWITCH_COLOR_SUPPORTED_REPORT);
 
@@ -56,11 +56,11 @@ public class SwitchColorCommands {
         return message.toString() + "\n";
     }
 
-    @ShellMethod(value = "Send color set request", key = { "switchcolor set", "sc set" })
+    @ShellMethod(value = "Send color set request", key = {"switchcolor set", "sc set"})
     public String executeColorSet(
-            @ShellOption(value = { "--node-id", "-id" }) int nodeId,
-            @ShellOption(value = { "--color-mode", "-mode" }) String colorMode,
-            @ShellOption(value = { "--color-value", "-color" }) String colorValue
+            @ShellOption(value = {"--node-id", "-id"}) int nodeId,
+            @ShellOption(value = {"--color-mode", "-mode"}) String colorMode,
+            @ShellOption(value = {"--color-value", "-color"}) String colorValue
     ) throws SerialException {
         String errorMessage = validateArguments(colorMode, colorValue);
         if (errorMessage != null) {
@@ -98,7 +98,7 @@ public class SwitchColorCommands {
                         + " color components but " + mode.componentsCount + " are required";
             }
             return null;
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return "Unknown color mode " + colorMode + ", available modes: "
                     + Arrays.stream(ColorMode.values()).map(ColorMode::name).collect(Collectors.joining(", "));
         }

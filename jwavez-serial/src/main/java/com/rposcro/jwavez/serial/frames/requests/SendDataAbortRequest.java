@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class SendDataAbortRequest extends ZWaveRequest {
 
-  public static SerialRequest createSendDataAbortRequest() {
-    return nonPayloadRequest(SEND_DATA_ABORT);
-  }
+    public static SerialRequest createSendDataAbortRequest() {
+        return nonPayloadRequest(SEND_DATA_ABORT);
+    }
 }

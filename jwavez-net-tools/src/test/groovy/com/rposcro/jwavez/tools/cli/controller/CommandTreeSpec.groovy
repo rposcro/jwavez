@@ -12,12 +12,12 @@ class CommandTreeSpec extends Specification {
 
     def setup() {
         commandTree = CommandTree.builder()
-        .rootNode(new CommandTreeNode("", "")
-                .addChild(new CommandTreeNode("alias-1", "alias-1 description")
-                        .addChild(new CommandTreeNode("alias-1-1", "sub-alias-1-1 desription"))
-                        .addChild(new CommandTreeNode("alias-1-2", "sub-alias-1-2 desription")
-                        .addChild(new CommandTreeNode("alias-1-2-1", "sub-alias-1-2-1 description"))))
-        ).build();
+                .rootNode(new CommandTreeNode("", "")
+                        .addChild(new CommandTreeNode("alias-1", "alias-1 description")
+                                .addChild(new CommandTreeNode("alias-1-1", "sub-alias-1-1 desription"))
+                                .addChild(new CommandTreeNode("alias-1-2", "sub-alias-1-2 desription")
+                                        .addChild(new CommandTreeNode("alias-1-2-1", "sub-alias-1-2-1 description"))))
+                ).build();
     }
 
     @Unroll
@@ -29,13 +29,13 @@ class CommandTreeSpec extends Specification {
         content.commandNode.alias == alias;
 
         where:
-        args                                            | alias             | options
-        ["alias-1"]                                     | "alias-1"         | []
-        ["alias-1", "-o1", "-o2"]                       | "alias-1"         | ["-o1", "-o2"]
-        ["alias-1", "alias-1-1"]                        | "alias-1-1"       | []
-        ["alias-1", "alias-1-2", "alias-1-2-1", "-o3"]  | "alias-1-2-1"     | ["-o3"]
-        ["alias-1", "arg0"]                             | "alias-1"         | ["arg0"]
-        ["alias-1", "alias-1-2", "arg0", "arg1", "-o3"] | "alias-1-2"       | ["arg0", "arg1", "-o3"]
+        args                                            | alias         | options
+        ["alias-1"]                                     | "alias-1"     | []
+        ["alias-1", "-o1", "-o2"]                       | "alias-1"     | ["-o1", "-o2"]
+        ["alias-1", "alias-1-1"]                        | "alias-1-1"   | []
+        ["alias-1", "alias-1-2", "alias-1-2-1", "-o3"]  | "alias-1-2-1" | ["-o3"]
+        ["alias-1", "arg0"]                             | "alias-1"     | ["arg0"]
+        ["alias-1", "alias-1-2", "arg0", "arg1", "-o3"] | "alias-1-2"   | ["arg0", "arg1", "-o3"]
     }
 
     @Unroll
@@ -47,10 +47,10 @@ class CommandTreeSpec extends Specification {
         thrown CommandLineException;
 
         where:
-        args                                    | _
-        []                                      | _
-        ["alias-1-2-1"]                         | _
-        ["alias-1-1", "-o1", "-o2"]             | _
+        args                        | _
+        []                          | _
+        ["alias-1-2-1"]             | _
+        ["alias-1-1", "-o1", "-o2"] | _
     }
 
     @Unroll
@@ -62,11 +62,11 @@ class CommandTreeSpec extends Specification {
         commandNode.alias == alias;
 
         where:
-        path                                        | alias
-        ["alias-1"]                                 | "alias-1"
-        ["alias-1", "alias-1-1"]                    | "alias-1-1"
-        ["alias-1", "alias-1-2"]                    | "alias-1-2"
-        ["alias-1", "alias-1-2", "alias-1-2-1"]     | "alias-1-2-1"
+        path                                    | alias
+        ["alias-1"]                             | "alias-1"
+        ["alias-1", "alias-1-1"]                | "alias-1-1"
+        ["alias-1", "alias-1-2"]                | "alias-1-2"
+        ["alias-1", "alias-1-2", "alias-1-2-1"] | "alias-1-2-1"
     }
 
     @Unroll
@@ -78,13 +78,13 @@ class CommandTreeSpec extends Specification {
         thrown CommandLineException;
 
         where:
-        path                                        | _
-        []                                          | _
-        ["alias-ne"]                                | _
-        ["alias-1-1"]                               | _
-        ["alias-1-2"]                               | _
-        ["alias-1-2-1"]                             | _
-        ["alias-1-2", "alias-1-2-1"]                | _
+        path                         | _
+        []                           | _
+        ["alias-ne"]                 | _
+        ["alias-1-1"]                | _
+        ["alias-1-2"]                | _
+        ["alias-1-2-1"]              | _
+        ["alias-1-2", "alias-1-2-1"] | _
     }
 
     @Unroll
@@ -100,14 +100,14 @@ class CommandTreeSpec extends Specification {
         commandPath == expectedPath;
 
         where:
-        args                        | expectedPath
-        []                          | []
-        ["-opt", "-arg"]            | []
-        ["item"]                    | ["item"]
-        ["item", "thing"]           | ["item", "thing"]
-        ["item", "thing"]           | ["item", "thing"]
-        ["item", "thing", "-o1"]    | ["item", "thing"]
-        ["item", "-o1", "-o2"]      | ["item"]
-        ["item", "-o1", "thing"]    | ["item"]
+        args                     | expectedPath
+        []                       | []
+        ["-opt", "-arg"]         | []
+        ["item"]                 | ["item"]
+        ["item", "thing"]        | ["item", "thing"]
+        ["item", "thing"]        | ["item", "thing"]
+        ["item", "thing", "-o1"] | ["item", "thing"]
+        ["item", "-o1", "-o2"]   | ["item"]
+        ["item", "-o1", "thing"] | ["item"]
     }
 }

@@ -14,15 +14,15 @@ import java.util.function.BiFunction;
 @SupportedCommandResolver(commandClass = CommandClass.CMD_CLASS_CENTRAL_SCENE)
 public class CentralSceneCommandResolver extends AbstractCommandResolver<CentralSceneCommandType> {
 
-  private static Map<CentralSceneCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
+    private static Map<CentralSceneCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
 
-  static {
-    suppliersPerCommandType = new HashMap<>();
-    suppliersPerCommandType.put(CentralSceneCommandType.CENTRAL_SCENE_SUPPORTED_REPORT, CentralSceneSupportedReport::new);
-    suppliersPerCommandType.put(CentralSceneCommandType.CENTRAL_SCENE_NOTIFICATION, CentralSceneNotification::new);
-  }
+    static {
+        suppliersPerCommandType = new HashMap<>();
+        suppliersPerCommandType.put(CentralSceneCommandType.CENTRAL_SCENE_SUPPORTED_REPORT, CentralSceneSupportedReport::new);
+        suppliersPerCommandType.put(CentralSceneCommandType.CENTRAL_SCENE_NOTIFICATION, CentralSceneNotification::new);
+    }
 
-  public CentralSceneCommandResolver() {
-    super(suppliersPerCommandType);
-  }
+    public CentralSceneCommandResolver() {
+        super(suppliersPerCommandType);
+    }
 }

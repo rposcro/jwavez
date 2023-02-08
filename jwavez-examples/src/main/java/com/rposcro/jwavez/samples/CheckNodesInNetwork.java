@@ -10,35 +10,35 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class CheckNodesInNetwork extends AbstractExample {
 
-  private void checkDongleIds(BasicSynchronousController controller) throws SerialException {
-    SerialRequest request = MemoryGetIdRequest.createMemoryGetIdRequest();
-    MemoryGetIdResponse response = controller.requestResponseFlow(request);
+    private void checkDongleIds(BasicSynchronousController controller) throws SerialException {
+        SerialRequest request = MemoryGetIdRequest.createMemoryGetIdRequest();
+        MemoryGetIdResponse response = controller.requestResponseFlow(request);
 
-    System.out.printf("Home Id: %02x\n", response.getHomeId());
-    System.out.printf("Node Id: %02x\n", response.getNodeId().getId());
-  }
-
-  private void checkNodesIds(BasicSynchronousController controller) throws SerialException {
-    SerialRequest request = GetInitDataRequest.createGetInitDataRequest();
-    GetInitDataResponse response = controller.requestResponseFlow(request);
-
-    System.out.print("Included nodes: ");
-    response.getNodes().stream().forEach(node -> {
-      System.out.printf("%02x ", node.getId());
-    });
-  }
-
-  private void runExample(String device) throws SerialException {
-    try (BasicSynchronousController controller = BasicSynchronousController.builder()
-        .dongleDevice(device)
-        .build()
-        .connect();) {
-      checkDongleIds(controller);
-      checkNodesIds(controller);
+        System.out.printf("Home Id: %02x\n", response.getHomeId());
+        System.out.printf("Node Id: %02x\n", response.getNodeId().getId());
     }
-  }
 
-  public static void main(String... args) throws SerialException {
-    new CheckNodesInNetwork().runExample(System.getProperty("zwave.dongleDevice", DEFAULT_DEVICE));
-  }
+    private void checkNodesIds(BasicSynchronousController controller) throws SerialException {
+        SerialRequest request = GetInitDataRequest.createGetInitDataRequest();
+        GetInitDataResponse response = controller.requestResponseFlow(request);
+
+        System.out.print("Included nodes: ");
+        response.getNodes().stream().forEach(node -> {
+            System.out.printf("%02x ", node.getId());
+        });
+    }
+
+    private void runExample(String device) throws SerialException {
+        try (BasicSynchronousController controller = BasicSynchronousController.builder()
+                .dongleDevice(device)
+                .build()
+                .connect();) {
+            checkDongleIds(controller);
+            checkNodesIds(controller);
+        }
+    }
+
+    public static void main(String... args) throws SerialException {
+        new CheckNodesInNetwork().runExample(System.getProperty("zwave.dongleDevice", DEFAULT_DEVICE));
+    }
 }

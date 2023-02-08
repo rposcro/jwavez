@@ -20,7 +20,7 @@ public class NodesRelatedCommands {
     @Autowired
     private NodeInformationFormatter nodeInformationFormatter;
 
-    @ShellMethod(value = "List known nodes", key = { "list", "ls" })
+    @ShellMethod(value = "List known nodes", key = {"list", "ls"})
     public String listKnownNodes() {
         return nodeInformationCache.getOrderedNodeList().stream()
                 .map(node -> "Id " + node.getNodeId() + ": " + node.getNodeMemo())

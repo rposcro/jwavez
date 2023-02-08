@@ -13,14 +13,14 @@ import java.util.function.BiFunction;
 @SupportedCommandResolver(commandClass = CommandClass.CMD_CLASS_METER)
 public class MeterCommandResolver extends AbstractCommandResolver<MeterCommandType> {
 
-  private static Map<MeterCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
+    private static Map<MeterCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
 
-  static {
-    suppliersPerCommandType = new HashMap<>();
-    suppliersPerCommandType.put(MeterCommandType.METER_REPORT, MeterReport::new);
-  }
+    static {
+        suppliersPerCommandType = new HashMap<>();
+        suppliersPerCommandType.put(MeterCommandType.METER_REPORT, MeterReport::new);
+    }
 
-  public MeterCommandResolver() {
-    super(suppliersPerCommandType);
-  }
+    public MeterCommandResolver() {
+        super(suppliersPerCommandType);
+    }
 }

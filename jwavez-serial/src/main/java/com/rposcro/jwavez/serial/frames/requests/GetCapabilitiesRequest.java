@@ -6,7 +6,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class GetCapabilitiesRequest extends ZWaveRequest {
 
-  public static SerialRequest createGetCapabilitiesRequest() {
-    return nonPayloadRequest(GET_CAPABILITIES);
-  }
+    public static SerialRequest createGetCapabilitiesRequest() {
+        return nonPayloadRequest(GET_CAPABILITIES);
+    }
 }

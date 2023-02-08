@@ -132,7 +132,7 @@ public class SerialControllerManager {
 
         try {
             Thread.sleep(200);  // to make sure OS releases hook before we attempt to connect another controller
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
         }
     }
 }

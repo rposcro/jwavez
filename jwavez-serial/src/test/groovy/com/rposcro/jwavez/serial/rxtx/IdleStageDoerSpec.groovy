@@ -70,9 +70,9 @@ class IdleStageDoerSpec extends Specification {
         receivedCallbackData == callbackData;
 
         where:
-        inboundData                          | expPosition   | expLimit  | expOut | expResult
-        callbackData                         | 5             | 5         | [ACK]  | IdleStageResult.RESULT_CALLBACK_HANDLED
-        callbackData + [CAN]                 | 5             | 6         | [ACK]  | IdleStageResult.RESULT_CALLBACK_HANDLED
+        inboundData          | expPosition | expLimit | expOut | expResult
+        callbackData         | 5           | 5        | [ACK]  | IdleStageResult.RESULT_CALLBACK_HANDLED
+        callbackData + [CAN] | 5           | 6        | [ACK]  | IdleStageResult.RESULT_CALLBACK_HANDLED
     }
 
     @Unroll
@@ -91,12 +91,12 @@ class IdleStageDoerSpec extends Specification {
         receivedCallbackData == [];
 
         where:
-        inboundData                          | expPosition   | expLimit  | expOut | expResult
-        [ACK]                                | 0             | 0         | [CAN]  | IdleStageResult.RESULT_ODD_INCOME
-        [CAN]                                | 0             | 0         | [CAN]  | IdleStageResult.RESULT_ODD_INCOME
-        [NAK]                                | 0             | 0         | [CAN]  | IdleStageResult.RESULT_ODD_INCOME
-        [SOF, 0x03, 0x01, 0x44, 0xee]        | 0             | 0         | [CAN]  | IdleStageResult.RESULT_ODD_INCOME
-        [SOF, 0x03, 0x01, 0x44, 0xee, 0x18]  | 0             | 0         | [CAN]  | IdleStageResult.RESULT_ODD_INCOME
+        inboundData                         | expPosition | expLimit | expOut | expResult
+        [ACK]                               | 0           | 0        | [CAN]  | IdleStageResult.RESULT_ODD_INCOME
+        [CAN]                               | 0           | 0        | [CAN]  | IdleStageResult.RESULT_ODD_INCOME
+        [NAK]                               | 0           | 0        | [CAN]  | IdleStageResult.RESULT_ODD_INCOME
+        [SOF, 0x03, 0x01, 0x44, 0xee]       | 0           | 0        | [CAN]  | IdleStageResult.RESULT_ODD_INCOME
+        [SOF, 0x03, 0x01, 0x44, 0xee, 0x18] | 0           | 0        | [CAN]  | IdleStageResult.RESULT_ODD_INCOME
     }
 
     @Unroll
@@ -112,17 +112,17 @@ class IdleStageDoerSpec extends Specification {
         thrown expException;
 
         where:
-        inboundData                     | expException
-        [0x01, 0x03, 0x00]              | StreamTimeoutException
-        [0x55, 0x03, 0x00, 0x44, 0xee]  | StreamMalformedException
+        inboundData                    | expException
+        [0x01, 0x03, 0x00]             | StreamTimeoutException
+        [0x55, 0x03, 0x00, 0x44, 0xee] | StreamMalformedException
     }
 
     def "carries exceptions from port"() {
         given:
         def serialPort = Mock(SerialPort);
         def doer = IdleStageDoer.builder()
-            .inboundStream(FrameInboundStream.builder().serialPort(serialPort).build())
-            .build();
+                .inboundStream(FrameInboundStream.builder().serialPort(serialPort).build())
+                .build();
         serialPort.readData(_) >> { buffer -> throw new SerialPortException("") };
 
         when:

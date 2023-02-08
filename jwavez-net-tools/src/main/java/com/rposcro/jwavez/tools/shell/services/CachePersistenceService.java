@@ -46,7 +46,7 @@ public class CachePersistenceService {
                     objectMapper.writeValue(nodeDetailsFile, Collections.emptyList());
                 }
             }
-        } catch(IOException e) {
+        } catch (IOException e) {
             log.warn("Failed to create cache file, persistence not available!", e);
         }
     }
@@ -65,7 +65,8 @@ public class CachePersistenceService {
         if (isPersistenceAvailable()) {
             try {
                 List<NodeInformation> nodeDetails = objectMapper.readValue(
-                        nodeDetailsFile, new TypeReference<List<NodeInformation>>() { });
+                        nodeDetailsFile, new TypeReference<List<NodeInformation>>() {
+                        });
                 return nodeDetails;
             } catch (IOException e) {
                 log.error("Failed to restore node details collection!", e);

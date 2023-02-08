@@ -13,14 +13,14 @@ import java.util.function.BiFunction;
 @SupportedCommandResolver(commandClass = CommandClass.CMD_CLASS_POWERLEVEL)
 public class PowerLevelCommandResolver extends AbstractCommandResolver<PowerLevelCommandType> {
 
-  private static Map<PowerLevelCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
+    private static Map<PowerLevelCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
 
-  static {
-    suppliersPerCommandType = new HashMap<>();
-    suppliersPerCommandType.put(PowerLevelCommandType.POWER_LEVEL_REPORT, PowerLevelReport::new);
-  }
+    static {
+        suppliersPerCommandType = new HashMap<>();
+        suppliersPerCommandType.put(PowerLevelCommandType.POWER_LEVEL_REPORT, PowerLevelReport::new);
+    }
 
-  public PowerLevelCommandResolver() {
-    super(suppliersPerCommandType);
-  }
+    public PowerLevelCommandResolver() {
+        super(suppliersPerCommandType);
+    }
 }

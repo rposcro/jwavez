@@ -8,11 +8,11 @@ import lombok.Getter;
 @Getter
 public class ZWaveResponse {
 
-  private SerialCommand serialCommand;
-  private int length;
+    private SerialCommand serialCommand;
+    private int length;
 
-  public ZWaveResponse(ViewBuffer viewBuffer) {
-    this.length = viewBuffer.get(SerialFrameConstants.FRAME_OFFSET_LENGTH) & 0xff;
-    this.serialCommand = SerialCommand.ofCode(viewBuffer.get(SerialFrameConstants.FRAME_OFFSET_COMMAND));
-  }
+    public ZWaveResponse(ViewBuffer viewBuffer) {
+        this.length = viewBuffer.get(SerialFrameConstants.FRAME_OFFSET_LENGTH) & 0xff;
+        this.serialCommand = SerialCommand.ofCode(viewBuffer.get(SerialFrameConstants.FRAME_OFFSET_COMMAND));
+    }
 }

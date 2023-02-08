@@ -13,8 +13,7 @@ public enum SetLearnModeFlowState implements TransactionState {
     LEARN_MODE_STARTED(30_000),
     LEARN_MODE_DONE(-1),
     LEARN_MODE_CANCELLED(-1),
-    LEARN_MODE_FAILED(-1)
-    ;
+    LEARN_MODE_FAILED(-1);
 
     private long transitTimeout;
 }

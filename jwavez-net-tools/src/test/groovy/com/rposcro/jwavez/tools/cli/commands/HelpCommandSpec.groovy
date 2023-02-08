@@ -39,11 +39,11 @@ class HelpCommandSpec extends Specification {
         println(ex.getMessage());
 
         where:
-        args                    | _
-        []                      | _
-        ["-opt"]                | _
-        ["arg"]                 | _
-        ["info", "-opt"]        | _
-        ["info", "arg"]         | _
+        args             | _
+        []               | _
+        ["-opt"]         | _
+        ["arg"]          | _
+        ["info", "-opt"] | _
+        ["info", "arg"]  | _
     }
 }

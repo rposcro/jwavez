@@ -46,10 +46,10 @@ class PackageScannerSpec extends Specification {
         classList.containsAll(expectedClasses);
 
         where:
-        packagePaths                        | expectedClasses
-        [ "test.scanner.correct" ]          | [ TCAnnotatedTypedA.class, TCAnnotatedTypedB.class, TCAnnotatedTypedC.class, TCAnnotatedTypedD.class ]
-        [ "test.scanner.incorrect1" ]       | [ TI1AnnotatedTypedA.class, TI1AnnotatedTypedC.class, TI1AnnotatedB.class, TI1AnnotatedTypedD.class ]
-        [ "test.scanner.incorrect2" ]       | [ TI2AnnotatedTypedA.class, TI2AnnotatedTypedB.class, TI2AnnotatedTypedC.class ]
+        packagePaths                | expectedClasses
+        ["test.scanner.correct"]    | [TCAnnotatedTypedA.class, TCAnnotatedTypedB.class, TCAnnotatedTypedC.class, TCAnnotatedTypedD.class]
+        ["test.scanner.incorrect1"] | [TI1AnnotatedTypedA.class, TI1AnnotatedTypedC.class, TI1AnnotatedB.class, TI1AnnotatedTypedD.class]
+        ["test.scanner.incorrect2"] | [TI2AnnotatedTypedA.class, TI2AnnotatedTypedB.class, TI2AnnotatedTypedC.class]
     }
 
     def "successful scan for classified classes {#packagePaths}"() {
@@ -65,8 +65,8 @@ class PackageScannerSpec extends Specification {
         classList.containsAll(expectedClasses);
 
         where:
-        packagePaths                    | expectedClasses
-        [ "test.scanner.correct" ]      | [ TCAnnotatedTypedA.class, TCAnnotatedTypedB.class, TCAnnotatedTypedC.class, TCAnnotatedTypedD.class ]
+        packagePaths             | expectedClasses
+        ["test.scanner.correct"] | [TCAnnotatedTypedA.class, TCAnnotatedTypedB.class, TCAnnotatedTypedC.class, TCAnnotatedTypedD.class]
     }
 
     def "failed scan for classified classes {#packagePaths}"() {
@@ -81,7 +81,7 @@ class PackageScannerSpec extends Specification {
         thrown CodeIntegrityException;
 
         where:
-        packagePaths                    | _
-        [ "test.scanner.incorrect2" ]   | _
+        packagePaths                | _
+        ["test.scanner.incorrect2"] | _
     }
 }

@@ -9,16 +9,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.MODULE)
 public class SwitchBinaryCommandBuilderV1 {
 
-  public ZWaveControlledCommand buildGetCommand() {
-    return new ZWaveControlledCommand(
-            CommandClass.CMD_CLASS_SWITCH_BINARY.getCode(),
-            SwitchBinaryCommandType.BINARY_SWITCH_GET.getCode());
-  }
+    public ZWaveControlledCommand buildGetCommand() {
+        return new ZWaveControlledCommand(
+                CommandClass.CMD_CLASS_SWITCH_BINARY.getCode(),
+                SwitchBinaryCommandType.BINARY_SWITCH_GET.getCode());
+    }
 
-  public ZWaveControlledCommand buildSetCommand(byte value) {
-    return new ZWaveControlledCommand(
-            CommandClass.CMD_CLASS_SWITCH_BINARY.getCode(),
-            SwitchBinaryCommandType.BINARY_SWITCH_SET.getCode(),
-            value);
-  }
+    public ZWaveControlledCommand buildSetCommand(byte value) {
+        return new ZWaveControlledCommand(
+                CommandClass.CMD_CLASS_SWITCH_BINARY.getCode(),
+                SwitchBinaryCommandType.BINARY_SWITCH_SET.getCode(),
+                value);
+    }
 }

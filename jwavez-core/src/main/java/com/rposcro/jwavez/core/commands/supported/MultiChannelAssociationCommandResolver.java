@@ -17,15 +17,15 @@ import static com.rposcro.jwavez.core.commands.types.MultiChannelAssociationComm
 @SupportedCommandResolver(commandClass = CommandClass.CMD_CLASS_MULTI_CHANNEL_ASSOCIATION)
 public class MultiChannelAssociationCommandResolver extends AbstractCommandResolver<MultiChannelAssociationCommandType> {
 
-  private static Map<MultiChannelAssociationCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
+    private static Map<MultiChannelAssociationCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
 
-  static {
-    suppliersPerCommandType = new HashMap<>();
-    suppliersPerCommandType.put(MULTI_CHANNEL_ASSOCIATION_REPORT, MultiChannelAssociationReport::new);
-    suppliersPerCommandType.put(MULTI_CHANNEL_ASSOCIATION_GROUPINGS_REPORT, MultiChannelAssociationGroupingsReport::new);
-  }
+    static {
+        suppliersPerCommandType = new HashMap<>();
+        suppliersPerCommandType.put(MULTI_CHANNEL_ASSOCIATION_REPORT, MultiChannelAssociationReport::new);
+        suppliersPerCommandType.put(MULTI_CHANNEL_ASSOCIATION_GROUPINGS_REPORT, MultiChannelAssociationGroupingsReport::new);
+    }
 
-  public MultiChannelAssociationCommandResolver() {
-    super(suppliersPerCommandType);
-  }
+    public MultiChannelAssociationCommandResolver() {
+        super(suppliersPerCommandType);
+    }
 }

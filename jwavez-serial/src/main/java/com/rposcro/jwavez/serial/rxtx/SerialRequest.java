@@ -9,9 +9,9 @@ import lombok.Getter;
 @Builder
 public class SerialRequest {
 
-  private FrameBuffer frameData;
-  private SerialCommand serialCommand;
-  private boolean retransmissionDisabled;
-  private boolean responseExpected;
-  private byte callbackFlowId;
+    private FrameBuffer frameData;
+    private SerialCommand serialCommand;
+    private boolean retransmissionDisabled;
+    private boolean responseExpected;
+    private byte callbackFlowId;
 }

@@ -43,7 +43,7 @@ public class NodeMultiChannelAssociationService {
                                 associationCommandBuilder.v2().buildGetCommand(groupId),
                                 MultiChannelAssociationCommandType.MULTI_CHANNEL_ASSOCIATION_REPORT,
                                 SerialUtils.DEFAULT_TIMEOUT)
-        )).getAcquiredSupportedCommand();
+                )).getAcquiredSupportedCommand();
 
         List<Integer> associatedNodes = Arrays.stream(associationReport.getNodeIds())
                 .map(id -> ((int) id.getId()) & 0xff)

@@ -7,7 +7,7 @@ import com.rposcro.jwavez.serial.frames.ResponseFrameModel;
 @ResponseFrameModel(function = SerialCommand.ENABLE_SUC)
 public class EnableSUCResponse extends ZWaveResponse {
 
-  public EnableSUCResponse(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-  }
+    public EnableSUCResponse(ViewBuffer frameBuffer) {
+        super(frameBuffer);
+    }
 }

@@ -37,7 +37,7 @@ public class BeanPropertiesFormatter {
         Arrays.stream(beanInfo.getPropertyDescriptors()).forEach(descriptor -> {
             try {
                 properties.put(descriptor.getDisplayName(), formatPropertyValue(descriptor, bean));
-            } catch(Exception e) {
+            } catch (Exception e) {
                 log.info("Skipped property " + descriptor.getDisplayName() + " skipped due to an exception " + e.getMessage());
             }
         });

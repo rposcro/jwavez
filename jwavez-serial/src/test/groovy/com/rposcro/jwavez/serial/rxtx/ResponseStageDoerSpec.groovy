@@ -60,12 +60,12 @@ class ResponseStageDoerSpec extends Specification {
         receivedResponseData == responseData;
 
         where:
-        inboundData                                                                                 | _
-        [responseData]                                                                              | _
-        singletonsOf(responseData)                                                                  | _
-        [responseData + [0x06, 0x15]]                                                               | _
-        [responseData, [0x06, 0x15]]                                                                | _
-        [responseData.subList(0, 3), responseData.subList(3, responseData.size()), [0x06, 0x15]]    | _
+        inboundData                                                                              | _
+        [responseData]                                                                           | _
+        singletonsOf(responseData)                                                               | _
+        [responseData + [0x06, 0x15]]                                                            | _
+        [responseData, [0x06, 0x15]]                                                             | _
+        [responseData.subList(0, 3), responseData.subList(3, responseData.size()), [0x06, 0x15]] | _
     }
 
     @Unroll
@@ -83,15 +83,15 @@ class ResponseStageDoerSpec extends Specification {
         doer.inboundStream.frameBuffer.limit() == 0;
 
         where:
-        inboundData                             | expOutData   | expResult
-        [[ACK]]                                 | [CAN]        | ResponseStageResult.RESULT_ODD_CATEGORY
-        [[ACK] + responseData]                  | [CAN]        | ResponseStageResult.RESULT_ODD_CATEGORY
-        [[ACK], responseData]                   | [CAN]        | ResponseStageResult.RESULT_ODD_CATEGORY
-        [[NAK]]                                 | [CAN]        | ResponseStageResult.RESULT_ODD_CATEGORY
-        [[CAN]]                                 | [CAN]        | ResponseStageResult.RESULT_ODD_CATEGORY
-        [[SOF, 0x03, 0x01, 0x2a, 0xff]]         | [CAN]        | ResponseStageResult.RESULT_DIVERGENT_RESPONSE
-        [[SOF, 0x03, 0x01, 0x2a, 0xff], [ACK]]  | [CAN]        | ResponseStageResult.RESULT_DIVERGENT_RESPONSE
-        [[SOF], [0x03, 0x01, 0x2a, 0xff]]       | [CAN]        | ResponseStageResult.RESULT_DIVERGENT_RESPONSE
+        inboundData                            | expOutData | expResult
+        [[ACK]]                                | [CAN]      | ResponseStageResult.RESULT_ODD_CATEGORY
+        [[ACK] + responseData]                 | [CAN]      | ResponseStageResult.RESULT_ODD_CATEGORY
+        [[ACK], responseData]                  | [CAN]      | ResponseStageResult.RESULT_ODD_CATEGORY
+        [[NAK]]                                | [CAN]      | ResponseStageResult.RESULT_ODD_CATEGORY
+        [[CAN]]                                | [CAN]      | ResponseStageResult.RESULT_ODD_CATEGORY
+        [[SOF, 0x03, 0x01, 0x2a, 0xff]]        | [CAN]      | ResponseStageResult.RESULT_DIVERGENT_RESPONSE
+        [[SOF, 0x03, 0x01, 0x2a, 0xff], [ACK]] | [CAN]      | ResponseStageResult.RESULT_DIVERGENT_RESPONSE
+        [[SOF], [0x03, 0x01, 0x2a, 0xff]]      | [CAN]      | ResponseStageResult.RESULT_DIVERGENT_RESPONSE
     }
 
     def "handles response timeout"() {
@@ -119,9 +119,9 @@ class ResponseStageDoerSpec extends Specification {
         thrown expException;
 
         where:
-        inboundData                     | expException
-        [[0x01, 0x03, 0x00]]            | StreamTimeoutException
-        [[0x00]]                        | StreamMalformedException
+        inboundData          | expException
+        [[0x01, 0x03, 0x00]] | StreamTimeoutException
+        [[0x00]]             | StreamMalformedException
     }
 
     def "carries exceptions from port"() {
@@ -142,12 +142,12 @@ class ResponseStageDoerSpec extends Specification {
 
     def singletonsOf(List<Integer> data) {
         return data.stream()
-            .map({value -> Collections.singletonList(value)})
-            .collect(Collectors.toList());
+                .map({ value -> Collections.singletonList(value) })
+                .collect(Collectors.toList());
     }
 
     def makeDoer(List<List<Integer>> frameData) {
-        frameData.forEach({series -> serialPort.addSeries(series)});
+        frameData.forEach({ series -> serialPort.addSeries(series) });
         serialPort.reset();
         def inboundStream = FrameInboundStream.builder().serialPort(serialPort).configuration(rxTxConfiguration).build();
         def outboundStream = FrameOutboundStream.builder().serialPort(serialPort).build();

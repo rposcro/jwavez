@@ -49,15 +49,15 @@ public class SerialCallbackExecutor {
     }
 
     public <T extends ZWaveCallback> T requestZWCallback(SerialRequest request, SerialCommand expectedCallbackCommand, long timeout)
-    throws SerialException {
+            throws SerialException {
         try {
             initExecutionContext(expectedCallbackCommand);
             futureCommand = new CompletableFuture<>();
             controller.requestResponseFlow(request);
             return (T) futureCommand.get(timeout, TimeUnit.MILLISECONDS);
-        } catch(TimeoutException e) {
+        } catch (TimeoutException e) {
             throw new FlowException("Request failed due to timeout");
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new FlowException("Unexpected exception occurred");
         } finally {
             cancelExecutionContext();

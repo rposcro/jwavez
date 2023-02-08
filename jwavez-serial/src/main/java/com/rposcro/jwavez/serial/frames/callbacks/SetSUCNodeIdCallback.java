@@ -10,10 +10,10 @@ import lombok.Getter;
 @CallbackFrameModel(function = SerialCommand.SET_SUC_NODE_ID)
 public class SetSUCNodeIdCallback extends FlowCallback {
 
-  private boolean successful;
+    private boolean successful;
 
-  public SetSUCNodeIdCallback(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-    this.successful = FieldUtil.byteBoolean(frameBuffer.get());
-  }
+    public SetSUCNodeIdCallback(ViewBuffer frameBuffer) {
+        super(frameBuffer);
+        this.successful = FieldUtil.byteBoolean(frameBuffer.get());
+    }
 }

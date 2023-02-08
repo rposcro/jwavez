@@ -18,12 +18,12 @@ class ImmutableBufferSpec extends Specification {
         value == expected;
 
         where:
-        data     | expected
-        [0x00]   | 0
-        [0x60]   | 96
-        [0x7f]   | 127
-        [0x80]   | -128
-        [0xFF]   | -1
+        data   | expected
+        [0x00] | 0
+        [0x60] | 96
+        [0x7f] | 127
+        [0x80] | -128
+        [0xFF] | -1
     }
 
     def "unsigned byte should be #expected"() {
@@ -38,12 +38,12 @@ class ImmutableBufferSpec extends Specification {
         value == expected;
 
         where:
-        data     | expected
-        [0x00]   | 0
-        [0x60]   | 96
-        [0x7f]   | 127
-        [0x80]   | 128
-        [0xFF]   | 255
+        data   | expected
+        [0x00] | 0
+        [0x60] | 96
+        [0x7f] | 127
+        [0x80] | 128
+        [0xFF] | 255
     }
 
     def "signed word should be #expected"() {
@@ -58,17 +58,17 @@ class ImmutableBufferSpec extends Specification {
         value == expected;
 
         where:
-        data            | expected
-        [0x00, 0x00 ]   | 0
-        [0x00, 0x7f ]   | 127
-        [0x00, 0x80 ]   | 128
-        [0x00, 0xff ]   | 255
-        [0x01, 0x00 ]   | 256
-        [0x01, 0xff ]   | 511
-        [0x02, 0x04 ]   | 516
-        [0xff, 0xff ]   | -1
-        [0x7f, 0xff ]   | Short.MAX_VALUE
-        [0x80, 0x00 ]   | Short.MIN_VALUE
+        data         | expected
+        [0x00, 0x00] | 0
+        [0x00, 0x7f] | 127
+        [0x00, 0x80] | 128
+        [0x00, 0xff] | 255
+        [0x01, 0x00] | 256
+        [0x01, 0xff] | 511
+        [0x02, 0x04] | 516
+        [0xff, 0xff] | -1
+        [0x7f, 0xff] | Short.MAX_VALUE
+        [0x80, 0x00] | Short.MIN_VALUE
     }
 
     def "unsigned word should be #expected"() {
@@ -83,17 +83,17 @@ class ImmutableBufferSpec extends Specification {
         value == expected;
 
         where:
-        data            | expected
-        [0x00, 0x00 ]   | 0
-        [0x00, 0x7f ]   | 127
-        [0x00, 0x80 ]   | 128
-        [0x00, 0xff ]   | 255
-        [0x01, 0x00 ]   | 256
-        [0x01, 0xff ]   | 511
-        [0x02, 0x04 ]   | 516
-        [0xff, 0xff ]   | 65535
-        [0x7f, 0xff ]   | Short.MAX_VALUE
-        [0x80, 0x00 ]   | Short.MAX_VALUE + 1
+        data         | expected
+        [0x00, 0x00] | 0
+        [0x00, 0x7f] | 127
+        [0x00, 0x80] | 128
+        [0x00, 0xff] | 255
+        [0x01, 0x00] | 256
+        [0x01, 0xff] | 511
+        [0x02, 0x04] | 516
+        [0xff, 0xff] | 65535
+        [0x7f, 0xff] | Short.MAX_VALUE
+        [0x80, 0x00] | Short.MAX_VALUE + 1
     }
 
     def "signed double word should be #expected"() {
@@ -108,15 +108,15 @@ class ImmutableBufferSpec extends Specification {
         value == expected;
 
         where:
-        data                        | expected
-        [0x00, 0x00, 0x00, 0x00]    | 0
-        [0x00, 0x00, 0x00, 0xff]    | 255
-        [0x00, 0x00, 0x01, 0xff]    | 511
-        [0x00, 0x00, 0xff, 0xff]    | 65535
-        [0x00, 0x01, 0x00, 0x00]    | 65536
-        [0xff, 0xff, 0xff, 0xff]    | -1
-        [0x80, 0x00, 0x00, 0x00]    | Integer.MIN_VALUE
-        [0x7f, 0xff, 0xff, 0xff]    | Integer.MAX_VALUE
+        data                     | expected
+        [0x00, 0x00, 0x00, 0x00] | 0
+        [0x00, 0x00, 0x00, 0xff] | 255
+        [0x00, 0x00, 0x01, 0xff] | 511
+        [0x00, 0x00, 0xff, 0xff] | 65535
+        [0x00, 0x01, 0x00, 0x00] | 65536
+        [0xff, 0xff, 0xff, 0xff] | -1
+        [0x80, 0x00, 0x00, 0x00] | Integer.MIN_VALUE
+        [0x7f, 0xff, 0xff, 0xff] | Integer.MAX_VALUE
     }
 
     def "next byte returned #expected times"() {
@@ -135,11 +135,11 @@ class ImmutableBufferSpec extends Specification {
         seqReceived == data
 
         where:
-        data                        | expected
-        []                          | 0
-        [0x00]                      | 1
-        [0x00, 0x01]                | 2
-        [0x00, 0x01, 0x02]          | 3
+        data               | expected
+        []                 | 0
+        [0x00]             | 1
+        [0x00, 0x01]       | 2
+        [0x00, 0x01, 0x02] | 3
     }
 
     def "next word returned #count times"() {
@@ -158,11 +158,11 @@ class ImmutableBufferSpec extends Specification {
         seqReceived == words
 
         where:
-        data                                    | words                         | count
-        []                                      | []                            | 0
-        [0x01, 0x01]                            | [0x0101]                      | 1
-        [0x01, 0x05, 0x82, 0x02]                | [261, -32254]                 | 2
-        [0x89, 0x04, 0x02, 0x06, 0x80, 0x01]    | [-30460, 518, -32767]         | 3
+        data                                 | words                 | count
+        []                                   | []                    | 0
+        [0x01, 0x01]                         | [0x0101]              | 1
+        [0x01, 0x05, 0x82, 0x02]             | [261, -32254]         | 2
+        [0x89, 0x04, 0x02, 0x06, 0x80, 0x01] | [-30460, 518, -32767] | 3
     }
 
     def "next double word returned #count times"() {
@@ -181,8 +181,8 @@ class ImmutableBufferSpec extends Specification {
         seqReceived == words
 
         where:
-        data                                    | words                         | count
-        []                                      | []                            | 0
-        [0x01, 0x05, 0x82, 0x02]                | [17138178]                    | 1
+        data                     | words      | count
+        []                       | []         | 0
+        [0x01, 0x05, 0x82, 0x02] | [17138178] | 1
     }
 }

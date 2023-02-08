@@ -77,7 +77,7 @@ public class MeterReport extends ZWaveSupportedCommand<MeterCommandType> {
     }
 
     private long extractMeasure(ImmutableBuffer payload, byte measureSize, int offset) {
-        switch(measureSize) {
+        switch (measureSize) {
             case 1:
                 return payload.getUnsignedByte(offset);
             case 2:
@@ -113,7 +113,7 @@ public class MeterReport extends ZWaveSupportedCommand<MeterCommandType> {
             return null;
         }
 
-        switch(meterType) {
+        switch (meterType) {
             case ELECTRIC_METER:
                 return recognizeMeterUnitForElectricMeter(scaleValue);
             case GAS_METER:

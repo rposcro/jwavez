@@ -35,7 +35,7 @@ public class NumberRangeParser {
 
     private int[] parseAsRange(String optionValue) {
         String[] tokens = optionValue.split("-");
-        int from  = Integer.parseInt(tokens[0]);
+        int from = Integer.parseInt(tokens[0]);
         int to = Integer.parseInt(tokens[1]);
         boolean swap = from > to;
         if (swap) {
@@ -51,6 +51,6 @@ public class NumberRangeParser {
     }
 
     private int[] parseAsSingle(String optionValue) {
-        return new int[] {  Integer.parseInt(optionValue) };
+        return new int[]{Integer.parseInt(optionValue)};
     }
 }

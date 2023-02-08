@@ -17,8 +17,7 @@ public enum MeterUnit {
     CubicMeters("Cubic Meters"),
     CubicFeet("Cubic Feet"),
     UsGallons("US Gallons"),
-    Unspecified("Unspecified")
-    ;
+    Unspecified("Unspecified");
 
     private String unitName;
 

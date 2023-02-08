@@ -12,11 +12,11 @@ import lombok.Getter;
 @ResponseFrameModel(function = SerialCommand.SERIAL_API_SETUP)
 public class SerialAPISetupResponse extends ZWaveResponse {
 
-  @Getter
-  private boolean requestAccepted;
+    @Getter
+    private boolean requestAccepted;
 
-  public SerialAPISetupResponse(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-    this.requestAccepted = FieldUtil.byteBoolean(frameBuffer.get(FRAME_OFFSET_PAYLOAD));
-  }
+    public SerialAPISetupResponse(ViewBuffer frameBuffer) {
+        super(frameBuffer);
+        this.requestAccepted = FieldUtil.byteBoolean(frameBuffer.get(FRAME_OFFSET_PAYLOAD));
+    }
 }

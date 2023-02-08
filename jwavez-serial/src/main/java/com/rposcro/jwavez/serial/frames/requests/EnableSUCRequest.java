@@ -7,7 +7,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class EnableSUCRequest extends ZWaveRequest {
 
-  public static SerialRequest createEnableSUCRequest() {
-    return nonPayloadRequest(ENABLE_SUC);
-  }
+    public static SerialRequest createEnableSUCRequest() {
+        return nonPayloadRequest(ENABLE_SUC);
+    }
 }

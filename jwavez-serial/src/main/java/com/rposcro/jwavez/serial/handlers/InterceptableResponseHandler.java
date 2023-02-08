@@ -12,50 +12,52 @@ import com.rposcro.jwavez.serial.interceptors.ResponseInterceptor;
 import com.rposcro.jwavez.serial.interceptors.ViewBufferInterceptor;
 import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class InterceptableResponseHandler implements ResponseHandler {
 
-  private InboundFrameValidator validator;
-  private InboundFrameParser parser;
+    private InboundFrameValidator validator;
+    private InboundFrameParser parser;
 
-  private List<ResponseInterceptor> responseInterceptors;
-  private List<ViewBufferInterceptor> bufferInterceptors;
+    private List<ResponseInterceptor> responseInterceptors;
+    private List<ViewBufferInterceptor> bufferInterceptors;
 
-  public InterceptableResponseHandler() {
-    this.validator = new InboundFrameValidator();
-    this.parser = new InboundFrameParser();
-    this.responseInterceptors = new ArrayList<>();
-    this.bufferInterceptors = new ArrayList<>();
-  }
-
-  @Override
-  public void accept(ViewBuffer frameBuffer) {
-    if (frameBuffer.get(FRAME_OFFSET_TYPE) != TYPE_RES || !validator.validate(frameBuffer)) {
-      log.warn("Response frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
-    } else if (log.isDebugEnabled()) {
-      log.debug("Response frame received: {}", BufferUtil.bufferToString(frameBuffer));
+    public InterceptableResponseHandler() {
+        this.validator = new InboundFrameValidator();
+        this.parser = new InboundFrameParser();
+        this.responseInterceptors = new ArrayList<>();
+        this.bufferInterceptors = new ArrayList<>();
     }
 
-    try {
-      bufferInterceptors.forEach(interceptor -> interceptor.intercept(frameBuffer));
-      ZWaveResponse response = parser.parseResponseFrame(frameBuffer);
-      responseInterceptors.forEach(interceptor -> interceptor.intercept(response));
-    } catch(FrameParseException e) {
-      log.warn("Response frame parse failed: {}", BufferUtil.bufferToString(frameBuffer));
+    @Override
+    public void accept(ViewBuffer frameBuffer) {
+        if (frameBuffer.get(FRAME_OFFSET_TYPE) != TYPE_RES || !validator.validate(frameBuffer)) {
+            log.warn("Response frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
+        } else if (log.isDebugEnabled()) {
+            log.debug("Response frame received: {}", BufferUtil.bufferToString(frameBuffer));
+        }
+
+        try {
+            bufferInterceptors.forEach(interceptor -> interceptor.intercept(frameBuffer));
+            ZWaveResponse response = parser.parseResponseFrame(frameBuffer);
+            responseInterceptors.forEach(interceptor -> interceptor.intercept(response));
+        } catch (FrameParseException e) {
+            log.warn("Response frame parse failed: {}", BufferUtil.bufferToString(frameBuffer));
+        }
     }
-  }
 
-  public InterceptableResponseHandler addResponseInterceptor(ResponseInterceptor interceptor) {
-    responseInterceptors.add(interceptor);
-    return this;
-  }
+    public InterceptableResponseHandler addResponseInterceptor(ResponseInterceptor interceptor) {
+        responseInterceptors.add(interceptor);
+        return this;
+    }
 
-  public InterceptableResponseHandler addViewBufferInterceptor(ViewBufferInterceptor interceptor) {
-    bufferInterceptors.add(interceptor);
-    return this;
-  }
+    public InterceptableResponseHandler addViewBufferInterceptor(ViewBufferInterceptor interceptor) {
+        bufferInterceptors.add(interceptor);
+        return this;
+    }
 }

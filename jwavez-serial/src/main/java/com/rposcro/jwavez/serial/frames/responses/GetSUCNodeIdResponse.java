@@ -12,10 +12,10 @@ import lombok.Getter;
 @ResponseFrameModel(function = SerialCommand.GET_SUC_NODE_ID)
 public class GetSUCNodeIdResponse extends ZWaveResponse {
 
-  private NodeId sucNodeId;
+    private NodeId sucNodeId;
 
-  public GetSUCNodeIdResponse(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-    this.sucNodeId = new NodeId(frameBuffer.get(FRAME_OFFSET_PAYLOAD));
-  }
+    public GetSUCNodeIdResponse(ViewBuffer frameBuffer) {
+        super(frameBuffer);
+        this.sucNodeId = new NodeId(frameBuffer.get(FRAME_OFFSET_PAYLOAD));
+    }
 }

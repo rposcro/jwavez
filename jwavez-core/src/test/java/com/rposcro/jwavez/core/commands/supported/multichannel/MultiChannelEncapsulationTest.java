@@ -15,7 +15,7 @@ public class MultiChannelEncapsulationTest {
 
     @Test
     public void testEncapsulation1() {
-        byte[] payload = new byte[] {
+        byte[] payload = new byte[]{
                 0x60, 0x0d, 0x07, 0x01, 0x31, 0x05, 0x01, 0x22, 0x01, 0x51
         };
 
@@ -27,7 +27,7 @@ public class MultiChannelEncapsulationTest {
         assertEquals(MultiChannelCommandType.MULTI_CHANNEL_CMD_ENCAP, encapsulation.getCommandType());
         assertEquals(0x07, encapsulation.getSourceEndpointId());
         assertEquals(0x01, encapsulation.getDestinationEndpointId());
-        assertArrayEquals(new byte[] { 0x31, 0x05, 0x01, 0x22, 0x01, 0x51 },
+        assertArrayEquals(new byte[]{0x31, 0x05, 0x01, 0x22, 0x01, 0x51},
                 encapsulation.getEncapsulatedCommandPayload());
     }
 }

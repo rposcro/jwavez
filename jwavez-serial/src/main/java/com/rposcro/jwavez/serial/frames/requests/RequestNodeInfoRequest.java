@@ -7,13 +7,13 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 public class RequestNodeInfoRequest extends ZWaveRequest {
 
-  public static SerialRequest createRequestNodeInfoRequest(NodeId nodeId) {
-    return SerialRequest.builder()
-        .frameData(startUpFrameBuffer(FRAME_CONTROL_SIZE + 1, REQUEST_NODE_INFO)
-            .put(nodeId.getId())
-            .putCRC())
-        .responseExpected(true)
-        .serialCommand(REQUEST_NODE_INFO)
-        .build();
-  }
+    public static SerialRequest createRequestNodeInfoRequest(NodeId nodeId) {
+        return SerialRequest.builder()
+                .frameData(startUpFrameBuffer(FRAME_CONTROL_SIZE + 1, REQUEST_NODE_INFO)
+                        .put(nodeId.getId())
+                        .putCRC())
+                .responseExpected(true)
+                .serialCommand(REQUEST_NODE_INFO)
+                .build();
+    }
 }

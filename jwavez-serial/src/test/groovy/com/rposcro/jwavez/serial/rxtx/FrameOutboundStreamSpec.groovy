@@ -56,7 +56,7 @@ public class FrameOutboundStreamSpec extends Specification {
         def outboundStream = FrameOutboundStream.builder().serialPort(port).build();
         def data = [0x01, 0x03, 0x00, 0x59, 0xd8];
         def outBuffer = ByteBuffer.allocate(255);
-        data.forEach({val -> outBuffer.put((byte) val)});
+        data.forEach({ val -> outBuffer.put((byte) val) });
         outBuffer.limit(outBuffer.position()).position(0);
 
         when:

@@ -34,7 +34,7 @@ class AddNodeToNetworkControllerSpec extends Specification {
 
     def "new node successfully added"() {
         given:
-        rxTxRouterProcess.sendRequest(_) >> { };
+        rxTxRouterProcess.sendRequest(_) >> {};
 
         when:
         controller.transactionKeeper.reset();
@@ -71,7 +71,7 @@ class AddNodeToNetworkControllerSpec extends Specification {
         given:
         actions = [
                 { controller.flowHandler.handleCallback(learnReadyCallback(controller.flowHandler.callbackFlowId)) },
-                { }
+                {}
         ].iterator();
         rxTxRouterProcess.sendRequest(_) >> { nextCallback() };
 
@@ -84,7 +84,7 @@ class AddNodeToNetworkControllerSpec extends Specification {
 
     def "timeout awaiting callback when adding in progress"() {
         given:
-        rxTxRouterProcess.sendRequest(_) >> { };
+        rxTxRouterProcess.sendRequest(_) >> {};
 
         when:
         controller.transactionKeeper.reset();

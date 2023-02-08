@@ -12,11 +12,11 @@ import lombok.Getter;
 @ResponseFrameModel(function = SerialCommand.SET_LEARN_MODE)
 public class SetLearnModeResponse extends ZWaveResponse {
 
-  @Getter
-  private boolean requestAccepted;
+    @Getter
+    private boolean requestAccepted;
 
-  public SetLearnModeResponse(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-    this.requestAccepted = FieldUtil.byteBoolean(frameBuffer.get(FRAME_OFFSET_PAYLOAD));
-  }
+    public SetLearnModeResponse(ViewBuffer frameBuffer) {
+        super(frameBuffer);
+        this.requestAccepted = FieldUtil.byteBoolean(frameBuffer.get(FRAME_OFFSET_PAYLOAD));
+    }
 }

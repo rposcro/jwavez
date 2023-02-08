@@ -11,17 +11,17 @@ import lombok.ToString;
 @ToString
 public class BasicReport extends ZWaveSupportedCommand<BasicCommandType> {
 
-  private short value;
+    private short value;
 
-  public BasicReport(ImmutableBuffer payload, NodeId sourceNodeId) {
-    super(BasicCommandType.BASIC_REPORT, sourceNodeId);
-    value = payload.getUnsignedByte(2);
-  }
+    public BasicReport(ImmutableBuffer payload, NodeId sourceNodeId) {
+        super(BasicCommandType.BASIC_REPORT, sourceNodeId);
+        value = payload.getUnsignedByte(2);
+    }
 
-  @Override
-  public String asNiceString() {
-    return String.format("%s value(%02x)",
-            super.asNiceString(), value
-    );
-  }
+    @Override
+    public String asNiceString() {
+        return String.format("%s value(%02x)",
+                super.asNiceString(), value
+        );
+    }
 }

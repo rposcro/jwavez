@@ -12,13 +12,13 @@ import lombok.Getter;
 @ResponseFrameModel(function = SerialCommand.MEMORY_GET_ID)
 public class MemoryGetIdResponse extends ZWaveResponse {
 
-  private long homeId;
-  private NodeId nodeId;
+    private long homeId;
+    private NodeId nodeId;
 
-  public MemoryGetIdResponse(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-    frameBuffer.position(FRAME_OFFSET_PAYLOAD);
-    this.homeId = frameBuffer.getUnsignedDWord();
-    this.nodeId = new NodeId(frameBuffer.get());
-  }
+    public MemoryGetIdResponse(ViewBuffer frameBuffer) {
+        super(frameBuffer);
+        frameBuffer.position(FRAME_OFFSET_PAYLOAD);
+        this.homeId = frameBuffer.getUnsignedDWord();
+        this.nodeId = new NodeId(frameBuffer.get());
+    }
 }

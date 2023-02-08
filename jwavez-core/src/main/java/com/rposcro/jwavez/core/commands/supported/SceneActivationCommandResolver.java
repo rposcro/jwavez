@@ -5,6 +5,7 @@ import com.rposcro.jwavez.core.commands.supported.sceneactivation.SceneActivatio
 import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.BiFunction;
@@ -12,14 +13,14 @@ import java.util.function.BiFunction;
 @SupportedCommandResolver(commandClass = CommandClass.CMD_CLASS_SCENE_ACTIVATION)
 public class SceneActivationCommandResolver extends AbstractCommandResolver<SceneActivationCommandType> {
 
-  private static Map<SceneActivationCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
+    private static Map<SceneActivationCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
 
-  static {
-    suppliersPerCommandType = new HashMap<>();
-    suppliersPerCommandType.put(SceneActivationCommandType.SCENE_ACTIVATION_SET, SceneActivationSet::new);
-  }
+    static {
+        suppliersPerCommandType = new HashMap<>();
+        suppliersPerCommandType.put(SceneActivationCommandType.SCENE_ACTIVATION_SET, SceneActivationSet::new);
+    }
 
-  public SceneActivationCommandResolver() {
-    super(suppliersPerCommandType);
-  }
+    public SceneActivationCommandResolver() {
+        super(suppliersPerCommandType);
+    }
 }

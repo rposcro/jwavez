@@ -80,9 +80,10 @@ public class DongleInformationFormatter {
                 .mapToObj(code -> {
                     try {
                         return SerialCommand.ofCode((byte) code);
-                    } catch(IllegalArgumentException e) {
+                    } catch (IllegalArgumentException e) {
                         return String.format("UNKNOWN(0x%02X)", code);
-                    }})
+                    }
+                })
                 .collect(Collectors.toList())
         );
     }

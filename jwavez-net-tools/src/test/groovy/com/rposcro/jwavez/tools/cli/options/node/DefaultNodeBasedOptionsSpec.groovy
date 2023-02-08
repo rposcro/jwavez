@@ -18,9 +18,9 @@ class DefaultNodeBasedOptionsSpec extends Specification {
         options.nodeId == expNodeId;
 
         where:
-        args                                            | expDevice     | expTimeout | expNodeId
-        ["-d", "/dev/dummy", "-n", "12"]                | "/dev/dummy"  | 0          | 12
-        ["-d", "/dev/dummy", "-t", "1234", "-n", "55"]  | "/dev/dummy"  | 1234       | 55
+        args                                           | expDevice    | expTimeout | expNodeId
+        ["-d", "/dev/dummy", "-n", "12"]               | "/dev/dummy" | 0          | 12
+        ["-d", "/dev/dummy", "-t", "1234", "-n", "55"] | "/dev/dummy" | 1234       | 55
     }
 
     @Unroll
@@ -33,11 +33,12 @@ class DefaultNodeBasedOptionsSpec extends Specification {
         println(ex.getMessage());
 
         where:
-        args                                            | _
-        []                                              | _
-        ["-d", "/dev/dummy"]                            | _
-        ["-d", "/dev/dummy", "-t", "1234"]              | _
-        ["-d", "/dev/dummy", "-n", "numer"]             | _
-        ["-d", "/dev/dummy", "-n", "33", "oddArg"]      | _
-        ["-d", "/dev/dummy", "-n", "33", "-oddOpt"]     | _
-    }}
+        args                                        | _
+        []                                          | _
+        ["-d", "/dev/dummy"]                        | _
+        ["-d", "/dev/dummy", "-t", "1234"]          | _
+        ["-d", "/dev/dummy", "-n", "numer"]         | _
+        ["-d", "/dev/dummy", "-n", "33", "oddArg"]  | _
+        ["-d", "/dev/dummy", "-n", "33", "-oddOpt"] | _
+    }
+}

@@ -5,5 +5,5 @@ import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 @FunctionalInterface
 public interface ViewBufferInterceptor {
 
-  void intercept(ViewBuffer viewBuffer);
+    void intercept(ViewBuffer viewBuffer);
 }

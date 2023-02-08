@@ -30,7 +30,7 @@ public class MultilevelSwitchCommands {
     @Autowired
     private SwitchMultiLevelCommandBuilder switchMultiLevelCommandBuilder;
 
-    @ShellMethod(value = "Request multilevel report", key = { "switchmultilevel report", "sml report" })
+    @ShellMethod(value = "Request multilevel report", key = {"switchmultilevel report", "sml report"})
     public String executeMultilevelGet(int nodeId) throws SerialException {
         ZWaveControlledCommand command = switchMultiLevelCommandBuilder.v1().buildGetCommand();
         SwitchMultilevelReport report = talkCommunicationService.requestTalk(nodeId, command, SwitchMultiLevelCommandType.SWITCH_MULTILEVEL_REPORT);
@@ -39,7 +39,7 @@ public class MultilevelSwitchCommands {
         ));
     }
 
-    @ShellMethod(value = "Send multilevel set", key = { "switchmultilevel set", "sml set" })
+    @ShellMethod(value = "Send multilevel set", key = {"switchmultilevel set", "sml set"})
     public String executeMultilevelSet(int nodeId, int value, @ShellOption(defaultValue = "0") int duration) throws SerialException {
         ZWaveControlledCommand command = switchMultiLevelCommandBuilder.v2().buildSetCommand((byte) value, (byte) duration);
         boolean success = talkCommunicationService.sendCommand(nodeId, command);

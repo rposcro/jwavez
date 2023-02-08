@@ -13,14 +13,14 @@ import java.util.function.BiFunction;
 @SupportedCommandResolver(commandClass = CommandClass.CMD_CLASS_SWITCH_BINARY)
 public class SwitchBinaryCommandResolver extends AbstractCommandResolver<SwitchBinaryCommandType> {
 
-  private static Map<SwitchBinaryCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
+    private static Map<SwitchBinaryCommandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
 
-  static {
-    suppliersPerCommandType = new HashMap<>();
-    suppliersPerCommandType.put(SwitchBinaryCommandType.BINARY_SWITCH_REPORT, BinarySwitchReport::new);
-  }
+    static {
+        suppliersPerCommandType = new HashMap<>();
+        suppliersPerCommandType.put(SwitchBinaryCommandType.BINARY_SWITCH_REPORT, BinarySwitchReport::new);
+    }
 
-  public SwitchBinaryCommandResolver() {
-    super(suppliersPerCommandType);
-  }
+    public SwitchBinaryCommandResolver() {
+        super(suppliersPerCommandType);
+    }
 }
