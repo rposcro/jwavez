@@ -1,6 +1,7 @@
 package com.rposcro.jwavez.serial.handlers;
 
-import com.rposcro.jwavez.core.commands.SupportedCommandParser;
+import com.rposcro.jwavez.core.commands.JwzSupportedCommandParser;
+import com.rposcro.jwavez.core.commands.supported.SupportedCommandResolversRegistry;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
 import com.rposcro.jwavez.core.utils.ImmutableBuffer;
@@ -22,7 +23,7 @@ public class ApplicationCommandHandler implements CallbackHandler {
     private final static byte APP_COMMAND_CODE = SerialCommand.APPLICATION_COMMAND_HANDLER.getCode();
 
     private InboundFrameParser frameParser;
-    private SupportedCommandParser supportedCommandParser;
+    private JwzSupportedCommandParser supportedCommandParser;
     private SupportedCommandDispatcher supportedCommandDispatcher;
 
     private boolean supportMulticasts;
@@ -36,7 +37,7 @@ public class ApplicationCommandHandler implements CallbackHandler {
         this.supportBroadcasts = supportBroadcasts;
         this.supportMulticasts = supportMulticasts;
         this.supportedCommandDispatcher = supportedCommandDispatcher;
-        this.supportedCommandParser = SupportedCommandParser.defaultParser();
+        this.supportedCommandParser = new JwzSupportedCommandParser(SupportedCommandResolversRegistry.instance());
         this.frameParser = InboundFrameParser.defaultParser();
     }
 

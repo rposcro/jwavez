@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.shell.services;
 
-import com.rposcro.jwavez.core.commands.SupportedCommandParser;
+import com.rposcro.jwavez.core.commands.JwzSupportedCommandParser;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.multichannel.MultiChannelCommandEncapsulation;
 import com.rposcro.jwavez.core.commands.types.MultiChannelCommandType;
@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.Semaphore;
-import java.util.stream.Collectors;
 
 import static com.rposcro.jwavez.core.classes.CommandClass.CMD_CLASS_MULTI_CHANNEL;
 
@@ -35,7 +34,7 @@ public class NetworkListeningService {
     private ConsoleAccessor console;
 
     @Autowired
-    private SupportedCommandParser supportedCommandParser;
+    private JwzSupportedCommandParser supportedCommandParser;
 
     @Autowired
     private SerialCommunicationService serialCommunicationService;

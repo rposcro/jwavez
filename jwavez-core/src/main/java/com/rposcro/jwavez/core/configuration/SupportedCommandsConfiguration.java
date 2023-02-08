@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.core.configuration;
 
-import com.rposcro.jwavez.core.commands.SupportedCommandParser;
+import com.rposcro.jwavez.core.commands.JwzSupportedCommandParser;
 import com.rposcro.jwavez.core.commands.supported.SupportedCommandResolversRegistry;
 import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
 
@@ -10,8 +10,8 @@ public class SupportedCommandsConfiguration {
     return SupportedCommandResolversRegistry.instance();
   }
 
-  public SupportedCommandParser inboundCommandParser() {
-    return SupportedCommandParser.builder()
+  public JwzSupportedCommandParser inboundCommandParser() {
+    return JwzSupportedCommandParser.builder()
         .supportedCommandsRegistry(supportedCommandResolversRegistry())
         .build();
   }

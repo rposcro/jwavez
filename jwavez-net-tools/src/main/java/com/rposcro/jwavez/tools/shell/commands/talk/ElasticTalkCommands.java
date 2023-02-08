@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.shell.commands.talk;
 
-import com.rposcro.jwavez.core.commands.SupportedCommandParser;
+import com.rposcro.jwavez.core.commands.JwzSupportedCommandParser;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.multichannel.MultiChannelCommandEncapsulation;
 import com.rposcro.jwavez.core.commands.types.MultiChannelCommandType;
@@ -28,7 +28,7 @@ public class ElasticTalkCommands {
     private ConsoleAccessor console;
 
     @Autowired
-    private SupportedCommandParser supportedCommandParser;
+    private JwzSupportedCommandParser supportedCommandParser;
 
     @Autowired
     private TalkCommunicationService talkCommunicationService;
