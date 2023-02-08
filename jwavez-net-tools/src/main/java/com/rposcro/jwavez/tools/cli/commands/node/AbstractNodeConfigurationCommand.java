@@ -2,7 +2,6 @@ package com.rposcro.jwavez.tools.cli.commands.node;
 
 import static com.rposcro.jwavez.core.commands.types.ConfigurationCommandType.CONFIGURATION_REPORT;
 
-import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
@@ -16,7 +15,7 @@ public abstract class AbstractNodeConfigurationCommand extends AbstractAsyncBase
   protected ConfigurationCommandBuilder configurationCommandBuilder;
 
   protected AbstractNodeConfigurationCommand() {
-    configurationCommandBuilder = ZWaveControlledCommandBuilder.configurationCommandBuilder();
+    configurationCommandBuilder = new ConfigurationCommandBuilder();
   }
 
   protected void checkConfiguration(NodeId hostNodeId, int parameterNumber, long timeout) {

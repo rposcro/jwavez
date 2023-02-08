@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.tools.shell.commands.talk;
 
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
-import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.powerlevel.PowerLevelCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.powerlevel.PowerLevelReport;
 import com.rposcro.jwavez.core.commands.types.PowerLevelCommandType;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
@@ -27,9 +27,12 @@ public class PowerLevelCommands {
     @Autowired
     private JWaveZShellContext shellContext;
 
+    @Autowired
+    private PowerLevelCommandBuilder powerLevelCommandBuilder;
+
     @ShellMethod(value = "Request power level report", key = { "powerlevel report", "pl report" })
     public String executePowerLevelReport(@ShellOption(value = { "--node-id", "-id" }) int nodeId) throws SerialException {
-        ZWaveControlledCommand command = ZWaveControlledCommandBuilder.powerLevelCommandBuilder().v1().buildGetCommand();
+        ZWaveControlledCommand command = powerLevelCommandBuilder.v1().buildGetCommand();
         PowerLevelReport powerLevelReport = talkCommunicationService.requestTalk(nodeId, command, PowerLevelCommandType.POWER_LEVEL_REPORT);
         return String.format("Power level reported: 0x%02X, timeout is: %s[s]\n", powerLevelReport.getPowerLevel(), powerLevelReport.getTimeout());
     }
@@ -40,7 +43,7 @@ public class PowerLevelCommands {
             @ShellOption(value = { "--power-level", "-pl" }) int powerLevel,
             @ShellOption(value = { "--level-timeout", "-lt" }) int powerLevelTimeout
     ) throws SerialException {
-        ZWaveControlledCommand command = ZWaveControlledCommandBuilder.powerLevelCommandBuilder().v1()
+        ZWaveControlledCommand command = powerLevelCommandBuilder.v1()
                 .buildSetCommand((byte) powerLevel, (byte) powerLevelTimeout);
         talkCommunicationService.sendCommand(nodeId, command);
         return String.format("Command %s successfully sent to node %s", PowerLevelCommandType.POWER_LEVEL_SET, nodeId);

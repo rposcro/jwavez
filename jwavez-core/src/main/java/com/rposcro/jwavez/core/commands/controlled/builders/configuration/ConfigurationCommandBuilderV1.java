@@ -5,7 +5,10 @@ import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.constants.BitLength;
 import com.rposcro.jwavez.core.utils.BytesUtil;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.MODULE)
 public class ConfigurationCommandBuilderV1 {
 
     public ZWaveControlledCommand buildSetByteParameterCommand(int parameterNumber, byte value) {

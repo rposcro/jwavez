@@ -3,9 +3,12 @@ package com.rposcro.jwavez.core.commands.controlled.builders.association;
 import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.types.AssociationCommandType;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import static com.rposcro.jwavez.core.utils.BytesUtil.toByteArray;
 
+@NoArgsConstructor(access = AccessLevel.MODULE)
 public class AssociationCommandBuilderV2 extends AssociationCommandBuilderV1 {
 
     public ZWaveControlledCommand buildRemoveAllNodesCommand(int... nodeIds) {

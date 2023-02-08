@@ -2,7 +2,6 @@ package com.rposcro.jwavez.tools.cli.commands.node;
 
 import static com.rposcro.jwavez.core.commands.types.AssociationCommandType.ASSOCIATION_REPORT;
 
-import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.builders.association.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.core.model.NodeId;
@@ -17,7 +16,7 @@ public abstract class AbstractNodeAssociationCommand extends AbstractAsyncBasedC
   protected AssociationCommandBuilder associationCommandBuilder;
 
   protected AbstractNodeAssociationCommand() {
-    associationCommandBuilder = ZWaveControlledCommandBuilder.associationCommandBuilder();
+    associationCommandBuilder = new AssociationCommandBuilder();
   }
 
   protected void checkGroupAssociations(NodeId hostNodeId, int groupId, long timeout) {

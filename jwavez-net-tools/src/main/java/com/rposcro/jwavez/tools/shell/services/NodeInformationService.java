@@ -1,7 +1,8 @@
 package com.rposcro.jwavez.tools.shell.services;
 
 import com.rposcro.jwavez.core.classes.CommandClass;
-import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.manufacturerspecific.ManufacturerSpecificCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.version.VersionCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.manufacturerspecific.ManufacturerSpecificReport;
 import com.rposcro.jwavez.core.commands.supported.version.VersionCommandClassReport;
 import com.rposcro.jwavez.core.commands.supported.version.VersionReport;
@@ -32,6 +33,12 @@ public class NodeInformationService {
 
     @Autowired
     private NodeInformationCache nodeInformationCache;
+
+    @Autowired
+    private ManufacturerSpecificCommandBuilder manufacturerSpecificCommandBuilder;
+
+    @Autowired
+    private VersionCommandBuilder versionCommandBuilder;
 
     public NodeInformation fetchNodeInformation(int nodeId) throws SerialException {
         NodeInformation nodeInformation = new NodeInformation();
@@ -109,7 +116,7 @@ public class NodeInformationService {
         return (ManufacturerSpecificReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
                         nodeID,
-                        ZWaveControlledCommandBuilder.manufacturerSpecificCommandBuilder().v1().buildGetCommand(),
+                        manufacturerSpecificCommandBuilder.v1().buildGetCommand(),
                         ManufacturerSpecificCommandType.MANUFACTURER_SPECIFIC_REPORT,
                         SerialUtils.DEFAULT_TIMEOUT)
         )).getAcquiredSupportedCommand();
@@ -119,7 +126,7 @@ public class NodeInformationService {
         return (VersionReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
                         nodeID,
-                        ZWaveControlledCommandBuilder.versionCommandBuilder().v1().buildGetCommand(),
+                        versionCommandBuilder.v1().buildGetCommand(),
                         VersionCommandType.VERSION_REPORT,
                         SerialUtils.DEFAULT_TIMEOUT)
         )).getAcquiredSupportedCommand();
@@ -136,7 +143,7 @@ public class NodeInformationService {
                 VersionCommandClassReport versionReport = (VersionCommandClassReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                         executor.requestApplicationCommand(
                                 nodeID,
-                                ZWaveControlledCommandBuilder.versionCommandBuilder().v1().buildCommandClassGetCommand(commandClass),
+                                versionCommandBuilder.v1().buildCommandClassGetCommand(commandClass),
                                 VersionCommandType.VERSION_COMMAND_CLASS_REPORT,
                                 SerialUtils.DEFAULT_TIMEOUT)
                 )).getAcquiredSupportedCommand();

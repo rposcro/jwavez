@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.tools.shell.services;
 
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
-import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.constants.BitLength;
@@ -25,6 +25,9 @@ public class NodeParameterService {
 
     @Autowired
     private NodeInformationCache nodeInformationCache;
+
+    @Autowired
+    private ConfigurationCommandBuilder configurationCommandBuilder;
 
     public void updateOrCreateMeta(int nodeId, int paramNumber, int sizeInBits, String memo) {
         ParameterMeta parameterMeta = ParameterMeta.builder()
@@ -50,7 +53,7 @@ public class NodeParameterService {
         ConfigurationReport configurationReport = (ConfigurationReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
                         nodeID,
-                        ZWaveControlledCommandBuilder.configurationCommandBuilder().v1().buildGetParameterCommand(paramNumber),
+                        configurationCommandBuilder.v1().buildGetParameterCommand(paramNumber),
                         ConfigurationCommandType.CONFIGURATION_REPORT,
                         SerialUtils.DEFAULT_TIMEOUT)
         )).getAcquiredSupportedCommand();
@@ -64,7 +67,7 @@ public class NodeParameterService {
         final NodeId nodeID = new NodeId(nodeId);
         final ParameterMeta parameterMeta = nodeInformationCache.getNodeDetails(nodeId).getParametersInformation().findParameterMeta(paramNumber);
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
-            ZWaveControlledCommand command = ZWaveControlledCommandBuilder.configurationCommandBuilder().v1()
+            ZWaveControlledCommand command = configurationCommandBuilder.v1()
                     .buildSetParameterCommand(paramNumber, (int) requestedValue, BitLength.ofBytesNumber(parameterMeta.getSizeInBytes()));
             SendDataCallback callback = executor.requestCallbackFlow(SendDataRequest.createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;

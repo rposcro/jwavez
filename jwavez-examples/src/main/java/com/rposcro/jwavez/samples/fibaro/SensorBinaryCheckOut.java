@@ -2,9 +2,8 @@ package com.rposcro.jwavez.samples.fibaro;
 
 import static com.rposcro.jwavez.serial.frames.requests.SendDataRequest.createSendDataRequest;
 
-import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
-import com.rposcro.jwavez.core.commands.controlled.builders.association.AssociationCommandBuilderV1;
-import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilderV1;
+import com.rposcro.jwavez.core.commands.controlled.builders.association.AssociationCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.commands.types.AssociationCommandType;
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
@@ -115,18 +114,18 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
   }
 
   private void learnAssociations() throws Exception {
-    AssociationCommandBuilderV1 commandBuilder = ZWaveControlledCommandBuilder.associationCommandBuilder().v1();
-    send("Get supported groupings", createSendDataRequest(addresseeId, commandBuilder.buildGetSupportedGroupingsCommand(), nextFlowId()));
-    send("Get group 1", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(1), nextFlowId()));
-    send("Get group 2", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(2), nextFlowId()));
-    send("Get group 3", createSendDataRequest(addresseeId, commandBuilder.buildGetCommand(3), nextFlowId()));
+    AssociationCommandBuilder commandBuilder = new AssociationCommandBuilder();
+    send("Get supported groupings", createSendDataRequest(addresseeId, commandBuilder.v1().buildGetSupportedGroupingsCommand(), nextFlowId()));
+    send("Get group 1", createSendDataRequest(addresseeId, commandBuilder.v1().buildGetCommand(1), nextFlowId()));
+    send("Get group 2", createSendDataRequest(addresseeId, commandBuilder.v1().buildGetCommand(2), nextFlowId()));
+    send("Get group 3", createSendDataRequest(addresseeId, commandBuilder.v1().buildGetCommand(3), nextFlowId()));
   }
 
   private void learnConfiguration() throws Exception {
     log.debug("Checking rxTxConfiguration");
-    ConfigurationCommandBuilderV1 commandBuilder = ZWaveControlledCommandBuilder.configurationCommandBuilder().v1();
+    ConfigurationCommandBuilder commandBuilder = new ConfigurationCommandBuilder();
     for (int paramNumber = 1; paramNumber <= 14; paramNumber++) {
-      send("Send get parameter " + paramNumber, createSendDataRequest(addresseeId, commandBuilder.buildGetParameterCommand(paramNumber), nextFlowId()));
+      send("Send get parameter " + paramNumber, createSendDataRequest(addresseeId, commandBuilder.v1().buildGetParameterCommand(paramNumber), nextFlowId()));
     }
   }
 

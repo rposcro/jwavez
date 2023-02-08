@@ -60,7 +60,7 @@ public class RepositoryCommands {
     @ShellMethod(value = "Persist repository", key={ "repository persist", "repo persist" })
     public String persistRepository() throws IOException {
         repositoryService.persistRepository();
-        return "Repository persisted";
+        return "Repository " + shellContext.getRepositoryName() + " persisted";
     }
 
     @ShellMethodAvailability(value = { "repository create" })

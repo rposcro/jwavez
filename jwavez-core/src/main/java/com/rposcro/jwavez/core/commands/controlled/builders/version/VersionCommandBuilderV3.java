@@ -3,7 +3,10 @@ package com.rposcro.jwavez.core.commands.controlled.builders.version;
 import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.types.VersionCommandType;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor(access = AccessLevel.MODULE)
 public class VersionCommandBuilderV3 extends VersionCommandBuilderV1 {
 
   public ZWaveControlledCommand buildCapabilitiesGetCommand() {

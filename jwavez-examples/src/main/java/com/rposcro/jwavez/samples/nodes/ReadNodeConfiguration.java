@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.samples.nodes;
 
-import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.samples.AbstractExample;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
@@ -46,7 +46,7 @@ public class ReadNodeConfiguration extends AbstractExample {
         log.debug("Sending configuration read request for parameter " + parameter);
         SerialRequest request = SendDataRequest.createSendDataRequest(
                 addresseeId,
-                ZWaveControlledCommandBuilder.configurationCommandBuilder().v1().buildGetParameterCommand(parameter),
+                new ConfigurationCommandBuilder().v1().buildGetParameterCommand(parameter),
                 nextFlowId());
         SendDataCallback callback = controller.requestCallbackFlow(request);
         if (callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK) {

@@ -3,9 +3,13 @@ package com.rposcro.jwavez.core.commands.controlled.builders.association;
 import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.types.AssociationCommandType;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import static com.rposcro.jwavez.core.utils.BytesUtil.toByteArray;
 
+@NoArgsConstructor(access = AccessLevel.MODULE)
 public class AssociationCommandBuilderV1 {
 
     public ZWaveControlledCommand buildGetCommand(int groupNumber) {

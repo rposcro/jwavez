@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.core.commands.controlled;
+package com.rposcro.jwavez.core.commands;
 
 import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.commands.controlled.builders.MultiChannelCommandBuilder;
@@ -13,39 +13,39 @@ import com.rposcro.jwavez.core.commands.controlled.builders.version.VersionComma
 import java.util.HashMap;
 import java.util.Map;
 
-public class ZWaveControlledCommandBuilder {
+public class JwzControlledCommandFactory {
 
-    private final static Map<CommandClass, Object> builders = new HashMap<>();
+    private final Map<CommandClass, Object> builders = new HashMap<>();
 
-    public static AssociationCommandBuilder associationCommandBuilder() {
+    public AssociationCommandBuilder associationCommandBuilder() {
         return (AssociationCommandBuilder) builders.computeIfAbsent(CommandClass.CMD_CLASS_ASSOCIATION, cmdClass -> new AssociationCommandBuilder());
     }
 
-    public static BasicCommandBuilder basicCommandBuilder() {
+    public BasicCommandBuilder basicCommandBuilder() {
         return (BasicCommandBuilder) builders.computeIfAbsent(CommandClass.CMD_CLASS_BASIC, cmdClass -> new BasicCommandBuilder());
     }
 
-    public static ConfigurationCommandBuilder configurationCommandBuilder() {
+    public ConfigurationCommandBuilder configurationCommandBuilder() {
         return (ConfigurationCommandBuilder) builders.computeIfAbsent(CommandClass.CMD_CLASS_CONFIGURATION, cmdClass -> new ConfigurationCommandBuilder());
     }
 
-    public static ManufacturerSpecificCommandBuilder manufacturerSpecificCommandBuilder() {
+    public ManufacturerSpecificCommandBuilder manufacturerSpecificCommandBuilder() {
         return (ManufacturerSpecificCommandBuilder) builders.computeIfAbsent(CommandClass.CMD_CLASS_MANUFACTURER_SPECIFIC, cmdClass -> new ManufacturerSpecificCommandBuilder());
     }
 
-    public static MultiChannelCommandBuilder multiChannelCommandBuilder() {
+    public MultiChannelCommandBuilder multiChannelCommandBuilder() {
         return (MultiChannelCommandBuilder) builders.computeIfAbsent(CommandClass.CMD_CLASS_MULTI_CHANNEL, cmdClass -> new MultiChannelCommandBuilder());
     }
 
-    public static PowerLevelCommandBuilder powerLevelCommandBuilder() {
+    public PowerLevelCommandBuilder powerLevelCommandBuilder() {
         return (PowerLevelCommandBuilder) builders.computeIfAbsent(CommandClass.CMD_CLASS_POWERLEVEL, cmdClass -> new PowerLevelCommandBuilder());
     }
 
-    public static SensorBinaryCommandBuilder sensorBinaryControlledCommand() {
+    public SensorBinaryCommandBuilder sensorBinaryControlledCommand() {
         return (SensorBinaryCommandBuilder) builders.computeIfAbsent(CommandClass.CMD_CLASS_SENSOR_BINARY, cmdClass -> new SensorBinaryCommandBuilder());
     }
 
-    public static VersionCommandBuilder versionCommandBuilder() {
+    public VersionCommandBuilder versionCommandBuilder() {
         return (VersionCommandBuilder) builders.computeIfAbsent(CommandClass.CMD_CLASS_VERSION, cmdClass -> new VersionCommandBuilder());
     }
 }

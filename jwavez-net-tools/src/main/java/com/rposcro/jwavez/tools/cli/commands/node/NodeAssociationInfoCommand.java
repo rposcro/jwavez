@@ -2,7 +2,6 @@ package com.rposcro.jwavez.tools.cli.commands.node;
 
 import static com.rposcro.jwavez.core.commands.types.AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT;
 
-import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.builders.association.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationGroupingsReport;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
@@ -24,7 +23,7 @@ public class NodeAssociationInfoCommand extends AbstractNodeAssociationCommand {
   @Override
   public void configure(String[] args) throws CommandOptionsException {
     options = new DefaultNodeBasedOptions(args);
-    commandBuilder = ZWaveControlledCommandBuilder.associationCommandBuilder();
+    commandBuilder = new AssociationCommandBuilder();
   }
 
   @Override

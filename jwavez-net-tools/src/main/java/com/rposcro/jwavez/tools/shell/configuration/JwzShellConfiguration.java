@@ -5,10 +5,8 @@ import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.scopes.ScopeContext;
 import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.scopes.TopScopeContext;
-import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
 import com.rposcro.jwavez.tools.shell.spring.ScopedPromptProvider;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -24,7 +22,7 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 
 @Slf4j
 @Configuration
-public class JWaveZShellConfiguration {
+public class JwzShellConfiguration {
 
     private final static String WORKSPACE_PATH = ".config/jwavez/shell/repo";
 
