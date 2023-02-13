@@ -3,6 +3,8 @@ package com.rposcro.jwavez.core.classes;
 import com.rposcro.jwavez.core.utils.EncodableConstantsRegistry;
 import com.rposcro.jwavez.core.utils.EncodableConstant;
 
+import java.util.Optional;
+
 public enum GenericDeviceClass implements EncodableConstant {
 
     GENERIC_TYPE_NOT_KNOWN(0x00),
@@ -35,11 +37,15 @@ public enum GenericDeviceClass implements EncodableConstant {
     GENERIC_TYPE_NON_INTEROPERABLE(0xFF),
     ;
 
-    private GenericDeviceClass(int code) {
+    GenericDeviceClass(int code) {
         EncodableConstantsRegistry.registerConstant(this, (byte) code);
     }
 
     public static GenericDeviceClass ofCode(byte code) {
         return EncodableConstantsRegistry.constantOfCode(GenericDeviceClass.class, code);
+    }
+
+    public static Optional<GenericDeviceClass> ofCodeOptional(byte code) {
+        return EncodableConstantsRegistry.optionalConstantOfCode(GenericDeviceClass.class, code);
     }
 }

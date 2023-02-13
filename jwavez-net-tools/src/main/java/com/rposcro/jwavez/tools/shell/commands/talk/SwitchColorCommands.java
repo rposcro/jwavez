@@ -5,7 +5,7 @@ import com.rposcro.jwavez.core.commands.controlled.builders.switchcolor.SwitchCo
 import com.rposcro.jwavez.core.commands.supported.switchcolor.SwitchColorReport;
 import com.rposcro.jwavez.core.commands.supported.switchcolor.SwitchColorSupportedReport;
 import com.rposcro.jwavez.core.commands.types.SwitchColorCommandType;
-import com.rposcro.jwavez.core.constants.ColorComponent;
+import com.rposcro.jwavez.core.model.ColorComponent;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;

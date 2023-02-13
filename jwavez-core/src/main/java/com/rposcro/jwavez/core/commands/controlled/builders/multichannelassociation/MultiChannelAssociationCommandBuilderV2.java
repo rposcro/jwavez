@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.core.commands.controlled.builders.multichannelassociation;
 
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
-import com.rposcro.jwavez.core.constants.ZWaveConstants;
+import com.rposcro.jwavez.core.model.ZWaveConstants;
 import com.rposcro.jwavez.core.model.EndPointId;
 import com.rposcro.jwavez.core.model.NodeId;
 import lombok.AccessLevel;

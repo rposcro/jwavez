@@ -4,9 +4,9 @@ import com.rposcro.jwavez.core.commands.JwzSupportedCommandParser;
 import com.rposcro.jwavez.core.commands.supported.SupportedCommandResolversRegistry;
 import com.rposcro.jwavez.core.commands.types.CommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
-import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
-import com.rposcro.jwavez.core.handlers.SupportedCommandHandler;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.listeners.SupportedCommandDispatcher;
+import com.rposcro.jwavez.core.listeners.SupportedCommandListener;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationCommandHandlerCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.model.FrameCast;
@@ -41,12 +41,12 @@ public class ApplicationCommandInterceptor implements CallbackInterceptor {
         this.skipUnsupportedCallbacks = skipUnsupportedCallbacks;
     }
 
-    public ApplicationCommandInterceptor registerCommandHandler(CommandType commandType, SupportedCommandHandler commandHandler) {
+    public ApplicationCommandInterceptor registerCommandHandler(CommandType commandType, SupportedCommandListener commandHandler) {
         supportedCommandDispatcher.registerHandler(commandType, commandHandler);
         return this;
     }
 
-    public ApplicationCommandInterceptor registerAllCommandsHandler(SupportedCommandHandler commandHandler) {
+    public ApplicationCommandInterceptor registerAllCommandsHandler(SupportedCommandListener commandHandler) {
         supportedCommandDispatcher.registerAllCommandsHandler(commandHandler);
         return this;
     }

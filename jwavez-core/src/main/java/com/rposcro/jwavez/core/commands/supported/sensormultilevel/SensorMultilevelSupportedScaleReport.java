@@ -3,7 +3,7 @@ package com.rposcro.jwavez.core.commands.supported.sensormultilevel;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.types.SensorMultilevelCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
 

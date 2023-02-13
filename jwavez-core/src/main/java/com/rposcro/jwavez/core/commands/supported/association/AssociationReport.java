@@ -3,7 +3,7 @@ package com.rposcro.jwavez.core.commands.supported.association;
 import com.rposcro.jwavez.core.commands.types.AssociationCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -18,7 +18,7 @@ public class AssociationReport extends ZWaveSupportedCommand<AssociationCommandT
     private short maxNodesCountSupported;
     private short nodesCount;
     private short reportsToFollow;
-    private NodeId[] nodeIds;
+    private byte[] nodeIds;
 
     public AssociationReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(AssociationCommandType.ASSOCIATION_REPORT, sourceNodeId);
@@ -26,9 +26,9 @@ public class AssociationReport extends ZWaveSupportedCommand<AssociationCommandT
         this.maxNodesCountSupported = payload.getUnsignedByte(3);
         this.reportsToFollow = payload.getUnsignedByte(4);
         this.nodesCount = (short) (payload.getLength() - 5);
-        this.nodeIds = new NodeId[nodesCount];
+        this.nodeIds = new byte[nodesCount];
         for (int i = 0; i < nodesCount; i++) {
-            nodeIds[i] = new NodeId(payload.getByte(5 + i));
+            nodeIds[i] = payload.getByte(5 + i);
         }
     }
 
@@ -40,7 +40,7 @@ public class AssociationReport extends ZWaveSupportedCommand<AssociationCommandT
                 getMaxNodesCountSupported(),
                 getNodesCount(),
                 getReportsToFollow(),
-                Stream.of(nodeIds).map(nodeId -> String.format("%02x", nodeId.getId())).collect(Collectors.joining(", "))
+                Stream.of(nodeIds).map(nodeId -> String.format("%02x", nodeId)).collect(Collectors.joining(", "))
         );
     }
 }

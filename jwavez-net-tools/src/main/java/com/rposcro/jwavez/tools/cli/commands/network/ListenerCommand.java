@@ -3,7 +3,7 @@ package com.rposcro.jwavez.tools.cli.commands.network;
 import com.rposcro.jwavez.core.JwzApplicationCommands;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.enums.FrameType;
 import com.rposcro.jwavez.serial.enums.SerialCommand;

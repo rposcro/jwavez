@@ -2,10 +2,10 @@ package com.rposcro.jwavez.core.commands.supported.multichannelassociation;
 
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.types.MultiChannelAssociationCommandType;
-import com.rposcro.jwavez.core.constants.ZWaveConstants;
+import com.rposcro.jwavez.core.model.ZWaveConstants;
 import com.rposcro.jwavez.core.model.EndPointId;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
 

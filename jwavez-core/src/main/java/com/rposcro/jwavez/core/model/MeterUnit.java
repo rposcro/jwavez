@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.core.constants;
+package com.rposcro.jwavez.core.model;
 
 import lombok.Getter;
 

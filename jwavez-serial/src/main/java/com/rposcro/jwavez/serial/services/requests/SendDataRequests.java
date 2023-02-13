@@ -2,7 +2,6 @@ package com.rposcro.jwavez.serial.services.requests;
 
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
 import com.rposcro.jwavez.serial.buffers.FrameBuffer;
 import com.rposcro.jwavez.serial.buffers.dispatchers.BufferDispatcher;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
@@ -23,9 +22,9 @@ public class SendDataRequests extends AbstractFrameRequests {
                 .put(addresseeId.getId())
                 .put((byte) zWaveCommand.getPayloadLength());
 
-        ImmutableBuffer payloadBuffer = zWaveCommand.getPayloadBuffer();
-        while (payloadBuffer.hasNext()) {
-            buffer.put(payloadBuffer.next());
+        byte[] payload = zWaveCommand.getPayload();
+        for (byte bt: payload) {
+            buffer.put(bt);
         }
 
         buffer.put(defaultTransmitOptions())

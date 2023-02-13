@@ -3,7 +3,7 @@ package com.rposcro.jwavez.core.commands.controlled.builders.configuration;
 import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
-import com.rposcro.jwavez.core.constants.BitLength;
+import com.rposcro.jwavez.core.model.BitLength;
 import com.rposcro.jwavez.core.utils.BytesUtil;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -62,12 +63,13 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
 
     private void handleAssociationReport(ZWaveSupportedCommand command) {
         AssociationReport report = (AssociationReport) command;
+        byte[] nodeIds = report.getNodeIds();
         StringBuffer logMessage = new StringBuffer()
                 .append(String.format("  association group: %s\n", report.getGroupId()))
                 .append(String.format("  max nodes supported: %s\n", report.getMaxNodesCountSupported()))
                 .append(String.format("  present nodes count: %s\n", report.getNodesCount()))
-                .append(String.format("  present nodes: %s\n", Arrays.stream(report.getNodeIds())
-                        .map(nodeId -> String.format("%02X", nodeId.getId()))
+                .append(String.format("  present nodes: %s\n", IntStream.range(0, nodeIds.length)
+                        .mapToObj(idx -> String.format("%02X", nodeIds[idx]))
                         .collect(Collectors.joining(","))));
         System.out.printf("%s\n", logMessage.toString());
         callbacksLatch.countDown();

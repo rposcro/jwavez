@@ -33,12 +33,12 @@ public class MultiChannelCommandBuilderV3 {
 
     public ZWaveControlledCommand encapsulateCommand(
             byte sourceEndpoint, byte destinationEndpoint, ZWaveControlledCommand command) {
-        byte[] payload = new byte[4 + command.getPayload().getLength()];
+        byte[] payload = new byte[4 + command.getPayloadLength()];
         payload[0] = CommandClass.CMD_CLASS_MULTI_CHANNEL.getCode();
         payload[1] = MultiChannelCommandType.MULTI_CHANNEL_CMD_ENCAP.getCode();
         payload[2] = sourceEndpoint;
         payload[3] = destinationEndpoint;
-        command.getPayload().cloneBytes(payload, 4);
+        System.arraycopy(command.getPayload(), 0, payload, 4, command.getPayloadLength());
         return new ZWaveControlledCommand(payload);
     }
 }

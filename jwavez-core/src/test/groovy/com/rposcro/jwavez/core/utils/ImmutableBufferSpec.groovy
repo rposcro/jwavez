@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.core.utils
 
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer
 import spock.lang.Specification
 import spock.lang.Unroll
 

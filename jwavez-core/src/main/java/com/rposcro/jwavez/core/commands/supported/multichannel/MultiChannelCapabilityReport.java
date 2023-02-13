@@ -6,9 +6,11 @@ import com.rposcro.jwavez.core.classes.SpecificDeviceClass;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.types.MultiChannelCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
+
+import java.util.stream.IntStream;
 
 @Getter
 @ToString
@@ -16,9 +18,9 @@ public class MultiChannelCapabilityReport extends ZWaveSupportedCommand<MultiCha
 
     private boolean endPointDynamic;
     private byte endpointId;
-    private GenericDeviceClass genericDeviceClass;
-    private SpecificDeviceClass specificDeviceClass;
-    private CommandClass[] commandClasses;
+    private byte genericDeviceClass;
+    private byte specificDeviceClass;
+    private byte[] commandClasses;
 
     public MultiChannelCapabilityReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(MultiChannelCommandType.MULTI_CHANNEL_CAPABILITY_REPORT, sourceNodeId);
@@ -26,13 +28,30 @@ public class MultiChannelCapabilityReport extends ZWaveSupportedCommand<MultiCha
         byte endpoint = payload.next();
         endPointDynamic = (endpoint & 0x80) != 0;
         endpointId = (byte) (endpoint & 0x7F);
-        genericDeviceClass = GenericDeviceClass.ofCode(payload.next());
-        specificDeviceClass = SpecificDeviceClass.ofCode(payload.next(), genericDeviceClass);
+        genericDeviceClass = payload.next();
+        specificDeviceClass = payload.next();
 
         int commandClassCount = payload.available();
-        commandClasses = new CommandClass[commandClassCount];
+        commandClasses = new byte[commandClassCount];
         for (int i = 0; i < commandClassCount; i++) {
-            commandClasses[i] = CommandClass.optionalOfCode(payload.next()).orElse(CommandClass.CMD_CLASS_UNKNOWN);
+            commandClasses[i] = payload.next();
         }
+    }
+
+    public GenericDeviceClass getDecodedGenericDeviceClass() {
+        return GenericDeviceClass.ofCodeOptional(this.genericDeviceClass).orElse(null);
+    }
+
+    public SpecificDeviceClass getDecodedSpecificDeviceClass() {
+        return SpecificDeviceClass.ofCodeOptional(this.specificDeviceClass, getDecodedGenericDeviceClass())
+                .orElse(null);
+    }
+
+    public CommandClass[] getDecodedCommandClasses() {
+        CommandClass[] classes = (CommandClass[]) IntStream.range(0, commandClasses.length)
+                .mapToObj(idx -> CommandClass.optionalOfCode(commandClasses[idx]))
+                .map(opt -> opt.orElse(CommandClass.CMD_CLASS_UNKNOWN))
+                .toArray();
+        return classes;
     }
 }

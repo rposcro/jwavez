@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.core.commands.supported.meter;
 
-import com.rposcro.jwavez.core.constants.MeterType;
-import com.rposcro.jwavez.core.constants.MeterUnit;
+import com.rposcro.jwavez.core.model.MeterType;
+import com.rposcro.jwavez.core.model.MeterUnit;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -22,8 +22,9 @@ public class MeterReportTest {
 
         assertEquals(SOURCE_NODE_ID, meterReport.getSourceNodeId().getId());
         assertEquals(2, meterReport.getCommandVersion());
-        assertEquals(MeterType.ELECTRIC_METER, meterReport.getMeterType());
-        assertEquals(MeterUnit.kWh, meterReport.getMeterUnit());
+        assertEquals(MeterType.ELECTRIC_METER.getCode(), meterReport.getMeterType());
+        assertEquals(MeterType.ELECTRIC_METER, meterReport.getDecodedMeterType());
+        assertEquals(MeterUnit.kWh, meterReport.getDecodedMeterUnit());
         assertEquals(1, meterReport.getRateType());
         assertEquals(2, meterReport.getPrecision());
         assertEquals(0, meterReport.getScaleValue());
@@ -45,8 +46,9 @@ public class MeterReportTest {
 
         assertEquals(SOURCE_NODE_ID, meterReport.getSourceNodeId().getId());
         assertEquals(2, meterReport.getCommandVersion());
-        assertEquals(MeterType.ELECTRIC_METER, meterReport.getMeterType());
-        assertEquals(MeterUnit.W, meterReport.getMeterUnit());
+        assertEquals(MeterType.ELECTRIC_METER.getCode(), meterReport.getMeterType());
+        assertEquals(MeterType.ELECTRIC_METER, meterReport.getDecodedMeterType());
+        assertEquals(MeterUnit.W, meterReport.getDecodedMeterUnit());
         assertEquals(1, meterReport.getRateType());
         assertEquals(1, meterReport.getPrecision());
         assertEquals(2, meterReport.getScaleValue());

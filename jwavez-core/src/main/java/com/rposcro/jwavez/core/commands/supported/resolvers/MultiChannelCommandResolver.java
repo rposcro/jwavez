@@ -1,6 +1,8 @@
-package com.rposcro.jwavez.core.commands.supported;
+package com.rposcro.jwavez.core.commands.supported.resolvers;
 
 import com.rposcro.jwavez.core.classes.CommandClass;
+import com.rposcro.jwavez.core.commands.supported.SupportedCommandResolver;
+import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.multichannel.MultiChannelAggregatedMembersReport;
 import com.rposcro.jwavez.core.commands.supported.multichannel.MultiChannelCapabilityReport;
 import com.rposcro.jwavez.core.commands.supported.multichannel.MultiChannelCommandEncapsulation;
@@ -8,7 +10,7 @@ import com.rposcro.jwavez.core.commands.supported.multichannel.MultiChannelEndPo
 import com.rposcro.jwavez.core.commands.supported.multichannel.MultiChannelEndPointReport;
 import com.rposcro.jwavez.core.commands.types.MultiChannelCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 
 import java.util.HashMap;
 import java.util.Map;

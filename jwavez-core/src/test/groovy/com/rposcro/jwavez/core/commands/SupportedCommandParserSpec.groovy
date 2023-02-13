@@ -13,7 +13,7 @@ import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationRep
 import com.rposcro.jwavez.core.commands.supported.sceneactivation.SceneActivationSet
 import com.rposcro.jwavez.core.enums.CommandClass
 import com.rposcro.jwavez.core.model.NodeId
-import com.rposcro.jwavez.core.utils.ImmutableBuffer
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer
 import spock.lang.Specification
 import spock.lang.Unroll
 

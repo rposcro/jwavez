@@ -6,7 +6,7 @@ import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommandResolver;
 import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 

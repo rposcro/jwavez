@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.core.utils;
+package com.rposcro.jwavez.core.buffer;
 
 import lombok.Getter;
 

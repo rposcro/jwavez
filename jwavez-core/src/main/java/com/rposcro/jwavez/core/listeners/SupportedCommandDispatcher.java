@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.core.handlers;
+package com.rposcro.jwavez.core.listeners;
 
 import com.rposcro.jwavez.core.commands.types.CommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
@@ -14,18 +14,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SupportedCommandDispatcher {
 
-    private Map<CommandType, List<SupportedCommandHandler>> handlersPerCommandType = new HashMap<>();
+    private Map<CommandType, List<SupportedCommandListener>> listenersPerCommandType = new HashMap<>();
 
-    public SupportedCommandDispatcher registerAllCommandsHandler(SupportedCommandHandler commandHandler) {
-        List<SupportedCommandHandler> handlers = handlersPerCommandType.computeIfAbsent(null, type -> new LinkedList<>());
+    public SupportedCommandDispatcher registerAllCommandsHandler(SupportedCommandListener commandHandler) {
+        List<SupportedCommandListener> handlers = listenersPerCommandType.computeIfAbsent(null, type -> new LinkedList<>());
         if (!handlers.contains(commandHandler)) {
             handlers.add(commandHandler);
         }
         return this;
     }
 
-    public SupportedCommandDispatcher registerHandler(CommandType commandType, SupportedCommandHandler commandHandler) {
-        List<SupportedCommandHandler> handlers = handlersPerCommandType.computeIfAbsent(commandType, type -> new LinkedList<>());
+    public SupportedCommandDispatcher registerHandler(CommandType commandType, SupportedCommandListener commandHandler) {
+        List<SupportedCommandListener> handlers = listenersPerCommandType.computeIfAbsent(commandType, type -> new LinkedList<>());
         if (!handlers.contains(commandHandler)) {
             handlers.add(commandHandler);
         }
@@ -39,9 +39,9 @@ public class SupportedCommandDispatcher {
             log.info("Command to dispatch: {} {}", command.getCommandClass(), command.getCommandType());
         }
 
-        Optional.ofNullable(handlersPerCommandType.get(command.getCommandType()))
+        Optional.ofNullable(listenersPerCommandType.get(command.getCommandType()))
                 .ifPresent(handlers -> handlers.stream().forEach(handler -> handler.handleCommand(command)));
-        Optional.ofNullable(handlersPerCommandType.get(null))
+        Optional.ofNullable(listenersPerCommandType.get(null))
                 .ifPresent(handlers -> handlers.stream().forEach(handler -> handler.handleCommand(command)));
     }
 }

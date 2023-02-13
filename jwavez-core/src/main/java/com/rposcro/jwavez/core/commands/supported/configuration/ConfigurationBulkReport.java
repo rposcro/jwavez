@@ -3,7 +3,7 @@ package com.rposcro.jwavez.core.commands.supported.configuration;
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -18,7 +18,6 @@ public class ConfigurationBulkReport extends ZWaveSupportedCommand<Configuration
     private final static int OFFSET_VALUES = 7;
     private final static int MASK_HANDSHAKE = 0b0100_0000;
     private final static int MASK_VALUE_SIZE = 0b0000_0111;
-
 
     private int parametersOffset;
     private int parametersCount;

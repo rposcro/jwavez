@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.core.utils;
 
-import com.rposcro.jwavez.core.constants.BitLength;
+import com.rposcro.jwavez.core.model.BitLength;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;

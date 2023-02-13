@@ -10,6 +10,7 @@ import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.tools.cli.commands.AbstractAsyncBasedCommand;
 
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public abstract class AbstractNodeAssociationCommand extends AbstractAsyncBasedCommand {
@@ -42,10 +43,11 @@ public abstract class AbstractNodeAssociationCommand extends AbstractAsyncBasedC
     }
 
     protected void printAssociationReport(AssociationReport report) {
+        byte[] nodeIds = report.getNodeIds();
         System.out.println(":: Report on group " + report.getGroupId());
         System.out.println("  max supported nodes count: " + report.getMaxNodesCountSupported());
-        System.out.println("  nodes in group: " + Stream.of(report.getNodeIds())
-                .map(nodeId -> String.format("%02x", nodeId.getId()))
+        System.out.println("  nodes in group: " + IntStream.range(0, nodeIds.length)
+                .mapToObj(idx -> String.format("%02x", nodeIds[idx]))
                 .collect(Collectors.joining(", ")));
         System.out.println();
     }

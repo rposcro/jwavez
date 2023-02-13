@@ -2,10 +2,10 @@ package com.rposcro.jwavez.core.commands.supported.meter;
 
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.types.MeterCommandType;
-import com.rposcro.jwavez.core.constants.MeterType;
-import com.rposcro.jwavez.core.constants.MeterUnit;
+import com.rposcro.jwavez.core.model.MeterType;
+import com.rposcro.jwavez.core.model.MeterUnit;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -19,20 +19,15 @@ public class MeterReport extends ZWaveSupportedCommand<MeterCommandType> {
     private final static int OFFSET_TO_DEFINITION_1 = 2;
     private final static int OFFSET_TO_DEFINITION_2 = 3;
 
-    private byte meterTypeCode;
-    private MeterType meterType;
-    private MeterUnit meterUnit;
+    private byte meterType;
     private byte scaleValue;
     private byte scale2Value;
     private byte rateType;
     private byte precision;
     private byte measureSize;
-
     private long measure;
     private long previousMeasure;
     private int deltaTime;
-
-    private byte commandVersion;
 
     public MeterReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(MeterCommandType.METER_REPORT, sourceNodeId);
@@ -40,18 +35,24 @@ public class MeterReport extends ZWaveSupportedCommand<MeterCommandType> {
         byte typeByte1 = payload.getByte(OFFSET_TO_DEFINITION_1);
         byte typeByte2 = payload.getByte(OFFSET_TO_DEFINITION_2);
 
-        this.meterTypeCode = extractValue(typeByte1, 0, 0b11111);
-        this.meterType = MeterType.ofCodeOptional(meterTypeCode).orElse(null);
+        this.meterType = extractValue(typeByte1, 0, 0b11111);
         this.rateType = extractValue(typeByte1, 5, 0b11);
         this.measureSize = extractValue(typeByte2, 0, 0b111);
         this.commandVersion = recognizeCommandVersion(payload, measureSize);
         this.precision = extractValue(typeByte2, 5, 0b111);
         this.scaleValue = extractScale(payload, commandVersion, measureSize);
         this.scale2Value = extractScale2(payload, commandVersion, measureSize);
-        this.meterUnit = recognizeMeterUnit(meterType, scaleValue);
         this.deltaTime = extractDeltaTime(payload, commandVersion, measureSize);
         this.measure = extractMeasure(payload, measureSize, OFFSET_TO_MEASURE);
         this.previousMeasure = extractPreviousMeasure(payload, commandVersion, measureSize);
+    }
+
+    public MeterType getDecodedMeterType() {
+        return MeterType.ofCodeOptional(meterType).orElse(null);
+    }
+
+    public MeterUnit getDecodedMeterUnit() {
+        return recognizeMeterUnit(getDecodedMeterType(), scaleValue);
     }
 
     private byte extractScale(ImmutableBuffer payload, byte commandVersion, byte measureSize) {
@@ -198,14 +199,13 @@ public class MeterReport extends ZWaveSupportedCommand<MeterCommandType> {
 
     @Override
     public String asNiceString() {
-        return String.format("%s version(%02x), %s(%02x) %s(%02x) rateType(%02x) precision(%02x) measureSize(%02x)" +
-                        ", scale(%02x), scale2(%02x), measure(%08x), prevMeasure(%08x), deltaTime(%02x)",
+        return String.format("%s version(%02x) %s(%02x) meterUnit(%s) rateType(%02x) precision(%02x) measureSize(%02x)" +
+                        " scale(%02x) scale2(%02x), measure(%08x) prevMeasure(%08x) deltaTime(%02x)",
                 super.asNiceString(),
                 commandVersion,
-                meterType.name(),
-                meterTypeCode,
-                meterUnit,
-                scaleValue,
+                getDecodedMeterType().name(),
+                meterType,
+                getDecodedMeterUnit().name(),
                 rateType,
                 precision,
                 measureSize,

@@ -14,9 +14,9 @@ import com.rposcro.jwavez.tools.utils.SerialUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 public class NodeAssociationService {
@@ -41,9 +41,11 @@ public class NodeAssociationService {
                         SerialUtils.DEFAULT_TIMEOUT)
         )).getAcquiredSupportedCommand();
 
-        List<Integer> associatedNodes = Arrays.stream(associationReport.getNodeIds())
-                .map(id -> ((int) id.getId()) & 0xff)
+        byte[] nodeIds = associationReport.getNodeIds();
+        List<Integer> associatedNodes = IntStream.range(0, nodeIds.length)
+                .map(idx -> nodeIds[idx] & 0xff)
                 .sorted()
+                .boxed()
                 .collect(Collectors.toList());
         nodeInformationCache.getNodeDetails(nodeId).getAssociationsInformation().replaceAllNodesAssociations(groupId, associatedNodes);
         return nodeInformationCache.getNodeDetails(nodeId).getAssociationsInformation().findNodeAssociations(groupId);
