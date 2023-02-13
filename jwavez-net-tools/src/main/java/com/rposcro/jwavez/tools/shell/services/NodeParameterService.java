@@ -58,7 +58,7 @@ public class NodeParameterService {
                         SerialUtils.DEFAULT_TIMEOUT)
         )).getAcquiredSupportedCommand();
 
-        long paramValue = ((long) configurationReport.getValue()) & 0xffffffff;
+        long paramValue = ((long) configurationReport.getParameterValue()) & 0xffffffff;
         nodeInformationCache.getNodeDetails(nodeId).getParametersInformation().setParameterValue(paramNumber, paramValue);
         return paramValue;
     }

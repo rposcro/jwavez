@@ -5,9 +5,8 @@ import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.types.AssociationCommandType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
-import static com.rposcro.jwavez.core.utils.BytesUtil.toByteArray;
+import static com.rposcro.jwavez.core.utils.BytesUtil.asByteArray;
 
 @NoArgsConstructor(access = AccessLevel.MODULE)
 public class AssociationCommandBuilderV1 {
@@ -25,7 +24,7 @@ public class AssociationCommandBuilderV1 {
     }
 
     public ZWaveControlledCommand buildSetCommand(int groupNumber, int... nodeIds) {
-        return buildSetCommand((byte) groupNumber, toByteArray(nodeIds));
+        return buildSetCommand((byte) groupNumber, asByteArray(nodeIds));
     }
 
     public ZWaveControlledCommand buildSetCommand(byte groupNumber, byte... nodeIds) {
@@ -40,7 +39,7 @@ public class AssociationCommandBuilderV1 {
     }
 
     public ZWaveControlledCommand buildRemoveCommand(int groupNumber, int... nodeIds) {
-        return buildRemoveCommand((byte) groupNumber, toByteArray(nodeIds));
+        return buildRemoveCommand((byte) groupNumber, asByteArray(nodeIds));
     }
 
     public ZWaveControlledCommand buildRemoveCommand(byte groupNumber, byte... nodeIds) {

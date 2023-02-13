@@ -13,7 +13,8 @@ public class MultiChannelEndPointReport extends ZWaveSupportedCommand<MultiChann
 
     private boolean endPointsCountDynamic;
     private boolean endPointsCapabilitiesIdentical;
-    private byte endpointsCount;
+    private byte endPointsCount;
+    private byte aggregatedEndPointsCount;
 
     public MultiChannelEndPointReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(MultiChannelCommandType.MULTI_CHANNEL_END_POINT_REPORT, sourceNodeId);
@@ -21,7 +22,14 @@ public class MultiChannelEndPointReport extends ZWaveSupportedCommand<MultiChann
         byte flags = payload.next();
         endPointsCountDynamic = (flags & 0x80) != 0;
         endPointsCapabilitiesIdentical = (flags & 0x40) != 0;
-        endpointsCount = payload.next();
+        endPointsCount = (byte) (payload.next() & 0x7f);
+
+        if (payload.hasNext()) {
+            aggregatedEndPointsCount = (byte) (payload.next() & 0x7f);
+            commandVersion = 4;
+        } else {
+            commandVersion = 3;
+        }
     }
 
     @Override
@@ -30,6 +38,6 @@ public class MultiChannelEndPointReport extends ZWaveSupportedCommand<MultiChann
                 super.asNiceString(),
                 endPointsCountDynamic,
                 endPointsCapabilitiesIdentical,
-                endpointsCount);
+                endPointsCount);
     }
 }

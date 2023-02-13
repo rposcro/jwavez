@@ -18,6 +18,7 @@ public class SensorMultilevelSupportedScaleReport extends ZWaveSupportedCommand<
         super(SensorMultilevelCommandType.SENSOR_MULTILEVEL_SUPPORTED_SENSOR_REPORT, sourceNodeId);
         this.sensorType = payload.getByte(2);
         this.scaleBitMask = (byte) (payload.getByte(3) & 0x0f);
+        this.commandVersion = 5;
     }
 
     @Override

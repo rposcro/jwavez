@@ -11,45 +11,43 @@ import lombok.ToString;
 @ToString
 public class ConfigurationBulkReport extends ZWaveSupportedCommand<ConfigurationCommandType> {
 
-    private final static int OFFSET_OFFSET = 2;
-    private final static int OFFSET_COUNT = 4;
-    private final static int OFFSET_FOLLOW = 5;
-    private final static int OFFSET_FLAGS = 6;
-    private final static int OFFSET_VALUES = 7;
     private final static int MASK_HANDSHAKE = 0b0100_0000;
     private final static int MASK_VALUE_SIZE = 0b0000_0111;
 
     private int parametersOffset;
-    private int parametersCount;
+    private short parametersCount;
     private short reportsToFollow;
     private boolean handshake;
-    private byte valueSize;
-    private int[] values;
+    private byte parameterSize;
+    private long[] parameterValues;
 
     public ConfigurationBulkReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(ConfigurationCommandType.CONFIGURATION_BULK_REPORT, sourceNodeId);
-        parametersOffset = payload.getUnsignedWord(OFFSET_OFFSET);
-        parametersCount = payload.getUnsignedByte(OFFSET_COUNT);
-        reportsToFollow = payload.getUnsignedByte(OFFSET_FOLLOW);
+        payload.rewind().skip(2);
+        parametersOffset = payload.nextUnsignedWord();
+        parametersCount = payload.nextUnsignedByte();
+        reportsToFollow = payload.nextUnsignedByte();
 
-        byte flags = payload.getByte(OFFSET_FLAGS);
+        byte flags = payload.nextByte();
         handshake = (flags & MASK_HANDSHAKE) != 0;
-        valueSize = (byte) (flags & MASK_VALUE_SIZE);
-        values = new int[parametersCount];
+        parameterSize = (byte) (flags & MASK_VALUE_SIZE);
+        parameterValues = new long[parametersCount];
 
         for (int i = 0; i < parametersCount; i++) {
-            values[i] = readValue(payload, valueSize, i * valueSize);
+            parameterValues[i] = readValue(payload, parameterSize);
         }
+
+        commandVersion = 2;
     }
 
-    private int readValue(ImmutableBuffer payload, int valueSize, int offset) {
+    private long readValue(ImmutableBuffer payload, int valueSize) {
         switch (valueSize) {
             case 1:
-                return payload.getByte(offset);
+                return payload.nextUnsignedByte();
             case 2:
-                return payload.getWord(offset);
+                return payload.nextUnsignedWord();
             case 4:
-                return payload.getDoubleWord(offset);
+                return payload.nextUnsignedDoubleWord();
             default:
                 throw new IllegalArgumentException("Unsupported value size found in payload: " + valueSize);
         }

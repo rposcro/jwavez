@@ -14,21 +14,32 @@ import lombok.ToString;
 public class MultiChannelEndPointFindReport extends ZWaveSupportedCommand<MultiChannelCommandType> {
 
     private short reportsToFollow;
-    private GenericDeviceClass genericDeviceClass;
-    private SpecificDeviceClass specificDeviceClass;
+    private byte genericDeviceClass;
+    private byte specificDeviceClass;
     private byte[] endpointsIds;
 
     public MultiChannelEndPointFindReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(MultiChannelCommandType.MULTI_CHANNEL_END_POINT_FIND_REPORT, sourceNodeId);
         payload.skip(2);
         reportsToFollow = payload.nextUnsignedByte();
-        genericDeviceClass = GenericDeviceClass.ofCode(payload.next());
-        specificDeviceClass = SpecificDeviceClass.ofCode(payload.next(), genericDeviceClass);
+        genericDeviceClass = payload.next();
+        specificDeviceClass = payload.next();
 
         int endpointsCount = payload.available();
         endpointsIds = new byte[endpointsCount];
         for (int i = 0; i < endpointsCount; i++) {
-            endpointsIds[i] = payload.next();
+            endpointsIds[i] = (byte) (payload.next() & 0x7f);
         }
+
+        commandVersion = 3;
+    }
+
+    public GenericDeviceClass getDecodedGenericDeviceClass() {
+        return GenericDeviceClass.ofCodeOptional(this.genericDeviceClass).orElse(null);
+    }
+
+    public SpecificDeviceClass getDecodedSpecificDeviceClass() {
+        return SpecificDeviceClass.ofCodeOptional(this.specificDeviceClass, getDecodedGenericDeviceClass())
+                .orElse(null);
     }
 }

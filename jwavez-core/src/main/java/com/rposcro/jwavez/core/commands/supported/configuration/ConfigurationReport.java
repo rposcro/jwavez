@@ -13,22 +13,24 @@ import lombok.ToString;
 public class ConfigurationReport extends ZWaveSupportedCommand<ConfigurationCommandType> {
 
     private short parameterNumber;
-    private byte valueSize;
-    private int value;
+    private byte parameterSize;
+    private long parameterValue;
 
     public ConfigurationReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(ConfigurationCommandType.CONFIGURATION_REPORT, sourceNodeId);
         parameterNumber = payload.getUnsignedByte(2);
-        valueSize = (byte) (payload.getByte(3) & 0x07);
+        parameterSize = (byte) (payload.getByte(3) & 0x07);
 
-        value = 0;
-        for (int i = 0; i < valueSize; i++) {
-            value <<= 8;
-            value |= (payload.getUnsignedByte(4 + i));
+        parameterValue = 0;
+        for (int i = 0; i < parameterSize; i++) {
+            parameterValue <<= 8;
+            parameterValue |= (payload.getUnsignedByte(4 + i));
         }
+
+        commandVersion = 1;
     }
 
     public BitLength getBitLength() {
-        return BitLength.ofBytesNumber(valueSize);
+        return BitLength.ofBytesNumber(parameterSize);
     }
 }

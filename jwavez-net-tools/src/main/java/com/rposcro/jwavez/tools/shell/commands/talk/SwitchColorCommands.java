@@ -50,7 +50,7 @@ public class SwitchColorCommands {
         for (ColorComponent colorComponent : colorComponents) {
             command = switchColorCommandBuilder.v1().buildGetCommand(colorComponent.getCode());
             SwitchColorReport colorReport = talkCommunicationService.requestTalk(nodeId, command, SwitchColorCommandType.SWITCH_COLOR_REPORT);
-            message.append(String.format("\n  %s (%s): 0x%02X", colorComponent.name(), colorComponent.getCode(), colorReport.getColorValue()));
+            message.append(String.format("\n  %s (%s): 0x%02X", colorComponent.name(), colorComponent.getCode(), colorReport.getCurrentValue()));
         }
 
         return message.toString() + "\n";

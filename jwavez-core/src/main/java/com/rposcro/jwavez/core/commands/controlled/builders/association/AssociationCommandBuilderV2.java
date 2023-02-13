@@ -6,13 +6,13 @@ import com.rposcro.jwavez.core.commands.types.AssociationCommandType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import static com.rposcro.jwavez.core.utils.BytesUtil.toByteArray;
+import static com.rposcro.jwavez.core.utils.BytesUtil.asByteArray;
 
 @NoArgsConstructor(access = AccessLevel.MODULE)
 public class AssociationCommandBuilderV2 extends AssociationCommandBuilderV1 {
 
     public ZWaveControlledCommand buildRemoveAllNodesCommand(int... nodeIds) {
-        return buildRemoveAllNodesCommand(toByteArray(nodeIds));
+        return buildRemoveAllNodesCommand(asByteArray(nodeIds));
     }
 
     public ZWaveControlledCommand buildRemoveAllNodesCommand(byte... nodeIds) {

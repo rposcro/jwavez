@@ -17,7 +17,7 @@ import java.util.stream.IntStream;
 public class MultiChannelCapabilityReport extends ZWaveSupportedCommand<MultiChannelCommandType> {
 
     private boolean endPointDynamic;
-    private byte endpointId;
+    private byte endPointId;
     private byte genericDeviceClass;
     private byte specificDeviceClass;
     private byte[] commandClasses;
@@ -27,7 +27,7 @@ public class MultiChannelCapabilityReport extends ZWaveSupportedCommand<MultiCha
         payload.skip(2);
         byte endpoint = payload.next();
         endPointDynamic = (endpoint & 0x80) != 0;
-        endpointId = (byte) (endpoint & 0x7F);
+        endPointId = (byte) (endpoint & 0x7F);
         genericDeviceClass = payload.next();
         specificDeviceClass = payload.next();
 
@@ -36,6 +36,8 @@ public class MultiChannelCapabilityReport extends ZWaveSupportedCommand<MultiCha
         for (int i = 0; i < commandClassCount; i++) {
             commandClasses[i] = payload.next();
         }
+
+        commandVersion = 3;
     }
 
     public GenericDeviceClass getDecodedGenericDeviceClass() {

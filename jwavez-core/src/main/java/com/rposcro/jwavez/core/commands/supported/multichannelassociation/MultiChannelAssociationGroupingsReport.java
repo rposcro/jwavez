@@ -16,10 +16,12 @@ public class MultiChannelAssociationGroupingsReport extends ZWaveSupportedComman
     public MultiChannelAssociationGroupingsReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(MultiChannelAssociationCommandType.MULTI_CHANNEL_ASSOCIATION_GROUPINGS_REPORT, sourceNodeId);
         groupsCount = payload.getUnsignedByte(2);
+        commandVersion = 2;
     }
 
     @Override
     public String asNiceString() {
-        return String.format("%s groupsCnt(%02x)", super.asNiceString(), getGroupsCount());
+        return String.format("%s groupsCnt(%02x)",
+                super.asNiceString(), getGroupsCount());
     }
 }

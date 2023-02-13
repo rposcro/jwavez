@@ -18,10 +18,11 @@ public class SensorMultilevelSupportedSensorReport extends ZWaveSupportedCommand
         super(SensorMultilevelCommandType.SENSOR_MULTILEVEL_SUPPORTED_SENSOR_REPORT, sourceNodeId);
         payload.rewind().skip(2);
         bitMask = payload.cloneRemainingBytes();
+        commandVersion = 5;
     }
 
     @Override
     public String asNiceString() {
-        return String.format("%s bitMask[%s]", super.asNiceString(), BytesUtil.arrayToString(bitMask));
+        return String.format("%s bitMask[%s]", super.asNiceString(), BytesUtil.asString(bitMask));
     }
 }

@@ -33,6 +33,7 @@ public class MultiChannelAssociationReport extends ZWaveSupportedCommand<MultiCh
 
         this.nodeIds = parseNodes(payload);
         this.endPointIds = parseEndPoints(payload);
+        this.commandVersion = 2;
     }
 
     private NodeId[] parseNodes(ImmutableBuffer payload) {

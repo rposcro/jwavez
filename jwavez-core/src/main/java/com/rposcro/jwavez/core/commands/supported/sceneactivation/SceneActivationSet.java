@@ -12,18 +12,19 @@ import lombok.ToString;
 public class SceneActivationSet extends ZWaveSupportedCommand<SceneActivationCommandType> {
 
     private short sceneId;
-    private short dimminingDuration;
+    private short dimmingDuration;
 
     public SceneActivationSet(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(SceneActivationCommandType.SCENE_ACTIVATION_SET, sourceNodeId);
         sceneId = payload.getUnsignedByte(2);
-        dimminingDuration = payload.getUnsignedByte(3);
+        dimmingDuration = payload.getUnsignedByte(3);
+        commandVersion = 1;
     }
 
     @Override
     public String asNiceString() {
         return String.format("%s sceneId(%02x) dimminingDuration(%02x)",
-                super.asNiceString(), sceneId, dimminingDuration
+                super.asNiceString(), sceneId, dimmingDuration
         );
     }
 }

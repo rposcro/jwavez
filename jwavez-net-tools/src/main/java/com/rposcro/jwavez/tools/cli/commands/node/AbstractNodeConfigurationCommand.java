@@ -41,12 +41,12 @@ public abstract class AbstractNodeConfigurationCommand extends AbstractAsyncBase
 
     protected void printConfigurationReport(ConfigurationReport report) {
         System.out.printf(":: Report on configuration parameter %s\n", report.getParameterNumber());
-        System.out.printf("  value size: %s bits\n", (8 * report.getValueSize()));
-        System.out.printf("  value: %s\n", formatValue(report.getValueSize(), report.getValue()));
+        System.out.printf("  value size: %s bits\n", (8 * report.getParameterSize()));
+        System.out.printf("  value: %s\n", formatValue(report.getParameterSize(), report.getParameterValue()));
         System.out.println();
     }
 
-    protected String formatValue(int size, int value) {
+    protected String formatValue(int size, long value) {
         switch (size) {
             case 1:
                 return String.format("%02x", (byte) value);

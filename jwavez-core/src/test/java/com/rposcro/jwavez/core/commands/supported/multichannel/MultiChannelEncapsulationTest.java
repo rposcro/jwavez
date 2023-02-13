@@ -25,8 +25,9 @@ public class MultiChannelEncapsulationTest {
         assertEquals(SOURCE_NODE_ID, encapsulation.getSourceNodeId().getId());
         assertEquals(CommandClass.CMD_CLASS_MULTI_CHANNEL, encapsulation.getCommandClass());
         assertEquals(MultiChannelCommandType.MULTI_CHANNEL_CMD_ENCAP, encapsulation.getCommandType());
-        assertEquals(0x07, encapsulation.getSourceEndpointId());
-        assertEquals(0x01, encapsulation.getDestinationEndpointId());
+        assertEquals(0x07, encapsulation.getSourceEndPointId());
+        assertEquals(0x01, encapsulation.getDestinationEndPointId());
+        assertEquals(0x03, encapsulation.getCommandVersion());
         assertArrayEquals(new byte[]{0x31, 0x05, 0x01, 0x22, 0x01, 0x51},
                 encapsulation.getEncapsulatedCommandPayload());
     }

@@ -66,7 +66,7 @@ public class SensorBinarySetUp extends AbstractExample implements AutoCloseable 
 
     private void handleConfigurationReport(ZWaveSupportedCommand command) {
         ConfigurationReport report = (ConfigurationReport) command;
-        System.out.printf("  parameter %s value %s\n", report.getParameterNumber(), report.getValue());
+        System.out.printf("  parameter %s value %s\n", report.getParameterNumber(), report.getParameterValue());
     }
 
     private void interceptViewBuffer(ViewBuffer buffer) {

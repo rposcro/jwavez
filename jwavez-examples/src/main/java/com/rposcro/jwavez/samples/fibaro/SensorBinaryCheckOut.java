@@ -24,7 +24,6 @@ import com.rposcro.jwavez.serial.interceptors.ApplicationCommandInterceptor;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
 
-import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -83,7 +82,7 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
 
     private void handleConfigurationReport(ZWaveSupportedCommand command) {
         ConfigurationReport report = (ConfigurationReport) command;
-        System.out.printf("  parameter %s value %s\n\n", report.getParameterNumber(), report.getValue());
+        System.out.printf("  parameter %s value %s\n\n", report.getParameterNumber(), report.getParameterValue());
         callbacksLatch.countDown();
     }
 

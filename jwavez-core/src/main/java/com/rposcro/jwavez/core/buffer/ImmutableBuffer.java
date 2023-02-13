@@ -101,6 +101,12 @@ public final class ImmutableBuffer {
         return value;
     }
 
+    public long nextUnsignedDoubleWord() {
+        long value = getUnsignedDoubleWord(position);
+        position += 4;
+        return value;
+    }
+
     public ImmutableBuffer skip(int distance) {
         if (position + distance >= length) {
             throw new IndexOutOfBoundsException("New index out of bound");
