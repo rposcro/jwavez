@@ -23,6 +23,8 @@ public class SensorMultilevelReportTest {
         assertEquals(SOURCE_NODE_ID, sensorReport.getSourceNodeId().getId());
         assertEquals(CommandClass.CMD_CLASS_SENSOR_MULTILEVEL, sensorReport.getCommandClass());
         assertEquals(SensorMultilevelCommandType.SENSOR_MULTILEVEL_REPORT, sensorReport.getCommandType());
+        assertEquals(1, sensorReport.getCommandVersion());
+
         assertEquals(0x01, sensorReport.getSensorType());
         assertEquals(0x01, sensorReport.getPrecision());
         assertEquals(0x00, sensorReport.getScaleValue());

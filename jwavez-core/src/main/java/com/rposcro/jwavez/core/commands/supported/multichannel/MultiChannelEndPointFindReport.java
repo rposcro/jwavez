@@ -16,7 +16,7 @@ public class MultiChannelEndPointFindReport extends ZWaveSupportedCommand<MultiC
     private short reportsToFollow;
     private byte genericDeviceClass;
     private byte specificDeviceClass;
-    private byte[] endpointsIds;
+    private byte[] endPointsIds;
 
     public MultiChannelEndPointFindReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(MultiChannelCommandType.MULTI_CHANNEL_END_POINT_FIND_REPORT, sourceNodeId);
@@ -26,9 +26,9 @@ public class MultiChannelEndPointFindReport extends ZWaveSupportedCommand<MultiC
         specificDeviceClass = payload.next();
 
         int endpointsCount = payload.available();
-        endpointsIds = new byte[endpointsCount];
+        endPointsIds = new byte[endpointsCount];
         for (int i = 0; i < endpointsCount; i++) {
-            endpointsIds[i] = (byte) (payload.next() & 0x7f);
+            endPointsIds[i] = (byte) (payload.next() & 0x7f);
         }
 
         commandVersion = 3;

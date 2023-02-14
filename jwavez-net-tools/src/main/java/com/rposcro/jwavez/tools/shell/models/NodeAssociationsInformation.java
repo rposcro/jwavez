@@ -14,7 +14,7 @@ public class NodeAssociationsInformation {
 
     private final List<AssociationGroupMeta> associationGroupsMetas;
     private final Map<Integer, List<Integer>> associatedNodesMap;
-    private final Map<Integer, List<EndPointAddress>> associatedEndPointsMap;
+    private final Map<Integer, List<EndPointMark>> associatedEndPointsMap;
 
     public NodeAssociationsInformation() {
         this.associationGroupsMetas = new ArrayList<>();
@@ -26,7 +26,7 @@ public class NodeAssociationsInformation {
     public NodeAssociationsInformation(
             @JsonProperty("groupsMetas") List<AssociationGroupMeta> associationGroupsMetas,
             @JsonProperty("associatedNodes") Map<Integer, List<Integer>> associatedNodesMap,
-            @JsonProperty("associatedEndPoints") Map<Integer, List<EndPointAddress>> associatedEndPointsMap) {
+            @JsonProperty("associatedEndPoints") Map<Integer, List<EndPointMark>> associatedEndPointsMap) {
         this();
         if (associationGroupsMetas != null) {
             this.associationGroupsMetas.addAll(associationGroupsMetas);
@@ -51,7 +51,7 @@ public class NodeAssociationsInformation {
         return Collections.unmodifiableMap(associatedNodesMap);
     }
 
-    public Map<Integer, List<EndPointAddress>> getAssociatedEndPoints() {
+    public Map<Integer, List<EndPointMark>> getAssociatedEndPoints() {
         return Collections.unmodifiableMap(associatedEndPointsMap);
     }
 
@@ -79,31 +79,31 @@ public class NodeAssociationsInformation {
         return existingGroupMeta;
     }
 
-    public List<EndPointAddress> findEndPointAssociations(int groupId) {
+    public List<EndPointMark> findEndPointAssociations(int groupId) {
         return associatedEndPointsMap.containsKey(groupId) ? Collections.unmodifiableList(associatedEndPointsMap.get(groupId)) : Collections.emptyList();
     }
 
-    public List<EndPointAddress> addEndPointAssociation(int groupId, EndPointAddress endPointAddress) {
-        List<EndPointAddress> associatedEndPoints = associatedEndPointsMap.get(groupId);
+    public List<EndPointMark> addEndPointAssociation(int groupId, EndPointMark endPointMark) {
+        List<EndPointMark> associatedEndPoints = associatedEndPointsMap.get(groupId);
         if (associatedEndPoints == null) {
             associatedEndPoints = new ArrayList<>();
             associatedEndPointsMap.put(groupId, associatedEndPoints);
         }
-        if (!associatedEndPoints.contains(endPointAddress)) {
-            associatedEndPoints.add(endPointAddress);
+        if (!associatedEndPoints.contains(endPointMark)) {
+            associatedEndPoints.add(endPointMark);
         }
         return Collections.unmodifiableList(associatedEndPoints);
     }
 
-    public boolean removeEndPointAssociation(int groupId, EndPointAddress endPointAddress) {
-        List<EndPointAddress> associatedEndPoints = associatedEndPointsMap.get(groupId);
+    public boolean removeEndPointAssociation(int groupId, EndPointMark endPointMark) {
+        List<EndPointMark> associatedEndPoints = associatedEndPointsMap.get(groupId);
         if (associatedEndPoints != null) {
-            return associatedEndPoints.remove(endPointAddress);
+            return associatedEndPoints.remove(endPointMark);
         }
         return false;
     }
 
-    public List<EndPointAddress> replaceAllEndPointsAssociations(int groupId, List<EndPointAddress> associations) {
+    public List<EndPointMark> replaceAllEndPointsAssociations(int groupId, List<EndPointMark> associations) {
         return associatedEndPointsMap.put(groupId, associations);
     }
 

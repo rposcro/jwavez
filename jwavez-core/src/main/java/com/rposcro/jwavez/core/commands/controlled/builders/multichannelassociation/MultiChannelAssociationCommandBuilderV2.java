@@ -2,7 +2,7 @@ package com.rposcro.jwavez.core.commands.controlled.builders.multichannelassocia
 
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.model.ZWaveConstants;
-import com.rposcro.jwavez.core.model.EndPointId;
+import com.rposcro.jwavez.core.model.EndPointAddress;
 import com.rposcro.jwavez.core.model.NodeId;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -20,18 +20,18 @@ public class MultiChannelAssociationCommandBuilderV2 {
         return buildSetCommand(groupNumber, nodeIds, null);
     }
 
-    public ZWaveControlledCommand buildSetCommand(int groupNumber, EndPointId... endPointIds) {
-        return buildSetCommand(groupNumber, null, endPointIds);
+    public ZWaveControlledCommand buildSetCommand(int groupNumber, EndPointAddress... endPointAddresses) {
+        return buildSetCommand(groupNumber, null, endPointAddresses);
     }
 
-    public ZWaveControlledCommand buildSetCommand(int groupNumber, NodeId[] nodeIds, EndPointId[] endPointIds) {
-        byte[] buffer = new byte[3 + computeIdsPayloadSize(nodeIds, endPointIds)];
+    public ZWaveControlledCommand buildSetCommand(int groupNumber, NodeId[] nodeIds, EndPointAddress[] endPointAddresses) {
+        byte[] buffer = new byte[3 + computeIdsPayloadSize(nodeIds, endPointAddresses)];
         buffer[0] = CMD_CLASS_MULTI_CHANNEL_ASSOCIATION.getCode();
         buffer[1] = MULTI_CHANNEL_ASSOCIATION_SET.getCode();
         buffer[2] = (byte) groupNumber;
 
         int offset = fillNodeIds(buffer, 3, nodeIds);
-        fillEndPointIds(buffer, offset, endPointIds);
+        fillEndPointIds(buffer, offset, endPointAddresses);
 
         return new ZWaveControlledCommand(buffer);
     }
@@ -67,18 +67,18 @@ public class MultiChannelAssociationCommandBuilderV2 {
         return buildRemoveCommand(groupNumber, nodeIds, null);
     }
 
-    public ZWaveControlledCommand buildRemoveCommand(int groupNumber, EndPointId... endPointIds) {
-        return buildRemoveCommand(groupNumber, null, endPointIds);
+    public ZWaveControlledCommand buildRemoveCommand(int groupNumber, EndPointAddress... endPointAddresses) {
+        return buildRemoveCommand(groupNumber, null, endPointAddresses);
     }
 
-    public ZWaveControlledCommand buildRemoveCommand(int groupNumber, NodeId[] nodeIds, EndPointId[] endPointIds) {
-        byte[] buffer = new byte[3 + computeIdsPayloadSize(nodeIds, endPointIds)];
+    public ZWaveControlledCommand buildRemoveCommand(int groupNumber, NodeId[] nodeIds, EndPointAddress[] endPointAddresses) {
+        byte[] buffer = new byte[3 + computeIdsPayloadSize(nodeIds, endPointAddresses)];
         buffer[0] = CMD_CLASS_MULTI_CHANNEL_ASSOCIATION.getCode();
         buffer[1] = MULTI_CHANNEL_ASSOCIATION_REMOVE.getCode();
         buffer[2] = (byte) groupNumber;
 
         int offset = fillNodeIds(buffer, 3, nodeIds);
-        fillEndPointIds(buffer, offset, endPointIds);
+        fillEndPointIds(buffer, offset, endPointAddresses);
 
         return new ZWaveControlledCommand(buffer);
     }
@@ -99,24 +99,24 @@ public class MultiChannelAssociationCommandBuilderV2 {
         return offset;
     }
 
-    private int fillEndPointIds(byte[] buffer, int offset, EndPointId[] endPointIds) {
-        if (endPointIds != null && endPointIds.length > 0) {
+    private int fillEndPointIds(byte[] buffer, int offset, EndPointAddress[] endPointAddresses) {
+        if (endPointAddresses != null && endPointAddresses.length > 0) {
             buffer[offset++] = ZWaveConstants.MULTI_CHANNEL_ASSOCIATION_SET_MARKER;
-            for (EndPointId endPointId : endPointIds) {
-                buffer[offset++] = endPointId.getNodeId();
-                buffer[offset++] = endPointId.getEndPointId();
+            for (EndPointAddress endPointAddress : endPointAddresses) {
+                buffer[offset++] = endPointAddress.getNodeId();
+                buffer[offset++] = endPointAddress.getEndPointId();
             }
         }
         return offset;
     }
 
-    private int computeIdsPayloadSize(NodeId[] nodeIds, EndPointId[] endPointIds) {
+    private int computeIdsPayloadSize(NodeId[] nodeIds, EndPointAddress[] endPointAddresses) {
         int size = nodeIds != null ? nodeIds.length : 0;
         size += nodeIds != null ? nodeIds.length : 0;
 
-        if (endPointIds != null && endPointIds.length > 0) {
+        if (endPointAddresses != null && endPointAddresses.length > 0) {
             size++;
-            size += 1 + (endPointIds.length * 2);
+            size += 1 + (endPointAddresses.length * 2);
         }
 
         return size;

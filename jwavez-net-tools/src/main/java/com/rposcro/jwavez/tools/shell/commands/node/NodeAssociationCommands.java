@@ -6,7 +6,7 @@ import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.AssociationGroupMeta;
 import com.rposcro.jwavez.tools.shell.models.CommandClassMeta;
-import com.rposcro.jwavez.tools.shell.models.EndPointAddress;
+import com.rposcro.jwavez.tools.shell.models.EndPointMark;
 import com.rposcro.jwavez.tools.shell.models.NodeAddress;
 import com.rposcro.jwavez.tools.shell.models.NodeAssociationsInformation;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
@@ -112,7 +112,7 @@ public class NodeAssociationCommands {
                 groupId,
                 destinationId,
                 nodeId -> associationService.sendAddAssociation(nodeId, groupId, Integer.parseInt(destinationId)),
-                nodeId -> multiChannelAssociationService.sendAddAssociation(nodeId, groupId, new EndPointAddress(destinationId)));
+                nodeId -> multiChannelAssociationService.sendAddAssociation(nodeId, groupId, new EndPointMark(destinationId)));
         return formatValueLine(nodeInformation, groupId) + "\n";
     }
 
@@ -126,7 +126,7 @@ public class NodeAssociationCommands {
                 groupId,
                 destinationId,
                 nodeId -> associationService.sendRemoveAssociation(nodeId, groupId, Integer.parseInt(destinationId)),
-                nodeId -> multiChannelAssociationService.sendRemoveAssociation(nodeId, groupId, new EndPointAddress(destinationId)));
+                nodeId -> multiChannelAssociationService.sendRemoveAssociation(nodeId, groupId, new EndPointMark(destinationId)));
         return formatValueLine(nodeInformation, groupId) + "\n";
     }
 
@@ -164,7 +164,7 @@ public class NodeAssociationCommands {
             success = false;
         }
 
-        if (EndPointAddress.isCorrectAddress(destinationId)) {
+        if (EndPointMark.isCorrectMark(destinationId)) {
             if (!supportsMultiChannel(nodeInformation)) {
                 console.flushLine(format("Node %02x doesn't support multi channel associations!", nodeId));
                 success = false;
@@ -245,7 +245,7 @@ public class NodeAssociationCommands {
         return nodes.stream().map(id -> format("%02x", id)).collect(Collectors.joining(", "));
     }
 
-    private String formatEndPointsList(List<EndPointAddress> nodes) {
-        return nodes.stream().map(EndPointAddress::getAddress).collect(Collectors.joining(", "));
+    private String formatEndPointsList(List<EndPointMark> nodes) {
+        return nodes.stream().map(EndPointMark::getMark).collect(Collectors.joining(", "));
     }
 }

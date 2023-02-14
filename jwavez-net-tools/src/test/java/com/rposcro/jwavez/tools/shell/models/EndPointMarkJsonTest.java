@@ -5,12 +5,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class EndPointAddressJsonTest {
+public class EndPointMarkJsonTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"93-150", "197-255"})
     public void testSerialization(String testValue) throws Exception {
-        EndPointAddress address = new EndPointAddress(testValue);
+        EndPointMark address = new EndPointMark(testValue);
         String expected = String.format("\"%s\"", testValue);
         String json = new ObjectMapper().writer().writeValueAsString(address);
 
@@ -23,9 +23,9 @@ public class EndPointAddressJsonTest {
         String json = String.format("\"%s\"", testValue);
         int expectedNode = Integer.parseInt(testValue.substring(0, testValue.indexOf('-')));
         int expectedEndPoint = Integer.parseInt(testValue.substring(testValue.indexOf('-') + 1));
-        EndPointAddress address = new ObjectMapper().readValue(json, EndPointAddress.class);
+        EndPointMark address = new ObjectMapper().readValue(json, EndPointMark.class);
 
-        Assertions.assertEquals(testValue, address.getAddress());
+        Assertions.assertEquals(testValue, address.getMark());
         Assertions.assertEquals(expectedNode, address.getNodeId());
         Assertions.assertEquals(expectedEndPoint, address.getEndPointId());
     }
@@ -35,9 +35,9 @@ public class EndPointAddressJsonTest {
     public void testNumericConstruction(String testValue) throws Exception {
         byte expectedNode = (byte) Integer.parseInt(testValue.substring(0, testValue.indexOf('-')));
         byte expectedEndPoint = (byte) Integer.parseInt(testValue.substring(testValue.indexOf('-') + 1));
-        EndPointAddress address = new EndPointAddress(expectedNode, expectedEndPoint);
+        EndPointMark address = new EndPointMark(expectedNode, expectedEndPoint);
 
-        Assertions.assertEquals(testValue, address.getAddress());
+        Assertions.assertEquals(testValue, address.getMark());
         Assertions.assertEquals(expectedNode, (byte) address.getNodeId());
         Assertions.assertEquals(expectedEndPoint, (byte) address.getEndPointId());
     }

@@ -147,7 +147,7 @@ public class NodeInformationService {
                                 VersionCommandType.VERSION_COMMAND_CLASS_REPORT,
                                 SerialUtils.DEFAULT_TIMEOUT)
                 )).getAcquiredSupportedCommand();
-                metas[i] = new CommandClassMeta(commandClass, versionReport.getCommandClassVersion());
+                metas[i] = new CommandClassMeta(commandClass, versionReport.getReportedCommandClassVersion());
             }
         }
         return metas;

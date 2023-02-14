@@ -1,10 +1,11 @@
-package com.rposcro.jwavez.core.commands.supported.resolvers;
+package com.rposcro.jwavez.core.commands.supported.multichannelassociation;
 
 import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.commands.supported.SupportedCommandResolver;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.multichannelassociation.MultiChannelAssociationGroupingsReport;
 import com.rposcro.jwavez.core.commands.supported.multichannelassociation.MultiChannelAssociationReport;
+import com.rposcro.jwavez.core.commands.supported.resolvers.AbstractCommandResolver;
 import com.rposcro.jwavez.core.commands.types.MultiChannelAssociationCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;

@@ -12,7 +12,7 @@ import lombok.ToString;
 @ToString
 public class SensorMultilevelReport extends ZWaveSupportedCommand<SensorMultilevelCommandType> {
 
-    private byte sensorType;
+    private short sensorType;
     private byte precision;
     private byte scaleValue;
     private byte measureSize;
@@ -21,7 +21,7 @@ public class SensorMultilevelReport extends ZWaveSupportedCommand<SensorMultilev
     public SensorMultilevelReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(SensorMultilevelCommandType.SENSOR_MULTILEVEL_REPORT, sourceNodeId);
         payload.rewind().skip(2);
-        this.sensorType = payload.nextByte();
+        this.sensorType = payload.nextUnsignedByte();
 
         byte def = payload.nextByte();
         this.precision = BitsUtil.extractValue(def, 5, 7);

@@ -3,21 +3,21 @@ package com.rposcro.jwavez.tools.shell.services;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.controlled.builders.multichannelassociation.MultiChannelAssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.multichannelassociation.MultiChannelAssociationReport;
+import com.rposcro.jwavez.core.commands.supported.multichannelassociation.MultiChannelAssociationReportInterpreter;
 import com.rposcro.jwavez.core.commands.types.MultiChannelAssociationCommandType;
-import com.rposcro.jwavez.core.model.EndPointId;
+import com.rposcro.jwavez.core.model.EndPointAddress;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
 import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
-import com.rposcro.jwavez.tools.shell.models.EndPointAddress;
+import com.rposcro.jwavez.tools.shell.models.EndPointMark;
 import com.rposcro.jwavez.tools.shell.models.NodeAssociationsInformation;
 import com.rposcro.jwavez.tools.utils.SerialUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,14 +44,11 @@ public class NodeMultiChannelAssociationService {
                                 MultiChannelAssociationCommandType.MULTI_CHANNEL_ASSOCIATION_REPORT,
                                 SerialUtils.DEFAULT_TIMEOUT)
                 )).getAcquiredSupportedCommand();
+        MultiChannelAssociationReportInterpreter interpreter = associationReport.interpreter();
 
-        List<Integer> associatedNodes = Arrays.stream(associationReport.getNodeIds())
-                .map(id -> ((int) id.getId()) & 0xff)
-                .sorted()
-                .collect(Collectors.toList());
-        List<EndPointAddress> associatedEndPoints = Arrays.stream(associationReport.getEndPointIds())
-                .map(endPoint -> new EndPointAddress(endPoint.getNodeId(), endPoint.getEndPointId()))
-                .sorted()
+        List<Integer> associatedNodes = interpreter.nodeIdList();
+        List<EndPointMark> associatedEndPoints = interpreter.endPointAddressList().stream()
+                .map(address -> new EndPointMark(address.getNodeId(), address.getEndPointId()))
                 .collect(Collectors.toList());
 
         NodeAssociationsInformation associationsInformation = nodeInformationCache.getNodeDetails(nodeId).getAssociationsInformation();
@@ -60,11 +57,11 @@ public class NodeMultiChannelAssociationService {
         return associationsInformation;
     }
 
-    public boolean sendAddAssociation(int nodeId, int groupId, EndPointAddress addressToAssociate) throws SerialException {
+    public boolean sendAddAssociation(int nodeId, int groupId, EndPointMark addressToAssociate) throws SerialException {
         final NodeId nodeID = new NodeId(nodeId);
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = associationCommandBuilder.v2()
-                    .buildSetCommand(groupId, new EndPointId(addressToAssociate.getNodeId(), addressToAssociate.getEndPointId()));
+                    .buildSetCommand(groupId, new EndPointAddress(addressToAssociate.getNodeId(), addressToAssociate.getEndPointId()));
             SendDataCallback callback = executor.requestCallbackFlow(SendDataRequest.createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;
         });
@@ -82,19 +79,19 @@ public class NodeMultiChannelAssociationService {
         return false;
     }
 
-    public boolean sendRemoveAssociation(int nodeId, int groupId, EndPointAddress addressToRemove) throws SerialException {
+    public boolean sendRemoveAssociation(int nodeId, int groupId, EndPointMark endPointToRemove) throws SerialException {
         final NodeId nodeID = new NodeId(nodeId);
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = associationCommandBuilder.v2()
-                    .buildRemoveCommand(groupId, new EndPointId(addressToRemove.getNodeId(), addressToRemove.getEndPointId()));
+                    .buildRemoveCommand(groupId, new EndPointAddress(endPointToRemove.getNodeId(), endPointToRemove.getEndPointId()));
             SendDataCallback callback = executor.requestCallbackFlow(SendDataRequest.createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;
         });
 
         if (sendResult) {
             NodeAssociationsInformation fetchedAssociations = fetchMultiChannelAssociations(nodeId, groupId);
-            if (!fetchedAssociations.findEndPointAssociations(groupId).contains(addressToRemove)) {
-                nodeInformationCache.getNodeDetails(nodeId).getAssociationsInformation().removeEndPointAssociation(groupId, addressToRemove);
+            if (!fetchedAssociations.findEndPointAssociations(groupId).contains(endPointToRemove)) {
+                nodeInformationCache.getNodeDetails(nodeId).getAssociationsInformation().removeEndPointAssociation(groupId, endPointToRemove);
                 return true;
             }
         } else {

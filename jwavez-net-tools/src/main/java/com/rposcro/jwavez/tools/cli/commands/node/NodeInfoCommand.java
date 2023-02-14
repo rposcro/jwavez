@@ -77,14 +77,14 @@ public class NodeInfoCommand extends AbstractAsyncBasedCommand {
             if (nodeInfoReport.classVersionReports != null) {
                 System.out.println("Class versions:");
                 for (VersionCommandClassReport report : nodeInfoReport.classVersionReports) {
-                    System.out.println("  " + report.getCommandClass() + ": " + report.getCommandClassVersion());
+                    System.out.println("  " + report.getDecodedReportedCommandClass() + ": " + report.getReportedCommandClassVersion());
                 }
                 System.out.println();
             }
 
             if (nodeInfoReport.protocolVersionReport != null) {
                 System.out.println("Protocol versions:");
-                System.out.println("  ZWave Library Type: " + nodeInfoReport.protocolVersionReport.getZWaveLibraryTypeEnum());
+                System.out.println("  ZWave Library Type: " + nodeInfoReport.protocolVersionReport.getDecodedZWaveLibraryType());
                 System.out.println("  Protocol Version: " + nodeInfoReport.protocolVersionReport.getZWaveProtocolVersion());
                 System.out.println("  Protocol Sub Version: " + nodeInfoReport.protocolVersionReport.getZWaveProtocolSubVersion());
                 System.out.println("  Application Version: " + nodeInfoReport.protocolVersionReport.getApplicationVersion());

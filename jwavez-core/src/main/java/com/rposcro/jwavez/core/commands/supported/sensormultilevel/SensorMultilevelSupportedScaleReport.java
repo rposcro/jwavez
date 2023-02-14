@@ -11,11 +11,11 @@ import lombok.ToString;
 @ToString
 public class SensorMultilevelSupportedScaleReport extends ZWaveSupportedCommand<SensorMultilevelCommandType> {
 
-    private byte sensorType;
+    private short sensorType;
     private byte scaleBitMask;
 
     public SensorMultilevelSupportedScaleReport(ImmutableBuffer payload, NodeId sourceNodeId) {
-        super(SensorMultilevelCommandType.SENSOR_MULTILEVEL_SUPPORTED_SENSOR_REPORT, sourceNodeId);
+        super(SensorMultilevelCommandType.SENSOR_MULTILEVEL_SUPPORTED_SCALE_REPORT, sourceNodeId);
         this.sensorType = payload.getByte(2);
         this.scaleBitMask = (byte) (payload.getByte(3) & 0x0f);
         this.commandVersion = 5;

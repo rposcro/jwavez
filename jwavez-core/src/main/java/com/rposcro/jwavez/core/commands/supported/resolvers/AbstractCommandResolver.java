@@ -8,6 +8,7 @@ import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -17,8 +18,16 @@ public abstract class AbstractCommandResolver<T extends CommandType> implements 
 
     private Map<T, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType;
 
+    protected AbstractCommandResolver() {
+        this.suppliersPerCommandType = new HashMap<>();
+    }
+
     protected AbstractCommandResolver(Map<T, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand>> suppliersPerCommandType) {
         this.suppliersPerCommandType = suppliersPerCommandType;
+    }
+
+    protected void addSupplier(T commandType, BiFunction<ImmutableBuffer, NodeId, ZWaveSupportedCommand> supplier) {
+        this.suppliersPerCommandType.put(commandType, supplier);
     }
 
     public Set<T> supportedCommands() {

@@ -36,7 +36,7 @@ class SupportedCommandParserSpec extends Specification {
         then:
         command.getClass() == javaClass
         command.sourceNodeId.getId() == 33;
-        command.commandClass == commandClass;
+        command.reportedCommandClass == commandClass;
         command.commandType == commandType;
 
         where:

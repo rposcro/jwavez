@@ -3,9 +3,9 @@ package com.rposcro.jwavez.core.commands.supported.multichannelassociation;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.types.MultiChannelAssociationCommandType;
 import com.rposcro.jwavez.core.model.ZWaveConstants;
-import com.rposcro.jwavez.core.model.EndPointId;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
+import com.rposcro.jwavez.core.utils.BytesUtil;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -21,22 +21,27 @@ public class MultiChannelAssociationReport extends ZWaveSupportedCommand<MultiCh
     private short groupId;
     private short maxNodesCountSupported;
     private short reportsToFollow;
-    private NodeId[] nodeIds;
-    private EndPointId[] endPointIds;
+    private byte[] nodeIds;
+    private byte[][] endPointIds;
 
     public MultiChannelAssociationReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(MultiChannelAssociationCommandType.MULTI_CHANNEL_ASSOCIATION_REPORT, sourceNodeId);
         payload.rewind().skip(2);
+
         this.groupId = payload.nextUnsignedByte();
         this.maxNodesCountSupported = payload.nextUnsignedByte();
         this.reportsToFollow = payload.nextUnsignedByte();
 
-        this.nodeIds = parseNodes(payload);
-        this.endPointIds = parseEndPoints(payload);
+        this.nodeIds = extractNodes(payload);
+        this.endPointIds = extractEndPoints(payload);
         this.commandVersion = 2;
     }
 
-    private NodeId[] parseNodes(ImmutableBuffer payload) {
+    public MultiChannelAssociationReportInterpreter interpreter() {
+        return new MultiChannelAssociationReportInterpreter(this);
+    }
+
+    private byte[] extractNodes(ImmutableBuffer payload) {
         int nodesCount = 0;
         int bytesLeft = payload.available();
 
@@ -44,25 +49,27 @@ public class MultiChannelAssociationReport extends ZWaveSupportedCommand<MultiCh
             nodesCount++;
         }
 
-        NodeId[] nodes = new NodeId[nodesCount];
+        byte[] nodeIds = new byte[nodesCount];
 
         for (int i = 0; i < nodesCount; i++) {
-            nodes[i] = new NodeId(payload.nextByte());
+            nodeIds[i] = payload.nextByte();
         }
 
-        return nodes;
+        return nodeIds;
     }
 
-    private EndPointId[] parseEndPoints(ImmutableBuffer payload) {
+    private byte[][] extractEndPoints(ImmutableBuffer payload) {
         int endPointsCount = payload.available() > 0
                 && payload.nextByte() == ZWaveConstants.MULTI_CHANNEL_ASSOCIATION_SET_MARKER ? payload.available() / 2 : 0;
-        EndPointId[] endPoints = new EndPointId[endPointsCount];
+
+        byte[][] endPointIds = new byte[endPointsCount][2];
 
         for (int i = 0; i < endPointsCount; i++) {
-            endPoints[i] = new EndPointId(payload.nextByte(), payload.nextByte());
+            endPointIds[i][0] = payload.nextByte();
+            endPointIds[i][1] = payload.nextByte();
         }
 
-        return endPoints;
+        return endPointIds;
     }
 
     @Override
@@ -72,8 +79,8 @@ public class MultiChannelAssociationReport extends ZWaveSupportedCommand<MultiCh
                 getGroupId(),
                 getMaxNodesCountSupported(),
                 getReportsToFollow(),
-                Stream.of(nodeIds).map(nodeId -> String.format("%02x", nodeId.getId())).collect(Collectors.joining(", ")),
-                Stream.of(endPointIds).map(epId -> String.format("%02x-%02x", epId.getNodeId(), epId.getEndPointId())).collect(Collectors.joining(", "))
+                BytesUtil.asString(nodeIds),
+                Stream.of(endPointIds).map(epId -> String.format("%02x-%02x", epId[0], epId[1])).collect(Collectors.joining(" "))
         );
     }
 }
