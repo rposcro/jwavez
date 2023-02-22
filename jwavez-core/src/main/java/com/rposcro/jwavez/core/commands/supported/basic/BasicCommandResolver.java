@@ -1,7 +1,8 @@
-package com.rposcro.jwavez.core.commands.supported.resolvers;
+package com.rposcro.jwavez.core.commands.supported.basic;
 
 import com.rposcro.jwavez.core.commands.supported.SupportedCommandResolver;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
+import com.rposcro.jwavez.core.commands.supported.resolvers.AbstractCommandResolver;
 import com.rposcro.jwavez.core.commands.types.BasicCommandType;
 import com.rposcro.jwavez.core.commands.supported.basic.BasicSet;
 import com.rposcro.jwavez.core.classes.CommandClass;

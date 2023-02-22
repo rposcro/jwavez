@@ -13,7 +13,7 @@ public abstract class AbstractZWaveControlledCommand {
     }
 
     public int getPayloadLength() {
-        return this.payloadBuffer.getLength();
+        return this.payloadBuffer.length();
     }
 
     public ImmutableBuffer getPayload() {

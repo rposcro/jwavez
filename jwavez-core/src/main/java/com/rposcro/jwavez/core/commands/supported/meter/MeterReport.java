@@ -49,7 +49,7 @@ public class MeterReport extends ZWaveSupportedCommand<MeterCommandType> {
     }
 
     private void processVersionSpecific(ImmutableBuffer payload) {
-        int tailSize = payload.getLength() - OFFSET_TO_MEASURE;
+        int tailSize = payload.length() - OFFSET_TO_MEASURE;
 
         if (tailSize == measureSize) {
             commandVersion = 1;

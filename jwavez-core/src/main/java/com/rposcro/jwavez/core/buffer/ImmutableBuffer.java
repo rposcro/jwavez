@@ -3,7 +3,13 @@ package com.rposcro.jwavez.core.buffer;
 import lombok.Getter;
 
 /**
- * All methods provided refer to virtual position and length
+ * Immutable temporary byte buffer, this is one time usage buffer for read only purposes.
+ * Routines which receive and operate on instances of the class must not store any references
+ * as they are likely to be invalidated when the routine call is completed.
+ * Access to the underlying byte data is not synchronized, so concurrent usage of nextXXX(...)
+ * methods needs to be considered.
+ *
+ * All methods provided refer to virtual position and length.
  * <p>
  * Properties:<br>
  * <li><b>data</b> physical byte array where this buffer is built on</li>
@@ -13,19 +19,46 @@ import lombok.Getter;
  */
 public final class ImmutableBuffer {
 
-    private byte[] data;
-    @Getter
     private int offset;
-    @Getter
     private int length;
-
     private int position;
+    private byte[] data;
 
-    private ImmutableBuffer(byte[] buffer, int offset, int length) {
+    ImmutableBuffer(byte[] buffer, int offset) {
+        this(buffer, offset, buffer.length);
+    }
+
+    ImmutableBuffer(byte[] buffer, int offset, int length) {
         this.data = buffer;
         this.offset = offset;
         this.length = length;
         this.position = 0;
+    }
+
+    public int position() {
+        return position;
+    }
+
+    public int length() {
+        return length;
+    }
+
+    public int available() {
+        return length - position;
+    }
+
+    public boolean hasNext() {
+        return position < length;
+    }
+
+    public ImmutableBuffer skip(int distance) {
+        position += distance;
+        return this;
+    }
+
+    public ImmutableBuffer rewind() {
+        position = 0;
+        return this;
     }
 
     public byte getByte(int index) {
@@ -58,14 +91,6 @@ public final class ImmutableBuffer {
         value |= ((long) (data[offset + index + 2] & 0xFF)) << 8;
         value |= ((long) (data[offset + index + 3] & 0xFF));
         return value;
-    }
-
-    public int available() {
-        return length - position;
-    }
-
-    public boolean hasNext() {
-        return position < length;
     }
 
     public byte next() {
@@ -107,19 +132,6 @@ public final class ImmutableBuffer {
         return value;
     }
 
-    public ImmutableBuffer skip(int distance) {
-        if (position + distance >= length) {
-            throw new IndexOutOfBoundsException("New index out of bound");
-        }
-        position += distance;
-        return this;
-    }
-
-    public ImmutableBuffer rewind() {
-        position = 0;
-        return this;
-    }
-
     public byte[] cloneBytes() {
         byte[] cloned = new byte[length];
         System.arraycopy(data, offset, cloned, 0, length);
@@ -137,6 +149,19 @@ public final class ImmutableBuffer {
         System.arraycopy(data, offset, toArray, toOffset, length);
     }
 
+    void invalidate() {
+        data = null;
+        position = 0;
+        length = 0;
+        offset = 0;
+    }
+
+    private void checkIndex(int index) {
+        if (index >= length) {
+            throw new IndexOutOfBoundsException(String.format("Index %s is out of payload length %s!", index, length));
+        }
+    }
+
     public static ImmutableBuffer overBuffer(byte[] buffer) {
         return overBuffer(buffer, 0, buffer.length);
     }
@@ -145,11 +170,5 @@ public final class ImmutableBuffer {
         byte assertByte = buffer[payloadLength + payloadOffset - 1];
         assertByte = buffer[payloadOffset];
         return new ImmutableBuffer(buffer, payloadOffset, payloadLength);
-    }
-
-    private void checkIndex(int index) {
-        if (index >= length) {
-            throw new IndexOutOfBoundsException(String.format("Index %s is out of payload length %s!", index, length));
-        }
     }
 }

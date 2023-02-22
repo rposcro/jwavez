@@ -27,7 +27,7 @@ public class BinarySwitchReport extends ZWaveSupportedCommand<SwitchBinaryComman
     }
 
     public byte recognizeVersion(ImmutableBuffer payload) {
-        int length = payload.getLength();
+        int length = payload.length();
         if (length == 3) {
             return 1;
         } else if (length == 5) {

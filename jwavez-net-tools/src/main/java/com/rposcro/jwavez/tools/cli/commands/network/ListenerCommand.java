@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.cli.commands.network;
 
-import com.rposcro.jwavez.core.JwzApplicationCommands;
+import com.rposcro.jwavez.core.JwzApplicationSupport;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
@@ -104,7 +104,7 @@ public class ListenerCommand extends AbstractAsyncBasedCommand {
         buffer.append("\n  RxStatus: " + achCallback.getRxStatus().getFrameCast());
 
         try {
-            ZWaveSupportedCommand command = new JwzApplicationCommands().supportedCommandParser().parseCommand(
+            ZWaveSupportedCommand command = new JwzApplicationSupport().supportedCommandParser().parseCommand(
                     ImmutableBuffer.overBuffer(achCallback.getCommandPayload()),
                     achCallback.getSourceNodeId());
             buffer.append("\n  Command Class: " + command.getCommandClass());

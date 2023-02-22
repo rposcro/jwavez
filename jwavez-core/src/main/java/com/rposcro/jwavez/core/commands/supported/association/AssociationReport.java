@@ -25,7 +25,7 @@ public class AssociationReport extends ZWaveSupportedCommand<AssociationCommandT
         this.groupId = payload.getUnsignedByte(2);
         this.maxNodesCountSupported = payload.getUnsignedByte(3);
         this.reportsToFollow = payload.getUnsignedByte(4);
-        this.nodesCount = (short) (payload.getLength() - 5);
+        this.nodesCount = (short) (payload.length() - 5);
         this.nodeIds = new byte[nodesCount];
         for (int i = 0; i < nodesCount; i++) {
             nodeIds[i] = payload.getByte(5 + i);

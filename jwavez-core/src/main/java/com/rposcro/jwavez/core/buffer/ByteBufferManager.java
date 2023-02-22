@@ -33,6 +33,8 @@ public class ByteBufferManager {
         ByteBuffer buffer = availableBuffers.poll();
         if (buffer == null) {
             buffer = new ByteBuffer(minCapacity);
+        } else {
+            occupiedBuffers.add(buffer);
         }
         return buffer;
     }

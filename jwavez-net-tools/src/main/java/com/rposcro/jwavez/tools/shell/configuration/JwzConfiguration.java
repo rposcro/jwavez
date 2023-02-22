@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.shell.configuration;
 
-import com.rposcro.jwavez.core.JwzApplicationCommands;
+import com.rposcro.jwavez.core.JwzApplicationSupport;
 import com.rposcro.jwavez.core.commands.JwzSupportedCommandParser;
 import com.rposcro.jwavez.core.commands.controlled.builders.association.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilder;
@@ -19,8 +19,8 @@ import org.springframework.context.annotation.Configuration;
 public class JwzConfiguration {
 
     @Bean
-    public JwzApplicationCommands jwzApplicationCommands() {
-        return new JwzApplicationCommands();
+    public JwzApplicationSupport jwzApplicationCommands() {
+        return new JwzApplicationSupport();
     }
 
     @Bean

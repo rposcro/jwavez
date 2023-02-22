@@ -1,7 +1,8 @@
-package com.rposcro.jwavez.core.commands.supported.resolvers;
+package com.rposcro.jwavez.core.commands.supported.centralscene;
 
 import com.rposcro.jwavez.core.commands.supported.SupportedCommandResolver;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
+import com.rposcro.jwavez.core.commands.supported.resolvers.AbstractCommandResolver;
 import com.rposcro.jwavez.core.commands.types.CentralSceneCommandType;
 import com.rposcro.jwavez.core.commands.supported.centralscene.CentralSceneNotification;
 import com.rposcro.jwavez.core.commands.supported.centralscene.CentralSceneSupportedReport;

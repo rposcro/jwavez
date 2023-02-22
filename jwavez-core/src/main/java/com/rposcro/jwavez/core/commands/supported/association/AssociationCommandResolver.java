@@ -1,8 +1,9 @@
-package com.rposcro.jwavez.core.commands.supported.resolvers;
+package com.rposcro.jwavez.core.commands.supported.association;
 
 import com.rposcro.jwavez.core.commands.supported.SupportedCommandResolver;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
+import com.rposcro.jwavez.core.commands.supported.resolvers.AbstractCommandResolver;
 import com.rposcro.jwavez.core.commands.types.AssociationCommandType;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationGroupingsReport;
 import com.rposcro.jwavez.core.classes.CommandClass;

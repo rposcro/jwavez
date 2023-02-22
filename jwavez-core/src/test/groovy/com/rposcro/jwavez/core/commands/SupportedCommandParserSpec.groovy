@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.core.commands
 
-import com.rposcro.jwavez.core.JwzApplicationCommands
+import com.rposcro.jwavez.core.JwzApplicationSupport
 import com.rposcro.jwavez.core.commands.enums.AssociationCommandType
 import com.rposcro.jwavez.core.commands.enums.BasicCommandType
 import com.rposcro.jwavez.core.commands.enums.ConfigurationCommandType
@@ -22,7 +22,7 @@ class SupportedCommandParserSpec extends Specification {
     def theParser;
 
     def setup() {
-        theParser = new JwzApplicationCommands().supportedCommandParser();
+        theParser = new JwzApplicationSupport().supportedCommandParser();
     }
 
     @Unroll
