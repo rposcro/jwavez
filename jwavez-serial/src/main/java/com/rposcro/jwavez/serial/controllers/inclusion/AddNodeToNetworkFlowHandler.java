@@ -25,7 +25,7 @@ import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.frames.callbacks.AddNodeToNetworkCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
-import com.rposcro.jwavez.serial.frames.requests.AddNodeToNetworkRequest;
+import com.rposcro.jwavez.serial.frames.requests.AddNodeToNetworkRequestBuilder;
 import com.rposcro.jwavez.serial.model.AddNodeToNeworkMode;
 import com.rposcro.jwavez.serial.model.AddNodeToNeworkStatus;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
@@ -40,14 +40,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
 
-    private TransactionKeeper<AddNodeToNetworkFlowState> transactionKeeper;
+    private final TransactionKeeper<AddNodeToNetworkFlowState> transactionKeeper;
+    private final AddNodeToNetworkRequestBuilder addNodeToNetworkRequestBuilder;
 
     @Getter(AccessLevel.PACKAGE)
     private NodeInfo nodeInfo;
     private byte callbackFlowId;
 
-    AddNodeToNetworkFlowHandler(TransactionKeeper<AddNodeToNetworkFlowState> transactionKeeper) {
+    AddNodeToNetworkFlowHandler(TransactionKeeper<AddNodeToNetworkFlowState> transactionKeeper,
+                                AddNodeToNetworkRequestBuilder addNodeToNetworkRequestBuilder) {
         this.transactionKeeper = transactionKeeper;
+        this.addNodeToNetworkRequestBuilder = addNodeToNetworkRequestBuilder;
     }
 
     @Override
@@ -61,7 +64,7 @@ class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
         this.callbackFlowId = callbackFlowId;
         this.transactionKeeper.transitAndSchedule(
                 AddNodeToNetworkFlowState.WAITING_FOR_PROTOCOL,
-                AddNodeToNetworkRequest.createAddNodeToNetworkRequest(AddNodeToNeworkMode.ADD_NODE_ANY, callbackFlowId, true, true));
+                addNodeToNetworkRequestBuilder.createAddNodeToNetworkRequest(AddNodeToNeworkMode.ADD_NODE_ANY, callbackFlowId, true, true));
     }
 
     @Override
@@ -124,11 +127,11 @@ class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
     }
 
     private SerialRequest stoppingFrame() {
-        return AddNodeToNetworkRequest.createStopTransactionRequest(callbackFlowId);
+        return addNodeToNetworkRequestBuilder.createStopTransactionRequest(callbackFlowId);
     }
 
     private SerialRequest finalStopFrame() {
-        return AddNodeToNetworkRequest.createFinalTransactionRequest();
+        return addNodeToNetworkRequestBuilder.createFinalTransactionRequest();
     }
 
     private void interruptTransaction(FlowException ex) {

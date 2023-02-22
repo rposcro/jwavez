@@ -1,13 +1,10 @@
 package com.rposcro.jwavez.tools.cli.commands.network;
 
 import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.serial.JwzSerialSupport;
 import com.rposcro.jwavez.serial.controllers.BasicSynchronousController;
 import com.rposcro.jwavez.serial.controllers.inclusion.SetLearnModeController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.frames.requests.GetControllerCapabilitiesRequest;
-import com.rposcro.jwavez.serial.frames.requests.GetInitDataRequest;
-import com.rposcro.jwavez.serial.frames.requests.GetSUCNodeIdRequest;
-import com.rposcro.jwavez.serial.frames.requests.MemoryGetIdRequest;
 import com.rposcro.jwavez.serial.frames.responses.GetControllerCapabilitiesResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetInitDataResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetSUCNodeIdResponse;
@@ -78,21 +75,25 @@ public class NetworkLearnCommand implements Command {
         ) {
             controller.connect();
 
-            MemoryGetIdResponse memoryGetIdResponse = controller.requestResponseFlow(MemoryGetIdRequest.createMemoryGetIdRequest());
+            MemoryGetIdResponse memoryGetIdResponse = controller.requestResponseFlow(
+                    JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder().createMemoryGetIdRequest());
             System.out.println(String.format("  HomeId: %02x", memoryGetIdResponse.getHomeId()));
             System.out.println(String.format("  Dongle NodeId: %02x", memoryGetIdResponse.getNodeId().getId()));
 
-            GetInitDataResponse getInitDataResponse = controller.requestResponseFlow(GetInitDataRequest.createGetInitDataRequest());
+            GetInitDataResponse getInitDataResponse = controller.requestResponseFlow(
+                    JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder().createGetInitDataRequest());
             System.out.println(String.format("  Nodes: %s", getInitDataResponse.getNodes().stream().map(NodeId::getId).collect(Collectors.toList())));
 
-            GetControllerCapabilitiesResponse ccap = controller.requestResponseFlow(GetControllerCapabilitiesRequest.createGetControllerCapabiltiesRequest());
+            GetControllerCapabilitiesResponse ccap = controller.requestResponseFlow(
+                    JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder().createGetControllerCapabilitiesRequest());
             System.out.println(String.format("  Is real primary: %s", ccap.isRealPrimary()));
             System.out.println(String.format("  Is secondary: %s", ccap.isSecondary()));
             System.out.println(String.format("  Is SUC: %s", ccap.isSUC()));
             System.out.println(String.format("  Is SIS: %s", ccap.isSIS()));
             System.out.println(String.format("  Is on another network: %s", ccap.isOnOtherNetwork()));
 
-            GetSUCNodeIdResponse sucId = controller.requestResponseFlow(GetSUCNodeIdRequest.createGetSUCNodeIdRequest());
+            GetSUCNodeIdResponse sucId = controller.requestResponseFlow(
+                    JwzSerialSupport.defaultSupport().serialRequestFactory().sucRequestBuilder().createGetSUCNodeIdRequest());
             System.out.println(String.format("  SUC node id: %02X", sucId.getSucNodeId()));
         }
     }

@@ -16,65 +16,65 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class JwzConfiguration {
+public class JwzApplicationConfiguration {
 
     @Bean
-    public JwzApplicationSupport jwzApplicationCommands() {
+    public JwzApplicationSupport jwzApplicationSupport() {
         return new JwzApplicationSupport();
     }
 
     @Bean
     public JwzSupportedCommandParser supportedCommandParser() {
-        return jwzApplicationCommands().supportedCommandParser();
+        return jwzApplicationSupport().supportedCommandParser();
     }
 
     @Bean
     public AssociationCommandBuilder associationCommandBuilder() {
-        return jwzApplicationCommands().controlledCommandFactory().associationCommandBuilder();
+        return jwzApplicationSupport().controlledCommandFactory().associationCommandBuilder();
     }
 
     @Bean
     public ConfigurationCommandBuilder configurationCommandBuilder() {
-        return jwzApplicationCommands().controlledCommandFactory().configurationCommandBuilder();
+        return jwzApplicationSupport().controlledCommandFactory().configurationCommandBuilder();
     }
 
     @Bean
     public ManufacturerSpecificCommandBuilder manufacturerSpecificCommandBuilder() {
-        return jwzApplicationCommands().controlledCommandFactory().manufacturerSpecificCommandBuilder();
+        return jwzApplicationSupport().controlledCommandFactory().manufacturerSpecificCommandBuilder();
     }
 
     @Bean
     public MultiChannelAssociationCommandBuilder multiChannelAssociationCommandBuilder() {
-        return jwzApplicationCommands().controlledCommandFactory().multiChannelAssociationCommandBuilder();
+        return jwzApplicationSupport().controlledCommandFactory().multiChannelAssociationCommandBuilder();
     }
 
     @Bean
     public MultiChannelCommandBuilder multiChannelCommandBuilder() {
-        return jwzApplicationCommands().controlledCommandFactory().multiChannelCommandBuilder();
+        return jwzApplicationSupport().controlledCommandFactory().multiChannelCommandBuilder();
     }
 
     @Bean
     public PowerLevelCommandBuilder powerLevelCommandBuilder() {
-        return jwzApplicationCommands().controlledCommandFactory().powerLevelCommandBuilder();
+        return jwzApplicationSupport().controlledCommandFactory().powerLevelCommandBuilder();
     }
 
     @Bean
     public SwitchBinaryCommandBuilder switchBinaryCommandBuilder() {
-        return jwzApplicationCommands().controlledCommandFactory().switchBinaryCommandBuilder();
+        return jwzApplicationSupport().controlledCommandFactory().switchBinaryCommandBuilder();
     }
 
     @Bean
     public SwitchColorCommandBuilder switchColorCommandBuilder() {
-        return jwzApplicationCommands().controlledCommandFactory().switchColorCommandBuilder();
+        return jwzApplicationSupport().controlledCommandFactory().switchColorCommandBuilder();
     }
 
     @Bean
     public SwitchMultiLevelCommandBuilder switchMultiLevelCommandBuilder() {
-        return jwzApplicationCommands().controlledCommandFactory().switchMultiLevelCommandBuilder();
+        return jwzApplicationSupport().controlledCommandFactory().switchMultiLevelCommandBuilder();
     }
 
     @Bean
     public VersionCommandBuilder versionCommandBuilder() {
-        return jwzApplicationCommands().controlledCommandFactory().versionCommandBuilder();
+        return jwzApplicationSupport().controlledCommandFactory().versionCommandBuilder();
     }
 }

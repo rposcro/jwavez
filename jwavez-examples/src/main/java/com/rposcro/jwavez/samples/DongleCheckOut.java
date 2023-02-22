@@ -1,12 +1,8 @@
 package com.rposcro.jwavez.samples;
 
+import com.rposcro.jwavez.serial.JwzSerialSupport;
 import com.rposcro.jwavez.serial.controllers.BasicSynchronousController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.frames.requests.GetCapabilitiesRequest;
-import com.rposcro.jwavez.serial.frames.requests.GetControllerCapabilitiesRequest;
-import com.rposcro.jwavez.serial.frames.requests.GetInitDataRequest;
-import com.rposcro.jwavez.serial.frames.requests.GetSUCNodeIdRequest;
-import com.rposcro.jwavez.serial.frames.requests.MemoryGetIdRequest;
 import com.rposcro.jwavez.serial.frames.responses.GetCapabilitiesResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetControllerCapabilitiesResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetInitDataResponse;
@@ -17,7 +13,8 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 public class DongleCheckOut extends AbstractExample {
 
     private void checkDongleIds(BasicSynchronousController controller) throws SerialException {
-        SerialRequest request = MemoryGetIdRequest.createMemoryGetIdRequest();
+        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder()
+                .createMemoryGetIdRequest();
         MemoryGetIdResponse response = controller.requestResponseFlow(request);
 
         System.out.printf("Home Id: %02x\n", response.getHomeId());
@@ -25,7 +22,8 @@ public class DongleCheckOut extends AbstractExample {
     }
 
     private void checkNodesIds(BasicSynchronousController controller) throws SerialException {
-        SerialRequest request = GetInitDataRequest.createGetInitDataRequest();
+        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder()
+                .createGetInitDataRequest();
         GetInitDataResponse response = controller.requestResponseFlow(request);
 
         System.out.print("Included nodes: ");
@@ -37,7 +35,7 @@ public class DongleCheckOut extends AbstractExample {
     }
 
     private void checkSUCId(BasicSynchronousController controller) throws SerialException {
-        SerialRequest request = GetSUCNodeIdRequest.createGetSUCNodeIdRequest();
+        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().sucRequestBuilder().createGetSUCNodeIdRequest();
         GetSUCNodeIdResponse response = controller.requestResponseFlow(request);
 
         System.out.printf("SUC node Id: %02x\n", response.getSucNodeId().getId());
@@ -45,7 +43,8 @@ public class DongleCheckOut extends AbstractExample {
     }
 
     private void controllerCapabilities(BasicSynchronousController controller) throws SerialException {
-        SerialRequest request = GetControllerCapabilitiesRequest.createGetControllerCapabiltiesRequest();
+        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder()
+                .createGetControllerCapabilitiesRequest();
         GetControllerCapabilitiesResponse response = controller.requestResponseFlow(request);
 
         System.out.printf("Is real primary: %s\n", response.isRealPrimary());
@@ -57,7 +56,8 @@ public class DongleCheckOut extends AbstractExample {
     }
 
     private void capabilties(BasicSynchronousController controller) throws SerialException {
-        SerialRequest request = GetCapabilitiesRequest.createGetCapabilitiesRequest();
+        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder()
+                .createGetCapabilitiesRequest();
         GetCapabilitiesResponse response = controller.requestResponseFlow(request);
 
         System.out.printf("Manufacturer Id: %02x\n", response.getManufacturerId());

@@ -3,14 +3,7 @@ package com.rposcro.jwavez.tools.cli.commands.dongle;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.frames.requests.GetCapabilitiesRequest;
-import com.rposcro.jwavez.serial.frames.requests.GetControllerCapabilitiesRequest;
-import com.rposcro.jwavez.serial.frames.requests.GetInitDataRequest;
-import com.rposcro.jwavez.serial.frames.requests.GetLibraryTypeRequest;
 import com.rposcro.jwavez.serial.frames.requests.GetRFPowerLevelRequest;
-import com.rposcro.jwavez.serial.frames.requests.GetSUCNodeIdRequest;
-import com.rposcro.jwavez.serial.frames.requests.GetVersionRequest;
-import com.rposcro.jwavez.serial.frames.requests.MemoryGetIdRequest;
 import com.rposcro.jwavez.serial.frames.responses.GetCapabilitiesResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetControllerCapabilitiesResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetInitDataResponse;
@@ -66,7 +59,7 @@ public class DongleCheckCommand extends AbstractSyncBasedCommand {
     }
 
     private void runSUCId() throws SerialException {
-        GetSUCNodeIdResponse response = controller.requestResponseFlow(GetSUCNodeIdRequest.createGetSUCNodeIdRequest());
+        GetSUCNodeIdResponse response = controller.requestResponseFlow(serialRequestFactory.sucRequestBuilder().createGetSUCNodeIdRequest());
         System.out.printf("  SUC node id: %02X\n", response.getSucNodeId().getId());
     }
 
@@ -76,18 +69,21 @@ public class DongleCheckCommand extends AbstractSyncBasedCommand {
     }
 
     private void runNetworkIds() throws SerialException {
-        MemoryGetIdResponse response = controller.requestResponseFlow(MemoryGetIdRequest.createMemoryGetIdRequest());
+        MemoryGetIdResponse response = controller.requestResponseFlow(
+                serialRequestFactory.dongleFactsRequestBuilder().createMemoryGetIdRequest());
         System.out.printf("  HomeId: %04x\n", response.getHomeId());
         System.out.printf("  Dongle NodeId: %02x\n", response.getNodeId().getId());
     }
 
     private void runLibraryType() throws SerialException {
-        GetLibraryTypeResponse response = controller.requestResponseFlow(GetLibraryTypeRequest.createLibraryTypeRequest());
+        GetLibraryTypeResponse response = controller.requestResponseFlow(
+                serialRequestFactory.dongleFactsRequestBuilder().createGetLibraryTypeRequest());
         System.out.printf("  Library type: %s\n", response.getLibraryType());
     }
 
     private void runInitialData() throws SerialException {
-        GetInitDataResponse response = controller.requestResponseFlow(GetInitDataRequest.createGetInitDataRequest());
+        GetInitDataResponse response = controller.requestResponseFlow(
+                serialRequestFactory.dongleFactsRequestBuilder().createGetInitDataRequest());
         System.out.printf("  Version: %s\n", response.getVersion());
         System.out.printf("  Capabilities: %s\n", response.getCapabilities());
         System.out.printf("  Chip type: %s\n", response.getChipType());
@@ -98,13 +94,15 @@ public class DongleCheckCommand extends AbstractSyncBasedCommand {
     }
 
     private void runGetVersion() throws SerialException {
-        GetVersionResponse response = controller.requestResponseFlow(GetVersionRequest.createGetVersionRequest());
+        GetVersionResponse response = controller.requestResponseFlow(
+                serialRequestFactory.dongleFactsRequestBuilder().createGetVersionRequest());
         System.out.printf("  Version: %s\n", response.getVersion());
         System.out.printf("  ZWaveResponse data: %s\n", response.getResponseData());
     }
 
     private void runControllerCapabilities() throws SerialException {
-        GetControllerCapabilitiesResponse response = controller.requestResponseFlow(GetControllerCapabilitiesRequest.createGetControllerCapabiltiesRequest());
+        GetControllerCapabilitiesResponse response = controller.requestResponseFlow(
+                serialRequestFactory.dongleFactsRequestBuilder().createGetControllerCapabilitiesRequest());
         System.out.printf("  Is real primary: %s\n", response.isRealPrimary());
         System.out.printf("  Is secondary: %s\n", response.isSecondary());
         System.out.printf("  Is SUC: %s\n", response.isSUC());
@@ -113,7 +111,8 @@ public class DongleCheckCommand extends AbstractSyncBasedCommand {
     }
 
     private void runCapabilities() throws SerialException {
-        GetCapabilitiesResponse response = controller.requestResponseFlow(GetCapabilitiesRequest.createGetCapabilitiesRequest());
+        GetCapabilitiesResponse response = controller.requestResponseFlow(
+                serialRequestFactory.dongleFactsRequestBuilder().createGetCapabilitiesRequest());
         System.out.printf("  App version: %s\n", response.getSerialAppVersion());
         System.out.printf("  App revision: %s\n", response.getSerialAppRevision());
         System.out.printf("  Manufacturer id: %s\n", response.getManufacturerId());

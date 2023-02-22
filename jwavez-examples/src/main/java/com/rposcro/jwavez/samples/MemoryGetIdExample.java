@@ -1,8 +1,8 @@
 package com.rposcro.jwavez.samples;
 
+import com.rposcro.jwavez.serial.JwzSerialSupport;
 import com.rposcro.jwavez.serial.controllers.BasicSynchronousController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.frames.requests.MemoryGetIdRequest;
 import com.rposcro.jwavez.serial.frames.responses.MemoryGetIdResponse;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
@@ -14,7 +14,8 @@ public class MemoryGetIdExample extends AbstractExample {
                 .build()
                 .connect();) {
 
-            SerialRequest request = MemoryGetIdRequest.createMemoryGetIdRequest();
+            SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder()
+                    .createMemoryGetIdRequest();
             MemoryGetIdResponse response = controller.requestResponseFlow(request);
 
             System.out.printf("Home Id: %02x\n", response.getHomeId());

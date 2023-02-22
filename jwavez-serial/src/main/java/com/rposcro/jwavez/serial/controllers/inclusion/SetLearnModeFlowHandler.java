@@ -16,7 +16,7 @@ import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationUpdateCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.SetLearnModeCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
-import com.rposcro.jwavez.serial.frames.requests.SetLearnModeRequest;
+import com.rposcro.jwavez.serial.frames.requests.SetLearnModeRequestBuilder;
 import com.rposcro.jwavez.serial.model.LearnMode;
 import com.rposcro.jwavez.serial.model.LearnStatus;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
@@ -31,7 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class SetLearnModeFlowHandler extends AbstractFlowHandler {
 
-    private TransactionKeeper<SetLearnModeFlowState> transactionKeeper;
+    private final TransactionKeeper<SetLearnModeFlowState> transactionKeeper;
+    private final SetLearnModeRequestBuilder setLearnModeRequestBuilder;
 
     @Getter(AccessLevel.PACKAGE)
     private byte callbackFlowId;
@@ -39,8 +40,10 @@ class SetLearnModeFlowHandler extends AbstractFlowHandler {
     @Getter(AccessLevel.PACKAGE)
     private NodeId nodeId;
 
-    SetLearnModeFlowHandler(TransactionKeeper<SetLearnModeFlowState> transactionKeeper) {
+    SetLearnModeFlowHandler(TransactionKeeper<SetLearnModeFlowState> transactionKeeper,
+                            SetLearnModeRequestBuilder setLearnModeRequestBuilder) {
         this.transactionKeeper = transactionKeeper;
+        this.setLearnModeRequestBuilder = setLearnModeRequestBuilder;
     }
 
     @Override
@@ -73,7 +76,7 @@ class SetLearnModeFlowHandler extends AbstractFlowHandler {
         this.callbackFlowId = callbackFlowId;
         this.transactionKeeper.transitAndSchedule(
                 LEARN_MODE_ACTIVATED,
-                SetLearnModeRequest.createSetLearnModeRequest(LearnMode.LEARN_MODE_CLASSIC, callbackFlowId));
+                setLearnModeRequestBuilder.createSetLearnModeRequest(LearnMode.LEARN_MODE_CLASSIC, callbackFlowId));
     }
 
     @Override
@@ -116,7 +119,7 @@ class SetLearnModeFlowHandler extends AbstractFlowHandler {
     }
 
     private SerialRequest disableLearnModeFrame() {
-        return SetLearnModeRequest.createSetLearnModeRequest(LearnMode.LEARN_MODE_DISABLE, callbackFlowId);
+        return setLearnModeRequestBuilder.createSetLearnModeRequest(LearnMode.LEARN_MODE_DISABLE, callbackFlowId);
     }
 
     private void interruptTransaction(FlowException ex) {

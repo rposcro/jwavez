@@ -15,13 +15,11 @@ public class JwzApplicationSupport {
     private JwzControlledCommandFactory controlledCommandFactory;
     private JwzSupportedCommandParser supportedCommandParser;
     private SupportedCommandDispatcher supportedCommandDispatcher;
-    private ByteBufferManager byteBufferManager;
 
     public JwzApplicationSupport() {
         this.controlledCommandFactory = new JwzControlledCommandFactory();
         this.supportedCommandParser = new JwzSupportedCommandParser(SupportedCommandResolversRegistry.instance());
         this.supportedCommandDispatcher = new SupportedCommandDispatcher();
-        this.byteBufferManager = new ByteBufferManager();
     }
 
     public JwzControlledCommandFactory controlledCommandFactory() {
@@ -34,9 +32,5 @@ public class JwzApplicationSupport {
 
     public SupportedCommandDispatcher supportedCommandDispatcher() {
         return this.supportedCommandDispatcher;
-    }
-
-    public ByteBufferManager byteBufferManager() {
-        return this.byteBufferManager;
     }
 }

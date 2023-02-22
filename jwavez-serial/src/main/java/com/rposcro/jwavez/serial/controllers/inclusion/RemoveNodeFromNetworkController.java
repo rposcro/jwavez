@@ -7,9 +7,12 @@ import static com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetw
 import static com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetworkFlowState.WAITING_FOR_NODE;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
+import com.rposcro.jwavez.serial.JwzSerialSupport;
+import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.frames.requests.RemoveNodeFromNetworkRequestBuilder;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 
@@ -72,11 +75,15 @@ public class RemoveNodeFromNetworkController extends AbstractInclusionController
             @NonNull String dongleDevice,
             RxTxConfiguration rxTxConfiguration,
             ExecutorService executorService,
+            SerialRequestFactory serialRequestFactory,
             long waitForTouchTimeout,
             long waitForProgressTimeout) {
+        RemoveNodeFromNetworkRequestBuilder requestBuilder = serialRequestFactory == null ?
+                JwzSerialSupport.defaultSupport().serialRequestFactory().removeNodeFromNetworkRequestBuilder() :
+                serialRequestFactory.removeNodeFromNetworkRequestBuilder();
         RemoveNodeFromNetworkController controller = new RemoveNodeFromNetworkController();
         controller.transactionKeeper = new TransactionKeeper<>(controller::transactionStateChanged);
-        controller.flowHandler = new RemoveNodeFromNetworkFlowHandler(controller.transactionKeeper);
+        controller.flowHandler = new RemoveNodeFromNetworkFlowHandler(controller.transactionKeeper, requestBuilder);
 
         InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
         controller.helpWithBuild(dongleDevice, rxTxConfiguration, null, callbackHandler, executorService);

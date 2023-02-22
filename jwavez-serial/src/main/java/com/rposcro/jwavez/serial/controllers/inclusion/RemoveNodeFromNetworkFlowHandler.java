@@ -24,7 +24,7 @@ import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.frames.callbacks.RemoveNodeFromNetworkCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
-import com.rposcro.jwavez.serial.frames.requests.RemoveNodeFromNetworkRequest;
+import com.rposcro.jwavez.serial.frames.requests.RemoveNodeFromNetworkRequestBuilder;
 import com.rposcro.jwavez.serial.model.RemoveNodeFromNeworkStatus;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
@@ -38,14 +38,17 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class RemoveNodeFromNetworkFlowHandler extends AbstractFlowHandler {
 
-    private TransactionKeeper<RemoveNodeFromNetworkFlowState> transactionKeeper;
+    private final TransactionKeeper<RemoveNodeFromNetworkFlowState> transactionKeeper;
+    private final RemoveNodeFromNetworkRequestBuilder removeNodeFromNetworkRequestBuilder;
 
     @Getter(AccessLevel.PACKAGE)
     private NodeInfo nodeInfo;
     private byte callbackFlowId;
 
-    RemoveNodeFromNetworkFlowHandler(TransactionKeeper<RemoveNodeFromNetworkFlowState> transactionKeeper) {
+    RemoveNodeFromNetworkFlowHandler(TransactionKeeper<RemoveNodeFromNetworkFlowState> transactionKeeper,
+                                     RemoveNodeFromNetworkRequestBuilder removeNodeFromNetworkRequestBuilder) {
         this.transactionKeeper = transactionKeeper;
+        this.removeNodeFromNetworkRequestBuilder = removeNodeFromNetworkRequestBuilder;
     }
 
     @Override
@@ -78,7 +81,7 @@ class RemoveNodeFromNetworkFlowHandler extends AbstractFlowHandler {
         this.callbackFlowId = callbackFlowId;
         this.transactionKeeper.transitAndSchedule(
                 WAITING_FOR_PROTOCOL,
-                RemoveNodeFromNetworkRequest.createStartRemoveAnyNodeRequest(callbackFlowId));
+                removeNodeFromNetworkRequestBuilder.createStartRemoveAnyNodeRequest(callbackFlowId));
     }
 
     @Override
@@ -128,11 +131,11 @@ class RemoveNodeFromNetworkFlowHandler extends AbstractFlowHandler {
     }
 
     private SerialRequest stoppingFrame() {
-        return RemoveNodeFromNetworkRequest.createStopTransactionRequest(callbackFlowId);
+        return removeNodeFromNetworkRequestBuilder.createStopTransactionRequest(callbackFlowId);
     }
 
     private SerialRequest finalStopFrame() {
-        return RemoveNodeFromNetworkRequest.createFinalTransactionRequest();
+        return removeNodeFromNetworkRequestBuilder.createFinalTransactionRequest();
     }
 
     private void interruptTransaction(FlowException ex) {

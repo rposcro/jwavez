@@ -6,9 +6,12 @@ import static com.rposcro.jwavez.serial.controllers.inclusion.SetLearnModeFlowSt
 import static com.rposcro.jwavez.serial.controllers.inclusion.SetLearnModeFlowState.LEARN_MODE_FAILED;
 
 import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.serial.JwzSerialSupport;
+import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.frames.requests.SetLearnModeRequestBuilder;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 
@@ -63,11 +66,15 @@ public class SetLearnModeController extends AbstractInclusionController<SetLearn
             @NonNull String dongleDevice,
             RxTxConfiguration rxTxConfiguration,
             ExecutorService executorService,
+            SerialRequestFactory serialRequestFactory,
             long waitForTouchTimeout,
             long waitForProgressTimeout) {
+        SetLearnModeRequestBuilder requestBuilder = serialRequestFactory == null ?
+                JwzSerialSupport.defaultSupport().serialRequestFactory().setLearnModeRequestBuilder()
+                : serialRequestFactory.setLearnModeRequestBuilder();
         SetLearnModeController controller = new SetLearnModeController();
         controller.transactionKeeper = new TransactionKeeper<>(controller::transactionStateChanged);
-        controller.flowHandler = new SetLearnModeFlowHandler(controller.transactionKeeper);
+        controller.flowHandler = new SetLearnModeFlowHandler(controller.transactionKeeper, requestBuilder);
 
         InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
         controller.helpWithBuild(dongleDevice, rxTxConfiguration, null, callbackHandler, executorService);

@@ -6,9 +6,12 @@ import static com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkFl
 import static com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkFlowState.WAITING_FOR_NODE;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
+import com.rposcro.jwavez.serial.JwzSerialSupport;
+import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.frames.requests.AddNodeToNetworkRequestBuilder;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 
@@ -74,11 +77,15 @@ public class AddNodeToNetworkController extends AbstractInclusionController<AddN
             @NonNull String dongleDevice,
             RxTxConfiguration rxTxConfiguration,
             ExecutorService executorService,
+            SerialRequestFactory serialRequestFactory,
             long waitForTouchTimeout,
             long waitForProgressTimeout) {
+        AddNodeToNetworkRequestBuilder requestBuilder = serialRequestFactory == null ?
+                JwzSerialSupport.defaultSupport().serialRequestFactory().addNodeToNetworkRequestsBuilder()
+                : serialRequestFactory.addNodeToNetworkRequestsBuilder();
         AddNodeToNetworkController controller = new AddNodeToNetworkController();
         controller.transactionKeeper = new TransactionKeeper<>(controller::transactionStateChanged);
-        controller.flowHandler = new AddNodeToNetworkFlowHandler(controller.transactionKeeper);
+        controller.flowHandler = new AddNodeToNetworkFlowHandler(controller.transactionKeeper, requestBuilder);
 
         InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
         controller.helpWithBuild(dongleDevice, rxTxConfiguration, null, callbackHandler, executorService);
