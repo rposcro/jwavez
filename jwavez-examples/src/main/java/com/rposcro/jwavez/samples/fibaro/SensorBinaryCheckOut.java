@@ -1,7 +1,5 @@
 package com.rposcro.jwavez.samples.fibaro;
 
-import static com.rposcro.jwavez.serial.frames.requests.SendDataRequest.createSendDataRequest;
-
 import com.rposcro.jwavez.core.commands.controlled.builders.association.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.commands.types.AssociationCommandType;
@@ -12,12 +10,14 @@ import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.samples.AbstractExample;
+import com.rposcro.jwavez.serial.JwzSerialSupport;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
+import com.rposcro.jwavez.serial.frames.requests.NetworkTransportRequestBuilder;
 import com.rposcro.jwavez.serial.frames.responses.SendDataResponse;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandInterceptor;
@@ -36,6 +36,7 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
 
     private final NodeId addresseeId;
     private final GeneralAsynchronousController controller;
+    private final NetworkTransportRequestBuilder requestBuilder;
     private byte callbackFlowId;
     private CountDownLatch callbacksLatch;
 
@@ -58,6 +59,7 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
                 .dongleDevice(device)
                 .build()
                 .connect();
+        this.requestBuilder = JwzSerialSupport.defaultSupport().serialRequestFactory().networkTransportRequestBuilder();
     }
 
     private void handleAssociationReport(ZWaveSupportedCommand command) {
@@ -118,17 +120,17 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
 
     private void learnAssociations() throws Exception {
         AssociationCommandBuilder commandBuilder = new AssociationCommandBuilder();
-        send("Get supported groupings", createSendDataRequest(addresseeId, commandBuilder.v1().buildGetSupportedGroupingsCommand(), nextFlowId()));
-        send("Get group 1", createSendDataRequest(addresseeId, commandBuilder.v1().buildGetCommand(1), nextFlowId()));
-        send("Get group 2", createSendDataRequest(addresseeId, commandBuilder.v1().buildGetCommand(2), nextFlowId()));
-        send("Get group 3", createSendDataRequest(addresseeId, commandBuilder.v1().buildGetCommand(3), nextFlowId()));
+        send("Get supported groupings", requestBuilder.createSendDataRequest(addresseeId, commandBuilder.v1().buildGetSupportedGroupingsCommand(), nextFlowId()));
+        send("Get group 1", requestBuilder.createSendDataRequest(addresseeId, commandBuilder.v1().buildGetCommand(1), nextFlowId()));
+        send("Get group 2", requestBuilder.createSendDataRequest(addresseeId, commandBuilder.v1().buildGetCommand(2), nextFlowId()));
+        send("Get group 3", requestBuilder.createSendDataRequest(addresseeId, commandBuilder.v1().buildGetCommand(3), nextFlowId()));
     }
 
     private void learnConfiguration() throws Exception {
         log.debug("Checking rxTxConfiguration");
         ConfigurationCommandBuilder commandBuilder = new ConfigurationCommandBuilder();
         for (int paramNumber = 1; paramNumber <= 14; paramNumber++) {
-            send("Send get parameter " + paramNumber, createSendDataRequest(addresseeId, commandBuilder.v1().buildGetParameterCommand(paramNumber), nextFlowId()));
+            send("Send get parameter " + paramNumber, requestBuilder.createSendDataRequest(addresseeId, commandBuilder.v1().buildGetParameterCommand(paramNumber), nextFlowId()));
         }
     }
 

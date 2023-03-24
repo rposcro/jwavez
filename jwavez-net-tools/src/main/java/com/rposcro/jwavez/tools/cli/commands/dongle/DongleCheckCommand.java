@@ -3,7 +3,6 @@ package com.rposcro.jwavez.tools.cli.commands.dongle;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.frames.requests.GetRFPowerLevelRequest;
 import com.rposcro.jwavez.serial.frames.responses.GetCapabilitiesResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetControllerCapabilitiesResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetInitDataResponse;
@@ -64,7 +63,8 @@ public class DongleCheckCommand extends AbstractSyncBasedCommand {
     }
 
     private void runPowerLevel() throws SerialException {
-        GetRFPowerLevelResponse response = controller.requestResponseFlow(GetRFPowerLevelRequest.createGetRFPowerLevelRequest());
+        GetRFPowerLevelResponse response = controller.requestResponseFlow(
+                serialRequestFactory.deviceStatusRequestBuilder().createGetRFPowerLevelRequest());
         System.out.printf("  Power level: %s\n", response.getPowerLevel());
     }
 

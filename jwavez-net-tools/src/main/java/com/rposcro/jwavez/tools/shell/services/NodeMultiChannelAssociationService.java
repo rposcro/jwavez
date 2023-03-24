@@ -7,9 +7,9 @@ import com.rposcro.jwavez.core.commands.supported.multichannelassociation.MultiC
 import com.rposcro.jwavez.core.commands.types.MultiChannelAssociationCommandType;
 import com.rposcro.jwavez.core.model.EndPointAddress;
 import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
-import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
 import com.rposcro.jwavez.tools.shell.models.EndPointMark;
@@ -32,6 +32,9 @@ public class NodeMultiChannelAssociationService {
 
     @Autowired
     private MultiChannelAssociationCommandBuilder associationCommandBuilder;
+
+    @Autowired
+    private SerialRequestFactory serialRequestFactory;
 
     public NodeAssociationsInformation fetchMultiChannelAssociations(int nodeId, int groupId) throws SerialException {
         final NodeId nodeID = new NodeId(nodeId);
@@ -62,7 +65,8 @@ public class NodeMultiChannelAssociationService {
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = associationCommandBuilder.v2()
                     .buildSetCommand(groupId, new EndPointAddress(addressToAssociate.getNodeId(), addressToAssociate.getEndPointId()));
-            SendDataCallback callback = executor.requestCallbackFlow(SendDataRequest.createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
+            SendDataCallback callback = executor.requestCallbackFlow(
+                    serialRequestFactory.networkTransportRequestBuilder().createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;
         });
 
@@ -84,7 +88,8 @@ public class NodeMultiChannelAssociationService {
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = associationCommandBuilder.v2()
                     .buildRemoveCommand(groupId, new EndPointAddress(endPointToRemove.getNodeId(), endPointToRemove.getEndPointId()));
-            SendDataCallback callback = executor.requestCallbackFlow(SendDataRequest.createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
+            SendDataCallback callback = executor.requestCallbackFlow(
+                    serialRequestFactory.networkTransportRequestBuilder().createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;
         });
 

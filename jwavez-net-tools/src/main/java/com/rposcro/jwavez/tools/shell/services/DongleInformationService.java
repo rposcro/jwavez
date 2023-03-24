@@ -3,7 +3,6 @@ package com.rposcro.jwavez.tools.shell.services;
 import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.controllers.BasicSynchronousController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.frames.requests.GetRFPowerLevelRequest;
 import com.rposcro.jwavez.serial.frames.responses.GetCapabilitiesResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetControllerCapabilitiesResponse;
 import com.rposcro.jwavez.serial.frames.responses.GetInitDataResponse;
@@ -143,7 +142,8 @@ public class DongleInformationService {
 
     private GetRFPowerLevelResponse askForRFPowerLevel() throws SerialException {
         SerialFunction<BasicSynchronousController, GetRFPowerLevelResponse> function = (controller) -> {
-            GetRFPowerLevelResponse response = controller.requestResponseFlow(GetRFPowerLevelRequest.createGetRFPowerLevelRequest());
+            GetRFPowerLevelResponse response = controller.requestResponseFlow(
+                    serialRequestFactory.deviceStatusRequestBuilder().createGetRFPowerLevelRequest());
             return response;
         };
         return controllerManager.runBasicSynchronousFunction(function);

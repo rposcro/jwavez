@@ -12,7 +12,7 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
-import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
+import com.rposcro.jwavez.serial.frames.requests.NetworkTransportRequestBuilder;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandInterceptor;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
@@ -31,13 +31,15 @@ import java.util.concurrent.TimeoutException;
 public class ApplicationCommandExecutor {
 
     private GeneralAsynchronousController controller;
+    private NetworkTransportRequestBuilder transportRequestBuilder;
     private CompletableFuture<ApplicationCommandResult> futureCommand;
 
     private CommandType expectedCommandType;
     private ApplicationCommandResult.ApplicationCommandResultBuilder resultBuilder = ApplicationCommandResult.builder();
 
     @Builder
-    public ApplicationCommandExecutor(@NonNull String device, Long timeoutMillis) throws SerialPortException {
+    public ApplicationCommandExecutor(@NonNull String device, Long timeoutMillis, NetworkTransportRequestBuilder transportRequestBuilder)
+            throws SerialPortException {
         ApplicationCommandInterceptor appCmdInterceptor = ApplicationCommandInterceptor.builder()
                 .skipUnsupportedCallbacks(true)
                 .supportBroadcasts(false)
@@ -71,7 +73,7 @@ public class ApplicationCommandExecutor {
             NodeId nodeId,
             ZWaveControlledCommand applicationCommand,
             long timeout) throws SerialException {
-        SerialRequest request = SendDataRequest.createSendDataRequest(nodeId, applicationCommand, SerialUtils.nextFlowId());
+        SerialRequest request = transportRequestBuilder.createSendDataRequest(nodeId, applicationCommand, SerialUtils.nextFlowId());
         return requestApplicationCommand(request, null, timeout);
     }
 
@@ -80,7 +82,7 @@ public class ApplicationCommandExecutor {
             ZWaveControlledCommand applicationCommand,
             CommandType expectedReturnedCommandType,
             long timeout) throws SerialException {
-        SerialRequest request = SendDataRequest.createSendDataRequest(nodeId, applicationCommand, SerialUtils.nextFlowId());
+        SerialRequest request = transportRequestBuilder.createSendDataRequest(nodeId, applicationCommand, SerialUtils.nextFlowId());
         return requestApplicationCommand(request, expectedReturnedCommandType, timeout);
     }
 

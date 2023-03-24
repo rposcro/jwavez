@@ -4,11 +4,11 @@ import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.controlled.builders.switchcolor.SwitchColorCommandBuilder;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.samples.AbstractExample;
+import com.rposcro.jwavez.serial.JwzSerialSupport;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
-import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
@@ -45,7 +45,8 @@ public class SetRGBWColor extends AbstractExample implements AutoCloseable {
             System.out.println("Sending color switch request");
             ZWaveControlledCommand command = new SwitchColorCommandBuilder().v1().buildSetWarmRGBWCommand(
                     (byte) red, (byte) green, (byte) blue, (byte) white, (byte) 1);
-            SerialRequest request = SendDataRequest.createSendDataRequest(addresseeId, command, callbackFlowId);
+            SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().networkTransportRequestBuilder()
+                    .createSendDataRequest(addresseeId, command, callbackFlowId);
             controller.requestCallbackFlow(request);
             System.out.println("Theoretically sent");
         } catch (SerialException e) {

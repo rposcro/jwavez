@@ -1,11 +1,12 @@
 package com.rposcro.jwavez.samples.zme;
 
 import com.rposcro.jwavez.samples.AbstractExample;
+import com.rposcro.jwavez.serial.buffers.DisposableFrameBuffer;
 import com.rposcro.jwavez.serial.controllers.BasicSynchronousController;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
-import com.rposcro.jwavez.serial.frames.requests.ZWaveRequest;
+import com.rposcro.jwavez.serial.rxtx.SerialFrameConstants;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import lombok.extern.slf4j.Slf4j;
 
@@ -27,7 +28,17 @@ public class CountrySetup extends AbstractExample implements AutoCloseable {
 
     private void setCountryToEU() throws Exception {
         sendWithoutResponse("Change frequency to EU",
-                ZWaveRequest.ofFrameData(SerialCommand.ZSTICK_SET_CONFIG, (byte) 0x00));
+            SerialRequest.builder()
+                .responseExpected(false)
+                .serialCommand(SerialCommand.ZSTICK_SET_CONFIG)
+                .frameData(new DisposableFrameBuffer(6)
+                        .put(SerialFrameConstants.CATEGORY_SOF)
+                        .put((byte) (4))
+                        .put(SerialFrameConstants.TYPE_REQ)
+                        .put(SerialCommand.ZSTICK_SET_CONFIG.getCode())
+                        .putData((byte) 0x00)
+                        .putCRC()
+                ).build());
     }
 
     private void sendWithoutResponse(String message, SerialRequest request) throws Exception {

@@ -10,10 +10,10 @@ import com.rposcro.jwavez.core.commands.types.ManufacturerSpecificCommandType;
 import com.rposcro.jwavez.core.commands.types.VersionCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.model.NodeInfo;
+import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationUpdateCallback;
-import com.rposcro.jwavez.serial.frames.requests.RequestNodeInfoRequest;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
 import com.rposcro.jwavez.tools.shell.models.CommandClassMeta;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
@@ -39,6 +39,9 @@ public class NodeInformationService {
 
     @Autowired
     private VersionCommandBuilder versionCommandBuilder;
+
+    @Autowired
+    private SerialRequestFactory serialRequestFactory;
 
     public NodeInformation fetchNodeInformation(int nodeId) throws SerialException {
         NodeInformation nodeInformation = new NodeInformation();
@@ -105,7 +108,7 @@ public class NodeInformationService {
     private NodeInfo fetchNodeInfo(NodeId nodeID) throws SerialException {
         ApplicationUpdateCallback callback = serialCommunicationService.runSerialCallbackFunction((executor ->
                 executor.requestZWCallback(
-                        RequestNodeInfoRequest.createRequestNodeInfoRequest(nodeID),
+                        serialRequestFactory.networkManagementRequestBuilder().createRequestNodeInfoRequest(nodeID),
                         SerialCommand.APPLICATION_UPDATE,
                         SerialUtils.DEFAULT_TIMEOUT)
         ));

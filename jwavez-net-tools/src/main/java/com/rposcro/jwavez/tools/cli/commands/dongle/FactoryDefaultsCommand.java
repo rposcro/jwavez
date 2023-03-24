@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.tools.cli.commands.dongle;
 
+import com.rposcro.jwavez.serial.JwzSerialSupport;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.frames.requests.SetDefaultRequest;
 import com.rposcro.jwavez.tools.cli.commands.AbstractSyncBasedCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.FactoryDefaultsOptions;
@@ -28,7 +28,8 @@ public class FactoryDefaultsCommand extends AbstractSyncBasedCommand {
     private void resetDongle() throws SerialException {
         connect(options);
         controller.requestCallbackFlow(
-                SetDefaultRequest.createSetDefaultRequest(nextFlowId()),
+                JwzSerialSupport.defaultSupport().serialRequestFactory().deviceManagementRequestBuilder()
+                        .createSetDefaultRequest(nextFlowId()),
                 options.getTimeout());
         System.out.println("Factory defaults reset successful");
     }

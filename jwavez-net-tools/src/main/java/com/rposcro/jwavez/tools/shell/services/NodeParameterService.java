@@ -6,9 +6,9 @@ import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationRep
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.model.BitLength;
 import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
-import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
@@ -28,6 +28,9 @@ public class NodeParameterService {
 
     @Autowired
     private ConfigurationCommandBuilder configurationCommandBuilder;
+
+    @Autowired
+    private SerialRequestFactory serialRequestFactory;
 
     public void updateOrCreateMeta(int nodeId, int paramNumber, int sizeInBits, String memo) {
         ParameterMeta parameterMeta = ParameterMeta.builder()
@@ -69,7 +72,8 @@ public class NodeParameterService {
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = configurationCommandBuilder.v1()
                     .buildSetParameterCommand(paramNumber, (int) requestedValue, BitLength.ofBytesNumber(parameterMeta.getSizeInBytes()));
-            SendDataCallback callback = executor.requestCallbackFlow(SendDataRequest.createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
+            SendDataCallback callback = executor.requestCallbackFlow(
+                    serialRequestFactory.networkTransportRequestBuilder().createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;
         });
 

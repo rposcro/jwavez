@@ -3,11 +3,11 @@ package com.rposcro.jwavez.samples.nodes;
 import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.samples.AbstractExample;
+import com.rposcro.jwavez.serial.JwzSerialSupport;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
-import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
@@ -44,10 +44,11 @@ public class ReadNodeConfiguration extends AbstractExample {
         try {
             for (int parameter : parameters) {
                 log.debug("Sending configuration read request for parameter " + parameter);
-                SerialRequest request = SendDataRequest.createSendDataRequest(
-                        addresseeId,
-                        new ConfigurationCommandBuilder().v1().buildGetParameterCommand(parameter),
-                        nextFlowId());
+                SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().networkTransportRequestBuilder()
+                        .createSendDataRequest(
+                                addresseeId,
+                                new ConfigurationCommandBuilder().v1().buildGetParameterCommand(parameter),
+                                nextFlowId());
                 SendDataCallback callback = controller.requestCallbackFlow(request);
                 if (callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK) {
                     log.debug("Request delivered successfully");

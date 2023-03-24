@@ -9,10 +9,10 @@ import com.rposcro.jwavez.core.commands.supported.version.VersionCommandClassRep
 import com.rposcro.jwavez.core.commands.supported.version.VersionReport;
 import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.model.NodeInfo;
+import com.rposcro.jwavez.serial.JwzSerialSupport;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationUpdateCallback;
-import com.rposcro.jwavez.serial.frames.requests.RequestNodeInfoRequest;
 import com.rposcro.jwavez.serial.model.ApplicationUpdateStatus;
 import com.rposcro.jwavez.tools.cli.ZWaveCLI;
 import com.rposcro.jwavez.tools.cli.commands.AbstractAsyncBasedCommand;
@@ -106,7 +106,8 @@ public class NodeInfoCommand extends AbstractAsyncBasedCommand {
     private void runFetchClassInfo() throws SerialException {
         System.out.println("Fetching class info");
         ApplicationUpdateCallback callback = requestZWCallback(
-                RequestNodeInfoRequest.createRequestNodeInfoRequest(options.getNodeId()),
+                JwzSerialSupport.defaultSupport().serialRequestFactory()
+                                .networkManagementRequestBuilder().createRequestNodeInfoRequest(options.getNodeId()),
                 SerialCommand.APPLICATION_UPDATE,
                 options.getTimeout()
         );

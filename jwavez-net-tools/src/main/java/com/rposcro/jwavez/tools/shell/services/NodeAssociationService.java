@@ -5,9 +5,9 @@ import com.rposcro.jwavez.core.commands.controlled.builders.association.Associat
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.core.commands.types.AssociationCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
-import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
 import com.rposcro.jwavez.tools.utils.SerialUtils;
@@ -29,6 +29,9 @@ public class NodeAssociationService {
 
     @Autowired
     private AssociationCommandBuilder associationCommandBuilder;
+
+    @Autowired
+    private SerialRequestFactory serialRequestFactory;
 
     public List<Integer> fetchGroupAssociations(int nodeId, int groupId) throws SerialException {
         final NodeId nodeID = new NodeId(nodeId);
@@ -56,7 +59,8 @@ public class NodeAssociationService {
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = associationCommandBuilder.v1()
                     .buildSetCommand(groupId, nodeIdToAssociate);
-            SendDataCallback callback = executor.requestCallbackFlow(SendDataRequest.createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
+            SendDataCallback callback = executor.requestCallbackFlow(
+                    serialRequestFactory.networkTransportRequestBuilder().createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;
         });
 
@@ -78,7 +82,8 @@ public class NodeAssociationService {
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = associationCommandBuilder.v1()
                     .buildRemoveCommand(groupId, nodeIdToRemove);
-            SendDataCallback callback = executor.requestCallbackFlow(SendDataRequest.createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
+            SendDataCallback callback = executor.requestCallbackFlow(
+                    serialRequestFactory.networkTransportRequestBuilder().createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;
         });
 

@@ -9,7 +9,7 @@ import static com.rposcro.jwavez.serial.enums.SerialCommand.GET_LIBRARY_TYPE;
 import static com.rposcro.jwavez.serial.enums.SerialCommand.GET_VERSION;
 import static com.rposcro.jwavez.serial.enums.SerialCommand.MEMORY_GET_ID;
 
-public class DongleFactsRequestBuilder extends AbstractRequestBuilder {
+public class DeviceCapabilityRequestBuilder extends AbstractRequestBuilder {
 
     public SerialRequest createGetInitDataRequest() {
         return nonPayloadRequest(GET_INIT_DATA);

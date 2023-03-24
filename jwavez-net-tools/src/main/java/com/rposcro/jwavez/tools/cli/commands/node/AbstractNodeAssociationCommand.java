@@ -6,12 +6,10 @@ import com.rposcro.jwavez.core.commands.controlled.builders.association.Associat
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.frames.requests.SendDataRequest;
 import com.rposcro.jwavez.tools.cli.commands.AbstractAsyncBasedCommand;
 
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public abstract class AbstractNodeAssociationCommand extends AbstractAsyncBasedCommand {
 
@@ -33,7 +31,7 @@ public abstract class AbstractNodeAssociationCommand extends AbstractAsyncBasedC
 
     protected AssociationReport readGroupAssociations(NodeId addresseeNodeId, int groupId, long timeout) throws SerialException {
         AssociationReport report = requestApplicationCommand(
-                SendDataRequest.createSendDataRequest(
+                transportRequestBuilder.createSendDataRequest(
                         addresseeNodeId,
                         associationCommandBuilder.v1().buildGetCommand(groupId),
                         nextFlowId()),
