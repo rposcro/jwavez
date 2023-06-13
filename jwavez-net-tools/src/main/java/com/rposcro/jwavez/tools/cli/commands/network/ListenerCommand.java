@@ -78,10 +78,10 @@ public class ListenerCommand extends AbstractAsyncBasedCommand {
         }
     }
 
-    private String formatCallback(ImmutableBuffer viewBuffer) {
+    private String formatCallback(ImmutableBuffer frameBuffer) {
         String visual = null;
         try {
-            ZWaveCallback callback = frameParser.parseCallbackFrame(viewBuffer);
+            ZWaveCallback callback = frameParser.parseCallbackFrame(frameBuffer);
             SerialCommand serialCommand = callback.getSerialCommand();
             Function<ZWaveCallback, String> formatter = formatters.computeIfAbsent(serialCommand, sc -> this::formatAnyCommand);
             visual = formatter.apply(callback);

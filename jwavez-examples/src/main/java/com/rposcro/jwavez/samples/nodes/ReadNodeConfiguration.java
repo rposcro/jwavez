@@ -27,7 +27,7 @@ public class ReadNodeConfiguration extends AbstractExample {
         log.debug("Running for device " + device + " and node " + addresseeId.getId());
 
         InterceptableCallbackHandler callbacksHandler = new InterceptableCallbackHandler()
-                .addViewBufferInterceptor(this::interceptViewBuffer);
+                .addFrameBufferInterceptor(this::interceptFrameBuffer);
 
         this.controller = GeneralAsynchronousController.builder()
                 .callbackHandler(callbacksHandler)
@@ -36,7 +36,7 @@ public class ReadNodeConfiguration extends AbstractExample {
                 .connect();
     }
 
-    private void interceptViewBuffer(ImmutableBuffer buffer) {
+    private void interceptFrameBuffer(ImmutableBuffer buffer) {
         log.debug("Callback frame received: {}", BufferUtil.bufferToString(buffer));
     }
 

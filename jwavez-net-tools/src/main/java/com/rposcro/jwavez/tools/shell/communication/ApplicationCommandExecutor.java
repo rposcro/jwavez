@@ -51,7 +51,7 @@ public class ApplicationCommandExecutor {
         appCmdInterceptor.registerAllCommandsHandler(this::handleApplicationCommand);
 
         InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
-        callbackHandler.addViewBufferInterceptor(this::interceptSerialCallbackBuffer);
+        callbackHandler.addFrameBufferInterceptor(this::interceptSerialCallbackBuffer);
         callbackHandler.addCallbackInterceptor(this::interceptSerialCallback);
         callbackHandler.addCallbackInterceptor(appCmdInterceptor);
 

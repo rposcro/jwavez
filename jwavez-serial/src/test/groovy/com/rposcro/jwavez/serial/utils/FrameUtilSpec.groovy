@@ -1,6 +1,5 @@
 package com.rposcro.jwavez.serial.utils
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -30,7 +29,7 @@ class FrameUtilSpec extends Specification {
     }
 
     @Unroll
-    def "CRC is properly calculated based on view buffer"() {
+    def "CRC is properly calculated based on frame buffer"() {
         given:
         def array = asByteArray(data);
         def buffer = new ViewBuffer(ByteBuffer.wrap(array));

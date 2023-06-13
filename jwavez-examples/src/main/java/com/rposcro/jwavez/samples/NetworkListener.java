@@ -14,7 +14,7 @@ public class NetworkListener extends AbstractExample implements AutoCloseable {
 
     public NetworkListener(String device) throws SerialPortException {
         this.controller = GeneralAsynchronousController.builder()
-                .callbackHandler(this::handleViewBuffer)
+                .callbackHandler(this::handleFrameBuffer)
                 .dongleDevice(device)
                 .build()
                 .connect();
@@ -24,7 +24,7 @@ public class NetworkListener extends AbstractExample implements AutoCloseable {
         controller.close();
     }
 
-    private void handleViewBuffer(ImmutableBuffer buffer) {
+    private void handleFrameBuffer(ImmutableBuffer buffer) {
         System.out.printf("Frame received: %s\n", BufferUtil.bufferToString(buffer));
     }
 

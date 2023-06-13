@@ -49,7 +49,7 @@ public class SensorBinarySetUp extends AbstractExample implements AutoCloseable 
         this.addresseeId = new NodeId((byte) nodeId);
 
         InterceptableCallbackHandler callbacksHandler = new InterceptableCallbackHandler()
-                .addViewBufferInterceptor(this::interceptViewBuffer)
+                .addFrameBufferInterceptor(this::interceptFrameBuffer)
                 .addCallbackInterceptor(new ApplicationCommandInterceptor()
                         .registerCommandHandler(ConfigurationCommandType.CONFIGURATION_REPORT, this::handleConfigurationReport));
 
@@ -69,7 +69,7 @@ public class SensorBinarySetUp extends AbstractExample implements AutoCloseable 
         System.out.printf("  parameter %s value %s\n", report.getParameterNumber(), report.getParameterValue());
     }
 
-    private void interceptViewBuffer(ImmutableBuffer buffer) {
+    private void interceptFrameBuffer(ImmutableBuffer buffer) {
         log.debug("Callback frame received: {}", BufferUtil.bufferToString(buffer));
     }
 

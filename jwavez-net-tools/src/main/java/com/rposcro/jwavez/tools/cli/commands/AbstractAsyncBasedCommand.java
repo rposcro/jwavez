@@ -17,7 +17,7 @@ import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandInterceptor;
 import com.rposcro.jwavez.serial.interceptors.CallbackInterceptor;
-import com.rposcro.jwavez.serial.interceptors.ViewBufferInterceptor;
+import com.rposcro.jwavez.serial.interceptors.FrameBufferInterceptor;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import com.rposcro.jwavez.tools.cli.options.AbstractDeviceBasedOptions;
@@ -55,8 +55,8 @@ public abstract class AbstractAsyncBasedCommand extends AbstractCommand {
         return this;
     }
 
-    public AbstractAsyncBasedCommand addCallbackInterceptor(ViewBufferInterceptor interceptor) {
-        callbackHandler.addViewBufferInterceptor(interceptor);
+    public AbstractAsyncBasedCommand addCallbackInterceptor(FrameBufferInterceptor interceptor) {
+        callbackHandler.addFrameBufferInterceptor(interceptor);
         return this;
     }
 

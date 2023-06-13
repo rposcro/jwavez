@@ -31,7 +31,7 @@ class ResponseStageDoerSpec extends Specification {
     def responseData;
 
     def receivedResponseData;
-    def responseConsumer = { frameView -> receivedResponseData.addAll(dataFromBuffer(frameView)) };
+    def responseConsumer = { frameBuffer -> receivedResponseData.addAll(dataFromBuffer(frameBuffer)) };
     def serialPort;
     def rxTxConfiguration;
 

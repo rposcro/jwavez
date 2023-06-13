@@ -1,18 +1,18 @@
 package com.rposcro.jwavez.serial.handlers;
 
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
-import com.rposcro.jwavez.serial.interceptors.ViewBufferInterceptor;
+import com.rposcro.jwavez.serial.interceptors.FrameBufferInterceptor;
 import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
 import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class InterceptableViewBufferHandler implements CallbackHandler, ResponseHandler {
+public class InterceptableFrameBufferHandler implements CallbackHandler, ResponseHandler {
 
-    private List<ViewBufferInterceptor> interceptors;
+    private List<FrameBufferInterceptor> interceptors;
 
-    public InterceptableViewBufferHandler() {
+    public InterceptableFrameBufferHandler() {
         this.interceptors = new ArrayList<>();
     }
 
@@ -21,7 +21,7 @@ public class InterceptableViewBufferHandler implements CallbackHandler, Response
         interceptors.forEach(interceptor -> interceptor.intercept(frameBuffer));
     }
 
-    public InterceptableViewBufferHandler addInterceptor(ViewBufferInterceptor interceptor) {
+    public InterceptableFrameBufferHandler addInterceptor(FrameBufferInterceptor interceptor) {
         interceptors.add(interceptor);
         return this;
     }

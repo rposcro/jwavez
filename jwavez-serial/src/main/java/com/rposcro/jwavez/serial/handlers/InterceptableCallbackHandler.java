@@ -9,7 +9,7 @@ import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.interceptors.CallbackInterceptor;
-import com.rposcro.jwavez.serial.interceptors.ViewBufferInterceptor;
+import com.rposcro.jwavez.serial.interceptors.FrameBufferInterceptor;
 import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
 
@@ -25,7 +25,7 @@ public class InterceptableCallbackHandler implements CallbackHandler {
     private InboundFrameParser parser;
 
     private List<CallbackInterceptor> callbackInterceptors;
-    private List<ViewBufferInterceptor> bufferInterceptors;
+    private List<FrameBufferInterceptor> bufferInterceptors;
 
     public InterceptableCallbackHandler() {
         this.validator = new InboundFrameValidator();
@@ -57,7 +57,7 @@ public class InterceptableCallbackHandler implements CallbackHandler {
         return this;
     }
 
-    public InterceptableCallbackHandler addViewBufferInterceptor(ViewBufferInterceptor interceptor) {
+    public InterceptableCallbackHandler addFrameBufferInterceptor(FrameBufferInterceptor interceptor) {
         bufferInterceptors.add(interceptor);
         return this;
     }

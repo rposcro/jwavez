@@ -4,8 +4,8 @@ import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 
 public abstract class SolicitedCallbackResponse extends ZWaveResponse {
 
-    public SolicitedCallbackResponse(ImmutableBuffer viewBuffer) {
-        super(viewBuffer);
+    public SolicitedCallbackResponse(ImmutableBuffer frameBuffer) {
+        super(frameBuffer);
     }
 
     public abstract boolean isSolicitedCallbackToFollow();

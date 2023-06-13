@@ -1,7 +1,6 @@
 package com.rposcro.jwavez.serial.frames
 
 import com.rposcro.jwavez.serial.TestUtils
-import com.rposcro.jwavez.serial.buffers.ViewBuffer
 import com.rposcro.jwavez.serial.frames.callbacks.AddNodeToNetworkCallback
 import com.rposcro.jwavez.serial.frames.callbacks.SendSUCIdCallback
 import com.rposcro.jwavez.serial.frames.callbacks.SetLearnModeCallback

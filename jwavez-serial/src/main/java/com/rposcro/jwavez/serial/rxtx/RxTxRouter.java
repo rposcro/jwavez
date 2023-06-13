@@ -213,11 +213,11 @@ public class RxTxRouter {
         this.outboundLock.release();
     }
 
-    private void handleResponse(ImmutableBuffer frameView) {
-        log.info("ZWaveResponse frame received: {}", bufferToString(frameView));
+    private void handleResponse(ImmutableBuffer frameBuffer) {
+        log.info("ZWaveResponse frame received: {}", bufferToString(frameBuffer));
     }
 
-    private void handleCallback(ImmutableBuffer frameView) {
-        log.info("ZWaveCallback frame received: {}", bufferToString(frameView));
+    private void handleCallback(ImmutableBuffer frameBuffer) {
+        log.info("ZWaveCallback frame received: {}", bufferToString(frameBuffer));
     }
 }

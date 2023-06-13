@@ -65,12 +65,12 @@ public class NetworkListeningService {
         semaphore.release();
     }
 
-    private void treatSerialCallback(ImmutableBuffer viewBuffer) {
+    private void treatSerialCallback(ImmutableBuffer frameBuffer) {
         console.flushLine("\nCallback frame received");
-        console.flushLine(FrameUtil.asFineString(viewBuffer));
+        console.flushLine(FrameUtil.asFineString(frameBuffer));
 
         try {
-            ZWaveCallback callback = serialFrameParser.parseCallbackFrame(viewBuffer);
+            ZWaveCallback callback = serialFrameParser.parseCallbackFrame(frameBuffer);
             console.flushLine(callback.asFineString());
             if (callback.getSerialCommand() == SerialCommand.APPLICATION_COMMAND_HANDLER) {
                 treatApplicationCommandHandler(callback);

@@ -9,7 +9,7 @@ import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.interceptors.ResponseInterceptor;
-import com.rposcro.jwavez.serial.interceptors.ViewBufferInterceptor;
+import com.rposcro.jwavez.serial.interceptors.FrameBufferInterceptor;
 import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
 import com.rposcro.jwavez.serial.utils.BufferUtil;
 
@@ -25,7 +25,7 @@ public class InterceptableResponseHandler implements ResponseHandler {
     private InboundFrameParser parser;
 
     private List<ResponseInterceptor> responseInterceptors;
-    private List<ViewBufferInterceptor> bufferInterceptors;
+    private List<FrameBufferInterceptor> bufferInterceptors;
 
     public InterceptableResponseHandler() {
         this.validator = new InboundFrameValidator();
@@ -56,7 +56,7 @@ public class InterceptableResponseHandler implements ResponseHandler {
         return this;
     }
 
-    public InterceptableResponseHandler addViewBufferInterceptor(ViewBufferInterceptor interceptor) {
+    public InterceptableResponseHandler addFrameBufferInterceptor(FrameBufferInterceptor interceptor) {
         bufferInterceptors.add(interceptor);
         return this;
     }

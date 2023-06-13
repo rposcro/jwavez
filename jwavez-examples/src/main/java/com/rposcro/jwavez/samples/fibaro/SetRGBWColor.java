@@ -27,7 +27,7 @@ public class SetRGBWColor extends AbstractExample implements AutoCloseable {
         this.addresseeId = new NodeId((byte) nodeId);
 
         InterceptableCallbackHandler callbacksHandler = new InterceptableCallbackHandler()
-                .addViewBufferInterceptor(this::interceptViewBuffer);
+                .addFrameBufferInterceptor(this::interceptFrameBuffer);
 
         this.controller = GeneralAsynchronousController.builder()
                 .callbackHandler(callbacksHandler)
@@ -36,7 +36,7 @@ public class SetRGBWColor extends AbstractExample implements AutoCloseable {
                 .connect();
     }
 
-    private void interceptViewBuffer(ImmutableBuffer buffer) {
+    private void interceptFrameBuffer(ImmutableBuffer buffer) {
         log.debug("Callback frame received: {}", BufferUtil.bufferToString(buffer));
     }
 

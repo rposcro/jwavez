@@ -52,7 +52,7 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
         InterceptableCallbackHandler callbacksHandler = new InterceptableCallbackHandler()
                 .addCallbackInterceptor(commandInterceptor)
                 .addCallbackInterceptor(this::interceptSendDataCallback)
-                .addViewBufferInterceptor(this::interceptViewBuffer);
+                .addFrameBufferInterceptor(this::interceptFrameBuffer);
 
         this.controller = GeneralAsynchronousController.builder()
                 .callbackHandler(callbacksHandler)
@@ -88,7 +88,7 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
         callbacksLatch.countDown();
     }
 
-    private void interceptViewBuffer(ImmutableBuffer buffer) {
+    private void interceptFrameBuffer(ImmutableBuffer buffer) {
         log.debug("Callback frame received: {}", BufferUtil.bufferToString(buffer));
     }
 

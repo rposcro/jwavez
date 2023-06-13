@@ -11,9 +11,9 @@ public abstract class ZWaveCallback {
     private SerialCommand serialCommand;
     private int length;
 
-    public ZWaveCallback(ImmutableBuffer viewBuffer) {
-        this.length = viewBuffer.getByte(SerialFrameConstants.FRAME_OFFSET_LENGTH) & 0xff;
-        this.serialCommand = SerialCommand.ofCode(viewBuffer.getByte(SerialFrameConstants.FRAME_OFFSET_COMMAND));
+    public ZWaveCallback(ImmutableBuffer frameBuffer) {
+        this.length = frameBuffer.getByte(SerialFrameConstants.FRAME_OFFSET_LENGTH) & 0xff;
+        this.serialCommand = SerialCommand.ofCode(frameBuffer.getByte(SerialFrameConstants.FRAME_OFFSET_COMMAND));
     }
 
     public String asFineString() {
