@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.handlers;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.interceptors.ViewBufferInterceptor;
 import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
 import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
@@ -17,8 +17,8 @@ public class InterceptableViewBufferHandler implements CallbackHandler, Response
     }
 
     @Override
-    public void accept(ViewBuffer viewBuffer) {
-        interceptors.forEach(interceptor -> interceptor.intercept(viewBuffer));
+    public void accept(ImmutableBuffer frameBuffer) {
+        interceptors.forEach(interceptor -> interceptor.intercept(frameBuffer));
     }
 
     public InterceptableViewBufferHandler addInterceptor(ViewBufferInterceptor interceptor) {

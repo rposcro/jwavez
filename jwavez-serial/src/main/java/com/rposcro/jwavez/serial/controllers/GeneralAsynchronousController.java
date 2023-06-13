@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.controllers;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.controllers.helpers.RequestCallbackFlowHelper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.FrameException;
@@ -89,7 +89,7 @@ public class GeneralAsynchronousController extends AbstractAsynchronousControlle
         }
     }
 
-    private void handleResponse(ViewBuffer frameBuffer) {
+    private void handleResponse(ImmutableBuffer frameBuffer) {
         lastResponseHandler.accept(frameBuffer);
 
         if (log.isDebugEnabled()) {
@@ -100,8 +100,8 @@ public class GeneralAsynchronousController extends AbstractAsynchronousControlle
         customResponseHandler.ifPresent(handler -> handler.accept(frameBuffer));
     }
 
-    private void handleCallback(ViewBuffer frameBuffer) {
-        if (expectedFutureCallback != null && !expectedFutureCallback.isDone() && frameBuffer.get(SerialFrameConstants.FRAME_OFFSET_COMMAND) == expectedCommandCode) {
+    private void handleCallback(ImmutableBuffer frameBuffer) {
+        if (expectedFutureCallback != null && !expectedFutureCallback.isDone() && frameBuffer.getByte(SerialFrameConstants.FRAME_OFFSET_COMMAND) == expectedCommandCode) {
             if (validator.validate(frameBuffer)) {
                 try {
                     FlowCallback callback = (FlowCallback) parser.parseCallbackFrame(frameBuffer);

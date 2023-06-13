@@ -1,10 +1,10 @@
 package com.rposcro.jwavez.samples.nodes;
 
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.samples.AbstractExample;
 import com.rposcro.jwavez.serial.JwzSerialSupport;
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
@@ -36,7 +36,7 @@ public class ReadNodeConfiguration extends AbstractExample {
                 .connect();
     }
 
-    private void interceptViewBuffer(ViewBuffer buffer) {
+    private void interceptViewBuffer(ImmutableBuffer buffer) {
         log.debug("Callback frame received: {}", BufferUtil.bufferToString(buffer));
     }
 

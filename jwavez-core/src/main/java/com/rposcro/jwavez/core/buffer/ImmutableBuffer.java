@@ -57,6 +57,11 @@ public final class ImmutableBuffer {
         return position < length;
     }
 
+    public ImmutableBuffer position(int position) {
+        this.position = position;
+        return this;
+    }
+
     public ImmutableBuffer skip(int distance) {
         position += distance;
         return this;
@@ -144,6 +149,12 @@ public final class ImmutableBuffer {
         return cloned;
     }
 
+    public byte[] cloneBytes(int length) {
+        byte[] cloned = new byte[length];
+        System.arraycopy(data, offset, cloned, 0, length);
+        return cloned;
+    }
+
     public byte[] cloneRemainingBytes() {
         int remaining = length - position;
         byte[] cloned = new byte[remaining];
@@ -184,5 +195,9 @@ public final class ImmutableBuffer {
         byte assertByte = buffer[payloadLength + payloadOffset - 1];
         assertByte = buffer[payloadOffset];
         return new ImmutableBuffer(buffer, payloadOffset, payloadLength);
+    }
+
+    public static ImmutableBuffer empty() {
+        return new ImmutableBuffer(null, 0, 0);
     }
 }

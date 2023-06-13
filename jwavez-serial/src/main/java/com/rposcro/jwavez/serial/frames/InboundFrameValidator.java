@@ -4,7 +4,7 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_SOF;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_CATEGORY;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_LENGTH;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.utils.FrameUtil;
 import lombok.extern.slf4j.Slf4j;
 
@@ -17,7 +17,7 @@ public class InboundFrameValidator {
         return defaultInstance == null ? defaultInstance = new InboundFrameValidator() : defaultInstance;
     }
 
-    public boolean validate(ViewBuffer buffer) {
+    public boolean validate(ImmutableBuffer buffer) {
         return validateFrameLength(buffer)
                 && validateFrameCategory(buffer)
                 && validatePayloadSize(buffer)
@@ -25,7 +25,7 @@ public class InboundFrameValidator {
                 ;
     }
 
-    private boolean validateFrameLength(ViewBuffer buffer) {
+    private boolean validateFrameLength(ImmutableBuffer buffer) {
         if (buffer.length() < 5) {
             log.info("Wrong frame length {}", buffer.length());
             return false;
@@ -33,25 +33,25 @@ public class InboundFrameValidator {
         return true;
     }
 
-    private boolean validateFrameCategory(ViewBuffer buffer) {
-        if (CATEGORY_SOF != buffer.get(FRAME_OFFSET_CATEGORY)) {
-            log.info("Wrong frame category, expected SOF frame but received {}", buffer.get(FRAME_OFFSET_CATEGORY));
+    private boolean validateFrameCategory(ImmutableBuffer buffer) {
+        if (CATEGORY_SOF != buffer.getByte(FRAME_OFFSET_CATEGORY)) {
+            log.info("Wrong frame category, expected SOF frame but received {}", buffer.getByte(FRAME_OFFSET_CATEGORY));
             return false;
         }
         return true;
     }
 
-    private boolean validatePayloadSize(ViewBuffer buffer) {
-        if (buffer.length() != Byte.toUnsignedInt(buffer.get(FRAME_OFFSET_LENGTH)) + 2) {
-            log.info("Wrong payload size {}", Byte.toUnsignedInt(buffer.get(FRAME_OFFSET_LENGTH)));
+    private boolean validatePayloadSize(ImmutableBuffer buffer) {
+        if (buffer.length() != Byte.toUnsignedInt(buffer.getByte(FRAME_OFFSET_LENGTH)) + 2) {
+            log.info("Wrong payload size {}", Byte.toUnsignedInt(buffer.getByte(FRAME_OFFSET_LENGTH)));
             return false;
         }
         return true;
     }
 
-    private boolean validateFrameCRC(ViewBuffer buffer) {
+    private boolean validateFrameCRC(ImmutableBuffer buffer) {
         byte calculatedCRC = FrameUtil.frameCRC(buffer);
-        byte receivedCRC = buffer.get(buffer.length() - 1);
+        byte receivedCRC = buffer.getByte(buffer.length() - 1);
         if (receivedCRC != calculatedCRC) {
             log.info("Incorrect CRC {}!={}", receivedCRC, calculatedCRC);
             return false;

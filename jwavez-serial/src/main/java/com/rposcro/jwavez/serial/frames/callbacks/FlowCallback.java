@@ -2,7 +2,7 @@ package com.rposcro.jwavez.serial.frames.callbacks;
 
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_PAYLOAD;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import lombok.Getter;
 
 @Getter
@@ -10,10 +10,10 @@ public abstract class FlowCallback extends ZWaveCallback {
 
     private byte callbackFlowId;
 
-    public FlowCallback(ViewBuffer frameBuffer) {
+    public FlowCallback(ImmutableBuffer frameBuffer) {
         super(frameBuffer);
         frameBuffer.position(FRAME_OFFSET_PAYLOAD);
-        callbackFlowId = frameBuffer.get();
+        callbackFlowId = frameBuffer.next();
     }
 
     public String asFineString() {

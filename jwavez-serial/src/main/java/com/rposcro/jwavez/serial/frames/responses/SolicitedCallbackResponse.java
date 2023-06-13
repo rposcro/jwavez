@@ -1,10 +1,10 @@
 package com.rposcro.jwavez.serial.frames.responses;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 
 public abstract class SolicitedCallbackResponse extends ZWaveResponse {
 
-    public SolicitedCallbackResponse(ViewBuffer viewBuffer) {
+    public SolicitedCallbackResponse(ImmutableBuffer viewBuffer) {
         super(viewBuffer);
     }
 

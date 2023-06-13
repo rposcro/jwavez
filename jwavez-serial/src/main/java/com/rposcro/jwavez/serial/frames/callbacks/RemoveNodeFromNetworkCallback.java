@@ -2,8 +2,8 @@ package com.rposcro.jwavez.serial.frames.callbacks;
 
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_PAYLOAD;
 
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.frames.CallbackFrameModel;
 import com.rposcro.jwavez.serial.model.RemoveNodeFromNeworkStatus;
@@ -23,9 +23,9 @@ public class RemoveNodeFromNetworkCallback extends FlowCallback {
     private RemoveNodeFromNeworkStatus status;
     private Optional<NodeInfo> nodeInfo;
 
-    public RemoveNodeFromNetworkCallback(ViewBuffer frameBuffer) {
+    public RemoveNodeFromNetworkCallback(ImmutableBuffer frameBuffer) {
         super(frameBuffer);
-        this.status = RemoveNodeFromNeworkStatus.ofCode(frameBuffer.get());
+        this.status = RemoveNodeFromNeworkStatus.ofCode(frameBuffer.nextByte());
         if (isNodeInfoPresent(frameBuffer)) {
             this.nodeInfo = Optional.of(NodeUtil.decodeNodeInfo(frameBuffer));
         } else {
@@ -33,7 +33,7 @@ public class RemoveNodeFromNetworkCallback extends FlowCallback {
         }
     }
 
-    private boolean isNodeInfoPresent(ViewBuffer frameBuffer) {
-        return (frameBuffer.get(OFFSET_SOURCE) != 0 && frameBuffer.get(OFFSET_NIF_LENGTH) != 0);
+    private boolean isNodeInfoPresent(ImmutableBuffer frameBuffer) {
+        return (frameBuffer.getByte(OFFSET_SOURCE) != 0 && frameBuffer.getByte(OFFSET_NIF_LENGTH) != 0);
     }
 }

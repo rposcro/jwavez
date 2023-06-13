@@ -6,7 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 public class ByteBufferManager {
 
-    private final static int MAX_BUFFER_SIZE = 256;
+    private final static int DEFAULT_MAX_BUFFER_SIZE = 256;
     private final static int DEFAULT_BUFFERS_NUMBER = 10;
 
     private final LinkedBlockingQueue<ByteBuffer> availableBuffers;
@@ -21,12 +21,12 @@ public class ByteBufferManager {
         this.occupiedBuffers = new HashSet<>(buffersNumber);
 
         for (int i = 0; i < buffersNumber; i++) {
-            availableBuffers.offer(new ByteBuffer(MAX_BUFFER_SIZE, this));
+            availableBuffers.offer(new ByteBuffer(DEFAULT_MAX_BUFFER_SIZE, this));
         }
     }
 
     public ByteBuffer obtainBuffer() {
-        return obtainBuffer(MAX_BUFFER_SIZE);
+        return obtainBuffer(DEFAULT_MAX_BUFFER_SIZE);
     }
 
     public ByteBuffer obtainBuffer(int minCapacity) {

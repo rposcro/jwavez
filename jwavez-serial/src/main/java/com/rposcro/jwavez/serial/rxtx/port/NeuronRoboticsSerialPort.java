@@ -10,7 +10,6 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
-import java.nio.channels.WritableByteChannel;
 import java.util.concurrent.Semaphore;
 import java.util.function.Supplier;
 
@@ -76,6 +75,7 @@ public class NeuronRoboticsSerialPort implements SerialPort {
         }
     }
 
+    @Override
     public int writeData(byte[] data) throws SerialPortException {
         return writeData(() -> data);
     }

@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.handlers;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.exceptions.FrameException;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
@@ -38,7 +38,7 @@ public class LastResponseHolder implements ResponseHandler {
     }
 
     @Override
-    public void accept(ViewBuffer frameBuffer) {
+    public void accept(ImmutableBuffer frameBuffer) {
         lastException = null;
         lastResponse = null;
 

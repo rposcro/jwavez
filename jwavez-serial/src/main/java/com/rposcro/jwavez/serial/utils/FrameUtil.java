@@ -1,10 +1,9 @@
 package com.rposcro.jwavez.serial.utils;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.enums.FrameCategory;
 import com.rposcro.jwavez.serial.enums.FrameType;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
-import com.rposcro.jwavez.serial.rxtx.SerialFrameConstants;
 
 import java.nio.ByteBuffer;
 import java.util.stream.Collectors;
@@ -43,43 +42,43 @@ public class FrameUtil {
         return crc;
     }
 
-    public static byte frameCRC(ViewBuffer buffer) {
+    public static byte frameCRC(ImmutableBuffer buffer) {
         byte crc = (byte) 0xff;
         for (int idx = 1; idx < buffer.length() - 1; idx++) {
-            crc ^= buffer.get(idx);
+            crc ^= buffer.getByte(idx);
         }
         return crc;
     }
 
-    public static FrameCategory category(ViewBuffer buffer) {
-        return FrameCategory.ofCode(buffer.get(FRAME_OFFSET_CATEGORY));
+    public static FrameCategory category(ImmutableBuffer buffer) {
+        return FrameCategory.ofCode(buffer.getByte(FRAME_OFFSET_CATEGORY));
     }
 
-    public static byte categoryCode(ViewBuffer buffer) {
-        return buffer.get(FRAME_OFFSET_CATEGORY);
+    public static byte categoryCode(ImmutableBuffer buffer) {
+        return buffer.getByte(FRAME_OFFSET_CATEGORY);
     }
 
-    public static FrameType type(ViewBuffer buffer) {
-        return FrameType.ofCode(buffer.get(FRAME_OFFSET_TYPE));
+    public static FrameType type(ImmutableBuffer buffer) {
+        return FrameType.ofCode(buffer.getByte(FRAME_OFFSET_TYPE));
     }
 
-    public static byte typeCode(ViewBuffer buffer) {
-        return buffer.get(FRAME_OFFSET_TYPE);
+    public static byte typeCode(ImmutableBuffer buffer) {
+        return buffer.getByte(FRAME_OFFSET_TYPE);
     }
 
-    public static byte length(ViewBuffer buffer) {
-        return buffer.get(FRAME_OFFSET_LENGTH);
+    public static byte length(ImmutableBuffer buffer) {
+        return buffer.getByte(FRAME_OFFSET_LENGTH);
     }
 
-    public static SerialCommand serialCommand(ViewBuffer buffer) {
-        return SerialCommand.ofCode(buffer.get(FRAME_OFFSET_COMMAND));
+    public static SerialCommand serialCommand(ImmutableBuffer buffer) {
+        return SerialCommand.ofCode(buffer.getByte(FRAME_OFFSET_COMMAND));
     }
 
-    public static byte serialCommandCode(ViewBuffer buffer) {
-        return buffer.get(FRAME_OFFSET_COMMAND);
+    public static byte serialCommandCode(ImmutableBuffer buffer) {
+        return buffer.getByte(FRAME_OFFSET_COMMAND);
     }
 
-    public static String asFineString(ViewBuffer buffer) {
+    public static String asFineString(ImmutableBuffer buffer) {
         StringBuffer frameString = new StringBuffer();
         int length = length(buffer);
 
@@ -91,11 +90,11 @@ public class FrameUtil {
         ));
 
         String payloadString = IntStream.range(FRAME_OFFSET_PAYLOAD, buffer.length() - 1)
-                .mapToObj(idx -> format("%02x", buffer.get(idx)))
+                .mapToObj(idx -> format("%02x", buffer.getByte(idx)))
                 .collect(Collectors.joining(" "));
         frameString.append("Payload[" + payloadString + "] ");
 
-        frameString.append(format("CRC(%02x)", buffer.get(buffer.length() - 1)));
+        frameString.append(format("CRC(%02x)", buffer.getByte(buffer.length() - 1)));
 
         return frameString.toString();
     }
@@ -104,7 +103,7 @@ public class FrameUtil {
         byte[] bytes = new byte[]{
                 0x01, 0x05, 0x00, 0x13, 0x5c, 0x00, (byte) 0xb5
         };
-        ViewBuffer buffer = new ViewBuffer(ByteBuffer.wrap(bytes));
+        ImmutableBuffer buffer = ImmutableBuffer.overBuffer(bytes);
         System.out.println(asFineString(buffer));
     }
 }

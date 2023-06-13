@@ -7,12 +7,12 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_SOF;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_LENGTH;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.MAX_Z_WAVE_FRAME_SIZE;
 
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.exceptions.RxTxException;
 import com.rposcro.jwavez.serial.exceptions.StreamTimeoutException;
 import com.rposcro.jwavez.serial.exceptions.StreamMalformedException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 
 import java.nio.ByteBuffer;
 
@@ -20,11 +20,12 @@ import lombok.Builder;
 
 public class FrameInboundStream {
 
+    private final static ImmutableBuffer EMPTY_FRAME_BUFFER = ImmutableBuffer.empty();
+
     private SerialPort serialPort;
     private RxTxConfiguration configuration;
 
-    private final ByteBuffer frameBuffer;
-    private final InboundViewBuffer viewBuffer;
+    private final ByteBuffer streamBuffer;
 
     @Builder
     public FrameInboundStream(SerialPort serialPort, RxTxConfiguration configuration) {
@@ -34,107 +35,88 @@ public class FrameInboundStream {
     }
 
     private FrameInboundStream() {
-        this.frameBuffer = ByteBuffer.allocateDirect(MAX_Z_WAVE_FRAME_SIZE * 2);
-        this.frameBuffer.limit(0);
-        this.viewBuffer = new InboundViewBuffer(frameBuffer);
+        this.streamBuffer = ByteBuffer.allocate(MAX_Z_WAVE_FRAME_SIZE * 2);
+        this.streamBuffer.limit(0);
     }
 
-    public ViewBuffer nextFrame() throws RxTxException {
-        if (!frameBuffer.hasRemaining()) {
+    public ImmutableBuffer nextFrame() throws RxTxException {
+        if (!streamBuffer.hasRemaining()) {
             purgeAndLoadBuffer();
         }
 
-        if (frameBuffer.hasRemaining()) {
-            setViewOverFrame();
-            progressBuffer();
+        ImmutableBuffer frameBuffer;
+
+        if (streamBuffer.hasRemaining()) {
+            frameBuffer = wrapFrameBuffer();
+            progressBuffer(frameBuffer.length());
         } else {
-            setViewOverEmpty();
+            frameBuffer = EMPTY_FRAME_BUFFER;
         }
 
-        return viewBuffer;
+        return frameBuffer;
     }
 
     public void purgeStream() throws SerialPortException {
         do {
-            frameBuffer.position(0).limit(frameBuffer.capacity());
-        } while (serialPort.readData(frameBuffer) > 0);
-        frameBuffer.position(0).limit(0);
+            streamBuffer.position(0).limit(streamBuffer.capacity());
+        } while (serialPort.readData(streamBuffer) > 0);
+        streamBuffer.position(0).limit(0);
     }
 
     private void purgeAndLoadBuffer() throws SerialPortException {
-        frameBuffer.position(0);
-        frameBuffer.limit(MAX_Z_WAVE_FRAME_SIZE);
-        serialPort.readData(frameBuffer);
-        frameBuffer.limit(frameBuffer.position());
-        frameBuffer.position(0);
+        streamBuffer.position(0);
+        streamBuffer.limit(MAX_Z_WAVE_FRAME_SIZE);
+        serialPort.readData(streamBuffer);
+        streamBuffer.limit(streamBuffer.position());
+        streamBuffer.position(0);
     }
 
-    private void progressBuffer() {
-        frameBuffer.position(frameBuffer.position() + viewBuffer.length());
+    private void progressBuffer(int progressLength) {
+        streamBuffer.position(streamBuffer.position() + progressLength);
     }
 
-    private ViewBuffer setViewOverEmpty() {
-        viewBuffer.setViewRange(0, 0);
-        return viewBuffer;
-    }
-
-    private ViewBuffer setViewOverFrame() throws RxTxException {
-        int position = frameBuffer.position();
-        byte category = frameBuffer.get(position);
+    private ImmutableBuffer wrapFrameBuffer() throws RxTxException {
+        int position = streamBuffer.position();
+        byte category = streamBuffer.get(position);
 
         if (category == CATEGORY_ACK || category == CATEGORY_CAN || category == CATEGORY_NAK) {
-            viewBuffer.setViewRange(position, 1);
+            return ImmutableBuffer.overBuffer(streamBuffer.array(), position, 1);
         } else if (category == CATEGORY_SOF) {
-            return setViewOverSOF();
+            return wrapSOFBuffer();
         } else {
             throw new StreamMalformedException("Unrecognized frame category %02x", category);
         }
-        return viewBuffer;
     }
 
-    private ViewBuffer setViewOverSOF() throws RxTxException {
-        int position = frameBuffer.position();
+    private ImmutableBuffer wrapSOFBuffer() throws RxTxException {
+        int position = streamBuffer.position();
         ensureRemaining(3);
-        int length = frameBuffer.get(position + FRAME_OFFSET_LENGTH) + 2;
+        int length = streamBuffer.get(position + FRAME_OFFSET_LENGTH) + 2;
         ensureRemaining(length);
-        viewBuffer.setViewRange(position, length);
-        return viewBuffer;
+        return ImmutableBuffer.overBuffer(streamBuffer.array(), position, length);
     }
 
     private void ensureRemaining(int expectedRemaining) throws RxTxException {
-        int remaining = frameBuffer.remaining();
+        int remaining = streamBuffer.remaining();
         if (remaining < expectedRemaining) {
             refillBuffer(expectedRemaining - remaining);
         }
     }
 
     private void refillBuffer(int refillSize) throws RxTxException {
-        frameBuffer.mark();
-        frameBuffer.position(frameBuffer.limit());
-        frameBuffer.limit(frameBuffer.limit() + refillSize);
+        streamBuffer.mark();
+        streamBuffer.position(streamBuffer.limit());
+        streamBuffer.limit(streamBuffer.limit() + refillSize);
         int refilled = 0;
         long timeOutPoint = System.currentTimeMillis() + configuration.getFrameCompleteTimeout();
         while (refilled < refillSize) {
-            refilled += serialPort.readData(frameBuffer);
+            refilled += serialPort.readData(streamBuffer);
             if (timeOutPoint < System.currentTimeMillis()) {
-                frameBuffer.limit(frameBuffer.position());
-                frameBuffer.reset();
+                streamBuffer.limit(streamBuffer.position());
+                streamBuffer.reset();
                 throw new StreamTimeoutException("Frame complete timeout!");
             }
         }
-        frameBuffer.reset();
-    }
-
-
-    private static class InboundViewBuffer extends ViewBuffer {
-
-        private InboundViewBuffer(ByteBuffer byteBuffer) {
-            super(byteBuffer);
-        }
-
-        @Override
-        protected void setViewRange(int offset, int length) {
-            super.setViewRange(offset, length);
-        }
+        streamBuffer.reset();
     }
 }

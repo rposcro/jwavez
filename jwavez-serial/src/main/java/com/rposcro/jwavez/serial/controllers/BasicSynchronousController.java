@@ -2,7 +2,7 @@ package com.rposcro.jwavez.serial.controllers;
 
 import static com.rposcro.jwavez.core.utils.ObjectsUtil.orDefault;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.controllers.helpers.RequestCallbackFlowHelper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.FrameException;
@@ -112,7 +112,7 @@ public class BasicSynchronousController extends AbstractClosableController<Basic
         }
     }
 
-    private void handleCallback(ViewBuffer frameBuffer) {
+    private void handleCallback(ImmutableBuffer frameBuffer) {
         expectedCallbackClass.ifPresent(clazz -> {
             if (validator.validate(frameBuffer)) {
                 try {

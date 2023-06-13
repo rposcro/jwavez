@@ -9,7 +9,6 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_C
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.exceptions.RxTxException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 
 import lombok.Builder;
 
@@ -31,9 +30,9 @@ public class RequestStageDoer {
     private RequestStageResult expectACK() throws RxTxException {
         long timeoutPoint = System.currentTimeMillis() + configuration.getFrameAckTimeout();
         do {
-            ViewBuffer frameView = inboundStream.nextFrame();
-            if (frameView.hasRemaining()) {
-                switch (frameView.get(FRAME_OFFSET_CATEGORY)) {
+            ImmutableBuffer frameBuffer = inboundStream.nextFrame();
+            if (frameBuffer.hasNext()) {
+                switch (frameBuffer.getByte(FRAME_OFFSET_CATEGORY)) {
                     case CATEGORY_ACK:
                         return RequestStageResult.RESULT_OK;
                     case CATEGORY_NAK:

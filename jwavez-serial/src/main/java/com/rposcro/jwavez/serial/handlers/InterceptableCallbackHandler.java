@@ -3,7 +3,7 @@ package com.rposcro.jwavez.serial.handlers;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_TYPE;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.TYPE_REQ;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
@@ -35,8 +35,8 @@ public class InterceptableCallbackHandler implements CallbackHandler {
     }
 
     @Override
-    public void accept(ViewBuffer frameBuffer) {
-        if (frameBuffer.get(FRAME_OFFSET_TYPE) != TYPE_REQ || !validator.validate(frameBuffer)) {
+    public void accept(ImmutableBuffer frameBuffer) {
+        if (frameBuffer.getByte(FRAME_OFFSET_TYPE) != TYPE_REQ || !validator.validate(frameBuffer)) {
             log.warn("Callback Frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
         } else if (log.isDebugEnabled()) {
             log.debug("Callback Frame received: {}", BufferUtil.bufferToString(frameBuffer));

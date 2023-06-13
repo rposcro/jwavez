@@ -5,7 +5,6 @@ import com.rposcro.jwavez.core.commands.supported.SupportedCommandResolversRegis
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.listeners.SupportedCommandDispatcher;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
@@ -42,8 +41,8 @@ public class ApplicationCommandHandler implements CallbackHandler {
     }
 
     @Override
-    public void accept(ViewBuffer buffer) {
-        if (buffer.get(SerialFrameConstants.FRAME_OFFSET_COMMAND) == APP_COMMAND_CODE) {
+    public void accept(ImmutableBuffer buffer) {
+        if (buffer.getByte(SerialFrameConstants.FRAME_OFFSET_COMMAND) == APP_COMMAND_CODE) {
             try {
                 ApplicationCommandHandlerCallback callback = (ApplicationCommandHandlerCallback) frameParser.parseCallbackFrame(buffer);
                 if (isCastSupported(callback)) {

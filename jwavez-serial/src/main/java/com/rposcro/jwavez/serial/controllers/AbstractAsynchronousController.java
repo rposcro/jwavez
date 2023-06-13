@@ -2,7 +2,7 @@ package com.rposcro.jwavez.serial.controllers;
 
 import static com.rposcro.jwavez.core.utils.ObjectsUtil.orDefault;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.controllers.helpers.CallbackFlowIdDispatcher;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
@@ -83,14 +83,14 @@ public abstract class AbstractAsynchronousController<T extends AbstractAsynchron
         return thread;
     }
 
-    private void handleResponse(ViewBuffer frameBuffer) {
+    private void handleResponse(ImmutableBuffer frameBuffer) {
         if (log.isDebugEnabled()) {
             log.debug("Response frame received: {}", BufferUtil.bufferToString(frameBuffer));
             log.debug(FrameUtil.asFineString(frameBuffer));
         }
     }
 
-    private void handleCallback(ViewBuffer frameBuffer) {
+    private void handleCallback(ImmutableBuffer frameBuffer) {
         if (log.isDebugEnabled()) {
             log.debug("Callback frame received: {}", BufferUtil.bufferToString(frameBuffer));
             log.debug(FrameUtil.asFineString(frameBuffer));

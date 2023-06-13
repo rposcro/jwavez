@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.samples.fibaro;
 
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.core.commands.controlled.builders.association.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
@@ -8,7 +9,6 @@ import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationRep
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.samples.AbstractExample;
 import com.rposcro.jwavez.serial.JwzSerialSupport;
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
@@ -69,7 +69,7 @@ public class SensorBinarySetUp extends AbstractExample implements AutoCloseable 
         System.out.printf("  parameter %s value %s\n", report.getParameterNumber(), report.getParameterValue());
     }
 
-    private void interceptViewBuffer(ViewBuffer buffer) {
+    private void interceptViewBuffer(ImmutableBuffer buffer) {
         log.debug("Callback frame received: {}", BufferUtil.bufferToString(buffer));
     }
 

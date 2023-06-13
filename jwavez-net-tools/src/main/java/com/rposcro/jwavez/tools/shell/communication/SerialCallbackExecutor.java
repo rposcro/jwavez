@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.shell.communication;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
@@ -64,7 +64,7 @@ public class SerialCallbackExecutor {
         }
     }
 
-    private void handleSerialResponse(ViewBuffer responseBuffer) {
+    private void handleSerialResponse(ImmutableBuffer responseBuffer) {
     }
 
     private void interceptSerialCallback(ZWaveCallback callback) {

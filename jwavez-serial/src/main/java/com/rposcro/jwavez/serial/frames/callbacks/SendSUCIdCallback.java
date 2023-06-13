@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.frames.callbacks;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.frames.CallbackFrameModel;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
@@ -13,9 +13,9 @@ public class SendSUCIdCallback extends FlowCallback {
     private TransmitCompletionStatus txStatus;
     private boolean statusReportPresent;
 
-    public SendSUCIdCallback(ViewBuffer frameBuffer) {
+    public SendSUCIdCallback(ImmutableBuffer frameBuffer) {
         super(frameBuffer);
-        this.txStatus = TransmitCompletionStatus.ofCode(frameBuffer.get());
-        this.statusReportPresent = frameBuffer.remaining() > 1;
+        this.txStatus = TransmitCompletionStatus.ofCode(frameBuffer.nextByte());
+        this.statusReportPresent = frameBuffer.available() > 1;
     }
 }

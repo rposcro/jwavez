@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.samples;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
@@ -24,7 +24,7 @@ public class NetworkListener extends AbstractExample implements AutoCloseable {
         controller.close();
     }
 
-    private void handleViewBuffer(ViewBuffer buffer) {
+    private void handleViewBuffer(ImmutableBuffer buffer) {
         System.out.printf("Frame received: %s\n", BufferUtil.bufferToString(buffer));
     }
 

@@ -72,4 +72,25 @@ public class ImmutableBufferTest {
         assertEquals(0x00102030, buffer.nextDoubleWord());
         assertEquals(0x40705500, buffer.nextUnsignedDoubleWord());
     }
+
+    @Test
+    public void positionsBuffer() {
+        ImmutableBuffer buffer = new ImmutableBuffer(
+                new byte[] { 0x00, 0x10, 0x20, 0x30, 0x40, 0x70 }, 0);
+
+        assertEquals(0x0010, buffer.nextUnsignedWord());
+        assertEquals(0x2030, buffer.nextUnsignedWord());
+        buffer.position(2);
+        assertEquals(0x2030, buffer.nextUnsignedWord());
+    }
+
+    @Test
+    public void skipsBytes() {
+        ImmutableBuffer buffer = new ImmutableBuffer(
+                new byte[] { 0x00, 0x10, 0x20, 0x30, 0x40, 0x70 }, 0);
+
+        assertEquals(0x0010, buffer.nextUnsignedWord());
+        buffer.skip(2);
+        assertEquals(0x4070, buffer.nextUnsignedWord());
+    }
 }

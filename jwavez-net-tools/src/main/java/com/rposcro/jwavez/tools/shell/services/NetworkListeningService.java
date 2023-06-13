@@ -5,7 +5,6 @@ import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.multichannel.MultiChannelCommandEncapsulation;
 import com.rposcro.jwavez.core.commands.types.MultiChannelCommandType;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
@@ -66,7 +65,7 @@ public class NetworkListeningService {
         semaphore.release();
     }
 
-    private void treatSerialCallback(ViewBuffer viewBuffer) {
+    private void treatSerialCallback(ImmutableBuffer viewBuffer) {
         console.flushLine("\nCallback frame received");
         console.flushLine(FrameUtil.asFineString(viewBuffer));
 

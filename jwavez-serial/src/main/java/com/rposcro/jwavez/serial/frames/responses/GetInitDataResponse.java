@@ -2,8 +2,8 @@ package com.rposcro.jwavez.serial.frames.responses;
 
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_PAYLOAD;
 
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.frames.ResponseFrameModel;
 
@@ -25,22 +25,22 @@ public class GetInitDataResponse extends ZWaveResponse {
     private byte chipVersion;
     private List<NodeId> nodes;
 
-    public GetInitDataResponse(ViewBuffer frameBuffer) {
+    public GetInitDataResponse(ImmutableBuffer frameBuffer) {
         super(frameBuffer);
         frameBuffer.position(FRAME_OFFSET_PAYLOAD);
-        this.version = frameBuffer.get();
-        this.capabilities = frameBuffer.get();
+        this.version = frameBuffer.nextByte();
+        this.capabilities = frameBuffer.nextByte();
         this.nodes = parseNodes(frameBuffer);
-        this.chipType = frameBuffer.get();
-        this.chipVersion = frameBuffer.get();
+        this.chipType = frameBuffer.nextByte();
+        this.chipVersion = frameBuffer.nextByte();
     }
 
-    private List<NodeId> parseNodes(ViewBuffer frameBuffer) {
-        int nodesBitMaskSize = frameBuffer.get() & 0xff;
+    private List<NodeId> parseNodes(ImmutableBuffer frameBuffer) {
+        int nodesBitMaskSize = frameBuffer.nextByte() & 0xff;
         List<NodeId> nodes = new ArrayList<>(nodesBitMaskSize * 8);
 
         for (int byteIdx = 0; byteIdx < nodesBitMaskSize; byteIdx++) {
-            byte maskByte = frameBuffer.get();
+            byte maskByte = frameBuffer.nextByte();
             for (int bitIdx = 0; bitIdx < 8; bitIdx++) {
                 byte nodeId = (byte) ((byteIdx * 8) + bitIdx + 1);
                 if ((maskByte & (0x01 << bitIdx)) > 0) {

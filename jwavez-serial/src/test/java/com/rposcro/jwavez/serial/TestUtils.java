@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -8,10 +8,10 @@ import java.util.List;
 
 public class TestUtils {
 
-    public static List<Integer> dataFromBuffer(ViewBuffer viewBuffer) {
-        List<Integer> data = new ArrayList<>(viewBuffer.remaining());
-        while (viewBuffer.hasRemaining()) {
-            data.add(viewBuffer.get() & 0xff);
+    public static List<Integer> dataFromBuffer(ImmutableBuffer frameBuffer) {
+        List<Integer> data = new ArrayList<>(frameBuffer.available());
+        while (frameBuffer.hasNext()) {
+            data.add(frameBuffer.nextByte() & 0xff);
         }
         return data;
     }
@@ -31,5 +31,4 @@ public class TestUtils {
         }
         return bytes;
     }
-
 }

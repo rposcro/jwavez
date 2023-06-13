@@ -2,7 +2,7 @@ package com.rposcro.jwavez.serial.frames.responses;
 
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_PAYLOAD;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.frames.ResponseFrameModel;
 
@@ -19,19 +19,19 @@ public class GetVersionResponse extends ZWaveResponse {
     private String version;
     private byte responseData;
 
-    public GetVersionResponse(ViewBuffer frameBuffer) {
+    public GetVersionResponse(ImmutableBuffer frameBuffer) {
         super(frameBuffer);
         frameBuffer.position(FRAME_OFFSET_PAYLOAD);
         this.version = decodeVersion(frameBuffer);
-        this.responseData = frameBuffer.get();
+        this.responseData = frameBuffer.nextByte();
     }
 
-    public String decodeVersion(ViewBuffer frameBuffer) {
+    public String decodeVersion(ImmutableBuffer frameBuffer) {
         byte[] data = new byte[VERSION_STRING_LENGTH];
         for (int i = 0; i < VERSION_STRING_LENGTH; i++) {
-            data[i] = frameBuffer.get();
+            data[i] = frameBuffer.nextByte();
         }
-        frameBuffer.get(); // skip 0 char (c++ end of string)
+        frameBuffer.nextByte(); // skip 0 char (c++ end of string)
         try {
             return new String(data, "US-ASCII");
         } catch (UnsupportedEncodingException e) {

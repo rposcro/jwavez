@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.frames.callbacks;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.frames.CallbackFrameModel;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
@@ -13,10 +13,10 @@ public class SendDataCallback extends FlowCallback {
     private TransmitCompletionStatus transmitCompletionStatus;
     private boolean statusReportPresent;
 
-    public SendDataCallback(ViewBuffer frameBuffer) {
+    public SendDataCallback(ImmutableBuffer frameBuffer) {
         super(frameBuffer);
-        this.transmitCompletionStatus = TransmitCompletionStatus.ofCode(frameBuffer.get());
-        this.statusReportPresent = frameBuffer.remaining() > 1;
+        this.transmitCompletionStatus = TransmitCompletionStatus.ofCode(frameBuffer.nextByte());
+        this.statusReportPresent = frameBuffer.available() > 1;
     }
 
     public String asFineString() {

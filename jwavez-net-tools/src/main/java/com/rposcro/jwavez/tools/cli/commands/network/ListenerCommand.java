@@ -4,7 +4,6 @@ import com.rposcro.jwavez.core.JwzApplicationSupport;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.enums.FrameType;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
@@ -63,7 +62,7 @@ public class ListenerCommand extends AbstractAsyncBasedCommand {
         while (true) ;
     }
 
-    private void intercept(ViewBuffer buffer) {
+    private void intercept(ImmutableBuffer buffer) {
         System.out.println("Frame Data: " + BufferUtil.bufferToString(buffer));
         if (!frameValidator.validate(buffer)) {
             System.out.println("Invalid Frame!");
@@ -79,7 +78,7 @@ public class ListenerCommand extends AbstractAsyncBasedCommand {
         }
     }
 
-    private String formatCallback(ViewBuffer viewBuffer) {
+    private String formatCallback(ImmutableBuffer viewBuffer) {
         String visual = null;
         try {
             ZWaveCallback callback = frameParser.parseCallbackFrame(viewBuffer);

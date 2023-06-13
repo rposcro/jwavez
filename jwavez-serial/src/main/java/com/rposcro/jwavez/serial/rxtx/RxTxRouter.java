@@ -14,7 +14,6 @@ import com.rposcro.jwavez.serial.exceptions.StreamFlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.exceptions.StreamException;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 
 import java.util.concurrent.Semaphore;
 
@@ -214,11 +213,11 @@ public class RxTxRouter {
         this.outboundLock.release();
     }
 
-    private void handleResponse(ViewBuffer frameView) {
+    private void handleResponse(ImmutableBuffer frameView) {
         log.info("ZWaveResponse frame received: {}", bufferToString(frameView));
     }
 
-    private void handleCallback(ViewBuffer frameView) {
+    private void handleCallback(ImmutableBuffer frameView) {
         log.info("ZWaveCallback frame received: {}", bufferToString(frameView));
     }
 }

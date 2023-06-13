@@ -1,11 +1,11 @@
 package com.rposcro.jwavez.tools.shell.communication;
 
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.types.CommandType;
 import com.rposcro.jwavez.core.listeners.SupportedCommandDispatcher;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
@@ -40,6 +40,8 @@ public class ApplicationCommandExecutor {
     @Builder
     public ApplicationCommandExecutor(@NonNull String device, Long timeoutMillis, NetworkTransportRequestBuilder transportRequestBuilder)
             throws SerialPortException {
+        this.transportRequestBuilder = transportRequestBuilder;
+
         ApplicationCommandInterceptor appCmdInterceptor = ApplicationCommandInterceptor.builder()
                 .skipUnsupportedCallbacks(true)
                 .supportBroadcasts(false)
@@ -112,16 +114,16 @@ public class ApplicationCommandExecutor {
         }
     }
 
-    private void handleSerialResponse(ViewBuffer responseBuffer) {
-        resultBuilder.serialResponsePayload(responseBuffer.copyBytes());
+    private void handleSerialResponse(ImmutableBuffer responseBuffer) {
+        resultBuilder.serialResponsePayload(responseBuffer.cloneBytes());
     }
 
     private void interceptSerialCallback(ZWaveCallback callback) {
         resultBuilder.serialCallback(callback);
     }
 
-    private void interceptSerialCallbackBuffer(ViewBuffer callbackBuffer) {
-        resultBuilder.serialCallbackPayload(callbackBuffer.copyBytes());
+    private void interceptSerialCallbackBuffer(ImmutableBuffer callbackBuffer) {
+        resultBuilder.serialCallbackPayload(callbackBuffer.cloneBytes());
     }
 
     private void handleApplicationCommand(ZWaveSupportedCommand command) {
