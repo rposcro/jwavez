@@ -35,6 +35,14 @@ public class FrameUtil {
         return crc;
     }
 
+    public static byte frameCRC(com.rposcro.jwavez.core.buffer.ByteBuffer buffer) {
+        byte crc = (byte) 0xff;
+        for (int idx = 1; idx < buffer.getLength() - 1; idx++) {
+            crc ^= buffer.get(idx);
+        }
+        return crc;
+    }
+
     public static byte frameCRC(ViewBuffer buffer) {
         byte crc = (byte) 0xff;
         for (int idx = 1; idx < buffer.length() - 1; idx++) {

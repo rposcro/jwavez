@@ -1,6 +1,8 @@
 package com.rposcro.jwavez.serial.frames.requests;
 
-import com.rposcro.jwavez.serial.buffers.DisposableFrameBuffer;
+import com.rposcro.jwavez.core.buffer.ByteBufferManager;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBufferBuilder;
 import com.rposcro.jwavez.serial.model.ApiSetupSubCommand;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
@@ -9,30 +11,34 @@ import static com.rposcro.jwavez.serial.enums.SerialCommand.SET_DEFAULT;
 
 public class DeviceManagementRequestBuilder extends AbstractRequestBuilder {
 
+    public DeviceManagementRequestBuilder(ByteBufferManager byteBufferManager) {
+        super(byteBufferManager);
+    }
+
     public SerialRequest createSetDefaultRequest(byte sessionId) {
+        ImmutableBuffer buffer = dataBuilder(SET_DEFAULT, 1)
+                .add(sessionId)
+                .build();
         return SerialRequest.builder()
                 .responseExpected(false)
                 .serialCommand(SET_DEFAULT)
-                .frameData(startUpFrameBuffer(FRAME_CONTROL_SIZE + 1, SET_DEFAULT)
-                        .put(sessionId)
-                        .putCRC())
+                .frameData(buffer)
                 .callbackFlowId(sessionId)
                 .build();
     }
 
     public SerialRequest createSerialAPISetupRequest(ApiSetupSubCommand subCommand, byte... subCommandPayload) {
-        DisposableFrameBuffer buffer = startUpFrameBuffer(
-                FRAME_CONTROL_SIZE + 2 + subCommandPayload.length, SERIAL_API_SETUP)
-                .put(subCommand.getCode());
+        ImmutableBufferBuilder bufferBuilder = dataBuilder(SERIAL_API_SETUP, 2 + subCommandPayload.length)
+                .add(subCommand.getCode());
+
         for (byte bt : subCommandPayload) {
-            buffer.put(bt);
+            bufferBuilder.add(bt);
         }
-        buffer.putCRC();
 
         return SerialRequest.builder()
                 .responseExpected(true)
                 .serialCommand(SERIAL_API_SETUP)
-                .frameData(buffer)
+                .frameData(bufferBuilder.build())
                 .build();
     }
 }

@@ -1,29 +1,33 @@
 package com.rposcro.jwavez.core.buffer;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 
 public final class ByteBuffer {
 
+    @Getter(AccessLevel.MODULE)
     private byte[] data;
-    private ImmutableBuffer immutableBuffer;
+
+    @Getter
+    private ByteBufferManager bufferManager;
 
     @Getter
     private int length;
 
-    public ByteBuffer(int size) {
+    public ByteBuffer(int size, ByteBufferManager bufferManager) {
         this.data = new byte[size];
         this.length = 0;
+        this.bufferManager = bufferManager;
     }
 
     public ByteBuffer clear() {
         this.length = 0;
-        invalidateImmutableBuffer();
         return this;
     }
 
-    public void add(byte value) {
+    public ByteBuffer add(byte value) {
         data[length++] = value;
-        invalidateImmutableBuffer();
+        return this;
     }
 
     public byte get(int index) {
@@ -31,17 +35,9 @@ public final class ByteBuffer {
         return data[index];
     }
 
-    public ImmutableBuffer toImmutableBuffer() {
-        if (immutableBuffer == null) {
-            immutableBuffer = new ImmutableBuffer(data, 0, length);
-        }
-        return immutableBuffer;
-    }
-
-    private void invalidateImmutableBuffer() {
-        if (immutableBuffer != null) {
-            immutableBuffer.invalidate();
-            immutableBuffer = null;
+    public void dispose() {
+        if (bufferManager != null) {
+            bufferManager.releaseBuffer(this);
         }
     }
 

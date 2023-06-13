@@ -6,11 +6,10 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_NAK;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.CATEGORY_SOF;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_CATEGORY;
 
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.exceptions.RxTxException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
-
-import java.nio.ByteBuffer;
 
 import lombok.Builder;
 
@@ -21,9 +20,9 @@ public class RequestStageDoer {
     private FrameOutboundStream outboundStream;
     private RxTxConfiguration configuration;
 
-    public RequestStageResult sendRequest(ByteBuffer outboundBuffer) throws RxTxException {
+    public RequestStageResult sendRequest(ImmutableBuffer outboundBuffer) throws RxTxException {
         outboundStream.writeSOF(outboundBuffer);
-        if (outboundBuffer.hasRemaining()) {
+        if (outboundBuffer.hasNext()) {
             return RequestStageResult.RESULT_ERR_OUTCOME;
         }
         return expectACK();

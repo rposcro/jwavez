@@ -1,21 +1,30 @@
 package com.rposcro.jwavez.serial.frames.requests;
 
-import com.rposcro.jwavez.serial.buffers.DisposableFrameBuffer;
-import com.rposcro.jwavez.serial.buffers.FrameBuffer;
+import com.rposcro.jwavez.core.buffer.ByteBufferManager;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBufferBuilder;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.rxtx.SerialFrameConstants;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
+import com.rposcro.jwavez.serial.utils.SerialFrameDataBuilder;
 
 abstract class AbstractRequestBuilder {
 
-    protected final int FRAME_CONTROL_SIZE = 5;
+    private static final int FRAME_CONTROL_SIZE = 5;
+    private static final int NO_PAYLOAD_FRAME_SIZE = 3;
 
-    protected DisposableFrameBuffer startUpFrameBuffer(int capacity, SerialCommand command) {
-        return new DisposableFrameBuffer(capacity)
-                .put(SerialFrameConstants.CATEGORY_SOF)
-                .put((byte) (capacity - 2))
-                .put(SerialFrameConstants.TYPE_REQ)
-                .put(command.getCode());
+    private final ByteBufferManager byteBufferManager;
+
+    protected AbstractRequestBuilder(ByteBufferManager byteBufferManager) {
+        this.byteBufferManager = byteBufferManager;
+    }
+
+    protected ImmutableBufferBuilder dataBuilder(SerialCommand serialCommand, int payloadSize) {
+        return new SerialFrameDataBuilder(byteBufferManager, FRAME_CONTROL_SIZE + payloadSize)
+                .add(SerialFrameConstants.CATEGORY_SOF)
+                .add((byte) (payloadSize - 2))
+                .add(SerialFrameConstants.TYPE_REQ)
+                .add(serialCommand.getCode());
     }
 
     protected SerialRequest nonPayloadRequest(SerialCommand command) {
@@ -26,12 +35,12 @@ abstract class AbstractRequestBuilder {
                 .build();
     }
 
-    private FrameBuffer completeFrameBuffer(SerialCommand command) {
-        return new DisposableFrameBuffer(5)
-                .put(SerialFrameConstants.CATEGORY_SOF)
-                .put((byte) (3))
-                .put(SerialFrameConstants.TYPE_REQ)
-                .put(command.getCode())
-                .putCRC();
+    private ImmutableBuffer completeFrameBuffer(SerialCommand serialCommand) {
+        return dataBuilder(serialCommand, 0)
+                .add(SerialFrameConstants.CATEGORY_SOF)
+                .add((byte) (NO_PAYLOAD_FRAME_SIZE))
+                .add(SerialFrameConstants.TYPE_REQ)
+                .add(serialCommand.getCode())
+                .build();
     }
 }

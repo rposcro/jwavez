@@ -21,7 +21,7 @@ public class ByteBufferManager {
         this.occupiedBuffers = new HashSet<>(buffersNumber);
 
         for (int i = 0; i < buffersNumber; i++) {
-            availableBuffers.offer(new ByteBuffer(MAX_BUFFER_SIZE));
+            availableBuffers.offer(new ByteBuffer(MAX_BUFFER_SIZE, this));
         }
     }
 
@@ -32,9 +32,10 @@ public class ByteBufferManager {
     public ByteBuffer obtainBuffer(int minCapacity) {
         ByteBuffer buffer = availableBuffers.poll();
         if (buffer == null) {
-            buffer = new ByteBuffer(minCapacity);
+            buffer = new ByteBuffer(minCapacity, this);
         } else {
             occupiedBuffers.add(buffer);
+            buffer.clear();
         }
         return buffer;
     }

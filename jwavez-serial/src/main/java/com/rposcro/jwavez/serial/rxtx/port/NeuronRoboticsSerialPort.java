@@ -1,14 +1,18 @@
 package com.rposcro.jwavez.serial.rxtx.port;
 
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import gnu.io.NRSerialPort;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
+import java.util.concurrent.Semaphore;
+import java.util.function.Supplier;
 
 public class NeuronRoboticsSerialPort implements SerialPort {
 
@@ -17,8 +21,10 @@ public class NeuronRoboticsSerialPort implements SerialPort {
     private String device;
     private NRSerialPort port;
     private InputStream inputStream;
+    private OutputStream outputStream;
+    private Semaphore rxTxSemaphore = new Semaphore(1);
+
     private ReadableByteChannel inputChannel;
-    private WritableByteChannel outputChannel;
 
     @Override
     public synchronized void connect(String device) throws SerialPortException {
@@ -32,7 +38,7 @@ public class NeuronRoboticsSerialPort implements SerialPort {
             this.port.connect();
             this.inputStream = port.getInputStream();
             this.inputChannel = Channels.newChannel(inputStream);
-            this.outputChannel = Channels.newChannel(port.getOutputStream());
+            this.outputStream = port.getOutputStream();
         } catch (Exception e) {
             throw new SerialPortException(e, "Could not connect with dongleDevice %s!", device);
         }
@@ -70,12 +76,27 @@ public class NeuronRoboticsSerialPort implements SerialPort {
         }
     }
 
+    public int writeData(byte[] data) throws SerialPortException {
+        return writeData(() -> data);
+    }
+
     @Override
-    public int writeData(ByteBuffer buffer) throws SerialPortException {
+    public int writeData(ImmutableBuffer buffer) throws SerialPortException {
+        return writeData(() -> buffer.cloneBytes());
+    }
+
+    private int writeData(Supplier<byte[]> dataSupplier) throws SerialPortException {
         try {
-            return outputChannel.write(buffer);
+            rxTxSemaphore.acquire();
+            byte[] data = dataSupplier.get();
+            outputStream.write(data);
+            return data.length;
         } catch (IOException e) {
             throw new SerialPortException(e, "Exception occurred while writing to channel!");
+        } catch (InterruptedException e) {
+            throw new SerialPortException(e, "Thread interrupted while waiting for transmission!");
+        } finally {
+            rxTxSemaphore.release();
         }
     }
 }

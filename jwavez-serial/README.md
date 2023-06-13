@@ -1,4 +1,15 @@
-#### General Assumptions
+### Buffers Considerations
+
+Data exchange is an unavoidable part of rx/tx communication, and it is done using shared data buffers.
+The key aspect to take care about is to make sure that the buffers are intended to be reusable, and this applies
+to both communication directions:
+
+* When transmitting, RxTxRouter is expected not to hold received buffers, and dispose them immediately when transmission 
+  is completed 
+* When receiving, response and callback handlers should not hold a reference to received buffers, references must be 
+  disposed and released immediately after processing received data 
+
+### Protocol Considerations
 
 Assumptions based on official protocol specification, assumed to have no more than two frames in
 inbound buffer at the same time as:
@@ -10,11 +21,11 @@ inbound buffer at the same time as:
 
 #### Possible Application States
 
-| Application State | Possible Following States
-|-------------------|---------------------------
-| Idle              | _\<Any\>_
-| AwaitingACK       | Idle, AwaitingResponse
-| AwaitingResponse  | Idle
+| Application State | Possible Following States |
+|-------------------|---------------------------|
+| Idle              | _\<Any\>_                 |
+| AwaitingACK       | Idle, AwaitingResponse    |
+| AwaitingResponse  | Idle                      |
 
 #### Supported Inbound Buffer Content Scenarios
 
@@ -22,31 +33,31 @@ Supported application states don't necessarily mean successful scenarios.
 They just mean scenarios handled in a way by this library. Others are treated as odd
 cases to be handled as exceptional.
 
-| Buffer Content | Supported App State(s) Scenarios
-|----------------|------------------------------------------------------
-| _\<empty\>_    | Idle, AwaitingACK or AwaitingResponse
-| ACK            | AwaitingACK
-| ACK, Response  | AwaitingACK
-| ACK, Callback  | AwaitingACK
-| NAK            | AwaitingACK
-| NAK, Callback  | AwaitingACK
-| CAN            | AwaitingACK
-| CAN, Callback  | AwaitingACK
-| Response       | AwaitingACK, AwaitingResponse
-| Callback       | AwaitingACK, AwaitingResponse
+| Buffer Content | Supported App State(s) Scenarios      |
+|----------------|---------------------------------------|
+| _\<empty\>_    | Idle, AwaitingACK or AwaitingResponse |
+| ACK            | AwaitingACK                           |
+| ACK, Response  | AwaitingACK                           |
+| ACK, Callback  | AwaitingACK                           |
+| NAK            | AwaitingACK                           |
+| NAK, Callback  | AwaitingACK                           |
+| CAN            | AwaitingACK                           |
+| CAN, Callback  | AwaitingACK                           |
+| Response       | AwaitingACK, AwaitingResponse         |
+| Callback       | AwaitingACK, AwaitingResponse         |
 
 #### Actions Taken Upon Scenario
 
-| Application State | Next Buffer Content | Action(s)
-|-------------------|---------------------|---------------------------------------------------------
-| Idle              | Callback            | send ACK, handle callback, set to Idle
-| Idle              | _\<other\>_         | exception(send CAN, empty buffer), set to Idle
-| AwaitingACK       | ACK                 | set to Idle or AwaitingResponse
-| AwaitingACK       | NAK                 | consider retransmission
-| AwaitingACK       | CAN                 | consider retransmission(?)
-| AwaitingACK       | _\<other\>_         | exception(send CAN, empty buffer), consider retransmission
-| AwaitingResponse  | ConvergentResponse  | send ACK, handle response, set to Idle
-| AwaitingResponse  | DivergentResponse   | exception(send CAN, empty buffer), consider retransmission
-| AwaitingResponse  | _\<other\>_         | exception(send CAN, empty buffer), set to Idle
+| Application State | Next Buffer Content | Action(s)                                                  | 
+|-------------------|---------------------|------------------------------------------------------------|
+| Idle              | Callback            | send ACK, handle callback, set to Idle                     |
+| Idle              | _\<other\>_         | exception(send CAN, empty buffer), set to Idle             |
+| AwaitingACK       | ACK                 | set to Idle or AwaitingResponse                            |
+| AwaitingACK       | NAK                 | consider retransmission                                    |
+| AwaitingACK       | CAN                 | consider retransmission(?)                                 |
+| AwaitingACK       | _\<other\>_         | exception(send CAN, empty buffer), consider retransmission |
+| AwaitingResponse  | ConvergentResponse  | send ACK, handle response, set to Idle                     |
+| AwaitingResponse  | DivergentResponse   | exception(send CAN, empty buffer), consider retransmission |
+| AwaitingResponse  | _\<other\>_         | exception(send CAN, empty buffer), set to Idle             |
 
 

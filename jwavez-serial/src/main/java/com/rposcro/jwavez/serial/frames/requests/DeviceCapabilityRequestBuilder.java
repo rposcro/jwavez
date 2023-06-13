@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.serial.frames.requests;
 
+import com.rposcro.jwavez.core.buffer.ByteBufferManager;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
 import static com.rposcro.jwavez.serial.enums.SerialCommand.GET_CAPABILITIES;
@@ -10,6 +11,10 @@ import static com.rposcro.jwavez.serial.enums.SerialCommand.GET_VERSION;
 import static com.rposcro.jwavez.serial.enums.SerialCommand.MEMORY_GET_ID;
 
 public class DeviceCapabilityRequestBuilder extends AbstractRequestBuilder {
+
+    public DeviceCapabilityRequestBuilder(ByteBufferManager byteBufferManager) {
+        super(byteBufferManager);
+    }
 
     public SerialRequest createGetInitDataRequest() {
         return nonPayloadRequest(GET_INIT_DATA);

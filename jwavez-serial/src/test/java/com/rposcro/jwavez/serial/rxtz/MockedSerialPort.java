@@ -1,12 +1,12 @@
 package com.rposcro.jwavez.serial.rxtz;
 
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 
 public class MockedSerialPort implements SerialPort {
 
@@ -64,12 +64,21 @@ public class MockedSerialPort implements SerialPort {
     }
 
     @Override
-    public int writeData(ByteBuffer buffer) {
-        int size = buffer.remaining();
-        while (buffer.hasRemaining()) {
-            outboundData.add(buffer.get() & 0xff);
+    public int writeData(ImmutableBuffer buffer) {
+        int size = buffer.available();
+        while (buffer.hasNext()) {
+            outboundData.add(buffer.nextByte() & 0xff);
         }
         return size;
+    }
+
+    @Override
+    public int writeData(byte[] data) {
+        for (byte bt: data) {
+            outboundData.add(bt & 0xff);
+
+        }
+        return data.length;
     }
 
     private void updateStream() {

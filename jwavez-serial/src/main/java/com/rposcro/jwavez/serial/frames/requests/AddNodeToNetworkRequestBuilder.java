@@ -1,6 +1,7 @@
 package com.rposcro.jwavez.serial.frames.requests;
 
-import com.rposcro.jwavez.serial.buffers.FrameBuffer;
+import com.rposcro.jwavez.core.buffer.ByteBufferManager;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.model.AddNodeToNeworkMode;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
@@ -8,11 +9,15 @@ import static com.rposcro.jwavez.serial.enums.SerialCommand.ADD_NODE_TO_NETWORK;
 
 public class AddNodeToNetworkRequestBuilder extends AbstractRequestBuilder {
 
+    public AddNodeToNetworkRequestBuilder(ByteBufferManager byteBufferManager) {
+        super(byteBufferManager);
+    }
+
     public SerialRequest createAddNodeToNetworkRequest(AddNodeToNeworkMode mode, byte callbackFlowId, boolean networkWide, boolean normalPower) {
-        FrameBuffer buffer = startUpFrameBuffer(FRAME_CONTROL_SIZE + 2, ADD_NODE_TO_NETWORK)
-                .put((byte) (mode.getCode() | (networkWide ? 0x40 : 0x00) | (normalPower ? 0x80 : 0x00)))
-                .put(callbackFlowId)
-                .putCRC();
+        ImmutableBuffer buffer = dataBuilder(ADD_NODE_TO_NETWORK, 2)
+                .add((byte) (mode.getCode() | (networkWide ? 0x40 : 0x00) | (normalPower ? 0x80 : 0x00)))
+                .add(callbackFlowId)
+                .build();
         return SerialRequest.builder()
                 .responseExpected(false)
                 .frameData(buffer)

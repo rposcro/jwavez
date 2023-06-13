@@ -1,5 +1,7 @@
 package com.rposcro.jwavez.serial;
 
+import com.rposcro.jwavez.core.buffer.ByteBufferManager;
+
 public class JwzSerialSupport {
 
     private static JwzSerialSupport DEFAULT_INSTANCE;
@@ -7,7 +9,7 @@ public class JwzSerialSupport {
     private final SerialRequestFactory serialRequestFactory;
 
     public JwzSerialSupport() {
-        this.serialRequestFactory = new SerialRequestFactory();
+        this.serialRequestFactory = new SerialRequestFactory(new ByteBufferManager());
     }
 
     public static JwzSerialSupport defaultSupport() {

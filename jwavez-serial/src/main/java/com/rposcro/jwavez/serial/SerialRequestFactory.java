@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.serial;
 
+import com.rposcro.jwavez.core.buffer.ByteBufferManager;
 import com.rposcro.jwavez.serial.frames.requests.AddNodeToNetworkRequestBuilder;
 import com.rposcro.jwavez.serial.frames.requests.DeviceManagementRequestBuilder;
 import com.rposcro.jwavez.serial.frames.requests.DeviceStatusRequestBuilder;
@@ -22,16 +23,16 @@ public class SerialRequestFactory {
     private NetworkManagementRequestBuilder networkManagementRequestBuilder;
     private NetworkTransportRequestBuilder networkTransportRequestBuilder;
 
-    public SerialRequestFactory() {
-        this.addNodeToNetworkRequestBuilder = new AddNodeToNetworkRequestBuilder();
-        this.removeNodeFromNetworkRequestBuilder = new RemoveNodeFromNetworkRequestBuilder();
-        this.setLearnModeRequestBuilder = new SetLearnModeRequestBuilder();
-        this.sucRequestBuilder = new SucRequestBuilder();
-        this.deviceCapabilityRequestBuilder = new DeviceCapabilityRequestBuilder();
-        this.deviceStatusRequestBuilder = new DeviceStatusRequestBuilder();
-        this.deviceManagementRequestBuilder = new DeviceManagementRequestBuilder();
-        this.networkManagementRequestBuilder = new NetworkManagementRequestBuilder();
-        this.networkTransportRequestBuilder = new NetworkTransportRequestBuilder();
+    public SerialRequestFactory(ByteBufferManager byteBufferManager) {
+        this.addNodeToNetworkRequestBuilder = new AddNodeToNetworkRequestBuilder(byteBufferManager);
+        this.removeNodeFromNetworkRequestBuilder = new RemoveNodeFromNetworkRequestBuilder(byteBufferManager);
+        this.setLearnModeRequestBuilder = new SetLearnModeRequestBuilder(byteBufferManager);
+        this.sucRequestBuilder = new SucRequestBuilder(byteBufferManager);
+        this.deviceCapabilityRequestBuilder = new DeviceCapabilityRequestBuilder(byteBufferManager);
+        this.deviceStatusRequestBuilder = new DeviceStatusRequestBuilder(byteBufferManager);
+        this.deviceManagementRequestBuilder = new DeviceManagementRequestBuilder(byteBufferManager);
+        this.networkManagementRequestBuilder = new NetworkManagementRequestBuilder(byteBufferManager);
+        this.networkTransportRequestBuilder = new NetworkTransportRequestBuilder(byteBufferManager);
     }
 
     public AddNodeToNetworkRequestBuilder addNodeToNetworkRequestsBuilder() {

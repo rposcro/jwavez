@@ -1,8 +1,6 @@
 package com.rposcro.jwavez.serial;
 
-import com.rposcro.jwavez.serial.buffers.FrameBuffer;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
-import com.rposcro.jwavez.serial.buffers.dispatchers.SingletonBufferDispatcher;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -16,13 +14,6 @@ public class TestUtils {
             data.add(viewBuffer.get() & 0xff);
         }
         return data;
-    }
-
-    public static FrameBuffer frameBufferFromData(List<Integer> data) {
-        SingletonBufferDispatcher dispatcher = new SingletonBufferDispatcher();
-        FrameBuffer frameBuffer = dispatcher.allocateBuffer(data.size());
-        data.forEach(value -> frameBuffer.put(value.byteValue()));
-        return frameBuffer;
     }
 
     public static ByteBuffer byteBufferFromData(List<Integer> data) {

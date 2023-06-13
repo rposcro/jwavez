@@ -5,6 +5,7 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_C
 import static com.rposcro.jwavez.serial.utils.BufferUtil.bufferToString;
 import static java.lang.System.currentTimeMillis;
 
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.exceptions.FatalSerialException;
 import com.rposcro.jwavez.serial.exceptions.RxTxException;
 import com.rposcro.jwavez.serial.exceptions.StreamTimeoutException;
@@ -15,7 +16,6 @@ import com.rposcro.jwavez.serial.exceptions.StreamException;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 import com.rposcro.jwavez.serial.buffers.ViewBuffer;
 
-import java.nio.ByteBuffer;
 import java.util.concurrent.Semaphore;
 
 import lombok.Builder;
@@ -91,7 +91,7 @@ public class RxTxRouter {
                 throw new StreamFlowException("Failed to send request!");
             }
         } finally {
-            serialRequest.getFrameData().release();
+            serialRequest.getFrameData().dispose();
             deactivateTransmission();
         }
     }
@@ -166,15 +166,15 @@ public class RxTxRouter {
 
     private void transmitStage() throws RxTxException {
         if (transmissionAwaiting()) {
-            ByteBuffer frameData = serialRequest.getFrameData().asByteBuffer();
-            frameData.mark();
+            ImmutableBuffer frameData = serialRequest.getFrameData();
+            frameData.rewind();
             RequestStageResult reqResult = requestStageDoer.sendRequest(frameData);
             boolean success = false;
             ResponseStageResult resResult = null;
 
             if (reqResult == RequestStageResult.RESULT_OK) {
                 if (serialRequest.isResponseExpected()) {
-                    byte commandCode = frameData.get(FRAME_OFFSET_COMMAND);
+                    byte commandCode = frameData.getByte(FRAME_OFFSET_COMMAND);
                     resResult = responseStageDoer.acquireResponse(commandCode);
                     success = resResult == ResponseStageResult.RESULT_OK;
                 } else {
@@ -188,7 +188,6 @@ public class RxTxRouter {
                 log.debug("Transmission successful");
             } else {
                 pursueRetransmission();
-                frameData.reset();
                 log.warn("Transmission failed, request result: {}, response result: {}", reqResult, resResult == null ? "N/A" : resResult);
             }
         }

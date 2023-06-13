@@ -1,7 +1,5 @@
 package com.rposcro.jwavez.core.buffer;
 
-import lombok.Getter;
-
 /**
  * Immutable temporary byte buffer, this is one time usage buffer for read only purposes.
  * Routines which receive and operate on instances of the class must not store any references
@@ -23,6 +21,13 @@ public final class ImmutableBuffer {
     private int length;
     private int position;
     private byte[] data;
+    private ByteBuffer byteBuffer;
+
+    ImmutableBuffer(ByteBuffer byteBuffer, int length) {
+        this.byteBuffer = byteBuffer;
+        this.data = byteBuffer.getData();
+        this.length = length;
+    }
 
     ImmutableBuffer(byte[] buffer, int offset) {
         this(buffer, offset, buffer.length);
@@ -33,6 +38,7 @@ public final class ImmutableBuffer {
         this.offset = offset;
         this.length = length;
         this.position = 0;
+        this.byteBuffer = null;
     }
 
     public int position() {
@@ -147,6 +153,14 @@ public final class ImmutableBuffer {
 
     public void cloneBytes(byte[] toArray, int toOffset) {
         System.arraycopy(data, offset, toArray, toOffset, length);
+    }
+
+    public void dispose() {
+        if (byteBuffer != null) {
+            byteBuffer.dispose();
+            byteBuffer = null;
+        }
+        invalidate();
     }
 
     void invalidate() {

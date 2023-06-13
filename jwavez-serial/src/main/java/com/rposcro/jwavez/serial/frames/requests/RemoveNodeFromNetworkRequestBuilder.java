@@ -2,7 +2,8 @@ package com.rposcro.jwavez.serial.frames.requests;
 
 import static com.rposcro.jwavez.serial.enums.SerialCommand.REMOVE_NODE_FROM_NETWORK;
 
-import com.rposcro.jwavez.serial.buffers.FrameBuffer;
+import com.rposcro.jwavez.core.buffer.ByteBufferManager;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.model.RemoveNodeFromNeworkMode;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 
@@ -10,11 +11,15 @@ public class RemoveNodeFromNetworkRequestBuilder extends AbstractRequestBuilder 
 
     private static final int REMOVE_NETWORK_WIDE_OPTION = 0x40;
 
+    public RemoveNodeFromNetworkRequestBuilder(ByteBufferManager byteBufferManager) {
+        super(byteBufferManager);
+    }
+
     public SerialRequest createRemoveNodeFromNetworkRequest(RemoveNodeFromNeworkMode mode, byte callbackFlowId, boolean networkWide) {
-        FrameBuffer buffer = startUpFrameBuffer(FRAME_CONTROL_SIZE + 2, REMOVE_NODE_FROM_NETWORK)
-                .put((byte) (mode.getCode() | (networkWide ? REMOVE_NETWORK_WIDE_OPTION : 0x00)))
-                .put(callbackFlowId)
-                .putCRC();
+        ImmutableBuffer buffer = dataBuilder(REMOVE_NODE_FROM_NETWORK, 2)
+                .add((byte) (mode.getCode() | (networkWide ? REMOVE_NETWORK_WIDE_OPTION : 0x00)))
+                .add(callbackFlowId)
+                .build();
         return SerialRequest.builder()
                 .responseExpected(false)
                 .frameData(buffer)
