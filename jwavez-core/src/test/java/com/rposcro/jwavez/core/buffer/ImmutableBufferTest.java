@@ -9,7 +9,7 @@ public class ImmutableBufferTest {
 
     @Test
     public void throwsExceptionWhenGetOutsideSize() {
-        ImmutableBuffer buffer = new ImmutableBuffer(
+        ImmutableBuffer buffer = new ImmutableByteBuffer(
                 new byte[] { 0x10, 0x20, 0x30, 0x40 }, 0, 4);
 
         assertThrows(IndexOutOfBoundsException.class, () -> buffer.getByte(4));
@@ -22,7 +22,7 @@ public class ImmutableBufferTest {
 
     @Test
     public void throwsExceptionWhenNoMoreDate() {
-        ImmutableBuffer buffer = new ImmutableBuffer(
+        ImmutableBuffer buffer = new ImmutableByteBuffer(
                 new byte[] { 0x10, 0x20, 0x30, 0x40 }, 0, 4);
         buffer.skip(4);
 
@@ -37,7 +37,7 @@ public class ImmutableBufferTest {
 
     @Test
     public void throwsExceptionWhenInvalidated() {
-        ImmutableBuffer buffer = new ImmutableBuffer(
+        ImmutableByteBuffer buffer = new ImmutableByteBuffer(
                 new byte[] { 0x10, 0x20, 0x30, 0x40 }, 0, 4);
         buffer.invalidate();
 
@@ -46,7 +46,7 @@ public class ImmutableBufferTest {
 
     @Test
     public void getsValue() {
-        ImmutableBuffer buffer = new ImmutableBuffer(
+        ImmutableByteBuffer buffer = new ImmutableByteBuffer(
                 new byte[] { 0x00, 0x10, 0x20, 0x30, 0x40, 0x70, 0x55 }, 0, 5);
 
         assertEquals(0x20, buffer.getByte(2));
@@ -59,7 +59,7 @@ public class ImmutableBufferTest {
 
     @Test
     public void returnsNextValues() {
-        ImmutableBuffer buffer = new ImmutableBuffer(
+        ImmutableByteBuffer buffer = new ImmutableByteBuffer(
                 new byte[] { 0x00, 0x10, 0x20, 0x30, 0x40, 0x70, 0x55, 0x00 }, 0);
 
         assertEquals(0x00, buffer.next());
@@ -75,7 +75,7 @@ public class ImmutableBufferTest {
 
     @Test
     public void positionsBuffer() {
-        ImmutableBuffer buffer = new ImmutableBuffer(
+        ImmutableByteBuffer buffer = new ImmutableByteBuffer(
                 new byte[] { 0x00, 0x10, 0x20, 0x30, 0x40, 0x70 }, 0);
 
         assertEquals(0x0010, buffer.nextUnsignedWord());
@@ -86,7 +86,7 @@ public class ImmutableBufferTest {
 
     @Test
     public void skipsBytes() {
-        ImmutableBuffer buffer = new ImmutableBuffer(
+        ImmutableByteBuffer buffer = new ImmutableByteBuffer(
                 new byte[] { 0x00, 0x10, 0x20, 0x30, 0x40, 0x70 }, 0);
 
         assertEquals(0x0010, buffer.nextUnsignedWord());

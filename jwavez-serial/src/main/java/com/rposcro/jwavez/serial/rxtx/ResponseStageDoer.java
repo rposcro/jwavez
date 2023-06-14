@@ -31,28 +31,33 @@ public class ResponseStageDoer {
         do {
             frameBuffer = inboundStream.nextFrame();
             if (frameBuffer.hasNext()) {
-                return handleFrame(frameBuffer, expectedCommand);
+                return consumeFrame(frameBuffer, expectedCommand);
             }
         } while (timeoutPoint > System.currentTimeMillis());
         return ResponseStageResult.RESULT_RESPONSE_TIMEOUT;
     }
 
-    private ResponseStageResult handleFrame(ImmutableBuffer frameBuffer, byte expectedCommand) throws SerialPortException {
+    private ResponseStageResult consumeFrame(ImmutableBuffer frameBuffer, byte expectedCommand) throws SerialPortException {
+        ResponseStageResult result;
+
         switch (frameBuffer.getByte(FRAME_OFFSET_CATEGORY)) {
             case CATEGORY_SOF:
-                return handleSOF(frameBuffer, expectedCommand);
+                result = consumeSOF(frameBuffer, expectedCommand);
             case CATEGORY_ACK:
             case CATEGORY_NAK:
             case CATEGORY_CAN:
                 processException();
-                return ResponseStageResult.RESULT_ODD_CATEGORY;
+                result = ResponseStageResult.RESULT_ODD_CATEGORY;
             default:
                 processException();
-                return ResponseStageResult.RESULT_ODD_INCOME;
+                result = ResponseStageResult.RESULT_ODD_INCOME;
         }
+
+        frameBuffer.dispose();
+        return result;
     }
 
-    private ResponseStageResult handleSOF(ImmutableBuffer frameBuffer, byte expectedCommand) throws SerialPortException {
+    private ResponseStageResult consumeSOF(ImmutableBuffer frameBuffer, byte expectedCommand) throws SerialPortException {
         if (frameBuffer.getByte(FRAME_OFFSET_TYPE) == TYPE_RES && frameBuffer.getByte(FRAME_OFFSET_COMMAND) == expectedCommand) {
             outboundStream.writeACK();
             try {

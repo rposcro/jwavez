@@ -32,7 +32,7 @@ import lombok.extern.slf4j.Slf4j;
  *
  * <B>Note!</B> This controller is not thread safe, must not send multiple requests at a time.
  * This controller runs in context of current thread, all calls are synchronized and blocking.
- * Dedicated typical usages are flow scenarios with well defined end conditions, in other words
+ * Dedicated typical usages are flow scenarios with well-defined end conditions, in other words
  * 'do the job and exit'.</br>
  */
 @Slf4j
@@ -105,6 +105,7 @@ public class BasicSynchronousController extends AbstractClosableController<Basic
 
     private <T extends ZWaveResponse> T runRequest(SerialRequest request) throws RxTxException, FrameException {
         rxTxRouter.runUnlessRequestSent(request);
+
         if (request.isResponseExpected()) {
             return (T) lastResponseHolder.get();
         } else {

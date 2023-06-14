@@ -23,7 +23,7 @@ public class ImmutableBufferBuilder {
     }
 
     public ImmutableBuffer build() {
-        ImmutableBuffer immutableBuffer = new ImmutableBuffer(byteBuffer, bufferSize);
+        ImmutableBuffer immutableBuffer = new ImmutableByteBuffer(byteBuffer, bufferSize);
         this.byteBuffer = null;
         return immutableBuffer;
     }

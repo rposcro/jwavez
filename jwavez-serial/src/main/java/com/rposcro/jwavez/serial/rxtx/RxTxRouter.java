@@ -90,7 +90,6 @@ public class RxTxRouter {
                 throw new StreamFlowException("Failed to send request!");
             }
         } finally {
-            serialRequest.getFrameData().dispose();
             deactivateTransmission();
         }
     }
@@ -209,6 +208,11 @@ public class RxTxRouter {
     }
 
     private void deactivateTransmission() {
+        if (serialRequest != null) {
+            this.serialRequest.getFrameData().dispose();
+            this.serialRequest = null;
+        }
+
         this.retransmissionTime = Long.MAX_VALUE;
         this.outboundLock.release();
     }

@@ -4,10 +4,10 @@ Data exchange is an unavoidable part of rx/tx communication, and it is done usin
 The key aspect to take care about is to make sure that the buffers are intended to be reusable, and this applies
 to both communication directions:
 
-* When transmitting, RxTxRouter is expected not to hold received buffers, and dispose them immediately when transmission 
-  is completed 
-* When receiving, response and callback handlers should not hold a reference to received buffers, references must be 
-  disposed and released immediately after processing received data 
+* When transmitting, RxTxRouter does not hold received buffers, and disposes them immediately when transmission 
+  request is completed 
+* When receiving, response and callback handlers should not hold a reference to received buffers, the buffers are disposed  
+  and immediately after processing received data 
 
 ### Protocol Considerations
 
