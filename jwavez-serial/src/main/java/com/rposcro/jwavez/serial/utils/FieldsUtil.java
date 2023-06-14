@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.utils;
 
-public class FieldUtil {
+public class FieldsUtil {
 
     public static final byte REQUEST_STATE_FAILED = 0x00;
     public static final byte REQUEST_STATE_SUCCESSFUL = 0x01;

@@ -6,7 +6,7 @@ import com.rposcro.jwavez.core.commands.types.AssociationCommandType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import static com.rposcro.jwavez.core.utils.BytesUtil.asByteArray;
+import static com.rposcro.jwavez.core.utils.BuffersUtil.asByteArray;
 
 @NoArgsConstructor(access = AccessLevel.MODULE)
 public class AssociationCommandBuilderV1 {

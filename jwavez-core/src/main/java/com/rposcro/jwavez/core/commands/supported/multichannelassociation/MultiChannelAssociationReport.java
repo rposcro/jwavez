@@ -5,7 +5,7 @@ import com.rposcro.jwavez.core.commands.types.MultiChannelAssociationCommandType
 import com.rposcro.jwavez.core.model.ZWaveConstants;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
-import com.rposcro.jwavez.core.utils.BytesUtil;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -79,7 +79,7 @@ public class MultiChannelAssociationReport extends ZWaveSupportedCommand<MultiCh
                 getGroupId(),
                 getMaxNodesCountSupported(),
                 getReportsToFollow(),
-                BytesUtil.asString(nodeIds),
+                BuffersUtil.asString(nodeIds),
                 Stream.of(endPointIds).map(epId -> String.format("%02x-%02x", epId[0], epId[1])).collect(Collectors.joining(" "))
         );
     }

@@ -4,6 +4,7 @@ import com.rposcro.jwavez.core.JwzApplicationSupport;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.exceptions.CommandNotSupportedException;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.serial.enums.FrameType;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
@@ -12,8 +13,7 @@ import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationCommandHandlerCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
-import com.rposcro.jwavez.serial.utils.BufferUtil;
-import com.rposcro.jwavez.serial.utils.FrameUtil;
+import com.rposcro.jwavez.serial.utils.FramesUtil;
 import com.rposcro.jwavez.tools.cli.commands.AbstractAsyncBasedCommand;
 import com.rposcro.jwavez.tools.cli.exceptions.CommandOptionsException;
 import com.rposcro.jwavez.tools.cli.options.DefaultDeviceBasedOptions;
@@ -63,12 +63,12 @@ public class ListenerCommand extends AbstractAsyncBasedCommand {
     }
 
     private void intercept(ImmutableBuffer buffer) {
-        System.out.println("Frame Data: " + BufferUtil.bufferToString(buffer));
+        System.out.println("Frame Data: " + BuffersUtil.asString(buffer));
         if (!frameValidator.validate(buffer)) {
             System.out.println("Invalid Frame!");
         } else {
-            FrameType frameType = FrameUtil.type(buffer);
-            SerialCommand serialCommand = FrameUtil.serialCommand(buffer);
+            FrameType frameType = FramesUtil.type(buffer);
+            SerialCommand serialCommand = FramesUtil.serialCommand(buffer);
             System.out.printf("%s : %s (%s)", frameType, serialCommand, serialCommand.getCode());
 
             if (frameType == FrameType.REQ) {

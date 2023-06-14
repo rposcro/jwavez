@@ -11,11 +11,11 @@ import com.rposcro.jwavez.core.model.NodeInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NodeUtil {
+public class NodesUtil {
 
     public static NodeInfo decodeNodeInfo(ImmutableBuffer frameBuffer) {
         NodeId nodeId = new NodeId(frameBuffer.nextByte());
-        int length = FieldUtil.asInt(frameBuffer.nextByte());
+        int length = FieldsUtil.asInt(frameBuffer.nextByte());
         BasicDeviceClass basicDeviceClass = BasicDeviceClass.ofCode(frameBuffer.nextByte());
         GenericDeviceClass genericDeviceClass = GenericDeviceClass.ofCode(frameBuffer.nextByte());
         SpecificDeviceClass specificDeviceClass = SpecificDeviceClass.ofCode(frameBuffer.nextByte(), genericDeviceClass);

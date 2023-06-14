@@ -4,7 +4,7 @@ import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.commands.types.SwitchColorCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.BytesUtil;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,7 +15,7 @@ public class SwitchColorReportTest {
 
     @Test
     public void testReportVersion1() {
-        byte[] payload = BytesUtil.asByteArray("33040150");
+        byte[] payload = BuffersUtil.asByteArray("33040150");
 
         SwitchColorReport report = new SwitchColorReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
@@ -29,7 +29,7 @@ public class SwitchColorReportTest {
 
     @Test
     public void testReportVersion3() {
-        byte[] payload = BytesUtil.asByteArray("33040150a905");
+        byte[] payload = BuffersUtil.asByteArray("33040150a905");
 
         SwitchColorReport report = new SwitchColorReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 

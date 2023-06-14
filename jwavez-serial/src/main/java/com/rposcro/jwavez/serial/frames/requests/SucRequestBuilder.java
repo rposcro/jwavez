@@ -4,7 +4,7 @@ import static com.rposcro.jwavez.serial.enums.SerialCommand.ENABLE_SUC;
 import static com.rposcro.jwavez.serial.enums.SerialCommand.GET_SUC_NODE_ID;
 import static com.rposcro.jwavez.serial.enums.SerialCommand.SEND_SUC_ID;
 import static com.rposcro.jwavez.serial.enums.SerialCommand.SET_SUC_NODE_ID;
-import static com.rposcro.jwavez.serial.utils.FieldUtil.booleanByte;
+import static com.rposcro.jwavez.serial.utils.FieldsUtil.booleanByte;
 
 import com.rposcro.jwavez.core.buffer.ByteBufferManager;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;

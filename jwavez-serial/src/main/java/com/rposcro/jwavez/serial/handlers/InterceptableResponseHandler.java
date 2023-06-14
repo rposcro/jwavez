@@ -4,6 +4,7 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_T
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.TYPE_RES;
 
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
@@ -11,7 +12,6 @@ import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.interceptors.ResponseInterceptor;
 import com.rposcro.jwavez.serial.interceptors.FrameBufferInterceptor;
 import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
-import com.rposcro.jwavez.serial.utils.BufferUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +37,9 @@ public class InterceptableResponseHandler implements ResponseHandler {
     @Override
     public void accept(ImmutableBuffer frameBuffer) {
         if (frameBuffer.getByte(FRAME_OFFSET_TYPE) != TYPE_RES || !validator.validate(frameBuffer)) {
-            log.warn("Response frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
+            log.warn("Response frame validation failed: {}", BuffersUtil.asString(frameBuffer));
         } else if (log.isDebugEnabled()) {
-            log.debug("Response frame received: {}", BufferUtil.bufferToString(frameBuffer));
+            log.debug("Response frame received: {}", BuffersUtil.asString(frameBuffer));
         }
 
         try {
@@ -47,7 +47,7 @@ public class InterceptableResponseHandler implements ResponseHandler {
             ZWaveResponse response = parser.parseResponseFrame(frameBuffer);
             responseInterceptors.forEach(interceptor -> interceptor.intercept(response));
         } catch (FrameParseException e) {
-            log.warn("Response frame parse failed: {}", BufferUtil.bufferToString(frameBuffer));
+            log.warn("Response frame parse failed: {}", BuffersUtil.asString(frameBuffer));
         }
     }
 

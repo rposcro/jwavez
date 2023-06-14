@@ -5,7 +5,7 @@ import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper
 import com.rposcro.jwavez.serial.frames.callbacks.AddNodeToNetworkCallback
 import com.rposcro.jwavez.serial.model.AddNodeToNeworkMode
 import com.rposcro.jwavez.serial.model.AddNodeToNeworkStatus
-import com.rposcro.jwavez.serial.utils.FrameUtil
+import com.rposcro.jwavez.serial.utils.FramesUtil
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -73,7 +73,7 @@ class AddNodeToNetworkFlowHandlerSpec extends Specification {
     }
 
     def callbackOfData(byte[] data) {
-        data[data.length - 1] = FrameUtil.frameCRC(data);
+        data[data.length - 1] = FramesUtil.frameCRC(data);
         ViewBuffer buffer = new ViewBuffer(ByteBuffer.wrap(data));
         buffer.setViewRange(0, data.length);
         return new AddNodeToNetworkCallback(buffer);

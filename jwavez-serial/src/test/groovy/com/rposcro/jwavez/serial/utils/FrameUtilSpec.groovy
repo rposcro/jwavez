@@ -17,7 +17,7 @@ class FrameUtilSpec extends Specification {
 
         when:
         buffer.position(3);
-        int crc = FrameUtil.frameCRC(buffer) & 0xff;
+        int crc = FramesUtil.frameCRC(buffer) & 0xff;
 
         then:
         crc == expectedCrc;
@@ -37,7 +37,7 @@ class FrameUtilSpec extends Specification {
         when:
         buffer.setViewRange(0, array.length);
         buffer.position(3);
-        int crc = FrameUtil.frameCRC(buffer) & 0xff;
+        int crc = FramesUtil.frameCRC(buffer) & 0xff;
 
         then:
         crc == expectedCrc;
@@ -54,7 +54,7 @@ class FrameUtilSpec extends Specification {
         def buffer = asByteArray(data);
 
         when:
-        int crc = FrameUtil.frameCRC(buffer) & 0xff;
+        int crc = FramesUtil.frameCRC(buffer) & 0xff;
 
         then:
         crc == expectedCrc;

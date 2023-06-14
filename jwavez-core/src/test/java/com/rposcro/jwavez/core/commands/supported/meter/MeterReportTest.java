@@ -3,7 +3,7 @@ package com.rposcro.jwavez.core.commands.supported.meter;
 import com.rposcro.jwavez.core.model.MeterType;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
-import com.rposcro.jwavez.core.utils.BytesUtil;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -14,7 +14,7 @@ public class MeterReportTest {
 
     @Test
     public void testReportV1() {
-        byte[] payload = BytesUtil.asByteArray("3202 0352 0566");
+        byte[] payload = BuffersUtil.asByteArray("3202 0352 0566");
         MeterReport meterReport = new MeterReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
         assertEquals(SOURCE_NODE_ID, meterReport.getSourceNodeId().getId());
@@ -32,7 +32,7 @@ public class MeterReportTest {
 
     @Test
     public void testReportV2WithDeltaSize4() {
-        byte[] payload = BytesUtil.asByteArray("3202 2144 00aa0710 0120 0103ffac");
+        byte[] payload = BuffersUtil.asByteArray("3202 2144 00aa0710 0120 0103ffac");
         MeterReport meterReport = new MeterReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
         assertEquals(SOURCE_NODE_ID, meterReport.getSourceNodeId().getId());
@@ -50,7 +50,7 @@ public class MeterReportTest {
 
     @Test
     public void testReportV2WithDeltaSize2() {
-        byte[] payload = BytesUtil.asByteArray("3202 2132 5011 3401 66fe");
+        byte[] payload = BuffersUtil.asByteArray("3202 2132 5011 3401 66fe");
         MeterReport meterReport = new MeterReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
         assertEquals(SOURCE_NODE_ID, meterReport.getSourceNodeId().getId());
@@ -68,7 +68,7 @@ public class MeterReportTest {
 
     @Test
     public void testReportV2NoDelta() {
-        byte[] payload = BytesUtil.asByteArray("3202 2131 a7 0000");
+        byte[] payload = BuffersUtil.asByteArray("3202 2131 a7 0000");
         MeterReport meterReport = new MeterReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
         assertEquals(SOURCE_NODE_ID, meterReport.getSourceNodeId().getId());
@@ -86,7 +86,7 @@ public class MeterReportTest {
 
     @Test
     public void testReportV3WithDelta() {
-        byte[] payload = BytesUtil.asByteArray("3202 a131 a7 0001 b0");
+        byte[] payload = BuffersUtil.asByteArray("3202 a131 a7 0001 b0");
         MeterReport meterReport = new MeterReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
         assertEquals(SOURCE_NODE_ID, meterReport.getSourceNodeId().getId());
@@ -104,7 +104,7 @@ public class MeterReportTest {
 
     @Test
     public void testReportV4NoDelta() {
-        byte[] payload = BytesUtil.asByteArray("3202 a139 a7 0000 77");
+        byte[] payload = BuffersUtil.asByteArray("3202 a139 a7 0000 77");
         MeterReport meterReport = new MeterReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
         assertEquals(SOURCE_NODE_ID, meterReport.getSourceNodeId().getId());

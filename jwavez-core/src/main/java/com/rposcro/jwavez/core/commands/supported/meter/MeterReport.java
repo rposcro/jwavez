@@ -7,7 +7,7 @@ import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
 
-import static com.rposcro.jwavez.core.utils.BitsUtil.extractValue;
+import static com.rposcro.jwavez.core.utils.BytesUtil.extractValue;
 
 @Getter
 @ToString

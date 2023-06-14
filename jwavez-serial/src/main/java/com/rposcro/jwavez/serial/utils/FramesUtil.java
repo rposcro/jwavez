@@ -16,7 +16,7 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_P
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_TYPE;
 import static java.lang.String.format;
 
-public class FrameUtil {
+public class FramesUtil {
 
     public static byte frameCRC(byte[] frameBuffer) {
         byte crc = (byte) 0xff;

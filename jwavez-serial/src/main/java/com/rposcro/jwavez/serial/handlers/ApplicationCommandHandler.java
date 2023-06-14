@@ -5,6 +5,7 @@ import com.rposcro.jwavez.core.commands.supported.SupportedCommandResolversRegis
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.listeners.SupportedCommandDispatcher;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
@@ -12,7 +13,6 @@ import com.rposcro.jwavez.serial.frames.callbacks.ApplicationCommandHandlerCallb
 import com.rposcro.jwavez.serial.model.FrameCast;
 import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
 import com.rposcro.jwavez.serial.rxtx.SerialFrameConstants;
-import com.rposcro.jwavez.serial.utils.BufferUtil;
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -50,13 +50,13 @@ public class ApplicationCommandHandler implements CallbackHandler {
                             .parseCommand(ImmutableBuffer.overBuffer(callback.getCommandPayload()), callback.getSourceNodeId());
                     supportedCommandDispatcher.dispatchCommand(command);
                 } else {
-                    log.debug("Skipped {} frame: {}", callback.getRxStatus().getFrameCast(), BufferUtil.bufferToString(buffer));
+                    log.debug("Skipped {} frame: {}", callback.getRxStatus().getFrameCast(), BuffersUtil.asString(buffer));
                 }
             } catch (FrameParseException e) {
-                log.error("Failed to parse application command handler frame: {}", BufferUtil.bufferToString(buffer));
+                log.error("Failed to parse application command handler frame: {}", BuffersUtil.asString(buffer));
             }
         } else if (log.isDebugEnabled()) {
-            log.debug("Skipped frame: {}", BufferUtil.bufferToString(buffer));
+            log.debug("Skipped frame: {}", BuffersUtil.asString(buffer));
         }
     }
 

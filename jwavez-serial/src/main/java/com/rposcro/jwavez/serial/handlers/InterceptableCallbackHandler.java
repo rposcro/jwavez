@@ -4,6 +4,7 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_T
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.TYPE_REQ;
 
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
@@ -11,7 +12,6 @@ import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.interceptors.CallbackInterceptor;
 import com.rposcro.jwavez.serial.interceptors.FrameBufferInterceptor;
 import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
-import com.rposcro.jwavez.serial.utils.BufferUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +37,9 @@ public class InterceptableCallbackHandler implements CallbackHandler {
     @Override
     public void accept(ImmutableBuffer frameBuffer) {
         if (frameBuffer.getByte(FRAME_OFFSET_TYPE) != TYPE_REQ || !validator.validate(frameBuffer)) {
-            log.warn("Callback Frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
+            log.warn("Callback Frame validation failed: {}", BuffersUtil.asString(frameBuffer));
         } else if (log.isDebugEnabled()) {
-            log.debug("Callback Frame received: {}", BufferUtil.bufferToString(frameBuffer));
+            log.debug("Callback Frame received: {}", BuffersUtil.asString(frameBuffer));
         }
 
         try {
@@ -47,7 +47,7 @@ public class InterceptableCallbackHandler implements CallbackHandler {
             ZWaveCallback callback = parser.parseCallbackFrame(frameBuffer);
             callbackInterceptors.forEach(interceptor -> interceptor.intercept(callback));
         } catch (FrameParseException e) {
-            log.warn("Callback Frame parse failed: {}", BufferUtil.bufferToString(frameBuffer));
+            log.warn("Callback Frame parse failed: {}", BuffersUtil.asString(frameBuffer));
             log.debug(e.getMessage(), e);
         }
     }

@@ -5,7 +5,7 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_P
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.frames.ResponseFrameModel;
-import com.rposcro.jwavez.serial.utils.FieldUtil;
+import com.rposcro.jwavez.serial.utils.FieldsUtil;
 import lombok.Getter;
 
 @Getter
@@ -17,7 +17,7 @@ public class SendSUCIdResponse extends SolicitedCallbackResponse {
 
     public SendSUCIdResponse(ImmutableBuffer frameBuffer) {
         super(frameBuffer);
-        this.requestAccepted = FieldUtil.byteBoolean(frameBuffer.getByte(FRAME_OFFSET_PAYLOAD));
+        this.requestAccepted = FieldsUtil.byteBoolean(frameBuffer.getByte(FRAME_OFFSET_PAYLOAD));
     }
 
     @Override

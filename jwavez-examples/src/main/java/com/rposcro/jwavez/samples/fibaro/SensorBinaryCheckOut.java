@@ -10,6 +10,7 @@ import com.rposcro.jwavez.core.commands.supported.association.AssociationGroupin
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
 import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.samples.AbstractExample;
 import com.rposcro.jwavez.serial.JwzSerialSupport;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
@@ -22,8 +23,6 @@ import com.rposcro.jwavez.serial.frames.responses.SendDataResponse;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandInterceptor;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
-import com.rposcro.jwavez.serial.utils.BufferUtil;
-
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -89,7 +88,7 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
     }
 
     private void interceptFrameBuffer(ImmutableBuffer buffer) {
-        log.debug("Callback frame received: {}", BufferUtil.bufferToString(buffer));
+        log.debug("Callback frame received: {}", BuffersUtil.asString(buffer));
     }
 
     private void interceptSendDataCallback(ZWaveCallback callback) {

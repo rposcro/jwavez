@@ -7,6 +7,7 @@ import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
 import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.samples.AbstractExample;
 import com.rposcro.jwavez.serial.JwzSerialSupport;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
@@ -18,7 +19,6 @@ import com.rposcro.jwavez.serial.frames.responses.SendDataResponse;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.interceptors.ApplicationCommandInterceptor;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
-import com.rposcro.jwavez.serial.utils.BufferUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -70,7 +70,7 @@ public class SensorBinarySetUp extends AbstractExample implements AutoCloseable 
     }
 
     private void interceptFrameBuffer(ImmutableBuffer buffer) {
-        log.debug("Callback frame received: {}", BufferUtil.bufferToString(buffer));
+        log.debug("Callback frame received: {}", BuffersUtil.asString(buffer));
     }
 
     private void setMonostableModeForBothInputs() throws Exception {

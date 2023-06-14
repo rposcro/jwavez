@@ -3,7 +3,7 @@ package com.rposcro.jwavez.core.commands.supported.sensormultilevel;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.types.SensorMultilevelCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.BytesUtil;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
@@ -23,6 +23,6 @@ public class SensorMultilevelSupportedSensorReport extends ZWaveSupportedCommand
 
     @Override
     public String asNiceString() {
-        return String.format("%s bitMask[%s]", super.asNiceString(), BytesUtil.asString(bitMask));
+        return String.format("%s bitMask[%s]", super.asNiceString(), BuffersUtil.asString(bitMask));
     }
 }

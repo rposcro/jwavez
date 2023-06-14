@@ -5,7 +5,7 @@ import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.model.ColorComponent;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
-import com.rposcro.jwavez.core.utils.BytesUtil;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -49,7 +49,7 @@ public class SwitchColorSupportedReport extends ZWaveSupportedCommand<SwitchColo
     @Override
     public String asNiceString() {
         return String.format("%s components[%s]",
-                super.asNiceString(), BytesUtil.asString(colorComponentsMask)
+                super.asNiceString(), BuffersUtil.asString(colorComponentsMask)
         );
     }
 }

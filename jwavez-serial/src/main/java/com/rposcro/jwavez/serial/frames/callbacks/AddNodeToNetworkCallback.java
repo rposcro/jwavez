@@ -7,7 +7,7 @@ import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.frames.CallbackFrameModel;
 import com.rposcro.jwavez.serial.model.AddNodeToNeworkStatus;
-import com.rposcro.jwavez.serial.utils.NodeUtil;
+import com.rposcro.jwavez.serial.utils.NodesUtil;
 
 import java.util.Optional;
 
@@ -28,7 +28,7 @@ public class AddNodeToNetworkCallback extends FlowCallback {
         this.status = AddNodeToNeworkStatus.ofCode(frameBuffer.nextByte());
 
         if (isNodeInfoPresent(frameBuffer)) {
-            this.nodeInfo = Optional.of(NodeUtil.decodeNodeInfo(frameBuffer));
+            this.nodeInfo = Optional.of(NodesUtil.decodeNodeInfo(frameBuffer));
         } else {
             this.nodeInfo = Optional.empty();
         }

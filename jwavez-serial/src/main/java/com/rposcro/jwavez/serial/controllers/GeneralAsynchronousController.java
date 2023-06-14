@@ -1,6 +1,7 @@
 package com.rposcro.jwavez.serial.controllers;
 
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.serial.controllers.helpers.RequestCallbackFlowHelper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.FrameException;
@@ -17,7 +18,6 @@ import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.SerialFrameConstants;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
-import com.rposcro.jwavez.serial.utils.BufferUtil;
 
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
@@ -28,14 +28,12 @@ import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import com.rposcro.jwavez.serial.utils.FrameUtil;
+import com.rposcro.jwavez.serial.utils.FramesUtil;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-
-import static com.rposcro.jwavez.serial.utils.BufferUtil.bufferToString;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -93,8 +91,8 @@ public class GeneralAsynchronousController extends AbstractAsynchronousControlle
         lastResponseHandler.accept(frameBuffer);
 
         if (log.isDebugEnabled()) {
-            log.debug("ZWaveResponse response frame received: {}", bufferToString(frameBuffer));
-            log.debug(FrameUtil.asFineString(frameBuffer));
+            log.debug("ZWaveResponse response frame received: {}", BuffersUtil.asString(frameBuffer));
+            log.debug(FramesUtil.asFineString(frameBuffer));
         }
 
         customResponseHandler.ifPresent(handler -> handler.accept(frameBuffer));
@@ -107,8 +105,8 @@ public class GeneralAsynchronousController extends AbstractAsynchronousControlle
                     FlowCallback callback = (FlowCallback) parser.parseCallbackFrame(frameBuffer);
 
                     if (log.isDebugEnabled()) {
-                        log.debug("ZWaveResponse response frame received: {}", bufferToString(frameBuffer));
-                        log.debug(FrameUtil.asFineString(frameBuffer));
+                        log.debug("ZWaveResponse response frame received: {}", BuffersUtil.asString(frameBuffer));
+                        log.debug(FramesUtil.asFineString(frameBuffer));
                     }
 
                     if (callback.getCallbackFlowId() == expectedCallbackFlowId) {
@@ -117,10 +115,10 @@ public class GeneralAsynchronousController extends AbstractAsynchronousControlle
                         log.info("Received matching callback class but flow id differs from expected: {}", callback.getCallbackFlowId());
                     }
                 } catch (FrameParseException e) {
-                    log.error("Callback frame parsing failed {}", BufferUtil.bufferToString(frameBuffer));
+                    log.error("Callback frame parsing failed {}", BuffersUtil.asString(frameBuffer));
                 }
             } else {
-                log.warn("Received callback frame which failed validation {}", BufferUtil.bufferToString(frameBuffer));
+                log.warn("Received callback frame which failed validation {}", BuffersUtil.asString(frameBuffer));
             }
         }
         customCallbackHandler.ifPresent(handler -> handler.accept(frameBuffer));

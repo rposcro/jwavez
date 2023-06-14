@@ -2,10 +2,10 @@ package com.rposcro.jwavez.serial.rxtx;
 
 import static com.rposcro.jwavez.core.utils.ObjectsUtil.orDefault;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_COMMAND;
-import static com.rposcro.jwavez.serial.utils.BufferUtil.bufferToString;
 import static java.lang.System.currentTimeMillis;
 
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.serial.exceptions.FatalSerialException;
 import com.rposcro.jwavez.serial.exceptions.RxTxException;
 import com.rposcro.jwavez.serial.exceptions.StreamTimeoutException;
@@ -214,10 +214,10 @@ public class RxTxRouter {
     }
 
     private void handleResponse(ImmutableBuffer frameBuffer) {
-        log.info("ZWaveResponse frame received: {}", bufferToString(frameBuffer));
+        log.info("ZWaveResponse frame received: {}", BuffersUtil.asString(frameBuffer));
     }
 
     private void handleCallback(ImmutableBuffer frameBuffer) {
-        log.info("ZWaveCallback frame received: {}", bufferToString(frameBuffer));
+        log.info("ZWaveCallback frame received: {}", BuffersUtil.asString(frameBuffer));
     }
 }

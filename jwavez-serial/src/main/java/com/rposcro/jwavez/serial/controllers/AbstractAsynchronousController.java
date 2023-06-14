@@ -3,6 +3,7 @@ package com.rposcro.jwavez.serial.controllers;
 import static com.rposcro.jwavez.core.utils.ObjectsUtil.orDefault;
 
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.serial.controllers.helpers.CallbackFlowIdDispatcher;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
@@ -10,13 +11,12 @@ import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.RxTxRouterProcess;
 import com.rposcro.jwavez.serial.rxtx.port.NeuronRoboticsSerialPort;
-import com.rposcro.jwavez.serial.utils.BufferUtil;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import com.rposcro.jwavez.serial.utils.FrameUtil;
+import com.rposcro.jwavez.serial.utils.FramesUtil;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -85,15 +85,15 @@ public abstract class AbstractAsynchronousController<T extends AbstractAsynchron
 
     private void handleResponse(ImmutableBuffer frameBuffer) {
         if (log.isDebugEnabled()) {
-            log.debug("Response frame received: {}", BufferUtil.bufferToString(frameBuffer));
-            log.debug(FrameUtil.asFineString(frameBuffer));
+            log.debug("Response frame received: {}", BuffersUtil.asString(frameBuffer));
+            log.debug(FramesUtil.asFineString(frameBuffer));
         }
     }
 
     private void handleCallback(ImmutableBuffer frameBuffer) {
         if (log.isDebugEnabled()) {
-            log.debug("Callback frame received: {}", BufferUtil.bufferToString(frameBuffer));
-            log.debug(FrameUtil.asFineString(frameBuffer));
+            log.debug("Callback frame received: {}", BuffersUtil.asString(frameBuffer));
+            log.debug(FramesUtil.asFineString(frameBuffer));
         }
     }
 }

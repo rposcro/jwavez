@@ -5,7 +5,7 @@ import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.model.BitLength;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.BytesUtil;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,7 +16,7 @@ public class ConfigurationReportTest {
 
     @Test
     public void testReportWith8Bits() {
-        byte[] payload = BytesUtil.asByteArray("7006c001ee");
+        byte[] payload = BuffersUtil.asByteArray("7006c001ee");
 
         ConfigurationReport report = new ConfigurationReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
@@ -32,7 +32,7 @@ public class ConfigurationReportTest {
 
     @Test
     public void testReportWith32Bits() {
-        byte[] payload = BytesUtil.asByteArray("7006c004ee451290");
+        byte[] payload = BuffersUtil.asByteArray("7006c004ee451290");
 
         ConfigurationReport report = new ConfigurationReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 

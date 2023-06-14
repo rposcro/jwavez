@@ -8,7 +8,7 @@ import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.frames.CallbackFrameModel;
 import com.rposcro.jwavez.serial.model.ApplicationUpdateStatus;
-import com.rposcro.jwavez.serial.utils.NodeUtil;
+import com.rposcro.jwavez.serial.utils.NodesUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,7 +30,7 @@ public class ApplicationUpdateCallback extends ZWaveCallback {
             this.nodeId = new NodeId(frameBuffer.nextByte());
             log.debug("Received SUC id update {}", nodeId.getId());
         } else if (status == ApplicationUpdateStatus.APP_UPDATE_STATUS_NODE_INFO_RECEIVED) {
-            this.nodeInfo = NodeUtil.decodeNodeInfo(frameBuffer);
+            this.nodeInfo = NodesUtil.decodeNodeInfo(frameBuffer);
             this.nodeId = nodeInfo.getId();
             log.debug("Received info of node {}", nodeInfo.getId());
         } else if (status == ApplicationUpdateStatus.APP_UPDATE_STATUS_NODE_INFO_REQ_FAILED) {

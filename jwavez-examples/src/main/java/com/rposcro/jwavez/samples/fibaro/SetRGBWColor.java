@@ -4,6 +4,7 @@ import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.controlled.builders.switchcolor.SwitchColorCommandBuilder;
 import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.samples.AbstractExample;
 import com.rposcro.jwavez.serial.JwzSerialSupport;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
@@ -11,7 +12,6 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
-import com.rposcro.jwavez.serial.utils.BufferUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -37,7 +37,7 @@ public class SetRGBWColor extends AbstractExample implements AutoCloseable {
     }
 
     private void interceptFrameBuffer(ImmutableBuffer buffer) {
-        log.debug("Callback frame received: {}", BufferUtil.bufferToString(buffer));
+        log.debug("Callback frame received: {}", BuffersUtil.asString(buffer));
     }
 
     public void switchColor(int red, int green, int blue, int white) {

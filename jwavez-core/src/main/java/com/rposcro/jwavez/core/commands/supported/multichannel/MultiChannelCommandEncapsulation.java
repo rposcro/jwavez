@@ -3,7 +3,7 @@ package com.rposcro.jwavez.core.commands.supported.multichannel;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.types.MultiChannelCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.BytesUtil;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
@@ -58,7 +58,7 @@ public class MultiChannelCommandEncapsulation extends ZWaveSupportedCommand<Mult
                 destinationAsBitMask,
                 encapsulatedCommandClass,
                 encapsulatedCommandCode,
-                BytesUtil.asString(encapsulatedCommandPayload)
+                BuffersUtil.asString(encapsulatedCommandPayload)
         );
     }
 }

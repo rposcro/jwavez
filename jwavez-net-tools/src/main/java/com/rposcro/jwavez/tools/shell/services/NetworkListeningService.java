@@ -11,7 +11,7 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationCommandHandlerCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
-import com.rposcro.jwavez.serial.utils.FrameUtil;
+import com.rposcro.jwavez.serial.utils.FramesUtil;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
 import com.rposcro.jwavez.tools.utils.BeanPropertiesFormatter;
 import lombok.extern.slf4j.Slf4j;
@@ -67,7 +67,7 @@ public class NetworkListeningService {
 
     private void treatSerialCallback(ImmutableBuffer frameBuffer) {
         console.flushLine("\nCallback frame received");
-        console.flushLine(FrameUtil.asFineString(frameBuffer));
+        console.flushLine(FramesUtil.asFineString(frameBuffer));
 
         try {
             ZWaveCallback callback = serialFrameParser.parseCallbackFrame(frameBuffer);

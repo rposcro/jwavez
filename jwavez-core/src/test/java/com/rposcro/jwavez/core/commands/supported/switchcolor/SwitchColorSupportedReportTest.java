@@ -5,7 +5,7 @@ import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.commands.types.SwitchColorCommandType;
 import com.rposcro.jwavez.core.model.ColorComponent;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.BytesUtil;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class SwitchColorSupportedReportTest {
 
     @Test
     public void testReportVersion1() {
-        byte[] payload = BytesUtil.asByteArray("3304 1c01");
+        byte[] payload = BuffersUtil.asByteArray("3304 1c01");
 
         SwitchColorSupportedReport report = new SwitchColorSupportedReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
         List<ColorComponent> components = report.getColorComponents();

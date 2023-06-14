@@ -19,6 +19,7 @@ public class SendDataCallback extends FlowCallback {
         this.statusReportPresent = frameBuffer.available() > 1;
     }
 
+    @Override
     public String asFineString() {
         return String.format("%s(%02x) clbckId(%02x) %s(%02x)",
                 getSerialCommand().name(), getSerialCommand().getCode(), getCallbackFlowId(),

@@ -3,7 +3,7 @@ package com.rposcro.jwavez.core.commands.supported.sensormultilevel;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.types.SensorMultilevelCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.BitsUtil;
+import com.rposcro.jwavez.core.utils.BytesUtil;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
@@ -24,9 +24,9 @@ public class SensorMultilevelReport extends ZWaveSupportedCommand<SensorMultilev
         this.sensorType = payload.nextUnsignedByte();
 
         byte def = payload.nextByte();
-        this.precision = BitsUtil.extractValue(def, 5, 7);
-        this.scaleValue = BitsUtil.extractValue(def, 3, 3);
-        this.measureSize = BitsUtil.extractValue(def, 0, 7);
+        this.precision = BytesUtil.extractValue(def, 5, 7);
+        this.scaleValue = BytesUtil.extractValue(def, 3, 3);
+        this.measureSize = BytesUtil.extractValue(def, 0, 7);
         this.measureValue = parseMeasureValue(measureSize, payload);
 
         this.commandVersion = 1;

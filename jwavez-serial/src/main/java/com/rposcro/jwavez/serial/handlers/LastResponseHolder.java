@@ -1,13 +1,13 @@
 package com.rposcro.jwavez.serial.handlers;
 
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.serial.exceptions.FrameException;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.InboundFrameValidator;
 import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
-import com.rposcro.jwavez.serial.utils.BufferUtil;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,7 +43,7 @@ public class LastResponseHolder implements ResponseHandler {
         lastResponse = null;
 
         if (!validator.validate(frameBuffer)) {
-            lastException = new FrameException("Inbound response frame validation failed: {}", BufferUtil.bufferToString(frameBuffer));
+            lastException = new FrameException("Inbound response frame validation failed: {}", BuffersUtil.asString(frameBuffer));
         }
 
         try {

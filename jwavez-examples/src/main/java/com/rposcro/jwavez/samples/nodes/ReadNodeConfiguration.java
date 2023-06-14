@@ -3,6 +3,7 @@ package com.rposcro.jwavez.samples.nodes;
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.samples.AbstractExample;
 import com.rposcro.jwavez.serial.JwzSerialSupport;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
@@ -11,7 +12,6 @@ import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
-import com.rposcro.jwavez.serial.utils.BufferUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -37,7 +37,7 @@ public class ReadNodeConfiguration extends AbstractExample {
     }
 
     private void interceptFrameBuffer(ImmutableBuffer buffer) {
-        log.debug("Callback frame received: {}", BufferUtil.bufferToString(buffer));
+        log.debug("Callback frame received: {}", BuffersUtil.asString(buffer));
     }
 
     public void readConfig(int... parameters) {

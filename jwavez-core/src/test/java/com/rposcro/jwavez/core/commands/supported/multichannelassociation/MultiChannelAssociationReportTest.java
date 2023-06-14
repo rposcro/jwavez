@@ -4,7 +4,7 @@ import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.core.commands.types.MultiChannelAssociationCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.BytesUtil;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -15,7 +15,7 @@ public class MultiChannelAssociationReportTest {
 
     @Test
     public void testWithoutAssociationsWithoutMarker() {
-        byte[] payload = BytesUtil.asByteArray("8e03 040a00");
+        byte[] payload = BuffersUtil.asByteArray("8e03 040a00");
         MultiChannelAssociationReport report = new MultiChannelAssociationReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
         assertEquals(SOURCE_NODE_ID, report.getSourceNodeId().getId());
@@ -33,7 +33,7 @@ public class MultiChannelAssociationReportTest {
 
     @Test
     public void testWithoutAssociationsWithMarker() {
-        byte[] payload = BytesUtil.asByteArray("8e03 040a00 00");
+        byte[] payload = BuffersUtil.asByteArray("8e03 040a00 00");
         MultiChannelAssociationReport report = new MultiChannelAssociationReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
         assertEquals(SOURCE_NODE_ID, report.getSourceNodeId().getId());
@@ -51,7 +51,7 @@ public class MultiChannelAssociationReportTest {
 
     @Test
     public void testWithNodesOnlyWithoutMarker() {
-        byte[] payload = BytesUtil.asByteArray("8e03 040a00 5643");
+        byte[] payload = BuffersUtil.asByteArray("8e03 040a00 5643");
         MultiChannelAssociationReport report = new MultiChannelAssociationReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
         assertEquals(SOURCE_NODE_ID, report.getSourceNodeId().getId());
@@ -71,7 +71,7 @@ public class MultiChannelAssociationReportTest {
 
     @Test
     public void testWithNodesOnlyWithMarker() {
-        byte[] payload = BytesUtil.asByteArray("8e03 040a00 11d7c5 00");
+        byte[] payload = BuffersUtil.asByteArray("8e03 040a00 11d7c5 00");
         MultiChannelAssociationReport report = new MultiChannelAssociationReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
         assertEquals(SOURCE_NODE_ID, report.getSourceNodeId().getId());
@@ -92,7 +92,7 @@ public class MultiChannelAssociationReportTest {
 
     @Test
     public void testWithEndpointsOnly() {
-        byte[] payload = BytesUtil.asByteArray("8e03 040a00 00 571366af");
+        byte[] payload = BuffersUtil.asByteArray("8e03 040a00 00 571366af");
         MultiChannelAssociationReport report = new MultiChannelAssociationReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
         assertEquals(SOURCE_NODE_ID, report.getSourceNodeId().getId());
@@ -114,7 +114,7 @@ public class MultiChannelAssociationReportTest {
 
     @Test
     public void testWithNodesAndEndpoints() {
-        byte[] payload = BytesUtil.asByteArray("8e03 040a00 11d7 00 1344");
+        byte[] payload = BuffersUtil.asByteArray("8e03 040a00 11d7 00 1344");
         MultiChannelAssociationReport report = new MultiChannelAssociationReport(ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
         assertEquals(SOURCE_NODE_ID, report.getSourceNodeId().getId());

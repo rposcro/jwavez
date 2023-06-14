@@ -5,7 +5,7 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_C
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_LENGTH;
 
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
-import com.rposcro.jwavez.serial.utils.FrameUtil;
+import com.rposcro.jwavez.serial.utils.FramesUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -50,7 +50,7 @@ public class InboundFrameValidator {
     }
 
     private boolean validateFrameCRC(ImmutableBuffer buffer) {
-        byte calculatedCRC = FrameUtil.frameCRC(buffer);
+        byte calculatedCRC = FramesUtil.frameCRC(buffer);
         byte receivedCRC = buffer.getByte(buffer.length() - 1);
         if (receivedCRC != calculatedCRC) {
             log.info("Incorrect CRC {}!={}", receivedCRC, calculatedCRC);
