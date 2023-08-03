@@ -15,7 +15,7 @@ import static SerialFrameConstants.CATEGORY_NAK
 import static SerialFrameConstants.CATEGORY_CAN
 import static SerialFrameConstants.CATEGORY_SOF
 
-import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
+import com.rposcro.jwavez.serial.rxtx.MockedSerialPort
 import spock.lang.Specification
 
 import static java.lang.Byte.toUnsignedInt

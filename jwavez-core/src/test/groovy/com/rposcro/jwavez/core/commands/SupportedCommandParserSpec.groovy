@@ -22,7 +22,7 @@ class SupportedCommandParserSpec extends Specification {
     def theParser;
 
     def setup() {
-        theParser = new JwzApplicationSupport().supportedCommandParser();
+        theParser = JwzApplicationSupport.defaultSupport().supportedCommandParser();
     }
 
     @Unroll
@@ -50,6 +50,6 @@ class SupportedCommandParserSpec extends Specification {
     }
 
     def immutableBuffer(byte[] payload) {
-        return new ImmutableBuffer(payload, 0, payload.length);
+        return ImmutableBuffer.overBuffer(payload);
     }
 }

@@ -2,6 +2,7 @@ package com.rposcro.jwavez.core.buffer;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -92,5 +93,57 @@ public class ImmutableBufferTest {
         assertEquals(0x0010, buffer.nextUnsignedWord());
         buffer.skip(2);
         assertEquals(0x4070, buffer.nextUnsignedWord());
+    }
+
+    @Test
+    public void clonesBytes() {
+        byte[] data = new byte[] { 0x00, 0x10, 0x20, 0x30, 0x40, 0x70 };
+        ImmutableBuffer buffer = new ImmutableByteBuffer(data, 0);
+
+        byte[] cloned = buffer.cloneBytes();
+        assertArrayEquals(data, cloned);
+    }
+
+    @Test
+    public void clonesBytesWithLength() {
+        byte[] data = new byte[] { 0x00, 0x10, 0x20, 0x30, 0x40, 0x70 };
+        ImmutableBuffer buffer = new ImmutableByteBuffer(data, 0);
+
+        byte[] expected = new byte[] { 0x00, 0x10, 0x20 };
+        byte[] cloned = buffer.cloneBytes(3);
+        assertArrayEquals(expected, cloned);
+    }
+
+    @Test
+    public void clonesRemainingBytes() {
+        byte[] data = new byte[] { 0x00, 0x10, 0x20, 0x30, 0x40, 0x70 };
+        ImmutableBuffer buffer = new ImmutableByteBuffer(data, 0);
+        buffer.position(3);
+
+        byte[] expected = new byte[] { 0x30, 0x40, 0x70 };
+        byte[] cloned = buffer.cloneRemainingBytes();
+        assertArrayEquals(expected, cloned);
+    }
+
+    @Test
+    public void clonesRemainingBytesWithLength() {
+        byte[] data = new byte[] { 0x00, 0x10, 0x20, 0x30, 0x40, 0x70 };
+        ImmutableBuffer buffer = new ImmutableByteBuffer(data, 0);
+        buffer.position(3);
+
+        byte[] expected = new byte[] { 0x30, 0x40 };
+        byte[] cloned = buffer.cloneRemainingBytes(2);
+        assertArrayEquals(expected, cloned);
+    }
+
+    @Test
+    public void copiesBytes() {
+        byte[] data = new byte[] { 0x00, 0x10, 0x20 };
+        ImmutableBuffer buffer = new ImmutableByteBuffer(data, 0);
+
+        byte[] dest = new byte[5];
+        byte[] expected = new byte[] { 0x00, 0x00, 0x10, 0x20, 0x00 };
+        buffer.copyBytes(dest, 1);
+        assertArrayEquals(expected, dest);
     }
 }

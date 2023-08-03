@@ -11,6 +11,7 @@ import com.rposcro.jwavez.serial.frames.callbacks.AddNodeToNetworkCallback
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler
 import com.rposcro.jwavez.serial.model.AddNodeToNeworkStatus
 import com.rposcro.jwavez.serial.rxtx.RxTxRouterProcess
+import com.rposcro.jwavez.serial.utils.ChecksumUtil
 import com.rposcro.jwavez.serial.utils.FramesUtil
 import spock.lang.Specification
 
@@ -154,7 +155,7 @@ class AddNodeToNetworkControllerSpec extends Specification {
     }
 
     def callbackOfData(byte[] data) {
-        data[data.length - 1] = FramesUtil.frameCRC(data);
+        data[data.length - 1] = ChecksumUtil.frameCrc(data);
         ViewBuffer buffer = new ViewBuffer(ByteBuffer.wrap(data));
         buffer.setViewRange(0, data.length);
         return new AddNodeToNetworkCallback(buffer);

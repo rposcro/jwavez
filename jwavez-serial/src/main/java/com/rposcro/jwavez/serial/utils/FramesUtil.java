@@ -5,7 +5,6 @@ import com.rposcro.jwavez.serial.enums.FrameCategory;
 import com.rposcro.jwavez.serial.enums.FrameType;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 
-import java.nio.ByteBuffer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -17,38 +16,6 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_T
 import static java.lang.String.format;
 
 public class FramesUtil {
-
-    public static byte frameCRC(byte[] frameBuffer) {
-        byte crc = (byte) 0xff;
-        for (int idx = 1; idx < frameBuffer.length - 1; idx++) {
-            crc ^= frameBuffer[idx];
-        }
-        return crc;
-    }
-
-    public static byte frameCRC(ByteBuffer buffer) {
-        byte crc = (byte) 0xff;
-        for (int idx = 1; idx < buffer.limit() - 1; idx++) {
-            crc ^= buffer.get(idx);
-        }
-        return crc;
-    }
-
-    public static byte frameCRC(com.rposcro.jwavez.core.buffer.ByteBuffer buffer) {
-        byte crc = (byte) 0xff;
-        for (int idx = 1; idx < buffer.getLength() - 1; idx++) {
-            crc ^= buffer.get(idx);
-        }
-        return crc;
-    }
-
-    public static byte frameCRC(ImmutableBuffer buffer) {
-        byte crc = (byte) 0xff;
-        for (int idx = 1; idx < buffer.length() - 1; idx++) {
-            crc ^= buffer.getByte(idx);
-        }
-        return crc;
-    }
 
     public static FrameCategory category(ImmutableBuffer buffer) {
         return FrameCategory.ofCode(buffer.getByte(FRAME_OFFSET_CATEGORY));

@@ -178,7 +178,14 @@ final class ImmutableByteBuffer implements ImmutableBuffer {
     }
 
     @Override
-    public void cloneBytes(byte[] toArray, int toOffset) {
+    public byte[] cloneRemainingBytes(int length) {
+        byte[] cloned = new byte[length];
+        System.arraycopy(data, offset + position, cloned, 0, length);
+        return cloned;
+    }
+
+    @Override
+    public void copyBytes(byte[] toArray, int toOffset) {
         System.arraycopy(data, offset, toArray, toOffset, length);
     }
 

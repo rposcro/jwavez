@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.serial.rxtx
 
 import com.rposcro.jwavez.serial.exceptions.StreamException
-import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
+import com.rposcro.jwavez.serial.rxtx.MockedSerialPort
 import spock.lang.Specification
 import spock.lang.Unroll
 

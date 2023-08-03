@@ -8,7 +8,7 @@ public class JwzSerialSupport {
 
     private final SerialRequestFactory serialRequestFactory;
 
-    public JwzSerialSupport() {
+    private JwzSerialSupport() {
         this.serialRequestFactory = new SerialRequestFactory(new ByteBufferManager());
     }
 

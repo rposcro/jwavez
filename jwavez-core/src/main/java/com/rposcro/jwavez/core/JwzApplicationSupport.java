@@ -1,6 +1,5 @@
 package com.rposcro.jwavez.core;
 
-import com.rposcro.jwavez.core.buffer.ByteBufferManager;
 import com.rposcro.jwavez.core.commands.JwzControlledCommandFactory;
 import com.rposcro.jwavez.core.commands.JwzSupportedCommandParser;
 import com.rposcro.jwavez.core.commands.supported.SupportedCommandResolversRegistry;
@@ -12,14 +11,20 @@ import lombok.Builder;
 @AllArgsConstructor
 public class JwzApplicationSupport {
 
+    private static JwzApplicationSupport DEFAULT_INSTANCE;
+
     private JwzControlledCommandFactory controlledCommandFactory;
     private JwzSupportedCommandParser supportedCommandParser;
     private SupportedCommandDispatcher supportedCommandDispatcher;
 
-    public JwzApplicationSupport() {
+    private JwzApplicationSupport() {
         this.controlledCommandFactory = new JwzControlledCommandFactory();
         this.supportedCommandParser = new JwzSupportedCommandParser(SupportedCommandResolversRegistry.instance());
         this.supportedCommandDispatcher = new SupportedCommandDispatcher();
+    }
+
+    public static JwzApplicationSupport defaultSupport() {
+        return DEFAULT_INSTANCE == null ? DEFAULT_INSTANCE = new JwzApplicationSupport() : DEFAULT_INSTANCE;
     }
 
     public JwzControlledCommandFactory controlledCommandFactory() {

@@ -14,7 +14,7 @@ public class UnknownCallback extends ZWaveCallback {
     public UnknownCallback(ImmutableBuffer frameBuffer) {
         super(frameBuffer);
         frameBuffer.position(FRAME_OFFSET_PAYLOAD);
-        this.payload = frameBuffer.cloneBytes(frameBuffer.available() - 1);
+        this.payload = frameBuffer.cloneRemainingBytes(frameBuffer.available() - 1);
         this.crc = frameBuffer.skip(frameBuffer.available() - 1).nextByte();
     }
 }

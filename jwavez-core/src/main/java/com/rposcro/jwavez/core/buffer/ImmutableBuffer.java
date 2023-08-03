@@ -38,7 +38,8 @@ public interface ImmutableBuffer {
     byte[] cloneBytes();
     byte[] cloneBytes(int length);
     byte[] cloneRemainingBytes();
-    void cloneBytes(byte[] toArray, int toOffset);
+    byte[] cloneRemainingBytes(int length);
+    void copyBytes(byte[] toArray, int toOffset);
 
     void dispose();
 

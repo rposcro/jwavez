@@ -22,7 +22,7 @@ abstract class AbstractRequestBuilder {
     protected ImmutableBufferBuilder dataBuilder(SerialCommand serialCommand, int payloadSize) {
         return new SerialFrameDataBuilder(byteBufferManager, FRAME_CONTROL_SIZE + payloadSize)
                 .add(SerialFrameConstants.CATEGORY_SOF)
-                .add((byte) (payloadSize - 2))
+                .add((byte) (NO_PAYLOAD_FRAME_SIZE + payloadSize))
                 .add(SerialFrameConstants.TYPE_REQ)
                 .add(serialCommand.getCode());
     }
@@ -30,13 +30,13 @@ abstract class AbstractRequestBuilder {
     protected SerialRequest nonPayloadRequest(SerialCommand command) {
         return SerialRequest.builder()
                 .responseExpected(true)
-                .frameData(completeFrameBuffer(command))
+                .frameData(noPayloadFrameBuffer(command))
                 .serialCommand(command)
                 .build();
     }
 
-    private ImmutableBuffer completeFrameBuffer(SerialCommand serialCommand) {
-        return dataBuilder(serialCommand, 0)
+    private ImmutableBuffer noPayloadFrameBuffer(SerialCommand serialCommand) {
+        return new SerialFrameDataBuilder(byteBufferManager, FRAME_CONTROL_SIZE)
                 .add(SerialFrameConstants.CATEGORY_SOF)
                 .add((byte) (NO_PAYLOAD_FRAME_SIZE))
                 .add(SerialFrameConstants.TYPE_REQ)

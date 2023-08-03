@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.serial.rxtz;
+package com.rposcro.jwavez.serial.rxtx;
 
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort;

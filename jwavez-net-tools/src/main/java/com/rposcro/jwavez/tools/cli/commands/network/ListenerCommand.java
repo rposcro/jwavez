@@ -103,7 +103,7 @@ public class ListenerCommand extends AbstractAsyncBasedCommand {
         buffer.append("\n  RxStatus: " + achCallback.getRxStatus().getFrameCast());
 
         try {
-            ZWaveSupportedCommand command = new JwzApplicationSupport().supportedCommandParser().parseCommand(
+            ZWaveSupportedCommand command = JwzApplicationSupport.defaultSupport().supportedCommandParser().parseCommand(
                     ImmutableBuffer.overBuffer(achCallback.getCommandPayload()),
                     achCallback.getSourceNodeId());
             buffer.append("\n  Command Class: " + command.getCommandClass());

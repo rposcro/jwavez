@@ -43,14 +43,17 @@ public class ResponseStageDoer {
         switch (frameBuffer.getByte(FRAME_OFFSET_CATEGORY)) {
             case CATEGORY_SOF:
                 result = consumeSOF(frameBuffer, expectedCommand);
+                break;
             case CATEGORY_ACK:
             case CATEGORY_NAK:
             case CATEGORY_CAN:
                 processException();
                 result = ResponseStageResult.RESULT_ODD_CATEGORY;
+                break;
             default:
                 processException();
                 result = ResponseStageResult.RESULT_ODD_INCOME;
+                break;
         }
 
         frameBuffer.dispose();

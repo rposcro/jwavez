@@ -20,8 +20,8 @@ public class RequestStageDoer {
     private RxTxConfiguration configuration;
 
     public RequestStageResult sendRequest(ImmutableBuffer outboundBuffer) throws RxTxException {
-        outboundStream.writeSOF(outboundBuffer);
-        if (outboundBuffer.hasNext()) {
+        int bytesWritten = outboundStream.writeSOF(outboundBuffer);
+        if (bytesWritten != outboundBuffer.length()) {
             return RequestStageResult.RESULT_ERR_OUTCOME;
         }
         return expectACK();

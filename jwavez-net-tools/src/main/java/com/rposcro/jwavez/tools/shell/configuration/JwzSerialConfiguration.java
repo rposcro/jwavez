@@ -10,7 +10,7 @@ public class JwzSerialConfiguration {
 
     @Bean
     public JwzSerialSupport jwzSerialSupport() {
-        return new JwzSerialSupport();
+        return JwzSerialSupport.defaultSupport();
     }
 
     @Bean

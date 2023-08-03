@@ -20,7 +20,7 @@ public class JwzApplicationConfiguration {
 
     @Bean
     public JwzApplicationSupport jwzApplicationSupport() {
-        return new JwzApplicationSupport();
+        return JwzApplicationSupport.defaultSupport();
     }
 
     @Bean

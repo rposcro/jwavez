@@ -28,7 +28,7 @@ public class ApplicationCommandHandlerCallback extends ZWaveCallback {
         this.rxStatus = new RxStatus(frameBuffer.next());
         this.sourceNodeId = new NodeId(frameBuffer.next());
         this.commandLength = frameBuffer.nextUnsignedByte();
-        this.commandPayload = frameBuffer.cloneBytes(commandLength);
+        this.commandPayload = frameBuffer.cloneRemainingBytes(commandLength);
     }
 
     public String asFineString() {

@@ -30,19 +30,19 @@ public class FrameOutboundStream {
         this.canBuffer = new byte[] { CATEGORY_CAN };
     }
 
-    public void writeCAN() throws SerialPortException {
-        serialPort.writeData(canBuffer);
+    public int writeCAN() throws SerialPortException {
+        return serialPort.writeData(canBuffer);
     }
 
-    public void writeNAK() throws SerialPortException {
-        serialPort.writeData(nakBuffer);
+    public int writeNAK() throws SerialPortException {
+        return serialPort.writeData(nakBuffer);
     }
 
-    public void writeACK() throws SerialPortException {
-        serialPort.writeData(ackBuffer);
+    public int writeACK() throws SerialPortException {
+        return serialPort.writeData(ackBuffer);
     }
 
-    public void writeSOF(ImmutableBuffer sofBuffer) throws SerialPortException {
-        serialPort.writeData(sofBuffer);
+    public int writeSOF(ImmutableBuffer sofBuffer) throws SerialPortException {
+        return serialPort.writeData(sofBuffer);
     }
 }

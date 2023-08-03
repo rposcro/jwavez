@@ -12,7 +12,7 @@ public class SerialFrameDataBuilder extends ImmutableBufferBuilder {
 
     @Override
     public ImmutableBuffer build() {
-        add(FramesUtil.frameCRC(byteBuffer));
+        add(ChecksumUtil.crc(byteBuffer, 1, byteBuffer.getLength() - 1));
         return super.build();
     }
 }
