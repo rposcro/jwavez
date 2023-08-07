@@ -28,7 +28,7 @@ public class TalkCommunicationService {
     ) throws SerialException {
         ZWaveSupportedCommand responseCommand = serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
-                        new NodeId(nodeId),
+                        NodeId.forId(nodeId),
                         commandToSend,
                         expectedResponseType,
                         SerialUtils.DEFAULT_TIMEOUT)
@@ -40,7 +40,7 @@ public class TalkCommunicationService {
         ZWaveControlledCommand commandToSend = new ZWaveControlledCommand(payload);
         return serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
-                        new NodeId(nodeId),
+                        NodeId.forId(nodeId),
                         commandToSend,
                         SerialUtils.DEFAULT_TIMEOUT)
         ));
@@ -50,7 +50,7 @@ public class TalkCommunicationService {
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             SendDataCallback callback = executor.requestCallbackFlow(
                     serialRequestFactory.networkTransportRequestBuilder().createSendDataRequest(
-                            new NodeId(nodeId), commandToSend, SerialUtils.nextFlowId()));
+                            NodeId.forId(nodeId), commandToSend, SerialUtils.nextFlowId()));
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;
         });
         return sendResult;

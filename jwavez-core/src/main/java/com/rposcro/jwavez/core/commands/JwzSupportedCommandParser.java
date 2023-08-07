@@ -28,4 +28,11 @@ public class JwzSupportedCommandParser {
         CommandClass commandClass = CommandClass.ofCode(payload.getByte(0));
         return supportedCommandsRegistry.isCommandClassSupported(commandClass);
     }
+
+    public static JwzSupportedCommandParser defaultParser() {
+        if (DEFAULT_PARSER == null) {
+            DEFAULT_PARSER = new JwzSupportedCommandParser(SupportedCommandResolversRegistry.instance());
+        }
+        return DEFAULT_PARSER;
+    }
 }

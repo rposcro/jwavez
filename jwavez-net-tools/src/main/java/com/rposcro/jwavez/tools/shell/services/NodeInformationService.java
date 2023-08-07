@@ -53,7 +53,7 @@ public class NodeInformationService {
 
     public boolean pingNode(int nodeId) {
         try {
-            fetchVersionReport(new NodeId(nodeId));
+            fetchVersionReport(NodeId.forId(nodeId));
             return true;
         } catch (SerialException e) {
             return false;
@@ -83,7 +83,7 @@ public class NodeInformationService {
     }
 
     private NodeProductInformation fetchProductInformation(int nodeId) throws SerialException {
-        final NodeId nodeID = new NodeId(nodeId);
+        final NodeId nodeID = NodeId.forId(nodeId);
         NodeInfo nodeInfo = fetchNodeInfo(nodeID);
         ManufacturerSpecificReport manufacturerReport = fetchManufacturerSpecificReport(nodeID);
         VersionReport versionReport = fetchVersionReport(nodeID);

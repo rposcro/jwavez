@@ -37,7 +37,7 @@ public class NodeMultiChannelAssociationService {
     private SerialRequestFactory serialRequestFactory;
 
     public NodeAssociationsInformation fetchMultiChannelAssociations(int nodeId, int groupId) throws SerialException {
-        final NodeId nodeID = new NodeId(nodeId);
+        final NodeId nodeID = NodeId.forId(nodeId);
 
         MultiChannelAssociationReport associationReport =
                 (MultiChannelAssociationReport) serialCommunicationService.runApplicationCommandFunction((executor ->
@@ -61,7 +61,7 @@ public class NodeMultiChannelAssociationService {
     }
 
     public boolean sendAddAssociation(int nodeId, int groupId, EndPointMark addressToAssociate) throws SerialException {
-        final NodeId nodeID = new NodeId(nodeId);
+        final NodeId nodeID = NodeId.forId(nodeId);
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = associationCommandBuilder.v2()
                     .buildSetCommand(groupId, new EndPointAddress(addressToAssociate.getNodeId(), addressToAssociate.getEndPointId()));
@@ -84,7 +84,7 @@ public class NodeMultiChannelAssociationService {
     }
 
     public boolean sendRemoveAssociation(int nodeId, int groupId, EndPointMark endPointToRemove) throws SerialException {
-        final NodeId nodeID = new NodeId(nodeId);
+        final NodeId nodeID = NodeId.forId(nodeId);
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = associationCommandBuilder.v2()
                     .buildRemoveCommand(groupId, new EndPointAddress(endPointToRemove.getNodeId(), endPointToRemove.getEndPointId()));

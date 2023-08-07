@@ -52,7 +52,7 @@ public class NodeParameterService {
     }
 
     public Long fetchParameterValue(int nodeId, int paramNumber) throws SerialException {
-        final NodeId nodeID = new NodeId(nodeId);
+        final NodeId nodeID = NodeId.forId(nodeId);
         ConfigurationReport configurationReport = (ConfigurationReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
                         nodeID,
@@ -67,7 +67,7 @@ public class NodeParameterService {
     }
 
     public boolean sendParameterValue(int nodeId, int paramNumber, long requestedValue) throws SerialException {
-        final NodeId nodeID = new NodeId(nodeId);
+        final NodeId nodeID = NodeId.forId(nodeId);
         final ParameterMeta parameterMeta = nodeInformationCache.getNodeDetails(nodeId).getParametersInformation().findParameterMeta(paramNumber);
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = configurationCommandBuilder.v1()

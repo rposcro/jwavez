@@ -16,18 +16,18 @@ public class SupportedCommandDispatcher {
 
     private Map<CommandType, List<SupportedCommandListener>> listenersPerCommandType = new HashMap<>();
 
-    public SupportedCommandDispatcher registerAllCommandsHandler(SupportedCommandListener commandHandler) {
-        List<SupportedCommandListener> handlers = listenersPerCommandType.computeIfAbsent(null, type -> new LinkedList<>());
-        if (!handlers.contains(commandHandler)) {
-            handlers.add(commandHandler);
+    public SupportedCommandDispatcher registerAllCommandsHandler(SupportedCommandListener commandListener) {
+        List<SupportedCommandListener> listeners = listenersPerCommandType.computeIfAbsent(null, type -> new LinkedList<>());
+        if (!listeners.contains(commandListener)) {
+            listeners.add(commandListener);
         }
         return this;
     }
 
-    public SupportedCommandDispatcher registerHandler(CommandType commandType, SupportedCommandListener commandHandler) {
-        List<SupportedCommandListener> handlers = listenersPerCommandType.computeIfAbsent(commandType, type -> new LinkedList<>());
-        if (!handlers.contains(commandHandler)) {
-            handlers.add(commandHandler);
+    public SupportedCommandDispatcher registerHandler(CommandType commandType, SupportedCommandListener commandListener) {
+        List<SupportedCommandListener> listeners = listenersPerCommandType.computeIfAbsent(commandType, type -> new LinkedList<>());
+        if (!listeners.contains(commandListener)) {
+            listeners.add(commandListener);
         }
         return this;
     }

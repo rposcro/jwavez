@@ -9,6 +9,8 @@ import lombok.Getter;
 @EqualsAndHashCode
 public class NodeId {
 
+    private final static NodeId[] CACHED = new NodeId[255];
+
     private byte id;
 
     public NodeId(int id) {
@@ -21,5 +23,16 @@ public class NodeId {
     @Override
     public String toString() {
         return "NodeId<" + id + ">";
+    }
+
+    public static NodeId forId(byte id) {
+        return forId(id & 0xff);
+    }
+
+    public static NodeId forId(int id) {
+        if (CACHED[id] == null) {
+            CACHED[id] = new NodeId(id);
+        }
+        return CACHED[id];
     }
 }

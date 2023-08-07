@@ -34,7 +34,7 @@ public class NodeAssociationService {
     private SerialRequestFactory serialRequestFactory;
 
     public List<Integer> fetchGroupAssociations(int nodeId, int groupId) throws SerialException {
-        final NodeId nodeID = new NodeId(nodeId);
+        final NodeId nodeID = NodeId.forId(nodeId);
 
         AssociationReport associationReport = (AssociationReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
@@ -55,7 +55,7 @@ public class NodeAssociationService {
     }
 
     public boolean sendAddAssociation(int nodeId, int groupId, int nodeIdToAssociate) throws SerialException {
-        final NodeId nodeID = new NodeId(nodeId);
+        final NodeId nodeID = NodeId.forId(nodeId);
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = associationCommandBuilder.v1()
                     .buildSetCommand(groupId, nodeIdToAssociate);
@@ -78,7 +78,7 @@ public class NodeAssociationService {
     }
 
     public boolean sendRemoveAssociation(int nodeId, int groupId, int nodeIdToRemove) throws SerialException {
-        final NodeId nodeID = new NodeId(nodeId);
+        final NodeId nodeID = NodeId.forId(nodeId);
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = associationCommandBuilder.v1()
                     .buildRemoveCommand(groupId, nodeIdToRemove);

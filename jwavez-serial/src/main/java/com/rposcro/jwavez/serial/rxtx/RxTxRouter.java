@@ -96,9 +96,11 @@ public class RxTxRouter {
 
     public void runSingleCycle() throws RxTxException {
         try {
-            receiveStage();
+            do {
+                while (receiveStage() > 0);
+                Thread.sleep(configuration.getRouterPollDelay());
+            } while(receiveStage() > 0);
             transmitStage();
-            Thread.sleep(configuration.getRouterPollDelay());
         } catch (StreamMalformedException e) {
             outboundStream.writeNAK();
             inboundStream.purgeStream();
@@ -155,11 +157,14 @@ public class RxTxRouter {
         return retransmissionTime <= System.currentTimeMillis();
     }
 
-    private void receiveStage() throws RxTxException {
+    private int receiveStage() throws RxTxException {
+        int inboundsRead = -1;
         IdleStageResult idleStageResult;
         do {
+            inboundsRead++;
             idleStageResult = idleStageDoer.checkInbound();
         } while (idleStageResult != IdleStageResult.RESULT_SILENCE);
+        return inboundsRead;
     }
 
     private void transmitStage() throws RxTxException {
