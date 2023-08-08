@@ -64,10 +64,6 @@ public class RxTxRouterProcess implements Runnable {
         this.stopRequested = true;
     }
 
-    public void resetStreams() throws RxTxException {
-        executeSynchronous(rxTxRouter::purgeInput);
-    }
-
     @Override
     public void run() {
         stopRequested = false;

@@ -150,7 +150,7 @@ public class RxTxRouter {
         this.transmissionSuccess = false;
         this.retransmissionCounter = 0;
         this.retransmissionTime = currentTimeMillis();
-        log.debug("ZWave request scheduled {}", serialRequest.getSerialCommand());
+        log.debug("Rx {}: scheduled {}", serialRequest.getId(), serialRequest.getSerialCommand());
     }
 
     private boolean transmissionAwaiting() {
@@ -169,6 +169,7 @@ public class RxTxRouter {
 
     private void transmitStage() throws RxTxException {
         if (transmissionAwaiting()) {
+            log.debug("Rx {}: transmission attempt #{}", serialRequest.getId(), retransmissionCounter);
             ImmutableBuffer frameData = serialRequest.getFrameData();
             frameData.rewind();
             RequestStageResult reqResult = requestStageDoer.sendRequest(frameData);
@@ -187,20 +188,23 @@ public class RxTxRouter {
 
             if (success) {
                 transmissionSuccess = true;
+                log.debug("Rx {}: transmission successful", serialRequest.getId());
                 deactivateTransmission();
-                log.debug("Transmission successful");
             } else {
+                log.warn("Rx {}: transmission failed, request result: {}, response result: {}",
+                        serialRequest.getId(), reqResult, resResult == null ? "N/A" : resResult);
                 pursueRetransmission();
-                log.warn("Transmission failed, request result: {}, response result: {}", reqResult, resResult == null ? "N/A" : resResult);
             }
         }
     }
 
     private void pursueRetransmission() {
         if (serialRequest.isRetransmissionDisabled() || ++retransmissionCounter > configuration.getRequestRetriesMaxCount()) {
+            log.debug("Rx {}: retransmission voided", serialRequest.getId());
             deactivateTransmission();
         } else {
             retransmissionTime = currentTimeMillis() + retransmissionDelay(retransmissionCounter);
+            log.debug("Rx {}: retransmission {} scheduled", retransmissionCounter, serialRequest.getId());
         }
     }
 
@@ -214,6 +218,7 @@ public class RxTxRouter {
 
     private void deactivateTransmission() {
         if (serialRequest != null) {
+            log.debug("Rx {}: retransmission deactivated", serialRequest.getId());
             this.serialRequest.getFrameData().dispose();
             this.serialRequest = null;
         }

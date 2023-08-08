@@ -9,6 +9,8 @@ import lombok.Getter;
 @Builder
 public class SerialRequest {
 
+    @Builder.Default
+    private long id = System.nanoTime();
     private ImmutableBuffer frameData;
     private SerialCommand serialCommand;
     private boolean retransmissionDisabled;
