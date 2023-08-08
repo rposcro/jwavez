@@ -126,7 +126,7 @@ public class NodeAssociationsInformation {
     public boolean removeNodeAssociation(int groupId, int nodeId) {
         List<Integer> associatedNodes = associatedNodesMap.get(groupId);
         if (associatedNodes != null) {
-            return associatedNodes.remove(new Integer(nodeId));
+            return associatedNodes.remove(Integer.valueOf(nodeId));
         }
         return false;
     }
