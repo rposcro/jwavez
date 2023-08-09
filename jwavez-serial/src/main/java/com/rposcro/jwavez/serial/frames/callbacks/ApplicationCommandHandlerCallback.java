@@ -33,27 +33,46 @@ public class ApplicationCommandHandlerCallback extends ZWaveCallback {
         this.sourceNodeId = NodeId.forId(frameBuffer.next());
         this.commandLength = frameBuffer.nextUnsignedByte();
         this.commandPayload = frameBuffer.cloneRemainingBytes(commandLength);
-        frameBuffer.skip(commandLength);
-        this.rxRssi = frameBuffer.nextUnsignedWord();
+        if (isRxRssiPresent(frameBuffer, commandLength)) {
+            frameBuffer.skip(commandLength);
+            this.rxRssi = frameBuffer.nextUnsignedWord();
+        }
     }
 
     public String asFineString() {
-        return String.format("APPLICATION_COMMAND_HANDLER(%02x) rxStatus(%02x) srcNode(%02x) CmdLen(%02x) Payload[%s] RxRSSI(%04x)",
-                SerialCommand.APPLICATION_COMMAND_HANDLER.getCode(),
-                rxStatus.getStatusValue(),
-                sourceNodeId.getId(),
-                commandLength,
-                IntStream.range(0, commandPayload.length)
-                        .mapToObj(idx -> format("%02x", commandPayload[idx]))
-                        .collect(Collectors.joining(" ")),
-                rxRssi
-        );
+        if (rxRssi != 0) {
+            return String.format("APPLICATION_COMMAND_HANDLER(%02x) rxStatus(%02x) srcNode(%02x) CmdLen(%02x) Payload[%s] RxRSSI(%04x)",
+                    SerialCommand.APPLICATION_COMMAND_HANDLER.getCode(),
+                    rxStatus.getStatusValue(),
+                    sourceNodeId.getId(),
+                    commandLength,
+                    IntStream.range(0, commandPayload.length)
+                            .mapToObj(idx -> format("%02x", commandPayload[idx]))
+                            .collect(Collectors.joining(" ")),
+                    rxRssi
+            );
+        } else {
+            return String.format("APPLICATION_COMMAND_HANDLER(%02x) rxStatus(%02x) srcNode(%02x) CmdLen(%02x) Payload[%s]",
+                    SerialCommand.APPLICATION_COMMAND_HANDLER.getCode(),
+                    rxStatus.getStatusValue(),
+                    sourceNodeId.getId(),
+                    commandLength,
+                    IntStream.range(0, commandPayload.length)
+                            .mapToObj(idx -> format("%02x", commandPayload[idx]))
+                            .collect(Collectors.joining(" "))
+            );
+        }
+    }
+
+    private boolean isRxRssiPresent(ImmutableBuffer buffer, int commandLength) {
+        // 1 for serial frame CRC, 2 min for rx rssi
+        return buffer.available() >= (commandLength + 1 + 2);
     }
 
     public static void main(String[] args) {
         //byte[] bytes = {0x01, 0x0f, 0x00, 0x04, 0x00, 0x0a, 0x07, 0x60, 0x0d, 0x02, 0x02, 0x20, 0x01, 0x00, (byte) 0xb3, 0x00, 0x06};
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        Stream.of("01 0f 00 04 00 0a 07 60 0d 02 02 20 01 ff c1 00 8b".split("\\s"))
+        Stream.of("01 0c 00 04 00 05 06 33 04 00 99 99 00 c3".split("\\s"))
                 .mapToInt(numStr -> Integer.parseInt(numStr, 16))
                 .forEach(byteBuffer::write);
         ImmutableBuffer buffer = ImmutableBuffer.overBuffer(byteBuffer.toByteArray());
