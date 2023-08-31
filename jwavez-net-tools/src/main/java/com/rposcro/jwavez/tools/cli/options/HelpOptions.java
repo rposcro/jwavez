@@ -4,5 +4,5 @@ import org.apache.commons.cli.Options;
 
 public class HelpOptions implements CommandOptions {
 
-  public static final Options OPTIONS = new Options();
+    public static final Options OPTIONS = new Options();
 }

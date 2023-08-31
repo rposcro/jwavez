@@ -43,8 +43,8 @@ public class ContextCommands {
         return "JWaveZ Network Shell";
     }
 
-    @ShellMethod(value = "Set current device", key="device")
-    public String setCurrentDevice(@ShellOption(value = { "--path-to-device", "-path" }) String pathToDevice
+    @ShellMethod(value = "Set current device", key = "device")
+    public String setCurrentDevice(@ShellOption(value = {"--path-to-device", "-path"}) String pathToDevice
     ) throws SerialException {
         File deviceFile = new File(pathToDevice);
         if (!deviceFile.exists()) {

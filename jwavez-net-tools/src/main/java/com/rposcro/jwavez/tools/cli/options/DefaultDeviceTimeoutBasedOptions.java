@@ -5,9 +5,9 @@ import org.apache.commons.cli.Options;
 
 public class DefaultDeviceTimeoutBasedOptions extends AbstractDeviceTimeoutBasedOptions {
 
-  public static final Options OPTIONS = CommandOptions.defaultDeviceTimeoutBasedOptions();
+    public static final Options OPTIONS = CommandOptions.defaultDeviceTimeoutBasedOptions();
 
-  public DefaultDeviceTimeoutBasedOptions(String[] args) throws CommandOptionsException {
-    super(OPTIONS, args);
-  }
+    public DefaultDeviceTimeoutBasedOptions(String[] args) throws CommandOptionsException {
+        super(OPTIONS, args);
+    }
 }

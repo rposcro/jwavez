@@ -5,5 +5,5 @@ import com.rposcro.jwavez.serial.frames.responses.ZWaveResponse;
 @FunctionalInterface
 public interface ResponseInterceptor {
 
-  void intercept(ZWaveResponse response);
+    void intercept(ZWaveResponse response);
 }

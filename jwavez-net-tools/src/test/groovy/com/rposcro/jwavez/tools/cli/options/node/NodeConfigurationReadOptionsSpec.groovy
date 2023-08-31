@@ -20,9 +20,9 @@ class NodeConfigurationReadOptionsSpec extends Specification {
         options.getParameterNumbers() == expNums;
 
         where:
-        args                                     | expNums | expDevice | expNode |expTimeout
-        "-pn 12 -d /dev/a -n 3 -pn 12"           | [12]    | "/dev/a"  | 3       | AbstractNodeBasedOptions.DEFAULT_TIMEOUT
-        "-pn 13 -t 667 -d /dev/b -n 189 -pn 13"  | [13]    | "/dev/b"  | 189     | 667
+        args                                    | expNums | expDevice | expNode | expTimeout
+        "-pn 12 -d /dev/a -n 3 -pn 12"          | [12]    | "/dev/a"  | 3       | AbstractNodeBasedOptions.DEFAULT_TIMEOUT
+        "-pn 13 -t 667 -d /dev/b -n 189 -pn 13" | [13]    | "/dev/b"  | 189     | 667
     }
 
     @Unroll
@@ -34,10 +34,10 @@ class NodeConfigurationReadOptionsSpec extends Specification {
         options.getParameterNumbers() == expNums;
 
         where:
-        args                              | expNums
-        "-d /dev/a -n 3 -pn 12-12"        | [12]
-        "-d /dev/a -n 3 -pn 12-16"        | [12, 13, 14, 15, 16]
-        "-d /dev/a -n 3 -pn 17-11"        | [17, 16, 15, 14, 13, 12, 11]
+        args                       | expNums
+        "-d /dev/a -n 3 -pn 12-12" | [12]
+        "-d /dev/a -n 3 -pn 12-16" | [12, 13, 14, 15, 16]
+        "-d /dev/a -n 3 -pn 17-11" | [17, 16, 15, 14, 13, 12, 11]
     }
 
     @Unroll
@@ -49,11 +49,11 @@ class NodeConfigurationReadOptionsSpec extends Specification {
         options.getParameterNumbers() == expNums;
 
         where:
-        args                              | expNums
-        "-d /dev/a -n 3 -pn 12,12"        | [12, 12]
-        "-d /dev/a -n 3 -pn 12,16"        | [12, 16]
-        "-d /dev/a -n 3 -pn 20,16"        | [20, 16]
-        "-d /dev/a -n 3 -pn 20,16,4,200"  | [20, 16, 4, 200]
+        args                             | expNums
+        "-d /dev/a -n 3 -pn 12,12"       | [12, 12]
+        "-d /dev/a -n 3 -pn 12,16"       | [12, 16]
+        "-d /dev/a -n 3 -pn 20,16"       | [20, 16]
+        "-d /dev/a -n 3 -pn 20,16,4,200" | [20, 16, 4, 200]
     }
 
     @Unroll
@@ -66,37 +66,38 @@ class NodeConfigurationReadOptionsSpec extends Specification {
         println(ex.getMessage());
 
         where:
-        args                              | _
-        ""                                | _
-        " "                               | _
-        "-d /dev"                         | _
-        "-n 56"                           | _
-        "-pn 77"                          | _
-        "-t 12"                           | _
-        "-d /dev -n 56"                   | _
-        "-d /dev -pn 77"                  | _
-        "-d /dev -t 12"                   | _
-        "-n 56 -pn 77"                    | _
-        "-n 56 -t 12"                     | _
-        "-pn 77 -t 12"                    | _
-        "-d /dev -n 56 -t 12"             | _
-        "-n 56 -pn 77 -t 12"              | _
+        args                       | _
+        ""                         | _
+        " "                        | _
+        "-d /dev"                  | _
+        "-n 56"                    | _
+        "-pn 77"                   | _
+        "-t 12"                    | _
+        "-d /dev -n 56"            | _
+        "-d /dev -pn 77"           | _
+        "-d /dev -t 12"            | _
+        "-n 56 -pn 77"             | _
+        "-n 56 -t 12"              | _
+        "-pn 77 -t 12"             | _
+        "-d /dev -n 56 -t 12"      | _
+        "-n 56 -pn 77 -t 12"       | _
 
-        "-d /dev -n xxx -pn 77"           | _
-        "-d /dev -n 56 -pn xxx"           | _
+        "-d /dev -n xxx -pn 77"    | _
+        "-d /dev -n 56 -pn xxx"    | _
 
-        "-d /dev -n 56 -pn 77-"           | _
-        "-d /dev -n 56 -pn -"             | _
-        "-d /dev -n 56 -pn -77"           | _
-        "-d /dev -n 56 -pn 77-j"          | _
-        "-d /dev -n 56 -pn j-77"          | _
-        "-d /dev -n 56 -pn j-k"           | _
+        "-d /dev -n 56 -pn 77-"    | _
+        "-d /dev -n 56 -pn -"      | _
+        "-d /dev -n 56 -pn -77"    | _
+        "-d /dev -n 56 -pn 77-j"   | _
+        "-d /dev -n 56 -pn j-77"   | _
+        "-d /dev -n 56 -pn j-k"    | _
 
-        "-d /dev -n 56 -pn 77,"           | _
-        "-d /dev -n 56 -pn ,77"           | _
-        "-d /dev -n 56 -pn ,77,55"        | _
-        "-d /dev -n 56 -pn 77,55,"        | _
-        "-d /dev -n 56 -pn j,55"          | _
-        "-d /dev -n 56 -pn 77,j"          | _
-        "-d /dev -n 56 -pn j,k"           | _
-    }}
+        "-d /dev -n 56 -pn 77,"    | _
+        "-d /dev -n 56 -pn ,77"    | _
+        "-d /dev -n 56 -pn ,77,55" | _
+        "-d /dev -n 56 -pn 77,55," | _
+        "-d /dev -n 56 -pn j,55"   | _
+        "-d /dev -n 56 -pn 77,j"   | _
+        "-d /dev -n 56 -pn j,k"    | _
+    }
+}

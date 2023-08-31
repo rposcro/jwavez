@@ -25,12 +25,14 @@ import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.frames.callbacks.AddNodeToNetworkCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
-import com.rposcro.jwavez.serial.frames.requests.AddNodeToNetworkRequest;
+import com.rposcro.jwavez.serial.frames.requests.AddNodeToNetworkRequestBuilder;
 import com.rposcro.jwavez.serial.model.AddNodeToNeworkMode;
 import com.rposcro.jwavez.serial.model.AddNodeToNeworkStatus;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -38,142 +40,145 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
 
-  private TransactionKeeper<AddNodeToNetworkFlowState> transactionKeeper;
+    private final TransactionKeeper<AddNodeToNetworkFlowState> transactionKeeper;
+    private final AddNodeToNetworkRequestBuilder addNodeToNetworkRequestBuilder;
 
-  @Getter(AccessLevel.PACKAGE)
-  private NodeInfo nodeInfo;
-  private byte callbackFlowId;
+    @Getter(AccessLevel.PACKAGE)
+    private NodeInfo nodeInfo;
+    private byte callbackFlowId;
 
-  AddNodeToNetworkFlowHandler(TransactionKeeper<AddNodeToNetworkFlowState> transactionKeeper) {
-    this.transactionKeeper = transactionKeeper;
-  }
-
-  @Override
-  NodeId getNodeId() {
-    return nodeInfo == null ? null : nodeInfo.getId();
-  }
-
-  @Override
-  void startOver(byte callbackFlowId) {
-    this.nodeInfo = null;
-    this.callbackFlowId = callbackFlowId;
-    this.transactionKeeper.transitAndSchedule(
-        AddNodeToNetworkFlowState.WAITING_FOR_PROTOCOL,
-        AddNodeToNetworkRequest.createAddNodeToNetworkRequest(AddNodeToNeworkMode.ADD_NODE_ANY, callbackFlowId, true, true));
-  }
-
-  @Override
-  void stopTransaction() {
-    this.transactionKeeper.transitAndSchedule(
-        AddNodeToNetworkFlowState.CANCELLATION_STOP_SENT,
-        finalStopFrame());
-  }
-
-  @Override
-  void killTransaction() {
-    this.transactionKeeper.transitAndSchedule(
-        AddNodeToNetworkFlowState.FAILURE_STOP_SENT,
-        finalStopFrame());
-  }
-
-  @Override
-  void handleCallback(ZWaveCallback zWaveCallback) {
-    AddNodeToNetworkCallback callback = verifyAndConvertCallback(zWaveCallback);
-    AddNodeToNetworkFlowState state = transactionKeeper.getState();
-    AddNodeToNeworkStatus status = callback.getStatus();
-    Map<AddNodeToNeworkStatus, Transition<AddNodeToNetworkFlowHandler, AddNodeToNetworkCallback, AddNodeToNetworkFlowState>> transitionsMap = TRANSITIONS.get(state);
-    Transition<AddNodeToNetworkFlowHandler, AddNodeToNetworkCallback, AddNodeToNetworkFlowState> transition = transitionsMap == null ? null : transitionsMap.get(status);
-
-    if (log.isDebugEnabled()) {
-      log.debug("Callback received in state {}, flow id {}, status {}", state, callback.getCallbackFlowId(), callback.getStatus());
+    AddNodeToNetworkFlowHandler(TransactionKeeper<AddNodeToNetworkFlowState> transactionKeeper,
+                                AddNodeToNetworkRequestBuilder addNodeToNetworkRequestBuilder) {
+        this.transactionKeeper = transactionKeeper;
+        this.addNodeToNetworkRequestBuilder = addNodeToNetworkRequestBuilder;
     }
 
-    if (transition != null) {
-      transition.getTransitionMethod().transit(this, callback, transition.getNewState());
-    } else {
-      interruptDueToStatus(status, state);
+    @Override
+    NodeId getNodeId() {
+        return nodeInfo == null ? null : nodeInfo.getId();
     }
-  }
 
-  private AddNodeToNetworkCallback verifyAndConvertCallback(ZWaveCallback callback) {
-    if (!(callback instanceof AddNodeToNetworkCallback)) {
-      interruptTransaction(new FlowException("Odd Callback class received while in node add mode %s", callback.getClass()));
-      return null;
+    @Override
+    void startOver(byte callbackFlowId) {
+        this.nodeInfo = null;
+        this.callbackFlowId = callbackFlowId;
+        this.transactionKeeper.transitAndSchedule(
+                AddNodeToNetworkFlowState.WAITING_FOR_PROTOCOL,
+                addNodeToNetworkRequestBuilder.createAddNodeToNetworkRequest(AddNodeToNeworkMode.ADD_NODE_ANY, callbackFlowId, true, true));
     }
-    AddNodeToNetworkCallback addCallback = (AddNodeToNetworkCallback) callback;
-    if (addCallback.getCallbackFlowId() != callbackFlowId) {
-      interruptTransaction(new FlowException("Incorrect callback flow id, expected %s while received %s", callbackFlowId, addCallback.getCallbackFlowId()));
-      return null;
+
+    @Override
+    void stopTransaction() {
+        this.transactionKeeper.transitAndSchedule(
+                AddNodeToNetworkFlowState.CANCELLATION_STOP_SENT,
+                finalStopFrame());
     }
-    return addCallback;
-  }
 
-  private void transit(AddNodeToNetworkFlowState newState) {
-    transactionKeeper.transit(newState);
-  }
+    @Override
+    void killTransaction() {
+        this.transactionKeeper.transitAndSchedule(
+                AddNodeToNetworkFlowState.FAILURE_STOP_SENT,
+                finalStopFrame());
+    }
 
-  private void transit(AddNodeToNetworkFlowState newState, SerialRequest request) {
-    transactionKeeper.transitAndSchedule(newState, request);
-  }
+    @Override
+    void handleCallback(ZWaveCallback zWaveCallback) {
+        AddNodeToNetworkCallback callback = verifyAndConvertCallback(zWaveCallback);
+        AddNodeToNetworkFlowState state = transactionKeeper.getState();
+        AddNodeToNeworkStatus status = callback.getStatus();
+        Map<AddNodeToNeworkStatus, Transition<AddNodeToNetworkFlowHandler, AddNodeToNetworkCallback, AddNodeToNetworkFlowState>> transitionsMap = TRANSITIONS.get(state);
+        Transition<AddNodeToNetworkFlowHandler, AddNodeToNetworkCallback, AddNodeToNetworkFlowState> transition = transitionsMap == null ? null : transitionsMap.get(status);
 
-  private void readNodeAndTransit(AddNodeToNetworkCallback callback, AddNodeToNetworkFlowState newState) {
-    nodeInfo = callback.getNodeInfo().orElse(nodeInfo);
-    transactionKeeper.transit(newState);
-  }
+        if (log.isDebugEnabled()) {
+            log.debug("Callback received in state {}, flow id {}, status {}", state, callback.getCallbackFlowId(), callback.getStatus());
+        }
 
-  private SerialRequest stoppingFrame() {
-    return AddNodeToNetworkRequest.createStopTransactionRequest(callbackFlowId);
-  }
+        if (transition != null) {
+            transition.getTransitionMethod().transit(this, callback, transition.getNewState());
+        } else {
+            interruptDueToStatus(status, state);
+        }
+    }
 
-  private SerialRequest finalStopFrame() {
-    return AddNodeToNetworkRequest.createFinalTransactionRequest();
-  }
+    private AddNodeToNetworkCallback verifyAndConvertCallback(ZWaveCallback callback) {
+        if (!(callback instanceof AddNodeToNetworkCallback)) {
+            interruptTransaction(new FlowException("Odd Callback class received while in node add mode %s", callback.getClass()));
+            return null;
+        }
+        AddNodeToNetworkCallback addCallback = (AddNodeToNetworkCallback) callback;
+        if (addCallback.getCallbackFlowId() != callbackFlowId) {
+            interruptTransaction(new FlowException("Incorrect callback flow id, expected %s while received %s", callbackFlowId, addCallback.getCallbackFlowId()));
+            return null;
+        }
+        return addCallback;
+    }
 
-  private void interruptTransaction(FlowException ex) {
-    transactionKeeper.interrupt(ex);
-  }
+    private void transit(AddNodeToNetworkFlowState newState) {
+        transactionKeeper.transit(newState);
+    }
 
-  private void interruptDueToStatus(AddNodeToNeworkStatus status, AddNodeToNetworkFlowState state) {
-    transactionKeeper.interrupt(new FlowException("Received network status %s misses current transaction state %s", status, state));
-  }
+    private void transit(AddNodeToNetworkFlowState newState, SerialRequest request) {
+        transactionKeeper.transitAndSchedule(newState, request);
+    }
 
-  private static final Map<AddNodeToNetworkFlowState, Map<AddNodeToNeworkStatus, Transition<AddNodeToNetworkFlowHandler, AddNodeToNetworkCallback, AddNodeToNetworkFlowState>>> TRANSITIONS;
+    private void readNodeAndTransit(AddNodeToNetworkCallback callback, AddNodeToNetworkFlowState newState) {
+        nodeInfo = callback.getNodeInfo().orElse(nodeInfo);
+        transactionKeeper.transit(newState);
+    }
 
-  static {
-    TRANSITIONS = new HashMap<>();
-    addTransition(WAITING_FOR_PROTOCOL, ADD_NODE_STATUS_FAILED, CLEANING_UP_ERRORS, (h, c, s) -> h.transit(s, h.stoppingFrame()));
-    addTransition(WAITING_FOR_PROTOCOL, ADD_NODE_STATUS_LEARN_READY, WAITING_FOR_NODE, (h, c, s) -> h.transit(s));
+    private SerialRequest stoppingFrame() {
+        return addNodeToNetworkRequestBuilder.createStopTransactionRequest(callbackFlowId);
+    }
 
-    addTransition(WAITING_FOR_NODE, ADD_NODE_STATUS_FAILED, CLEANING_UP_ERRORS, (h, c, s) -> h.transit(s, h.stoppingFrame()));
-    addTransition(WAITING_FOR_NODE, ADD_NODE_STATUS_NODE_FOUND, NODE_FOUND, (h, c, s) -> h.readNodeAndTransit(c, s));
+    private SerialRequest finalStopFrame() {
+        return addNodeToNetworkRequestBuilder.createFinalTransactionRequest();
+    }
 
-    addTransition(NODE_FOUND, ADD_NODE_STATUS_FAILED, CLEANING_UP_ERRORS, (h, c, s) -> h.transit(s, h.stoppingFrame()));
-    addTransition(NODE_FOUND, ADD_NODE_STATUS_ADDING_SLAVE, SLAVE_FOUND, (h, c, s) -> h.readNodeAndTransit(c, s));
-    addTransition(NODE_FOUND, ADD_NODE_STATUS_ADDING_CONTROLLER, CONTROLLER_FOUND, (h, c, s) -> h.readNodeAndTransit(c, s));
+    private void interruptTransaction(FlowException ex) {
+        transactionKeeper.interrupt(ex);
+    }
 
-    addTransition(SLAVE_FOUND, ADD_NODE_STATUS_FAILED, CLEANING_UP_ERRORS, (h, c, s) -> h.transit(s, h.stoppingFrame()));
-    addTransition(SLAVE_FOUND, ADD_NODE_STATUS_PROTOCOL_DONE, TERMINATING_ADD_NODE, (h, c, s) -> h.transit(s, h.stoppingFrame()));
+    private void interruptDueToStatus(AddNodeToNeworkStatus status, AddNodeToNetworkFlowState state) {
+        transactionKeeper.interrupt(new FlowException("Received network status %s misses current transaction state %s", status, state));
+    }
 
-    addTransition(CONTROLLER_FOUND, ADD_NODE_STATUS_FAILED, CLEANING_UP_ERRORS, (h, c, s) -> h.transit(s, h.stoppingFrame()));
-    addTransition(CONTROLLER_FOUND, ADD_NODE_STATUS_PROTOCOL_DONE, TERMINATING_ADD_NODE, (h, c, s) -> h.transit(s, h.stoppingFrame()));
+    private static final Map<AddNodeToNetworkFlowState, Map<AddNodeToNeworkStatus, Transition<AddNodeToNetworkFlowHandler, AddNodeToNetworkCallback, AddNodeToNetworkFlowState>>> TRANSITIONS;
 
-    addTransition(TERMINATING_ADD_NODE, ADD_NODE_STATUS_FAILED, FAILURE_STOP_SENT, (h, c, s) -> h.transit(s, h.finalStopFrame()));
-    addTransition(TERMINATING_ADD_NODE, ADD_NODE_STATUS_DONE, TERMINATION_STOP_SENT, (h, c, s) -> h.transit(s, h.finalStopFrame()));
+    static {
+        TRANSITIONS = new HashMap<>();
+        addTransition(WAITING_FOR_PROTOCOL, ADD_NODE_STATUS_FAILED, CLEANING_UP_ERRORS, (h, c, s) -> h.transit(s, h.stoppingFrame()));
+        addTransition(WAITING_FOR_PROTOCOL, ADD_NODE_STATUS_LEARN_READY, WAITING_FOR_NODE, (h, c, s) -> h.transit(s));
 
-    addTransition(ABORTING_OPERATION, ADD_NODE_STATUS_FAILED, FAILURE_STOP_SENT, (h, c, s) -> h.transit(s, h.finalStopFrame()));
-    addTransition(ABORTING_OPERATION, ADD_NODE_STATUS_DONE, CANCELLATION_STOP_SENT, (h, c, s) -> h.transit(s, h.finalStopFrame()));
-    addTransition(ABORTING_OPERATION, ADD_NODE_STATUS_NODE_FOUND, NODE_FOUND, (h, c, s) -> h.transit(s));
+        addTransition(WAITING_FOR_NODE, ADD_NODE_STATUS_FAILED, CLEANING_UP_ERRORS, (h, c, s) -> h.transit(s, h.stoppingFrame()));
+        addTransition(WAITING_FOR_NODE, ADD_NODE_STATUS_NODE_FOUND, NODE_FOUND, (h, c, s) -> h.readNodeAndTransit(c, s));
 
-    addTransition(CLEANING_UP_ERRORS, ADD_NODE_STATUS_FAILED, FAILURE_STOP_SENT, (h, c, s) -> h.transit(s, h.finalStopFrame()));
-    addTransition(CLEANING_UP_ERRORS, ADD_NODE_STATUS_DONE, FAILURE_STOP_SENT, (h, c, s) -> h.transit(s, h.finalStopFrame()));
-  }
+        addTransition(NODE_FOUND, ADD_NODE_STATUS_FAILED, CLEANING_UP_ERRORS, (h, c, s) -> h.transit(s, h.stoppingFrame()));
+        addTransition(NODE_FOUND, ADD_NODE_STATUS_ADDING_SLAVE, SLAVE_FOUND, (h, c, s) -> h.readNodeAndTransit(c, s));
+        addTransition(NODE_FOUND, ADD_NODE_STATUS_ADDING_CONTROLLER, CONTROLLER_FOUND, (h, c, s) -> h.readNodeAndTransit(c, s));
 
-  private static void addTransition(
-      AddNodeToNetworkFlowState currentState,
-      AddNodeToNeworkStatus callbackStatus,
-      AddNodeToNetworkFlowState newState,
-      TransitionMethod<AddNodeToNetworkFlowHandler, AddNodeToNetworkCallback, AddNodeToNetworkFlowState> method) {
-    TRANSITIONS.computeIfAbsent(currentState, (state) -> new HashMap<>())
-        .put(callbackStatus, new Transition<>(newState, method));
-  }
+        addTransition(SLAVE_FOUND, ADD_NODE_STATUS_FAILED, CLEANING_UP_ERRORS, (h, c, s) -> h.transit(s, h.stoppingFrame()));
+        addTransition(SLAVE_FOUND, ADD_NODE_STATUS_PROTOCOL_DONE, TERMINATING_ADD_NODE, (h, c, s) -> h.transit(s, h.stoppingFrame()));
+
+        addTransition(CONTROLLER_FOUND, ADD_NODE_STATUS_FAILED, CLEANING_UP_ERRORS, (h, c, s) -> h.transit(s, h.stoppingFrame()));
+        addTransition(CONTROLLER_FOUND, ADD_NODE_STATUS_PROTOCOL_DONE, TERMINATING_ADD_NODE, (h, c, s) -> h.transit(s, h.stoppingFrame()));
+
+        addTransition(TERMINATING_ADD_NODE, ADD_NODE_STATUS_FAILED, FAILURE_STOP_SENT, (h, c, s) -> h.transit(s, h.finalStopFrame()));
+        addTransition(TERMINATING_ADD_NODE, ADD_NODE_STATUS_DONE, TERMINATION_STOP_SENT, (h, c, s) -> h.transit(s, h.finalStopFrame()));
+
+        addTransition(ABORTING_OPERATION, ADD_NODE_STATUS_FAILED, FAILURE_STOP_SENT, (h, c, s) -> h.transit(s, h.finalStopFrame()));
+        addTransition(ABORTING_OPERATION, ADD_NODE_STATUS_DONE, CANCELLATION_STOP_SENT, (h, c, s) -> h.transit(s, h.finalStopFrame()));
+        addTransition(ABORTING_OPERATION, ADD_NODE_STATUS_NODE_FOUND, NODE_FOUND, (h, c, s) -> h.transit(s));
+
+        addTransition(CLEANING_UP_ERRORS, ADD_NODE_STATUS_FAILED, FAILURE_STOP_SENT, (h, c, s) -> h.transit(s, h.finalStopFrame()));
+        addTransition(CLEANING_UP_ERRORS, ADD_NODE_STATUS_DONE, FAILURE_STOP_SENT, (h, c, s) -> h.transit(s, h.finalStopFrame()));
+    }
+
+    private static void addTransition(
+            AddNodeToNetworkFlowState currentState,
+            AddNodeToNeworkStatus callbackStatus,
+            AddNodeToNetworkFlowState newState,
+            TransitionMethod<AddNodeToNetworkFlowHandler, AddNodeToNetworkCallback, AddNodeToNetworkFlowState> method) {
+        TRANSITIONS.computeIfAbsent(currentState, (state) -> new HashMap<>())
+                .put(callbackStatus, new Transition<>(newState, method));
+    }
 }

@@ -1,8 +1,8 @@
 package com.rposcro.jwavez.tools.shell.services;
 
 import com.rposcro.jwavez.core.classes.CommandClass;
-import com.rposcro.jwavez.core.commands.controlled.builders.ManufacturerSpecificCommandBuilder;
-import com.rposcro.jwavez.core.commands.controlled.builders.VersionCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.manufacturerspecific.ManufacturerSpecificCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.version.VersionCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.manufacturerspecific.ManufacturerSpecificReport;
 import com.rposcro.jwavez.core.commands.supported.version.VersionCommandClassReport;
 import com.rposcro.jwavez.core.commands.supported.version.VersionReport;
@@ -10,10 +10,10 @@ import com.rposcro.jwavez.core.commands.types.ManufacturerSpecificCommandType;
 import com.rposcro.jwavez.core.commands.types.VersionCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.core.model.NodeInfo;
+import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationUpdateCallback;
-import com.rposcro.jwavez.serial.frames.requests.RequestNodeInfoRequest;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
 import com.rposcro.jwavez.tools.shell.models.CommandClassMeta;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
@@ -34,6 +34,15 @@ public class NodeInformationService {
     @Autowired
     private NodeInformationCache nodeInformationCache;
 
+    @Autowired
+    private ManufacturerSpecificCommandBuilder manufacturerSpecificCommandBuilder;
+
+    @Autowired
+    private VersionCommandBuilder versionCommandBuilder;
+
+    @Autowired
+    private SerialRequestFactory serialRequestFactory;
+
     public NodeInformation fetchNodeInformation(int nodeId) throws SerialException {
         NodeInformation nodeInformation = new NodeInformation();
         nodeInformation.setProductInformation(fetchProductInformation(nodeId));
@@ -44,9 +53,9 @@ public class NodeInformationService {
 
     public boolean pingNode(int nodeId) {
         try {
-            fetchVersionReport(new NodeId(nodeId));
+            fetchVersionReport(NodeId.forId(nodeId));
             return true;
-        } catch(SerialException e) {
+        } catch (SerialException e) {
             return false;
         }
     }
@@ -74,7 +83,7 @@ public class NodeInformationService {
     }
 
     private NodeProductInformation fetchProductInformation(int nodeId) throws SerialException {
-        final NodeId nodeID = new NodeId(nodeId);
+        final NodeId nodeID = NodeId.forId(nodeId);
         NodeInfo nodeInfo = fetchNodeInfo(nodeID);
         ManufacturerSpecificReport manufacturerReport = fetchManufacturerSpecificReport(nodeID);
         VersionReport versionReport = fetchVersionReport(nodeID);
@@ -99,7 +108,7 @@ public class NodeInformationService {
     private NodeInfo fetchNodeInfo(NodeId nodeID) throws SerialException {
         ApplicationUpdateCallback callback = serialCommunicationService.runSerialCallbackFunction((executor ->
                 executor.requestZWCallback(
-                        RequestNodeInfoRequest.createRequestNodeInfoRequest(nodeID),
+                        serialRequestFactory.networkManagementRequestBuilder().createRequestNodeInfoRequest(nodeID),
                         SerialCommand.APPLICATION_UPDATE,
                         SerialUtils.DEFAULT_TIMEOUT)
         ));
@@ -110,7 +119,7 @@ public class NodeInformationService {
         return (ManufacturerSpecificReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
                         nodeID,
-                        new ManufacturerSpecificCommandBuilder().buildGetCommand(),
+                        manufacturerSpecificCommandBuilder.v1().buildGetCommand(),
                         ManufacturerSpecificCommandType.MANUFACTURER_SPECIFIC_REPORT,
                         SerialUtils.DEFAULT_TIMEOUT)
         )).getAcquiredSupportedCommand();
@@ -120,7 +129,7 @@ public class NodeInformationService {
         return (VersionReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                 executor.requestApplicationCommand(
                         nodeID,
-                        new VersionCommandBuilder().buildGetCommand(),
+                        versionCommandBuilder.v1().buildGetCommand(),
                         VersionCommandType.VERSION_REPORT,
                         SerialUtils.DEFAULT_TIMEOUT)
         )).getAcquiredSupportedCommand();
@@ -129,7 +138,7 @@ public class NodeInformationService {
     private CommandClassMeta[] fetchCommandClassMetadata(NodeId nodeID, CommandClass[] commandClasses)
             throws SerialException {
         CommandClassMeta[] metas = new CommandClassMeta[commandClasses.length];
-        for(int i = 0; i < commandClasses.length; i++) {
+        for (int i = 0; i < commandClasses.length; i++) {
             CommandClass commandClass = commandClasses[i];
             if (commandClass.isMarker()) {
                 metas[i] = new CommandClassMeta(commandClass, -1);
@@ -137,11 +146,11 @@ public class NodeInformationService {
                 VersionCommandClassReport versionReport = (VersionCommandClassReport) serialCommunicationService.runApplicationCommandFunction((executor ->
                         executor.requestApplicationCommand(
                                 nodeID,
-                                new VersionCommandBuilder().buildCommandClassGetCommand(commandClass),
+                                versionCommandBuilder.v1().buildCommandClassGetCommand(commandClass),
                                 VersionCommandType.VERSION_COMMAND_CLASS_REPORT,
                                 SerialUtils.DEFAULT_TIMEOUT)
                 )).getAcquiredSupportedCommand();
-                metas[i] = new CommandClassMeta(commandClass, versionReport.getCommandClassVersion());
+                metas[i] = new CommandClassMeta(commandClass, versionReport.getReportedCommandClassVersion());
             }
         }
         return metas;

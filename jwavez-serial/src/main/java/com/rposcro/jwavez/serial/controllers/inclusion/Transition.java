@@ -9,6 +9,6 @@ import lombok.Getter;
 @AllArgsConstructor
 public class Transition<H, C extends ZWaveCallback, T extends TransactionState> {
 
-  private T newState;
-  private TransitionMethod<H, C, T> transitionMethod;
+    private T newState;
+    private TransitionMethod<H, C, T> transitionMethod;
 }

@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.shell.communication;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
@@ -49,22 +49,22 @@ public class SerialCallbackExecutor {
     }
 
     public <T extends ZWaveCallback> T requestZWCallback(SerialRequest request, SerialCommand expectedCallbackCommand, long timeout)
-    throws SerialException {
+            throws SerialException {
         try {
             initExecutionContext(expectedCallbackCommand);
             futureCommand = new CompletableFuture<>();
             controller.requestResponseFlow(request);
             return (T) futureCommand.get(timeout, TimeUnit.MILLISECONDS);
-        } catch(TimeoutException e) {
+        } catch (TimeoutException e) {
             throw new FlowException("Request failed due to timeout");
-        } catch(Exception e) {
+        } catch (Exception e) {
             throw new FlowException("Unexpected exception occurred");
         } finally {
             cancelExecutionContext();
         }
     }
 
-    private void handleSerialResponse(ViewBuffer responseBuffer) {
+    private void handleSerialResponse(ImmutableBuffer responseBuffer) {
     }
 
     private void interceptSerialCallback(ZWaveCallback callback) {

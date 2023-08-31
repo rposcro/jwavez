@@ -13,10 +13,10 @@ import lombok.Getter;
 @AllArgsConstructor
 public class NodeInfo {
 
-  private NodeId id;
-  private BasicDeviceClass basicDeviceClass;
-  private GenericDeviceClass genericDeviceClass;
-  private SpecificDeviceClass specificDeviceClass;
-  private CommandClass[] commandClasses;
-  private byte[] commandCodes;
+    private NodeId id;
+    private BasicDeviceClass basicDeviceClass;
+    private GenericDeviceClass genericDeviceClass;
+    private SpecificDeviceClass specificDeviceClass;
+    private CommandClass[] commandClasses;
+    private byte[] commandCodes;
 }

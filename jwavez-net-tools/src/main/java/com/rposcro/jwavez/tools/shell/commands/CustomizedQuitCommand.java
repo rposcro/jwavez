@@ -16,7 +16,7 @@ public class CustomizedQuitCommand implements Quit.Command {
     @Autowired
     private SerialCommunicationService serialCommunicationService;
 
-    @ShellMethod(value = "Quits JWaveZ shell", key={ "quit", "exit"} )
+    @ShellMethod(value = "Quits JWaveZ shell", key = {"quit", "exit"})
     public void quit() throws SerialPortException {
         serialCommunicationService.releaseAllHooks();
         throw new ExitRequest();

@@ -2,11 +2,11 @@ allprojects {
     wrapper {
         gradleVersion '7.0.2'
     }
-
     repositories {
         mavenCentral()
     }
 }
+
 wrapper {
     gradleVersion '7.0.2'
 }

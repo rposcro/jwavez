@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.tools.shell.commands.talk;
 
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
-import com.rposcro.jwavez.core.commands.controlled.builders.SwitchMultiLevelCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.switchmultilevel.SwitchMultiLevelCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.switchmultilevel.SwitchMultilevelReport;
 import com.rposcro.jwavez.core.commands.types.SwitchMultiLevelCommandType;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
@@ -27,18 +27,21 @@ public class MultilevelSwitchCommands {
     @Autowired
     private JWaveZShellContext shellContext;
 
-    @ShellMethod(value = "Request multilevel report", key = { "switchmultilevel report", "sml report" })
+    @Autowired
+    private SwitchMultiLevelCommandBuilder switchMultiLevelCommandBuilder;
+
+    @ShellMethod(value = "Request multilevel report", key = {"switchmultilevel report", "sml report"})
     public String executeMultilevelGet(int nodeId) throws SerialException {
-        ZWaveControlledCommand command = new SwitchMultiLevelCommandBuilder().buildGetCommand();
+        ZWaveControlledCommand command = switchMultiLevelCommandBuilder.v1().buildGetCommand();
         SwitchMultilevelReport report = talkCommunicationService.requestTalk(nodeId, command, SwitchMultiLevelCommandType.SWITCH_MULTILEVEL_REPORT);
         return String.format(String.format("Multilevel report for node %s\nCurrent value: %s, Target value: %s, Duration: %s\n"
                 , nodeId, report.getCurrentValue(), report.getTargetValue(), report.getDuration()
         ));
     }
 
-    @ShellMethod(value = "Send multilevel set", key = { "switchmultilevel set", "sml set" })
+    @ShellMethod(value = "Send multilevel set", key = {"switchmultilevel set", "sml set"})
     public String executeMultilevelSet(int nodeId, int value, @ShellOption(defaultValue = "0") int duration) throws SerialException {
-        ZWaveControlledCommand command = new SwitchMultiLevelCommandBuilder().buildSetCommand((byte) value, (byte) duration);
+        ZWaveControlledCommand command = switchMultiLevelCommandBuilder.v2().buildSetCommand((byte) value, (byte) duration);
         boolean success = talkCommunicationService.sendCommand(nodeId, command);
         if (success) {
             return String.format("Command %s successfully sent to node %s", SwitchMultiLevelCommandType.SWITCH_MULTILEVEL_SET, nodeId);

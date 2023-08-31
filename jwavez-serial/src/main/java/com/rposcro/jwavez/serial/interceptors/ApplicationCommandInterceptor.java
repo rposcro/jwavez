@@ -1,11 +1,12 @@
 package com.rposcro.jwavez.serial.interceptors;
 
-import com.rposcro.jwavez.core.commands.SupportedCommandParser;
+import com.rposcro.jwavez.core.commands.JwzSupportedCommandParser;
+import com.rposcro.jwavez.core.commands.supported.SupportedCommandResolversRegistry;
 import com.rposcro.jwavez.core.commands.types.CommandType;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
-import com.rposcro.jwavez.core.handlers.SupportedCommandDispatcher;
-import com.rposcro.jwavez.core.handlers.SupportedCommandHandler;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.listeners.SupportedCommandDispatcher;
+import com.rposcro.jwavez.core.listeners.SupportedCommandListener;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationCommandHandlerCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.model.FrameCast;
@@ -15,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ApplicationCommandInterceptor implements CallbackInterceptor {
 
-    private SupportedCommandParser supportedCommandParser;
+    private JwzSupportedCommandParser supportedCommandParser;
     private SupportedCommandDispatcher supportedCommandDispatcher;
 
     private boolean supportMulticasts;
@@ -24,7 +25,7 @@ public class ApplicationCommandInterceptor implements CallbackInterceptor {
 
     public ApplicationCommandInterceptor() {
         this.supportedCommandDispatcher = new SupportedCommandDispatcher();
-        this.supportedCommandParser = SupportedCommandParser.defaultParser();
+        this.supportedCommandParser = new JwzSupportedCommandParser(SupportedCommandResolversRegistry.instance());
     }
 
     @Builder
@@ -33,19 +34,19 @@ public class ApplicationCommandInterceptor implements CallbackInterceptor {
             boolean supportMulticasts,
             boolean supportBroadcasts,
             boolean skipUnsupportedCallbacks) {
-        this.supportedCommandParser = SupportedCommandParser.defaultParser();
+        this.supportedCommandParser = new JwzSupportedCommandParser(SupportedCommandResolversRegistry.instance());
         this.supportedCommandDispatcher = supportedCommandDispatcher;
         this.supportBroadcasts = supportBroadcasts;
         this.supportMulticasts = supportMulticasts;
         this.skipUnsupportedCallbacks = skipUnsupportedCallbacks;
     }
 
-    public ApplicationCommandInterceptor registerCommandHandler(CommandType commandType, SupportedCommandHandler commandHandler) {
+    public ApplicationCommandInterceptor registerCommandHandler(CommandType commandType, SupportedCommandListener commandHandler) {
         supportedCommandDispatcher.registerHandler(commandType, commandHandler);
         return this;
     }
 
-    public ApplicationCommandInterceptor registerAllCommandsHandler(SupportedCommandHandler commandHandler) {
+    public ApplicationCommandInterceptor registerAllCommandsHandler(SupportedCommandListener commandHandler) {
         supportedCommandDispatcher.registerAllCommandsHandler(commandHandler);
         return this;
     }

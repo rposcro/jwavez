@@ -40,8 +40,8 @@ public class InclusionCommands {
     @Autowired
     private ConsoleAccessor console;
 
-    @ShellMethod(value = "Include new node into network", key="include")
-    public String includeNode(@ShellOption(value = { "--timeout", "-to" }, defaultValue = "60") int timeout) throws SerialException {
+    @ShellMethod(value = "Include new node into network", key = "include")
+    public String includeNode(@ShellOption(value = {"--timeout", "-to"}, defaultValue = "60") int timeout) throws SerialException {
         if (timeout > 60) {
             return "Maximum timeout value is 60 seconds";
         }
@@ -60,8 +60,8 @@ public class InclusionCommands {
         }
     }
 
-    @ShellMethod(value = "Exclude node from network", key="exclude")
-    public String excludeNode(@ShellOption(value = { "--timeout", "-to" }, defaultValue = "60") int timeout) throws SerialException {
+    @ShellMethod(value = "Exclude node from network", key = "exclude")
+    public String excludeNode(@ShellOption(value = {"--timeout", "-to"}, defaultValue = "60") int timeout) throws SerialException {
         if (timeout > 60) {
             return "Maximum timeout value is 60 seconds";
         }

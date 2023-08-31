@@ -35,13 +35,13 @@ public class DongleCommands {
     @Autowired
     private ConsoleAccessor console;
 
-    @ShellMethod(value = "Show current dongle information", key="info")
+    @ShellMethod(value = "Show current dongle information", key = "info")
     public String showInfo() throws SerialException {
         DongleInformation dongleInformation = shellContext.getDongleInformation();
         return String.format("\n** Network Information\n%s\n\n"
-                + "** Dongle Role Information\n%s\n\n"
-                + "** Device Information\n%s\n\n"
-                + "** Functions\n%s\n"
+                        + "** Dongle Role Information\n%s\n\n"
+                        + "** Device Information\n%s\n\n"
+                        + "** Functions\n%s\n"
                 , dongleInformationFormatter.formatNetworkInfo(dongleInformation.getDongleNetworkInformation())
                 , dongleInformationFormatter.formatRoleInfo(dongleInformation.getDongleRoleInformation())
                 , dongleInformationFormatter.formatDeviceInfo(dongleInformation.getDongleDeviceInformation())
@@ -49,7 +49,7 @@ public class DongleCommands {
         );
     }
 
-    @ShellMethod(value = "Reset dongle to factory defaults", key="wipeout")
+    @ShellMethod(value = "Reset dongle to factory defaults", key = "wipeout")
     public String factoryReset() throws SerialException {
         String answer = console.readLine("NOTE!\n"
                 + "If you continue, ALL device settings will be reset to factory defaults and your custom changes will be lost.\n"

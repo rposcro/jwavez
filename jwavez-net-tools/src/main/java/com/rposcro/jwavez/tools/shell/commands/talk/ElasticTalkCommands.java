@@ -1,12 +1,12 @@
 package com.rposcro.jwavez.tools.shell.commands.talk;
 
-import com.rposcro.jwavez.core.commands.SupportedCommandParser;
+import com.rposcro.jwavez.core.commands.JwzSupportedCommandParser;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.multichannel.MultiChannelCommandEncapsulation;
 import com.rposcro.jwavez.core.commands.types.MultiChannelCommandType;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.utils.BufferUtil;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.communication.ApplicationCommandResult;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
@@ -28,16 +28,16 @@ public class ElasticTalkCommands {
     private ConsoleAccessor console;
 
     @Autowired
-    private SupportedCommandParser supportedCommandParser;
+    private JwzSupportedCommandParser supportedCommandParser;
 
     @Autowired
     private TalkCommunicationService talkCommunicationService;
 
-    @ShellMethod(value = "Sends application command payload", key = { "send" })
+    @ShellMethod(value = "Sends application command payload", key = {"send"})
     public String sendApplicationCommand(
-            @ShellOption(value = { "--node-id", "-id" }) int nodeId,
-            @ShellOption(value = { "--payload", "-py" }) String payload)
-    throws SerialException {
+            @ShellOption(value = {"--node-id", "-id"}) int nodeId,
+            @ShellOption(value = {"--payload", "-py"}) String payload)
+            throws SerialException {
         byte[] payloadBytes = parsePayload(payload);
         console.flushLine(format("Sending application command to " + nodeId));
 
@@ -45,9 +45,9 @@ public class ElasticTalkCommands {
         ZWaveSupportedCommand acquiredCommand = commandResult.getAcquiredSupportedCommand();
 
         console.flushLine(format("Serial response frame: %s",
-                BufferUtil.bufferToString(commandResult.getSerialResponsePayload())));
+                BuffersUtil.asString(commandResult.getSerialResponsePayload())));
         console.flushLine(format("Serial callback frame: %s",
-                BufferUtil.bufferToString(commandResult.getSerialCallbackPayload())));
+                BuffersUtil.asString(commandResult.getSerialCallbackPayload())));
         console.flushLine(format("Serial callback: %s", commandResult.getSerialCallback().asFineString()));
         console.flushLine("Supported application command: " + acquiredCommand.asNiceString());
 
@@ -55,7 +55,7 @@ public class ElasticTalkCommands {
             try {
                 console.flushLine("Encapsulated application command: " +
                         extractEncapsulatedCommand((MultiChannelCommandEncapsulation) acquiredCommand).asNiceString());
-            } catch(Exception e) {
+            } catch (Exception e) {
                 console.flushLine("Encapsulated application command: Failed to parse");
             }
         }

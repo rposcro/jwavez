@@ -33,23 +33,23 @@ public class TopScopeCommands {
     @Autowired
     private NodeScopeContext nodeScopeContext;
 
-    @ShellMethod(value = "Change working scope to Dongle", key="dongle")
+    @ShellMethod(value = "Change working scope to Dongle", key = "dongle")
     public String switchToDongleScope() {
         return switchToScope(ShellScope.DONGLE);
     }
 
-    @ShellMethod(value = "Change working scope to Network", key="network")
+    @ShellMethod(value = "Change working scope to Network", key = "network")
     public String switchToNetworkScope() {
         return switchToScope(ShellScope.NETWORK);
     }
 
-    @ShellMethod(value = "Change working scope to Talk", key="talk")
+    @ShellMethod(value = "Change working scope to Talk", key = "talk")
     public String switchToTalkScope() {
         return switchToScope(ShellScope.TALK);
     }
 
-    @ShellMethod(value = "Change working scope to Node", key="node")
-    public String switchToNodeScope(@ShellOption(value = { "--node-id", "-id" }, defaultValue = ShellOption.NULL) Integer nodeId) {
+    @ShellMethod(value = "Change working scope to Node", key = "node")
+    public String switchToNodeScope(@ShellOption(value = {"--node-id", "-id"}, defaultValue = ShellOption.NULL) Integer nodeId) {
         switchToScope(ShellScope.NODE);
         String message = "Scope changed to " + ShellScope.NODE;
         if (nodeId != null && nodeInformationCache.isNodeKnown(nodeId)) {

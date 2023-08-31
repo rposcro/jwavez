@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.tools.shell.commands.talk;
 
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
-import com.rposcro.jwavez.core.commands.controlled.builders.SwitchBinaryCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.switchbinary.SwitchBinaryCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.binaryswitch.BinarySwitchReport;
 import com.rposcro.jwavez.core.commands.supported.multichannel.MultiChannelCommandEncapsulation;
 import com.rposcro.jwavez.core.commands.types.MultiChannelCommandType;
@@ -30,20 +30,25 @@ public class SwitchBinaryCommands {
     @Autowired
     private JWaveZShellContext shellContext;
 
-    @ShellMethod(value = "Request binary report", key = { "switchbinary report", "sb report" })
+    @Autowired
+    EncapsulationBuilder encapsulationBuilder;
+
+    @Autowired
+    private SwitchBinaryCommandBuilder switchBinaryCommandBuilder;
+
+    @ShellMethod(value = "Request binary report", key = {"switchbinary report", "sb report"})
     public String executeBinaryReport(
-            @ShellOption(value = { "--node-id", "-id" }) int nodeId,
-            @ShellOption(value = { "--encapsulate", "-encap", "-ec" }, defaultValue = ShellOption.NULL) String encapsulationParameter
+            @ShellOption(value = {"--node-id", "-id"}) int nodeId,
+            @ShellOption(value = {"--encapsulate", "-encap", "-ec"}, defaultValue = ShellOption.NULL) String encapsulationParameter
     ) throws SerialException {
-        SwitchBinaryCommandBuilder commandBuilder = new SwitchBinaryCommandBuilder();
-        ZWaveControlledCommand command = commandBuilder.buildGetCommand();
+        ZWaveControlledCommand command = switchBinaryCommandBuilder.v1().buildGetCommand();
         short reportValue;
 
         if (encapsulationParameter == null) {
             BinarySwitchReport binaryReport = talkCommunicationService.requestTalk(nodeId, command, SwitchBinaryCommandType.BINARY_SWITCH_REPORT);
             reportValue = binaryReport.getValue();
         } else {
-            command = new EncapsulationBuilder().encapsulateCommand(command, encapsulationParameter);
+            command = encapsulationBuilder.encapsulateCommand(command, encapsulationParameter);
             MultiChannelCommandEncapsulation encapsulation = talkCommunicationService.requestTalk(
                     nodeId, command, MultiChannelCommandType.MULTI_CHANNEL_CMD_ENCAP);
             reportValue = (short) (encapsulation.getEncapsulatedCommandPayload()[0] & 0xff);
@@ -52,17 +57,16 @@ public class SwitchBinaryCommands {
         return String.format("Binary value reported: 0x%02X\n", reportValue);
     }
 
-    @ShellMethod(value = "Binary set request", key = { "switchbinary set", "sb set" })
+    @ShellMethod(value = "Binary set request", key = {"switchbinary set", "sb set"})
     public String executeBinarySet(
-            @ShellOption(value = { "--node-id", "-id" }) int nodeId,
-            @ShellOption(value = { "--binary-value", "-value" }) int binaryValue,
-            @ShellOption(value = { "--encapsulate", "-encap", "-ec" }, defaultValue = ShellOption.NULL) String encapsulationParameter
+            @ShellOption(value = {"--node-id", "-id"}) int nodeId,
+            @ShellOption(value = {"--binary-value", "-value"}) int binaryValue,
+            @ShellOption(value = {"--encapsulate", "-encap", "-ec"}, defaultValue = ShellOption.NULL) String encapsulationParameter
     ) throws SerialException {
-        SwitchBinaryCommandBuilder commandBuilder = new SwitchBinaryCommandBuilder();
-        ZWaveControlledCommand command = commandBuilder.buildSetCommandV1((byte) binaryValue);
+        ZWaveControlledCommand command = switchBinaryCommandBuilder.v1().buildSetCommand((byte) binaryValue);
 
         if (encapsulationParameter != null) {
-            command = new EncapsulationBuilder().encapsulateCommand(command, encapsulationParameter);
+            command = encapsulationBuilder.encapsulateCommand(command, encapsulationParameter);
         }
 
         talkCommunicationService.sendCommand(nodeId, command);

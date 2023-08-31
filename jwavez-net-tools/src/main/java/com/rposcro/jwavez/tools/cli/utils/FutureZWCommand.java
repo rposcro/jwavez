@@ -11,11 +11,11 @@ import java.util.concurrent.Future;
 @Builder
 public class FutureZWCommand {
 
-  @Getter
-  private ZWaveCallback solicitedCallback;
-  private Future<ZWaveSupportedCommand> supportedCommand;
+    @Getter
+    private ZWaveCallback solicitedCallback;
+    private Future<ZWaveSupportedCommand> supportedCommand;
 
-  public ZWaveSupportedCommand getSupportedCommand() throws InterruptedException, ExecutionException {
-    return supportedCommand.get();
-  }
+    public ZWaveSupportedCommand getSupportedCommand() throws InterruptedException, ExecutionException {
+        return supportedCommand.get();
+    }
 }

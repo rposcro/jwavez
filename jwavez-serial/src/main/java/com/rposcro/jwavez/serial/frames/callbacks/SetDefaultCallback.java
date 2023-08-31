@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.serial.frames.callbacks;
 
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.frames.CallbackFrameModel;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Getter;
 @CallbackFrameModel(function = SerialCommand.SET_DEFAULT)
 public class SetDefaultCallback extends FlowCallback {
 
-  public SetDefaultCallback(ViewBuffer frameBuffer) {
-    super(frameBuffer);
-  }
+    public SetDefaultCallback(ImmutableBuffer frameBuffer) {
+        super(frameBuffer);
+    }
 }

@@ -17,9 +17,9 @@ class DefaultDeviceTimeoutBasedOptionsSpec extends Specification {
         options.timeout == expTimeout;
 
         where:
-        args                        | expDevice     | expTimeout
-        "-d /dev/dummy"             | "/dev/dummy"  | 0
-        "-d /dev/dummy -t 1234"     | "/dev/dummy"  | 1234
+        args                    | expDevice    | expTimeout
+        "-d /dev/dummy"         | "/dev/dummy" | 0
+        "-d /dev/dummy -t 1234" | "/dev/dummy" | 1234
     }
 
     @Unroll

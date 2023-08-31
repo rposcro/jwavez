@@ -8,25 +8,31 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PROTECTED)
 public abstract class ZWaveSupportedCommand<C extends CommandType> {
 
-  protected static final int OFFSET_COMMAND_CLASS = 0;
-  protected static final int OFFSET_COMMAND = 1;
+    protected static final int OFFSET_COMMAND_CLASS = 0;
+    protected static final int OFFSET_COMMAND = 1;
 
-  private C commandType;
-  private NodeId sourceNodeId;
+    protected C commandType;
+    protected NodeId sourceNodeId;
+    protected byte commandVersion;
 
-  public CommandClass getCommandClass() {
-    return this.commandType.getCommandClass();
-  }
+    protected ZWaveSupportedCommand(C commandType, NodeId sourceNodeId) {
+        this.commandType = commandType;
+        this.sourceNodeId = sourceNodeId;
+    }
 
-  public String asNiceString() {
-    return String.format("%s(%02x) %s(%02x)",
-            commandType.getCommandClass(),
-            commandType.getCommandClass().getCode(),
-            commandType.name(),
-            commandType.getCode()
-    );
-  }
+    public CommandClass getCommandClass() {
+        return this.commandType.getCommandClass();
+    }
+
+    public String asNiceString() {
+        return String.format("%s(%02x) %s(%02x) commandVersion(%02x)",
+                commandType.getCommandClass(),
+                commandType.getCommandClass().getCode(),
+                commandType.name(),
+                commandType.getCode(),
+                commandVersion
+        );
+    }
 }

@@ -36,7 +36,7 @@ public class ApplicationStartedListener implements ApplicationListener<Applicati
                 shellContext.setDongleDevicePath(devicePath);
                 shellContext.setDongleInformation(dongleInformationService.collectDongleInformation());
             }
-        } catch(SerialException e) {
+        } catch (SerialException e) {
             log.error("Failed to initialize detected dongle device!", e);
         }
     }

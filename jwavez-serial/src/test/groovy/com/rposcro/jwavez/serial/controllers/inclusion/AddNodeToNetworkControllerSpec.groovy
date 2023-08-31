@@ -11,7 +11,8 @@ import com.rposcro.jwavez.serial.frames.callbacks.AddNodeToNetworkCallback
 import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler
 import com.rposcro.jwavez.serial.model.AddNodeToNeworkStatus
 import com.rposcro.jwavez.serial.rxtx.RxTxRouterProcess
-import com.rposcro.jwavez.serial.utils.FrameUtil
+import com.rposcro.jwavez.serial.utils.ChecksumUtil
+import com.rposcro.jwavez.serial.utils.FramesUtil
 import spock.lang.Specification
 
 import java.nio.ByteBuffer
@@ -34,7 +35,7 @@ class AddNodeToNetworkControllerSpec extends Specification {
 
     def "new node successfully added"() {
         given:
-        rxTxRouterProcess.sendRequest(_) >> { };
+        rxTxRouterProcess.sendRequest(_) >> {};
 
         when:
         controller.transactionKeeper.reset();
@@ -71,7 +72,7 @@ class AddNodeToNetworkControllerSpec extends Specification {
         given:
         actions = [
                 { controller.flowHandler.handleCallback(learnReadyCallback(controller.flowHandler.callbackFlowId)) },
-                { }
+                {}
         ].iterator();
         rxTxRouterProcess.sendRequest(_) >> { nextCallback() };
 
@@ -84,7 +85,7 @@ class AddNodeToNetworkControllerSpec extends Specification {
 
     def "timeout awaiting callback when adding in progress"() {
         given:
-        rxTxRouterProcess.sendRequest(_) >> { };
+        rxTxRouterProcess.sendRequest(_) >> {};
 
         when:
         controller.transactionKeeper.reset();
@@ -154,7 +155,7 @@ class AddNodeToNetworkControllerSpec extends Specification {
     }
 
     def callbackOfData(byte[] data) {
-        data[data.length - 1] = FrameUtil.frameCRC(data);
+        data[data.length - 1] = ChecksumUtil.frameCrc(data);
         ViewBuffer buffer = new ViewBuffer(ByteBuffer.wrap(data));
         buffer.setViewRange(0, data.length);
         return new AddNodeToNetworkCallback(buffer);

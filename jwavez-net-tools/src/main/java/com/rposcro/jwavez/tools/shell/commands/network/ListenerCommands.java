@@ -32,7 +32,7 @@ public class ListenerCommands {
     @Autowired
     private NetworkListeningService networkListeningService;
 
-    @ShellMethod(value = "Enters command listener mode", key="listen")
+    @ShellMethod(value = "Enters command listener mode", key = "listen")
     public String listenCommand() throws SerialException {
         networkListeningService.startListening();
         console.flushLine("Entered listening mode, press <Enter> to quit");

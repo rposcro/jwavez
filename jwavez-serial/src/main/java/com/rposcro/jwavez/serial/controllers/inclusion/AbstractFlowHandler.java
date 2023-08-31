@@ -5,9 +5,13 @@ import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 
 abstract class AbstractFlowHandler {
 
-  abstract void startOver(byte callbackFlowId);
-  abstract void stopTransaction();
-  abstract void killTransaction();
-  abstract NodeId getNodeId();
-  abstract void handleCallback(ZWaveCallback zWaveCallback);
+    abstract void startOver(byte callbackFlowId);
+
+    abstract void stopTransaction();
+
+    abstract void killTransaction();
+
+    abstract NodeId getNodeId();
+
+    abstract void handleCallback(ZWaveCallback zWaveCallback);
 }

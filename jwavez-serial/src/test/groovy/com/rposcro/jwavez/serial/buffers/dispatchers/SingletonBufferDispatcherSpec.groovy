@@ -15,7 +15,7 @@ class SingletonBufferDispatcherSpec extends Specification {
         def buffer = dispatcher.allocateBuffer(data.size());
 
         when:
-        data.stream().forEach({ bt -> buffer.put((byte) bt)});
+        data.stream().forEach({ bt -> buffer.put((byte) bt) });
         def byteBuffer = buffer.asByteBuffer();
 
         then:
@@ -23,11 +23,11 @@ class SingletonBufferDispatcherSpec extends Specification {
         data == listFromBuffer(byteBuffer);
 
         where:
-        data                | _
-        []                  | _
-        [0x44]              | _
-        [0x22, 0x44]        | _
-        [0x22, 0x44, 0x66]  | _
+        data               | _
+        []                 | _
+        [0x44]             | _
+        [0x22, 0x44]       | _
+        [0x22, 0x44, 0x66] | _
     }
 
     @Unroll
@@ -37,18 +37,18 @@ class SingletonBufferDispatcherSpec extends Specification {
         def buffer = dispatcher.allocateBuffer(data.size());
 
         when:
-        data.stream().forEach({ bt -> buffer.put((byte) bt)});
+        data.stream().forEach({ bt -> buffer.put((byte) bt) });
         buffer.put((byte) 0x01);
 
         then:
         thrown BufferOverflowException;
 
         where:
-        data                | _
-        []                  | _
-        [0x44]              | _
-        [0x22, 0x44]        | _
-        [0x22, 0x44, 0x66]  | _
+        data               | _
+        []                 | _
+        [0x44]             | _
+        [0x22, 0x44]       | _
+        [0x22, 0x44, 0x66] | _
     }
 
     def "releases buffer by calling dispatcher's recycle"() {

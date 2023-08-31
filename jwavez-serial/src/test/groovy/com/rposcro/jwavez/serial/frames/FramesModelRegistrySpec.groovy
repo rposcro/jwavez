@@ -26,12 +26,12 @@ class FramesModelRegistrySpec extends Specification {
         optionalClass.get() == expectedClass;
 
         where:
-        functionId  | expectedClass
-        0x4a        | AddNodeToNetworkCallback.class
-        0x04        | ApplicationCommandHandlerCallback.class
-        0x49        | ApplicationUpdateCallback.class
-        0x4b        | RemoveNodeFromNetworkCallback.class
-        0x13        | SendDataCallback.class
+        functionId | expectedClass
+        0x4a       | AddNodeToNetworkCallback.class
+        0x04       | ApplicationCommandHandlerCallback.class
+        0x49       | ApplicationUpdateCallback.class
+        0x4b       | RemoveNodeFromNetworkCallback.class
+        0x13       | SendDataCallback.class
     }
 
     @Unroll
@@ -47,9 +47,9 @@ class FramesModelRegistrySpec extends Specification {
         optionalClass.get() == expectedClass;
 
         where:
-        functionId  | expectedClass
-        0x07        | GetCapabilitiesResponse.class
-        0x15        | GetVersionResponse.class
-        0x13        | SendDataResponse.class
+        functionId | expectedClass
+        0x07       | GetCapabilitiesResponse.class
+        0x15       | GetVersionResponse.class
+        0x13       | SendDataResponse.class
     }
 }

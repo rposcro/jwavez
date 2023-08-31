@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.core.io.ClassPathResource;
 
-@SpringBootApplication(excludeName = { "org.springframework.shell.standard.StandardAPIAutoConfiguration" })
+@SpringBootApplication(excludeName = {"org.springframework.shell.standard.StandardAPIAutoConfiguration"})
 public class JWaveZShell {
 
     public static void main(String[] args) {

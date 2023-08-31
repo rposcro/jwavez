@@ -7,10 +7,10 @@ import lombok.Getter;
 @Builder
 public class NetworkStatistics {
 
-  private int transmittedFramesCount;
-  private int backOffsCount;
-  private int receivedCorrectFramesCount;
-  private int lcrErrorsCount;
-  private int crcErrorsCount;
-  private int foreignHomeIdCount;
+    private int transmittedFramesCount;
+    private int backOffsCount;
+    private int receivedCorrectFramesCount;
+    private int lcrErrorsCount;
+    private int crcErrorsCount;
+    private int foreignHomeIdCount;
 }

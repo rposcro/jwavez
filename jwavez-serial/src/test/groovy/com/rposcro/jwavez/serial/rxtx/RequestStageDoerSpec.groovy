@@ -4,7 +4,7 @@ import com.rposcro.jwavez.serial.exceptions.StreamTimeoutException
 import com.rposcro.jwavez.serial.exceptions.StreamMalformedException
 import com.rposcro.jwavez.serial.exceptions.SerialPortException
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort
-import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
+import com.rposcro.jwavez.serial.rxtx.MockedSerialPort
 import spock.lang.Specification
 import spock.lang.Shared
 import spock.lang.Unroll
@@ -57,14 +57,14 @@ class RequestStageDoerSpec extends Specification {
         doer.inboundStream.frameBuffer.limit() == expLim;
 
         where:
-        inboundData                            | expPos | expLim | expLastOut   | expResult
-        [[0x06]]                               | 1      | 1      | []           | RequestStageResult.RESULT_OK
-        [[], [], [], [0x06]]                   | 1      | 1      | []           | RequestStageResult.RESULT_OK
-        [[0x06, 0x06, 0x15]]                   | 1      | 3      | []           | RequestStageResult.RESULT_OK
-        [[0x15]]                               | 1      | 1      | []           | RequestStageResult.RESULT_NAK
-        [[0x18]]                               | 1      | 1      | []           | RequestStageResult.RESULT_CAN
-        [[0x01, 0x03, 0x01, 0x44, 0xff]]       | 0      | 0      | CAN          | RequestStageResult.RESULT_SOF
-        [[0x01, 0x03, 0x01, 0x44, 0xff, 0x15]] | 0      | 0      | CAN          | RequestStageResult.RESULT_SOF
+        inboundData                            | expPos | expLim | expLastOut | expResult
+        [[0x06]]                               | 1      | 1      | []         | RequestStageResult.RESULT_OK
+        [[], [], [], [0x06]]                   | 1      | 1      | []         | RequestStageResult.RESULT_OK
+        [[0x06, 0x06, 0x15]]                   | 1      | 3      | []         | RequestStageResult.RESULT_OK
+        [[0x15]]                               | 1      | 1      | []         | RequestStageResult.RESULT_NAK
+        [[0x18]]                               | 1      | 1      | []         | RequestStageResult.RESULT_CAN
+        [[0x01, 0x03, 0x01, 0x44, 0xff]]       | 0      | 0      | CAN        | RequestStageResult.RESULT_SOF
+        [[0x01, 0x03, 0x01, 0x44, 0xff, 0x15]] | 0      | 0      | CAN        | RequestStageResult.RESULT_SOF
     }
 
     def "handles ack timeout"() {
@@ -94,9 +94,9 @@ class RequestStageDoerSpec extends Specification {
         thrown expException;
 
         where:
-        resData                         | expException
-        [[0x01, 0x03, 0x00]]            | StreamTimeoutException
-        [[0x00]]                        | StreamMalformedException
+        resData              | expException
+        [[0x01, 0x03, 0x00]] | StreamTimeoutException
+        [[0x00]]             | StreamMalformedException
     }
 
     def "carries exceptions from port"() {
@@ -115,7 +115,7 @@ class RequestStageDoerSpec extends Specification {
     }
 
     def makeDoer(List<List<Integer>> frameData) {
-        frameData.forEach({series -> serialPort.addSeries(series)});
+        frameData.forEach({ series -> serialPort.addSeries(series) });
         serialPort.reset();
         def inboundStream = FrameInboundStream.builder().serialPort(serialPort).configuration(rxTxConfiguration).build();
         def outboundStream = FrameOutboundStream.builder().serialPort(serialPort).build();

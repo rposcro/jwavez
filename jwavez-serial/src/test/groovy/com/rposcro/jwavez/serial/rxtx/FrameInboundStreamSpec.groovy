@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.serial.rxtx
 
 import com.rposcro.jwavez.serial.exceptions.StreamException
-import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
+import com.rposcro.jwavez.serial.rxtx.MockedSerialPort
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -53,11 +53,11 @@ class FrameInboundStreamSpec extends Specification {
         dataFromBuffer(buffer) == inboundData;
 
         where:
-        inboundData | _
+        inboundData                   | _
         [SOF, 0x03, 0x00, 0x06, 0xaa] | _
-        [ACK] | _
-        [NAK] | _
-        [CAN] | _
+        [ACK]                         | _
+        [NAK]                         | _
+        [CAN]                         | _
     }
 
     def "single odd frame in pipe"() {
@@ -88,9 +88,9 @@ class FrameInboundStreamSpec extends Specification {
         lim2 == expLim2;
 
         where:
-        inboundData                                         | expLim1   | expLim2
-        [0x01, 0x06, 0x00, 0x06, 0x34, 0x11, 0x67, 0xbb]    | 3         | 7
-        [0x01, 0x06, 0x00, 0x06, 0x34, 0x11, 0x67]          | 3         | 7
+        inboundData                                      | expLim1 | expLim2
+        [0x01, 0x06, 0x00, 0x06, 0x34, 0x11, 0x67, 0xbb] | 3       | 7
+        [0x01, 0x06, 0x00, 0x06, 0x34, 0x11, 0x67]       | 3       | 7
     }
 
     @Unroll
@@ -107,10 +107,10 @@ class FrameInboundStreamSpec extends Specification {
         thrown StreamException;
 
         where:
-        inboundData                                         | _
-        [0x01, 0x06, 0x00, 0x06, 0x34]                      | _
-        [0x01, 0x06, 0x00]                                  | _
-        [0x01, 0x06]                                        | _
+        inboundData                    | _
+        [0x01, 0x06, 0x00, 0x06, 0x34] | _
+        [0x01, 0x06, 0x00]             | _
+        [0x01, 0x06]                   | _
     }
 
     @Unroll
@@ -130,15 +130,15 @@ class FrameInboundStreamSpec extends Specification {
         dataFromBuffer(buffer) == expectedData;
 
         where:
-        inboundData                                                             | expPos | expLim
-        [[0x01, 0x06, 0x00, 0x06, 0x34], [0x11, 0x67, 0xbb]]                    | 8      | 8
-        [[0x01], [0x06, 0x00, 0x06, 0x34, 0x11, 0x67, 0xbb]]                    | 8      | 8
-        [[0x01], [0x06, 0x00, 0x06, 0x34], [0x11, 0x67, 0xbb]]                  | 8      | 8
-        [[0x01], [0x03, 0x00, 0x06], [0xbb], [0x06, 0x15]]                      | 5      | 5
-        [[0x01], [0x03, 0x00, 0x06], [0xbb], [0x01, 0x03, 0x01, 0x06, 0xcc]]    | 5      | 5
-        [[0x01], [0x03, 0x00, 0x06], [0xbb, 0x01, 0x03, 0x01, 0x06, 0xcc]]      | 5      | 5
-        [[0x01], [0x03, 0x00, 0x06, 0xbb, 0x01, 0x03, 0x01, 0x06, 0xcc]]        | 5      | 5
-        [[0x01, 0x04, 0x00, 0x06, 0x01, 0xbb, 0x01, 0x03, 0x01, 0x06, 0xcc]]    | 6      | 11
+        inboundData                                                          | expPos | expLim
+        [[0x01, 0x06, 0x00, 0x06, 0x34], [0x11, 0x67, 0xbb]]                 | 8      | 8
+        [[0x01], [0x06, 0x00, 0x06, 0x34, 0x11, 0x67, 0xbb]]                 | 8      | 8
+        [[0x01], [0x06, 0x00, 0x06, 0x34], [0x11, 0x67, 0xbb]]               | 8      | 8
+        [[0x01], [0x03, 0x00, 0x06], [0xbb], [0x06, 0x15]]                   | 5      | 5
+        [[0x01], [0x03, 0x00, 0x06], [0xbb], [0x01, 0x03, 0x01, 0x06, 0xcc]] | 5      | 5
+        [[0x01], [0x03, 0x00, 0x06], [0xbb, 0x01, 0x03, 0x01, 0x06, 0xcc]]   | 5      | 5
+        [[0x01], [0x03, 0x00, 0x06, 0xbb, 0x01, 0x03, 0x01, 0x06, 0xcc]]     | 5      | 5
+        [[0x01, 0x04, 0x00, 0x06, 0x01, 0xbb, 0x01, 0x03, 0x01, 0x06, 0xcc]] | 6      | 11
     }
 
     @Unroll
@@ -148,7 +148,7 @@ class FrameInboundStreamSpec extends Specification {
 
         when:
         def counter = 0;
-        while(inboundStream.nextFrame().hasRemaining()) {
+        while (inboundStream.nextFrame().hasRemaining()) {
             counter++;
         }
 
@@ -156,11 +156,11 @@ class FrameInboundStreamSpec extends Specification {
         counter == framesCnt;
 
         where:
-        inboundData             | framesCnt
-        [[]]                    | 0
-        [[0x15]]                | 1
-        [[0x06, 0x15, 0x18]]    | 3
-        [[0x06], [0x15, 0x18]]  | 3
+        inboundData                                                                        | framesCnt
+        [[]]                                                                               | 0
+        [[0x15]]                                                                           | 1
+        [[0x06, 0x15, 0x18]]                                                               | 3
+        [[0x06], [0x15, 0x18]]                                                             | 3
         [[0x06], [0x15, 0x18, 0x01], [0x05], [0x01, 0x21, 0x22, 0x18, 0xff, 0x18], [0x06]] | 6
     }
 
@@ -179,11 +179,11 @@ class FrameInboundStreamSpec extends Specification {
         !serialPort.inboundDataAvailable();
 
         where:
-        inboundData             | _
-        [[]]                    | _
-        [[0x15]]                | _
-        [[0x06, 0x15, 0x18]]    | _
-        [[0x06], [0x15, 0x18]]  | _
+        inboundData                                                                        | _
+        [[]]                                                                               | _
+        [[0x15]]                                                                           | _
+        [[0x06, 0x15, 0x18]]                                                               | _
+        [[0x06], [0x15, 0x18]]                                                             | _
         [[0x06], [0x15, 0x18, 0x01], [0x05], [0x01, 0x21, 0x22, 0x18, 0xff, 0x18], [0x06]] | _
     }
 
@@ -202,14 +202,14 @@ class FrameInboundStreamSpec extends Specification {
         buffer.position() == Math.min(bufferLimit, inboundData.size());
 
         where:
-        inboundData                     | bufferLimit
-        [0x01, 0x03, 0x00, 0x06, 0xaa]  | 3
-        [0x01, 0x03, 0x00, 0x06, 0xaa]  | 6
-        [0x06]                          | 3
+        inboundData                    | bufferLimit
+        [0x01, 0x03, 0x00, 0x06, 0xaa] | 3
+        [0x01, 0x03, 0x00, 0x06, 0xaa] | 6
+        [0x06]                         | 3
     }
 
     def makeStream(List<List<Integer>> inboundData) {
-        inboundData.forEach({series -> serialPort.addSeries(series)});
+        inboundData.forEach({ series -> serialPort.addSeries(series) });
         serialPort.reset();
         return FrameInboundStream.builder()
                 .serialPort(serialPort)

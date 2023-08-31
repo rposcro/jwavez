@@ -3,7 +3,7 @@ package com.rposcro.jwavez.serial.rxtx
 import com.rposcro.jwavez.serial.exceptions.FatalSerialException
 import com.rposcro.jwavez.serial.exceptions.SerialPortException
 import com.rposcro.jwavez.serial.rxtx.port.SerialPort
-import com.rposcro.jwavez.serial.rxtz.MockedSerialPort
+import com.rposcro.jwavez.serial.rxtx.MockedSerialPort
 import spock.lang.Specification
 
 class RxTxRouterProcessSpec extends Specification {
@@ -34,7 +34,7 @@ class RxTxRouterProcessSpec extends Specification {
     }
 
     def constructProcess(List<List<Integer>> inbounds) {
-        inbounds.forEach({series -> serialPort.addSeries(series)});
+        inbounds.forEach({ series -> serialPort.addSeries(series) });
         serialPort.reset();
 
         return RxTxRouterProcess.builder()

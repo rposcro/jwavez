@@ -3,8 +3,8 @@ package com.rposcro.jwavez.core.commands.supported.sensormultilevel;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.types.SensorMultilevelCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
-import com.rposcro.jwavez.core.utils.BitsUtil;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
+import com.rposcro.jwavez.core.utils.BytesUtil;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -12,7 +12,7 @@ import lombok.ToString;
 @ToString
 public class SensorMultilevelReport extends ZWaveSupportedCommand<SensorMultilevelCommandType> {
 
-    private byte sensorTypeCode;
+    private short sensorType;
     private byte precision;
     private byte scaleValue;
     private byte measureSize;
@@ -21,13 +21,15 @@ public class SensorMultilevelReport extends ZWaveSupportedCommand<SensorMultilev
     public SensorMultilevelReport(ImmutableBuffer payload, NodeId sourceNodeId) {
         super(SensorMultilevelCommandType.SENSOR_MULTILEVEL_REPORT, sourceNodeId);
         payload.rewind().skip(2);
-        this.sensorTypeCode = payload.nextByte();
+        this.sensorType = payload.nextUnsignedByte();
 
         byte def = payload.nextByte();
-        this.precision = BitsUtil.extractValue(def, 5, 7);
-        this.scaleValue = BitsUtil.extractValue(def, 3, 3);
-        this.measureSize = BitsUtil.extractValue(def, 0, 7);
+        this.precision = BytesUtil.extractValue(def, 5, 7);
+        this.scaleValue = BytesUtil.extractValue(def, 3, 3);
+        this.measureSize = BytesUtil.extractValue(def, 0, 7);
         this.measureValue = parseMeasureValue(measureSize, payload);
+
+        this.commandVersion = 1;
     }
 
     private long parseMeasureValue(int size, ImmutableBuffer payload) {
@@ -43,7 +45,7 @@ public class SensorMultilevelReport extends ZWaveSupportedCommand<SensorMultilev
     public String asNiceString() {
         return String.format("%s typeCode(%02x), precision(%02x) scaleValue(%02x) measureSize(%02x) measure(dec: %s)",
                 super.asNiceString(),
-                sensorTypeCode,
+                sensorType,
                 precision,
                 scaleValue,
                 measureSize,

@@ -6,17 +6,17 @@ import com.rposcro.jwavez.serial.rxtx.port.SerialPort;
 
 public abstract class AbstractClosableController<T extends AbstractClosableController> implements AutoCloseable {
 
-  protected String dongleDevice;
-  protected SerialPort serialPort;
-  protected RxTxConfiguration rxTxConfiguration;
+    protected String dongleDevice;
+    protected SerialPort serialPort;
+    protected RxTxConfiguration rxTxConfiguration;
 
-  public T connect() throws SerialPortException {
-    this.serialPort.connect(dongleDevice);
-    return (T) this;
-  }
+    public T connect() throws SerialPortException {
+        this.serialPort.connect(dongleDevice);
+        return (T) this;
+    }
 
-  @Override
-  public void close() throws SerialPortException {
-    this.serialPort.disconnect();
-  }
+    @Override
+    public void close() throws SerialPortException {
+        this.serialPort.disconnect();
+    }
 }

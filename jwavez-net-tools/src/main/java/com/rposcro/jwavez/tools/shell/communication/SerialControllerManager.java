@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.tools.shell.communication;
 
+import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.controllers.BasicSynchronousController;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
 import com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkController;
@@ -20,6 +21,8 @@ public class SerialControllerManager {
 
     @Autowired
     private JWaveZShellContext shellContext;
+    @Autowired
+    private SerialRequestFactory serialRequestFactory;
 
     private BasicSynchronousController basicSynchronousController;
     private GeneralAsynchronousController generalAsynchronousController;
@@ -59,6 +62,7 @@ public class SerialControllerManager {
             this.applicationCommandExecutor = ApplicationCommandExecutor.builder()
                     .device(shellContext.getDongleDevicePath())
                     .timeoutMillis(timeoutMillis)
+                    .transportRequestBuilder(serialRequestFactory.networkTransportRequestBuilder())
                     .build();
         }
         return applicationCommandExecutor;
@@ -132,7 +136,7 @@ public class SerialControllerManager {
 
         try {
             Thread.sleep(200);  // to make sure OS releases hook before we attempt to connect another controller
-        } catch(InterruptedException e) {
+        } catch (InterruptedException e) {
         }
     }
 }

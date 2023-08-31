@@ -37,12 +37,12 @@ import java.util.stream.Stream;
  */
 public class DynamicMethodTargetRegistrar implements MethodTargetRegistrar {
 
-    private static final String[] GROUPS_ALWAYS_ON = { "Built-In Commands", CommandGroup.GENERIC };
+    private static final String[] GROUPS_ALWAYS_ON = {"Built-In Commands", CommandGroup.GENERIC};
 
     private ApplicationContext applicationContext;
     private JWaveZShellContext shellContext;
 
-  //  private Map<String, MethodTarget> commands;
+    //  private Map<String, MethodTarget> commands;
 
     @Builder
     public DynamicMethodTargetRegistrar(ApplicationContext applicationContext, JWaveZShellContext shellContext) {
@@ -59,7 +59,7 @@ public class DynamicMethodTargetRegistrar implements MethodTargetRegistrar {
                 ShellMethod shellMapping = method.getAnnotation(ShellMethod.class);
                 String[] keys = shellMapping.key();
                 if (keys.length == 0) {
-                    keys = new String[] { Utils.unCamelify(method.getName()) };
+                    keys = new String[]{Utils.unCamelify(method.getName())};
                 }
 
                 String group = getOrInferGroup(method);
@@ -161,8 +161,7 @@ public class DynamicMethodTargetRegistrar implements MethodTargetRegistrar {
             Assert.isTrue(indicator.getParameterCount() == 0, "Method " + indicator + " should be a no-arg method");
             ReflectionUtils.makeAccessible(indicator);
             return () -> (Availability) ReflectionUtils.invokeMethod(indicator, bean);
-        }
-        else {
+        } else {
             return null;
         }
     }

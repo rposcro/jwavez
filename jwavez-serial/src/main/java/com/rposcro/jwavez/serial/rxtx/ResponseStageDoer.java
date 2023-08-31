@@ -9,10 +9,10 @@ import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_C
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.FRAME_OFFSET_TYPE;
 import static com.rposcro.jwavez.serial.rxtx.SerialFrameConstants.TYPE_RES;
 
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.exceptions.RxTxException;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
-import java.util.function.Consumer;
+
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,55 +20,63 @@ import lombok.extern.slf4j.Slf4j;
 @Builder
 public class ResponseStageDoer {
 
-  private FrameInboundStream inboundStream;
-  private FrameOutboundStream outboundStream;
-  private RxTxConfiguration configuration;
-  private ResponseHandler responseHandler;
+    private FrameInboundStream inboundStream;
+    private FrameOutboundStream outboundStream;
+    private RxTxConfiguration configuration;
+    private ResponseHandler responseHandler;
 
-  public ResponseStageResult acquireResponse(byte expectedCommand) throws RxTxException {
-    long timeoutPoint = System.currentTimeMillis() + configuration.getFrameResponseTimeout();
-    ViewBuffer frameView;
-    do {
-      frameView = inboundStream.nextFrame();
-      if (frameView.hasRemaining()) {
-        return receiveFrame(frameView, expectedCommand);
-      }
-    } while (timeoutPoint > System.currentTimeMillis());
-    return ResponseStageResult.RESULT_RESPONSE_TIMEOUT;
-  }
-
-  private ResponseStageResult receiveFrame(ViewBuffer frameBuffer, byte expectedCommand) throws SerialPortException {
-    switch(frameBuffer.get(FRAME_OFFSET_CATEGORY)) {
-      case CATEGORY_SOF:
-        return receiveSOF(frameBuffer, expectedCommand);
-      case CATEGORY_ACK:
-      case CATEGORY_NAK:
-      case CATEGORY_CAN:
-        processException();
-        return ResponseStageResult.RESULT_ODD_CATEGORY;
-      default:
-        processException();
-        return ResponseStageResult.RESULT_ODD_INCOME;
+    public ResponseStageResult acquireResponse(byte expectedCommand) throws RxTxException {
+        long timeoutPoint = System.currentTimeMillis() + configuration.getFrameResponseTimeout();
+        ImmutableBuffer frameBuffer;
+        do {
+            frameBuffer = inboundStream.nextFrame();
+            if (frameBuffer.hasNext()) {
+                return consumeFrame(frameBuffer, expectedCommand);
+            }
+        } while (timeoutPoint > System.currentTimeMillis());
+        return ResponseStageResult.RESULT_RESPONSE_TIMEOUT;
     }
-  }
 
-  private ResponseStageResult receiveSOF(ViewBuffer frameBuffer, byte expectedCommand) throws SerialPortException {
-    if (frameBuffer.get(FRAME_OFFSET_TYPE) == TYPE_RES && frameBuffer.get(FRAME_OFFSET_COMMAND) == expectedCommand) {
-      outboundStream.writeACK();
-      try {
-        responseHandler.accept(frameBuffer);
-      } catch(Throwable t) {
-        log.error("Response handler thrown forbidden exception!", t);
-      }
-      return ResponseStageResult.RESULT_OK;
-    } else {
-      processException();
-      return ResponseStageResult.RESULT_DIVERGENT_RESPONSE;
+    private ResponseStageResult consumeFrame(ImmutableBuffer frameBuffer, byte expectedCommand) throws SerialPortException {
+        ResponseStageResult result;
+
+        switch (frameBuffer.getByte(FRAME_OFFSET_CATEGORY)) {
+            case CATEGORY_SOF:
+                result = consumeSOF(frameBuffer, expectedCommand);
+                break;
+            case CATEGORY_ACK:
+            case CATEGORY_NAK:
+            case CATEGORY_CAN:
+                processException();
+                result = ResponseStageResult.RESULT_ODD_CATEGORY;
+                break;
+            default:
+                processException();
+                result = ResponseStageResult.RESULT_ODD_INCOME;
+                break;
+        }
+
+        frameBuffer.dispose();
+        return result;
     }
-  }
 
-  private void processException() throws SerialPortException {
-    outboundStream.writeCAN();
-    inboundStream.purgeStream();
-  }
+    private ResponseStageResult consumeSOF(ImmutableBuffer frameBuffer, byte expectedCommand) throws SerialPortException {
+        if (frameBuffer.getByte(FRAME_OFFSET_TYPE) == TYPE_RES && frameBuffer.getByte(FRAME_OFFSET_COMMAND) == expectedCommand) {
+            outboundStream.writeACK();
+            try {
+                responseHandler.accept(frameBuffer);
+            } catch (Throwable t) {
+                log.error("Response handler thrown forbidden exception!", t);
+            }
+            return ResponseStageResult.RESULT_OK;
+        } else {
+            processException();
+            return ResponseStageResult.RESULT_DIVERGENT_RESPONSE;
+        }
+    }
+
+    private void processException() throws SerialPortException {
+        outboundStream.writeCAN();
+        inboundStream.purgeStream();
+    }
 }

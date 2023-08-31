@@ -42,11 +42,11 @@ public class NodeParameterCommands {
     @Autowired
     private NumberRangeParser numberRangeParser;
 
-    @ShellMethod(value = "Define node parameter", key = { "param define", "pd" })
+    @ShellMethod(value = "Define node parameter", key = {"param define", "pd"})
     public String defineParameter(
-            @ShellOption(value = { "--param-number", "-pn" }) int paramNumber,
-            @ShellOption(value = { "--param-memo", "-memo" }) String paramMemo,
-            @ShellOption(value = { "--size-in-bytes", "-sib" }) int sizeInBytes
+            @ShellOption(value = {"--param-number", "-pn"}) int paramNumber,
+            @ShellOption(value = {"--param-memo", "-memo"}) String paramMemo,
+            @ShellOption(value = {"--size-in-bytes", "-sib"}) int sizeInBytes
     ) {
         int nodeId = nodeScopeContext.getCurrentNodeId();
         int sizeInBits = sizeInBytes * 8;
@@ -55,9 +55,9 @@ public class NodeParameterCommands {
                 , nodeId, paramNumber, sizeInBits, paramMemo);
     }
 
-    @ShellMethod(value = "Clone node parameters definitions from given node to current", key = { "param clone" })
+    @ShellMethod(value = "Clone node parameters definitions from given node to current", key = {"param clone"})
     public String cloneParameters(
-            @ShellOption(value = { "--node-id", "-id" }) int sourceNodeId
+            @ShellOption(value = {"--node-id", "-id"}) int sourceNodeId
     ) {
         int currentNodeId = nodeScopeContext.getCurrentNodeId();
         NodeInformation currentNode = nodeInformationCache.getNodeDetails(currentNodeId);
@@ -75,9 +75,9 @@ public class NodeParameterCommands {
         }
     }
 
-    @ShellMethod(value = "Delete node parameter definition", key = { "param delete" })
+    @ShellMethod(value = "Delete node parameter definition", key = {"param delete"})
     public String deleteParameterDefinitionAndValue(
-            @ShellOption(value = { "--param-number", "-pn" }) int paramNumber
+            @ShellOption(value = {"--param-number", "-pn"}) int paramNumber
     ) throws SerialException {
         int nodeId = nodeScopeContext.getCurrentNodeId();
         NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
@@ -89,28 +89,28 @@ public class NodeParameterCommands {
         }
     }
 
-    @ShellMethod(value = "Print parameter(s)", key = { "param print", "pp" })
+    @ShellMethod(value = "Print parameter(s)", key = {"param print", "pp"})
     public String printParametersDetails(
-            @ShellOption(value = { "--param-numbers", "-pns" }, defaultValue = ShellOption.NULL) String paramNumbersRange,
+            @ShellOption(value = {"--param-numbers", "-pns"}, defaultValue = ShellOption.NULL) String paramNumbersRange,
             @ShellOption(defaultValue = "false") boolean verbose
     ) {
         try {
             int[] paramNumbers = parseParamNumbersArgument(paramNumbersRange);
             StringBuffer paramDetails = new StringBuffer();
             NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeScopeContext.getCurrentNodeId());
-            for (int number: paramNumbers) {
-                paramDetails.append(verbose ? formatParamVerboseLine(nodeInformation, number) :  formatParamValueLine(nodeInformation, number));
+            for (int number : paramNumbers) {
+                paramDetails.append(verbose ? formatParamVerboseLine(nodeInformation, number) : formatParamValueLine(nodeInformation, number));
                 paramDetails.append('\n');
             }
             return paramDetails.toString();
-        } catch(ParseException e) {
+        } catch (ParseException e) {
             return "Cannot parse argument: " + paramNumbersRange;
         }
     }
 
-    @ShellMethod(value = "Learn about parameter(s) value", key = { "param learn", "pl" })
+    @ShellMethod(value = "Learn about parameter(s) value", key = {"param learn", "pl"})
     public String fetchParametersValues(
-            @ShellOption(value = { "--param-numbers", "-pns" }, defaultValue = ShellOption.NULL) String paramNumbersRange
+            @ShellOption(value = {"--param-numbers", "-pns"}, defaultValue = ShellOption.NULL) String paramNumbersRange
     ) throws SerialException {
         try {
             int[] paramNumbers = parseParamNumbersArgument(paramNumbersRange);
@@ -118,22 +118,22 @@ public class NodeParameterCommands {
             NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
 
             StringBuffer paramDetails = new StringBuffer();
-            for (int number: paramNumbers) {
+            for (int number : paramNumbers) {
                 nodeParameterService.fetchParameterValue(nodeId, number);
                 paramDetails.append(formatParamVerboseLine(nodeInformation, number));
                 paramDetails.append('\n');
             }
             return paramDetails.toString();
 
-        } catch(ParseException e) {
+        } catch (ParseException e) {
             return "Cannot parse argument: " + paramNumbersRange;
         }
     }
 
-    @ShellMethod(value = "Set parameter value", key = { "param set", "ps" })
+    @ShellMethod(value = "Set parameter value", key = {"param set", "ps"})
     public String setParameterValue(
-            @ShellOption(value = { "--param-number", "-pn" }) int paramNumber,
-            @ShellOption(value = { "--param-value", "-pv" }) long paramValue
+            @ShellOption(value = {"--param-number", "-pn"}) int paramNumber,
+            @ShellOption(value = {"--param-value", "-pv"}) long paramValue
     ) throws SerialException {
         int nodeId = nodeScopeContext.getCurrentNodeId();
         NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
@@ -150,7 +150,7 @@ public class NodeParameterCommands {
         }
     }
 
-    @ShellMethodAvailability(value = { "param learn", "param set" })
+    @ShellMethodAvailability(value = {"param learn", "param set"})
     public Availability checkRemoteAvailability() {
         if (!nodeScopeContext.isAnyNodeSelected()) {
             return Availability.unavailable("No node is selected in the working context, try to select or fetch one");
@@ -161,7 +161,7 @@ public class NodeParameterCommands {
                 Availability.unavailable("ZWave dongle device is not specified");
     }
 
-    @ShellMethodAvailability({ "param clone", "param define", "param delete", "param print" })
+    @ShellMethodAvailability({"param clone", "param define", "param delete", "param print"})
     public Availability checkLocalAvailability() {
         return nodeScopeContext.isAnyNodeSelected() ?
                 Availability.available() :

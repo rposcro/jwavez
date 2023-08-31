@@ -7,6 +7,6 @@ import lombok.Getter;
 @Builder
 public class CommandLineContent {
 
-  private CommandTreeNode commandNode;
-  private String[] commandOtions;
+    private CommandTreeNode commandNode;
+    private String[] commandOtions;
 }

@@ -1,11 +1,11 @@
 package com.rposcro.jwavez.tools.shell.commands.talk;
 
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
-import com.rposcro.jwavez.core.commands.controlled.builders.SwitchColorCommandBuilder;
+import com.rposcro.jwavez.core.commands.controlled.builders.switchcolor.SwitchColorCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.switchcolor.SwitchColorReport;
 import com.rposcro.jwavez.core.commands.supported.switchcolor.SwitchColorSupportedReport;
 import com.rposcro.jwavez.core.commands.types.SwitchColorCommandType;
-import com.rposcro.jwavez.core.constants.ColorComponent;
+import com.rposcro.jwavez.core.model.ColorComponent;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
@@ -36,29 +36,31 @@ public class SwitchColorCommands {
     @Autowired
     private JWaveZShellContext shellContext;
 
-    @ShellMethod(value = "Request color report", key = { "switchcolor report", "sc report" })
-    public String executeColorReport(@ShellOption(value = { "--node-id", "-id" }) int nodeId) throws SerialException {
-        SwitchColorCommandBuilder commandBuilder = new SwitchColorCommandBuilder();
-        ZWaveControlledCommand command = commandBuilder.buildSupportedGetCommand();
+    @Autowired
+    private SwitchColorCommandBuilder switchColorCommandBuilder;
+
+    @ShellMethod(value = "Request color report", key = {"switchcolor report", "sc report"})
+    public String executeColorReport(@ShellOption(value = {"--node-id", "-id"}) int nodeId) throws SerialException {
+        ZWaveControlledCommand command = switchColorCommandBuilder.v1().buildSupportedGetCommand();
         SwitchColorSupportedReport supportedReport = talkCommunicationService.requestTalk(nodeId, command, SwitchColorCommandType.SWITCH_COLOR_SUPPORTED_REPORT);
 
         List<ColorComponent> colorComponents = supportedReport.getColorComponents();
         StringBuffer message = new StringBuffer("Color components report for node " + nodeId);
 
         for (ColorComponent colorComponent : colorComponents) {
-            command = commandBuilder.buildGetCommand(colorComponent.getCode());
+            command = switchColorCommandBuilder.v1().buildGetCommand(colorComponent.getCode());
             SwitchColorReport colorReport = talkCommunicationService.requestTalk(nodeId, command, SwitchColorCommandType.SWITCH_COLOR_REPORT);
-            message.append(String.format("\n  %s (%s): 0x%02X", colorComponent.name(), colorComponent.getCode(), colorReport.getColorValue()));
+            message.append(String.format("\n  %s (%s): 0x%02X", colorComponent.name(), colorComponent.getCode(), colorReport.getCurrentValue()));
         }
 
         return message.toString() + "\n";
     }
 
-    @ShellMethod(value = "Send color set request", key = { "switchcolor set", "sc set" })
+    @ShellMethod(value = "Send color set request", key = {"switchcolor set", "sc set"})
     public String executeColorSet(
-            @ShellOption(value = { "--node-id", "-id" }) int nodeId,
-            @ShellOption(value = { "--color-mode", "-mode" }) String colorMode,
-            @ShellOption(value = { "--color-value", "-color" }) String colorValue
+            @ShellOption(value = {"--node-id", "-id"}) int nodeId,
+            @ShellOption(value = {"--color-mode", "-mode"}) String colorMode,
+            @ShellOption(value = {"--color-value", "-color"}) String colorValue
     ) throws SerialException {
         String errorMessage = validateArguments(colorMode, colorValue);
         if (errorMessage != null) {
@@ -67,7 +69,7 @@ public class SwitchColorCommands {
 
         ColorMode mode = ColorMode.valueOf(colorMode.toUpperCase());
         byte[] componentsFrame = constructComponentsFrame(mode, colorValue);
-        ZWaveControlledCommand command = new SwitchColorCommandBuilder().buildSetCommand((byte) 0, componentsFrame);
+        ZWaveControlledCommand command = switchColorCommandBuilder.v1().buildSetCommand((byte) 0, componentsFrame);
         talkCommunicationService.sendCommand(nodeId, command);
 
         return String.format("Command %s successfully sent to node %s", SwitchColorCommandType.SWITCH_COLOR_SET, nodeId);
@@ -96,7 +98,7 @@ public class SwitchColorCommands {
                         + " color components but " + mode.componentsCount + " are required";
             }
             return null;
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return "Unknown color mode " + colorMode + ", available modes: "
                     + Arrays.stream(ColorMode.values()).map(ColorMode::name).collect(Collectors.joining(", "));
         }

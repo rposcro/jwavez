@@ -1,18 +1,17 @@
 package com.rposcro.jwavez.tools.shell.services;
 
-import com.rposcro.jwavez.core.commands.SupportedCommandParser;
+import com.rposcro.jwavez.core.commands.JwzSupportedCommandParser;
 import com.rposcro.jwavez.core.commands.supported.ZWaveSupportedCommand;
 import com.rposcro.jwavez.core.commands.supported.multichannel.MultiChannelCommandEncapsulation;
 import com.rposcro.jwavez.core.commands.types.MultiChannelCommandType;
-import com.rposcro.jwavez.core.utils.ImmutableBuffer;
-import com.rposcro.jwavez.serial.buffers.ViewBuffer;
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.serial.exceptions.FrameParseException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.InboundFrameParser;
 import com.rposcro.jwavez.serial.frames.callbacks.ApplicationCommandHandlerCallback;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
-import com.rposcro.jwavez.serial.utils.FrameUtil;
+import com.rposcro.jwavez.serial.utils.FramesUtil;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
 import com.rposcro.jwavez.tools.utils.BeanPropertiesFormatter;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +21,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.Semaphore;
-import java.util.stream.Collectors;
 
 import static com.rposcro.jwavez.core.classes.CommandClass.CMD_CLASS_MULTI_CHANNEL;
 
@@ -35,7 +33,7 @@ public class NetworkListeningService {
     private ConsoleAccessor console;
 
     @Autowired
-    private SupportedCommandParser supportedCommandParser;
+    private JwzSupportedCommandParser supportedCommandParser;
 
     @Autowired
     private SerialCommunicationService serialCommunicationService;
@@ -56,7 +54,7 @@ public class NetworkListeningService {
                     semaphore.release();
                     return null;
                 }, this::treatSerialCallback);
-            } catch(SerialException e) {
+            } catch (SerialException e) {
                 throw new RuntimeException(e);
             }
         }).start();
@@ -67,17 +65,17 @@ public class NetworkListeningService {
         semaphore.release();
     }
 
-    private void treatSerialCallback(ViewBuffer viewBuffer) {
+    private void treatSerialCallback(ImmutableBuffer frameBuffer) {
         console.flushLine("\nCallback frame received");
-        console.flushLine(FrameUtil.asFineString(viewBuffer));
+        console.flushLine(FramesUtil.asFineString(frameBuffer));
 
         try {
-            ZWaveCallback callback = serialFrameParser.parseCallbackFrame(viewBuffer);
+            ZWaveCallback callback = serialFrameParser.parseCallbackFrame(frameBuffer);
             console.flushLine(callback.asFineString());
             if (callback.getSerialCommand() == SerialCommand.APPLICATION_COMMAND_HANDLER) {
                 treatApplicationCommandHandler(callback);
             }
-        } catch(FrameParseException e) {
+        } catch (FrameParseException e) {
             console.flushLine("Failed to parse callback frame: " + e.getMessage());
         }
 
