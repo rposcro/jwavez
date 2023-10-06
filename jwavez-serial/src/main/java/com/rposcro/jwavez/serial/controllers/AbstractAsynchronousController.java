@@ -10,6 +10,7 @@ import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
 import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.RxTxRouterProcess;
+import com.rposcro.jwavez.serial.rxtx.port.JSerialComPort;
 import com.rposcro.jwavez.serial.rxtx.port.NeuronRoboticsSerialPort;
 
 import java.util.concurrent.ExecutorService;
@@ -62,7 +63,7 @@ public abstract class AbstractAsynchronousController<T extends AbstractAsynchron
             CallbackHandler callbackHandler,
             ExecutorService executorService) {
         this.dongleDevice = dongleDevice;
-        this.serialPort = new NeuronRoboticsSerialPort();
+        this.serialPort = new JSerialComPort();
         this.rxTxConfiguration = orDefault(rxTxConfiguration, RxTxConfiguration::defaultConfiguration);
 
         this.executorService = executorService == null ? Executors.newSingleThreadExecutor(this::makeThread) : executorService;
