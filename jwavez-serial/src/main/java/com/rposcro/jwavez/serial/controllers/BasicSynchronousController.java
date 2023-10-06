@@ -17,6 +17,7 @@ import com.rposcro.jwavez.serial.handlers.LastResponseHolder;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.RxTxRouter;
 import com.rposcro.jwavez.serial.rxtx.SerialRequest;
+import com.rposcro.jwavez.serial.rxtx.port.JSerialComPort;
 import com.rposcro.jwavez.serial.rxtx.port.NeuronRoboticsSerialPort;
 
 import java.util.Optional;
@@ -54,7 +55,7 @@ public class BasicSynchronousController extends AbstractClosableController<Basic
         this.rxTxConfiguration = orDefault(rxTxConfiguration, RxTxConfiguration::defaultConfiguration);
         this.lastResponseHolder = new LastResponseHolder();
         this.dongleDevice = dongleDevice;
-        this.serialPort = new NeuronRoboticsSerialPort();
+        this.serialPort = new JSerialComPort();
         this.rxTxRouter = RxTxRouter.builder()
                 .configuration(this.rxTxConfiguration)
                 .serialPort(serialPort)
