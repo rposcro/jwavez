@@ -51,7 +51,7 @@ public class SensorBinarySetUp extends AbstractExample implements AutoCloseable 
         InterceptableCallbackHandler callbacksHandler = new InterceptableCallbackHandler()
                 .addFrameBufferInterceptor(this::interceptFrameBuffer)
                 .addCallbackInterceptor(new ApplicationCommandInterceptor()
-                        .registerCommandHandler(ConfigurationCommandType.CONFIGURATION_REPORT, this::handleConfigurationReport));
+                        .registerCommandListener(ConfigurationCommandType.CONFIGURATION_REPORT, this::handleConfigurationReport));
 
         this.controller = GeneralAsynchronousController.builder()
                 .callbackHandler(callbacksHandler)

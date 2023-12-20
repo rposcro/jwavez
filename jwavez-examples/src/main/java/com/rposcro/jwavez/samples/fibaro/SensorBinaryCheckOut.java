@@ -44,9 +44,9 @@ public class SensorBinaryCheckOut extends AbstractExample implements AutoCloseab
         this.addresseeId = new NodeId((byte) nodeId);
 
         ApplicationCommandInterceptor commandInterceptor = new ApplicationCommandInterceptor()
-                .registerCommandHandler(AssociationCommandType.ASSOCIATION_REPORT, this::handleAssociationReport)
-                .registerCommandHandler(AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT, this::handleAssociationGroupingsReport)
-                .registerCommandHandler(ConfigurationCommandType.CONFIGURATION_REPORT, this::handleConfigurationReport);
+                .registerCommandListener(AssociationCommandType.ASSOCIATION_REPORT, this::handleAssociationReport)
+                .registerCommandListener(AssociationCommandType.ASSOCIATION_GROUPINGS_REPORT, this::handleAssociationGroupingsReport)
+                .registerCommandListener(ConfigurationCommandType.CONFIGURATION_REPORT, this::handleConfigurationReport);
 
         InterceptableCallbackHandler callbacksHandler = new InterceptableCallbackHandler()
                 .addCallbackInterceptor(commandInterceptor)

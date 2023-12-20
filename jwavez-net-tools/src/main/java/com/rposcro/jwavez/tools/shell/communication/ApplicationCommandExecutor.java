@@ -48,7 +48,7 @@ public class ApplicationCommandExecutor {
                 .supportMulticasts(false)
                 .supportedCommandDispatcher(new SupportedCommandDispatcher())
                 .build();
-        appCmdInterceptor.registerAllCommandsHandler(this::handleApplicationCommand);
+        appCmdInterceptor.registerCommandsListener(this::handleApplicationCommand);
 
         InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
         callbackHandler.addFrameBufferInterceptor(this::interceptSerialCallbackBuffer);

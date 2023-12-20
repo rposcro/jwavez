@@ -41,13 +41,13 @@ public class ApplicationCommandInterceptor implements CallbackInterceptor {
         this.skipUnsupportedCallbacks = skipUnsupportedCallbacks;
     }
 
-    public ApplicationCommandInterceptor registerCommandHandler(CommandType commandType, SupportedCommandListener commandHandler) {
-        supportedCommandDispatcher.registerHandler(commandType, commandHandler);
+    public ApplicationCommandInterceptor registerCommandListener(CommandType commandType, SupportedCommandListener commandListener) {
+        supportedCommandDispatcher.registerListener(commandType, commandListener);
         return this;
     }
 
-    public ApplicationCommandInterceptor registerAllCommandsHandler(SupportedCommandListener commandHandler) {
-        supportedCommandDispatcher.registerAllCommandsHandler(commandHandler);
+    public ApplicationCommandInterceptor registerCommandsListener(SupportedCommandListener commandHandler) {
+        supportedCommandDispatcher.registerCommandsListener(commandHandler);
         return this;
     }
 
