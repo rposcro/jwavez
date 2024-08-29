@@ -78,7 +78,8 @@ public class NodeAssociationCommands {
 
     @ShellMethod(value = "Learn about group associations", key = {"association learn", "al"})
     public String fetchGroupAssociations(
-            @ShellOption(value = {"--group-ids", "-gis"}, defaultValue = ShellOption.NULL) String groupIdsRange
+            @ShellOption(value = {"--group-ids", "-gis"}, defaultValue = ShellOption.NULL) String groupIdsRange,
+            @ShellOption(value = {"--multichannel", "-mch"}, arity = 1, defaultValue = "true") boolean useMultiChannel
     ) throws SerialException {
         try {
             int[] groupIds = parseGroupIdsArgument(groupIdsRange);
@@ -87,7 +88,7 @@ public class NodeAssociationCommands {
 
             StringBuffer groupDetails = new StringBuffer();
             for (int groupId : groupIds) {
-                if (supportsMultiChannel(nodeInformation)) {
+                if (useMultiChannel && supportsMultiChannel(nodeInformation)) {
                     multiChannelAssociationService.fetchMultiChannelAssociations(nodeId, groupId);
                 } else {
                     associationService.fetchGroupAssociations(nodeId, groupId);

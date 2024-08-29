@@ -10,7 +10,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 @Getter
 @ToString
@@ -80,7 +80,9 @@ public class MultiChannelAssociationReport extends ZWaveSupportedCommand<MultiCh
                 getMaxNodesCountSupported(),
                 getReportsToFollow(),
                 BuffersUtil.asString(nodeIds),
-                Stream.of(endPointIds).map(epId -> String.format("%02x-%02x", epId[0], epId[1])).collect(Collectors.joining(" "))
+                IntStream.range(0, endPointIds.length)
+                        .mapToObj(idx -> String.format("%02x-%02x", endPointIds[idx][0], endPointIds[idx][1]))
+                        .collect(Collectors.joining(", "))
         );
     }
 }

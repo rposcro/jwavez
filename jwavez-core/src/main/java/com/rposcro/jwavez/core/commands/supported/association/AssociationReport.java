@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.stream.IntStream;
 
 @Getter
 @ToString
@@ -40,7 +40,9 @@ public class AssociationReport extends ZWaveSupportedCommand<AssociationCommandT
                 getMaxNodesCountSupported(),
                 getNodesCount(),
                 getReportsToFollow(),
-                Stream.of(nodeIds).map(nodeId -> String.format("%02x", nodeId)).collect(Collectors.joining(", "))
+                IntStream.range(0, nodeIds.length)
+                        .mapToObj(idx -> String.format("%02x", nodeIds[idx]))
+                        .collect(Collectors.joining(", "))
         );
     }
 }

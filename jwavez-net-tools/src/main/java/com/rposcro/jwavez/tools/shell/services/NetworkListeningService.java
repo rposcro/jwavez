@@ -20,6 +20,7 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.concurrent.Semaphore;
 
 import static com.rposcro.jwavez.core.classes.CommandClass.CMD_CLASS_MULTI_CHANNEL;
@@ -66,7 +67,7 @@ public class NetworkListeningService {
     }
 
     private void treatSerialCallback(ImmutableBuffer frameBuffer) {
-        console.flushLine("\nCallback frame received");
+        console.flushLine("\nCallback frame received @" + new Date());
         console.flushLine(FramesUtil.asFineString(frameBuffer));
 
         try {
