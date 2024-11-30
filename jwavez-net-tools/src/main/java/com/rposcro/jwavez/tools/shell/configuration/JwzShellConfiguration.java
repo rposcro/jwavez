@@ -42,7 +42,7 @@ public class JwzShellConfiguration {
 
     @Bean
     @Scope(SCOPE_SINGLETON)
-    public JWaveZShellContext shellContext(TopScopeContext topScope) throws SerialException {
+    public JWaveZShellContext jWaveZShellContext(TopScopeContext topScope) throws SerialException {
         JWaveZShellContext shellContext = JWaveZShellContext.builder()
                 .workspaceDir(ensureWorkspaceDir())
                 .scopeContext(topScope)

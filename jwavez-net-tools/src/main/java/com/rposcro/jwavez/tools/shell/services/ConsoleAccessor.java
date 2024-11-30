@@ -3,14 +3,17 @@ package com.rposcro.jwavez.tools.shell.services;
 import org.jline.reader.LineReader;
 import org.jline.terminal.Terminal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ConsoleAccessor {
 
+    @Lazy
     @Autowired
     private LineReader lineReader;
 
+    @Lazy
     @Autowired
     private Terminal terminal;
 

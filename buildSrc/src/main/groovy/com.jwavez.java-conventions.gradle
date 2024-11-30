@@ -22,22 +22,22 @@ publishing {
 }
 
 dependencies {
-    implementation 'org.slf4j:slf4j-api:1.7.30'
-    implementation 'org.slf4j:jcl-over-slf4j:1.7.30'
-    implementation 'ch.qos.logback:logback-classic:1.2.0'
+    implementation 'org.slf4j:slf4j-api:2.0.16'
+//    implementation 'org.slf4j:jcl-over-slf4j:1.7.30'
+//    implementation 'ch.qos.logback:logback-classic:1.2.0'
 
     testImplementation 'cglib:cglib-nodep:3.2.5'
     testImplementation 'org.spockframework:spock-core:1.1-groovy-2.4'
     testImplementation 'org.codehaus.groovy:groovy-all:2.4.6'
 
-    testImplementation "org.junit.jupiter:junit-jupiter:5.8.2"
-    testImplementation "org.mockito:mockito-core:2.+"
-    testImplementation "org.mockito:mockito-junit-jupiter:2.+"
+    testImplementation "org.junit.jupiter:junit-jupiter:5.11.3"
+    testImplementation "org.mockito:mockito-core:5.14.2"
+    testImplementation "org.mockito:mockito-junit-jupiter:5.14.2"
 
-    compileOnly 'org.projectlombok:lombok:1.18.20'
-    annotationProcessor 'org.projectlombok:lombok:1.18.20'
-    testCompileOnly 'org.projectlombok:lombok:1.18.20'
-    testAnnotationProcessor 'org.projectlombok:lombok:1.18.20'
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
+    testCompileOnly 'org.projectlombok:lombok:1.18.36'
+    testAnnotationProcessor 'org.projectlombok:lombok:1.18.36'
 }
 
 test {

@@ -1,5 +1,5 @@
 plugins {
-    id 'org.springframework.boot' version '2.5.8'
+    id 'org.springframework.boot' version '3.4.0'
     id 'io.spring.dependency-management' version '1.0.11.RELEASE'
     id 'application'
     id 'com.jwavez.java-conventions'
@@ -11,7 +11,7 @@ apply {
 }
 
 ext {
-    springShellVersion = '2.0.1.RELEASE'
+    springShellVersion = '3.3.3'
     jacksonVersion = '2.11.4'
     commonsCliVersion = '1.4'
 }
@@ -41,7 +41,6 @@ dependencies {
     implementation "org.springframework.shell:spring-shell-starter:${springShellVersion}"
 
     implementation "commons-cli:commons-cli:${commonsCliVersion}"
-    //implementation 'jakarta.validation:jakarta.validation-api:3.0.0'
 
     implementation "com.fasterxml.jackson.core:jackson-annotations:${jacksonVersion}"
     implementation "com.fasterxml.jackson.core:jackson-core:${jacksonVersion}"
