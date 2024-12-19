@@ -34,8 +34,22 @@ public class KnownNodesCommands {
     @ShellMethod(value = "List known nodes", key = {"list", "ls"})
     public String listKnownNodes() {
         return nodeInformationCache.getOrderedNodeList().stream()
-                .map(node -> "Id " + node.getNodeId() + ": " + node.getNodeMemo())
+                .map(node -> String.format("Id %3s (%02x): %s", node.getNodeId(), node.getNodeId(), node.getNodeMemo()))
                 .collect(Collectors.joining("\n"));
+    }
+
+    @ShellMethod(value = "Checks node responsiveness", key = "ping")
+    public String checkNodeResponsiveness(
+        @ShellOption(value = {"--node-id", "-id"}, defaultValue = ShellOption.NULL) Integer nodeIdArg
+    ) {
+        if (nodeIdArg == null && !nodeScopeContext.isAnyNodeSelected()) {
+            return "No node selected, --node-id needs to be provided";
+        }
+
+        int nodeId = nodeIdArg != null ? nodeIdArg : nodeScopeContext.getCurrentNodeId();
+        boolean pingAnswer = nodeInformationService.pingNode(nodeId);
+
+        return String.format("Node %3s (%02x) is %s", nodeId, nodeId, pingAnswer ? "Alive" : "Silent");
     }
 
     @ShellMethod(value = "Show known node information", key = {"info", "ni"})
@@ -53,7 +67,7 @@ public class KnownNodesCommands {
             return verbose ? nodeInformationFormatter.formatVerboseNodeInfo(nodeInformation)
                     : nodeInformationFormatter.formatShortNodeInfo(nodeInformation);
         } else {
-            return String.format("Node %s is unknown, try to fetch it first", nodeId);
+            return String.format("Node %s (%02x) is unknown, try to fetch it first", nodeId, nodeId);
         }
     }
 
@@ -71,7 +85,7 @@ public class KnownNodesCommands {
             nodeInformation.setNodeMemo(nodeMemo);
             return "Memo changed\n" + nodeInformationFormatter.formatShortNodeInfo(nodeInformation);
         } else {
-            return String.format("Node %s is unknown, try to fetch it first", nodeIdArg);
+            return String.format("Node %s (%02x) is unknown, try to fetch it first", nodeIdArg, nodeIdArg);
         }
     }
 
@@ -83,7 +97,7 @@ public class KnownNodesCommands {
         }
 
         if (nodeInformation != null) {
-            return String.format("Node %s (%s) removed from cache", nodeId, nodeInformation.getNodeMemo());
+            return String.format("Node %s (%02x) {%s} removed from cache", nodeId, nodeId, nodeInformation.getNodeMemo());
         } else {
             return "Node id " + nodeId + " was not in cache";
         }
@@ -100,8 +114,8 @@ public class KnownNodesCommands {
             StringBuffer message = new StringBuffer(String.format("Discovered nodes similar to current %s (%s)\n\n",
                     currentNodeId, currentNode.getNodeMemo()));
             discoveredNodes.stream().forEach(
-                    node -> message.append(String.format("Id: %s (%s) with %s parameters\n",
-                            node.getNodeId(), node.getNodeMemo(), node.getParametersInformation().getParameterMetas().size()))
+                    node -> message.append(String.format("Id: %s (%02x) {%s} with %s parameters\n",
+                            node.getNodeId(), node.getNodeId(), node.getNodeMemo(), node.getParametersInformation().getParameterMetas().size()))
             );
             return message.toString();
         }

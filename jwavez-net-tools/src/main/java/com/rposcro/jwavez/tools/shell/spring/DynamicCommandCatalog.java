@@ -2,7 +2,9 @@ package com.rposcro.jwavez.tools.shell.spring;
 
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import org.springframework.shell.command.CommandAlias;
 import org.springframework.shell.command.CommandCatalog;
 import org.springframework.shell.command.CommandRegistration;
@@ -26,7 +28,7 @@ public class DynamicCommandCatalog implements CommandCatalog {
 
     private static final String[] GROUPS_ALWAYS_ON = {"Built-In Commands", CommandGroup.GENERIC};
 
-    private final Map<String, CommandRegistration> commandRegistrations = new HashMap<>();
+    private final Map<CommandKey, CommandRegistration> commandRegistrations = new HashMap<>();
     private final Collection<CommandResolver> resolvers = new ArrayList<>();
     private final ShellContext shellContext;
     private final JWaveZShellContext jWaveZShellContext;
@@ -41,55 +43,54 @@ public class DynamicCommandCatalog implements CommandCatalog {
     }
 
     @Override
-    public void register(CommandRegistration... registration) {
-        for (CommandRegistration r : registration) {
-            String commandName = r.getCommand();
-            commandRegistrations.put(commandName, r);
-            for (CommandAlias a : r.getAliases()) {
-                commandRegistrations.put(a.getCommand(), r);
+    public void register(CommandRegistration... registrations) {
+        for (CommandRegistration registration : registrations) {
+            commandRegistrations.put(commandKey(registration), registration);
+            for (CommandAlias alias : registration.getAliases()) {
+                commandRegistrations.put(commandKey(alias), registration);
             }
         }
     }
 
     @Override
-    public void unregister(CommandRegistration... registration) {
-        for (CommandRegistration r : registration) {
-            String commandName = r.getCommand();
-            commandRegistrations.remove(commandName);
-            for (CommandAlias a : r.getAliases()) {
-                commandRegistrations.remove(a.getCommand());
+    public void unregister(CommandRegistration... registrations) {
+        for (CommandRegistration registration : registrations) {
+            commandRegistrations.remove(commandKey(registration));
+            for (CommandAlias alias : registration.getAliases()) {
+                commandRegistrations.remove(commandKey(alias));
             }
         }
     }
 
     @Override
     public void unregister(String... commandName) {
-        for (String n : commandName) {
-            commandRegistrations.remove(n);
-        }
+        throw new RuntimeException("Unsupported operation");
     }
 
     @Override
     public Map<String, CommandRegistration> getRegistrations() {
-        Map<String, CommandRegistration> regs = new HashMap<>();
+        Map<CommandKey, CommandRegistration> regs = new HashMap<>();
         regs.putAll(commandRegistrations);
-        for (CommandResolver resolver : resolvers) {
-            resolver.resolve().stream().forEach(r -> {
-                regs.put(r.getCommand(), r);
-            });
-        }
         return regs.entrySet().stream()
             .filter(filterByJwzShellContext(jWaveZShellContext))
             .filter(filterByInteractionMode(shellContext))
-            .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            .collect(Collectors.toMap(entry -> entry.getKey().command, Map.Entry::getValue));
+    }
+
+    private CommandKey commandKey(CommandRegistration registration) {
+        return new CommandKey(registration.getCommand(), registration.getGroup());
+    }
+
+    private CommandKey commandKey(CommandAlias registration) {
+        return new CommandKey(registration.getCommand(), registration.getGroup());
     }
 
     /**
      * Filter registration entries by currently set mode. Having it set to ALL or null
-     * effectively disables filtering as as we only care if mode is set to interactive
+     * effectively disables filtering as we only care if mode is set to interactive
      * or non-interactive.
      */
-    private static Predicate<Map.Entry<String, CommandRegistration>> filterByInteractionMode(ShellContext shellContext) {
+    private static Predicate<Map.Entry<CommandKey, CommandRegistration>> filterByInteractionMode(ShellContext shellContext) {
         return e -> {
             InteractionMode mim = e.getValue().getInteractionMode();
             InteractionMode cim = shellContext != null ? shellContext.getInteractionMode() : InteractionMode.ALL;
@@ -106,7 +107,7 @@ public class DynamicCommandCatalog implements CommandCatalog {
         };
     }
 
-    private static Predicate<Map.Entry<String, CommandRegistration>> filterByJwzShellContext(JWaveZShellContext jWaveZShellContext) {
+    private static Predicate<Map.Entry<CommandKey, CommandRegistration>> filterByJwzShellContext(JWaveZShellContext jWaveZShellContext) {
         return registrationEntry -> {
             String registrationGroup = registrationEntry.getValue().getGroup();
             if (jWaveZShellContext.getShellScope().name().equalsIgnoreCase(registrationGroup)) {
@@ -114,5 +115,12 @@ public class DynamicCommandCatalog implements CommandCatalog {
             }
             return Stream.of(GROUPS_ALWAYS_ON).anyMatch(groupOn -> groupOn.equals(registrationGroup));
         };
+    }
+
+    @EqualsAndHashCode
+    @AllArgsConstructor
+    private static class CommandKey {
+        private String command;
+        private String group;
     }
 }

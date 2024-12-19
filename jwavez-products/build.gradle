@@ -11,7 +11,6 @@ apply {
 }
 
 ext {
-    springShellVersion = '3.3.3'
     jacksonVersion = '2.11.4'
     commonsCliVersion = '1.4'
 }
@@ -26,20 +25,17 @@ jar {
     duplicatesStrategy = "exclude"
     manifest {
         attributes(
-                "Implementation-Title": "JWaveZ Net Tools",
+                "Implementation-Title": "JWaveZ Products",
                 "Implementation-Version": archiveVersion,
-                "Main-Class": "com.rposcro.jwavez.tools.shell.JWaveZShell"
+                "Main-Class": "com.rposcro.jwavez.products.JWaveZProducts"
         )
     }
 }
 
 dependencies {
     implementation project(':jwavez-core')
-    implementation project(':jwavez-serial')
-    implementation project(':jwavez-products')
 
     implementation "org.springframework.boot:spring-boot-starter"
-    implementation "org.springframework.shell:spring-shell-starter:${springShellVersion}"
 
     implementation "commons-cli:commons-cli:${commonsCliVersion}"
 
@@ -48,43 +44,4 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jdk8:${jacksonVersion}"
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:${jacksonVersion}"
     implementation "com.fasterxml.jackson.core:jackson-databind:${jacksonVersion}"
-}
-
-task _packCreateDir {
-    doLast {
-        mkdir "$buildDir/jwz"
-    }
-}
-
-task _packCopyArchives(type: Copy) {
-    dependsOn _packCreateDir
-    from(bootJar.archiveFile) {
-        rename { fileName -> bootJar.archiveBaseName.get() << ".jar" }
-    }
-    from("src/main/bash") {
-        include "*"
-    }
-    into "$buildDir/jwz"
-}
-
-task _packZipArchives(type: Zip) {
-    dependsOn _packCopyArchives
-    archiveFileName = "jwz.zip"
-    destinationDirectory = buildDir
-
-    from("$buildDir") {
-        include "jwz/*"
-    }
-}
-
-task pack {
-    dependsOn _packZipArchives
-}
-
-task deployLocal(type: Copy) {
-    dependsOn _packCopyArchives
-    from("$buildDir/jwz") {
-        include "*"
-    }
-    into "file://" + System.properties["user.home"] + "/bin"
 }
