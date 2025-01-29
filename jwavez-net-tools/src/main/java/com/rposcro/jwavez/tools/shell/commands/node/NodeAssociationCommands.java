@@ -3,7 +3,6 @@ package com.rposcro.jwavez.tools.shell.commands.node;
 import com.jwavez.jwavez.products.model.AssociationGroup;
 import com.rposcro.jwavez.core.classes.CommandClass;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.CommandClassMeta;
 import com.rposcro.jwavez.tools.shell.models.EndPointMark;
@@ -19,11 +18,10 @@ import com.rposcro.jwavez.tools.shell.services.NumberRangeParser;
 import com.rposcro.jwavez.tools.shell.services.ProductsSpecificationsProvider;
 import com.rposcro.jwavez.tools.utils.SerialFunction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Availability;
 import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.CommandAvailability;
 import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethodAvailability;
 
 import java.text.ParseException;
 import java.util.List;
@@ -35,9 +33,6 @@ import static java.lang.String.format;
 @ShellComponent
 @Command(group = CommandGroup.NODE)
 public class NodeAssociationCommands {
-
-    @Autowired
-    private JWaveZShellContext shellContext;
 
     @Autowired
     private ConsoleAccessor console;
@@ -58,12 +53,10 @@ public class NodeAssociationCommands {
     private NumberRangeParser numberRangeParser;
 
     @Autowired
-    private NodeAssociationService nodeAssociationService;
-
-    @Autowired
     private ProductsSpecificationsProvider productsSpecificationsProvider;
 
     @Command(command = "association print", alias = "ap", description = "Print association group(s)")
+    @CommandAvailability(provider = {"nodeAvailability"})
     public String printAssociationGroupDetails(
             @Option(longNames = "group-ids", shortNames = 'g') String groupIdRange,
             @Option(longNames = "verbose", shortNames = 'v', defaultValue = "false") boolean verbose
@@ -83,6 +76,7 @@ public class NodeAssociationCommands {
     }
 
     @Command(command = "association learn", alias = "al", description = "Learn about group associations")
+    @CommandAvailability(provider = {"dongleAvailability", "nodeAvailability"})
     public String fetchGroupAssociations(
             @Option(longNames = "group-ids", shortNames = 'g') String groupIdsRange,
             @Option(longNames = "multichannel", shortNames = 'm', defaultValue = "true") boolean useMultiChannel
@@ -110,6 +104,7 @@ public class NodeAssociationCommands {
     }
 
     @Command(command = "association add", alias = "aa", description = "Add association to given group")
+    @CommandAvailability(provider = {"dongleAvailability", "nodeAvailability"})
     public String addAssociation(
             @Option(longNames = "group-id", shortNames = 'g', required = true) int groupId,
             @Option(longNames = "destination-id", shortNames = 'd', required = true) String destinationId
@@ -124,6 +119,7 @@ public class NodeAssociationCommands {
     }
 
     @Command(command = "association remove", alias = "ar", description = "Remove association from given group")
+    @CommandAvailability(provider = {"dongleAvailability", "nodeAvailability"})
     public String removeAssociation(
             @Option(longNames = "group-id", shortNames = 'g', required = true) int groupId,
             @Option(longNames = "destination-id", shortNames = 'd', required = true) String destinationId
@@ -135,24 +131,6 @@ public class NodeAssociationCommands {
                 nodeId -> associationService.sendRemoveAssociation(nodeId, groupId, Integer.parseInt(destinationId)),
                 nodeId -> multiChannelAssociationService.sendRemoveAssociation(nodeId, groupId, new EndPointMark(destinationId)));
         return formatValueLine(nodeInformation, groupId) + "\n";
-    }
-
-    @ShellMethodAvailability(value = {"association learn", "association add", "association remove"})
-    public Availability checkRemoteAvailability() {
-        if (!nodeScopeContext.isAnyNodeSelected()) {
-            return Availability.unavailable("No node is selected in the working context, try to select or fetch one");
-        }
-
-        return shellContext.getDongleDevicePath() != null ?
-                Availability.available() :
-                Availability.unavailable("ZWave dongle device is not specified");
-    }
-
-    @ShellMethodAvailability({"association print"})
-    public Availability checkLocalAvailability() {
-        return nodeScopeContext.isAnyNodeSelected() ?
-                Availability.available() :
-                Availability.unavailable("No node is selected in the working context, try to select or fetch one");
     }
 
     private NodeInformation executeAssociationAction(

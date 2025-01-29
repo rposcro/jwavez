@@ -9,16 +9,15 @@ import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationService;
 import com.rposcro.jwavez.tools.shell.services.ProductsSpecificationsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.CommandAvailability;
+import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
 @ShellComponent
-@ShellCommandGroup(CommandGroup.NODE)
+@Command(group = CommandGroup.NODE)
 public class KnownNodesCommands {
 
     @Autowired
@@ -36,7 +35,7 @@ public class KnownNodesCommands {
     @Autowired
     private ProductsSpecificationsProvider productsSpecificationsProvider;
 
-    @ShellMethod(value = "List known nodes", key = {"list", "ls"})
+    @Command(command = "list", alias = "ls", description = "List known nodes")
     public String listKnownNodes() {
         return nodeInformationCache.getOrderedNodeList().stream()
                 .map(node -> {
@@ -46,10 +45,9 @@ public class KnownNodesCommands {
                 .collect(Collectors.joining("\n"));
     }
 
-    @ShellMethod(value = "Checks node responsiveness", key = "ping")
-    public String checkNodeResponsiveness(
-        @ShellOption(value = {"--node-id", "-id"}, defaultValue = ShellOption.NULL) Integer nodeIdArg
-    ) {
+    @Command(command = "ping", description = "Checks node responsiveness")
+    @CommandAvailability(provider = "dongleAvailability")
+    public String checkNodeResponsiveness(@Option(longNames = "node-id", shortNames = 'n') Integer nodeIdArg) {
         if (nodeIdArg == null && !nodeScopeContext.isAnyNodeSelected()) {
             return "No node selected, --node-id needs to be provided";
         }
@@ -60,10 +58,10 @@ public class KnownNodesCommands {
         return String.format("Node %3s (%02x) is %s", nodeId, nodeId, pingAnswer ? "Alive" : "Silent");
     }
 
-    @ShellMethod(value = "Show known node information", key = {"info", "ni"})
+    @Command(command = "info", alias = "ni", description = "Show known node information")
     public String showNodeInformation(
-            @ShellOption(value = {"--node-id", "-id"}, defaultValue = ShellOption.NULL) Integer nodeIdArg,
-            @ShellOption(value = {"--verbose", "-v"}, defaultValue = "false") boolean verbose
+            @Option(longNames = "node-id", shortNames = 'n') Integer nodeIdArg,
+            @Option(longNames = "verbose", shortNames = 'v', defaultValue = "false") boolean verbose
     ) {
         if (nodeIdArg == null && !nodeScopeContext.isAnyNodeSelected()) {
             return "No node selected, --node-id needs to be provided";
@@ -79,8 +77,8 @@ public class KnownNodesCommands {
         }
     }
 
-    @ShellMethod(value = "Remove node from known list", key = {"remove"})
-    public String removeNodeInformation(@ShellOption({"--node-id", "-id"}) int nodeId) {
+    @Command(command = "remove", description = "Remove node from known list")
+    public String removeNodeInformation(@Option(longNames = "node-id", shortNames = 'n') int nodeId) {
         NodeInformation nodeInformation = nodeInformationCache.removeNodeInformation(nodeId);
         if (nodeScopeContext.isAnyNodeSelected() && nodeScopeContext.getCurrentNodeId() == nodeId) {
             nodeScopeContext.setCurrentNodeId(null);
@@ -91,10 +89,5 @@ public class KnownNodesCommands {
         } else {
             return "Node id " + nodeId + " was not in cache";
         }
-    }
-
-    private NodeInformation findNodeInformation(Integer nodeIdArg) {
-        int nodeId = nodeIdArg == null ? nodeScopeContext.getCurrentNodeId() : nodeIdArg;
-        return nodeInformationCache.getNodeDetails(nodeId);
     }
 }

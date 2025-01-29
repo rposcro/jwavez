@@ -2,7 +2,6 @@ package com.rposcro.jwavez.tools.shell.commands.node;
 
 import com.jwavez.jwavez.products.model.Parameter;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import com.rposcro.jwavez.tools.shell.scopes.NodeScopeContext;
@@ -11,21 +10,16 @@ import com.rposcro.jwavez.tools.shell.services.NodeParameterService;
 import com.rposcro.jwavez.tools.shell.services.NumberRangeParser;
 import com.rposcro.jwavez.tools.shell.services.ProductsSpecificationsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Availability;
-import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.CommandAvailability;
+import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellMethodAvailability;
-import org.springframework.shell.standard.ShellOption;
 
 import java.text.ParseException;
 
 @ShellComponent
-@ShellCommandGroup(CommandGroup.NODE)
+@Command(group = CommandGroup.NODE)
 public class NodeParameterCommands {
-
-    @Autowired
-    private JWaveZShellContext shellContext;
 
     @Autowired
     private NodeScopeContext nodeScopeContext;
@@ -42,10 +36,11 @@ public class NodeParameterCommands {
     @Autowired
     private ProductsSpecificationsProvider productsSpecificationsProvider;
 
-    @ShellMethod(value = "Print parameter(s)", key = {"param print", "pp"})
+    @Command(command = "param print", alias = "pp", description = "Print parameter(s)")
+    @CommandAvailability(provider = "nodeAvailability")
     public String printParametersDetails(
-            @ShellOption(value = {"--param-numbers", "-pns"}, defaultValue = ShellOption.NULL) String paramNumbersRange,
-            @ShellOption(value = {"--verbose", "-v"}, defaultValue = "false") boolean verbose
+            @Option(longNames = "param-numbers", shortNames = 'p') String paramNumbersRange,
+            @Option(longNames = "verbose", shortNames = 'v', defaultValue = "false") boolean verbose
     ) {
         try {
             int[] paramNumbers = parseParamNumbersArgument(paramNumbersRange);
@@ -61,9 +56,10 @@ public class NodeParameterCommands {
         }
     }
 
-    @ShellMethod(value = "Learn about parameter(s) value", key = {"param learn", "pl"})
+    @Command(command = "param learn", alias = "pl", description = "Learn about parameter(s) value")
+    @CommandAvailability(provider = {"nodeAvailability", "dongleAvailability"})
     public String fetchParametersValues(
-            @ShellOption(value = {"--param-numbers", "-pns"}, defaultValue = ShellOption.NULL) String paramNumbersRange
+        @Option(longNames = "param-numbers", shortNames = 'p') String paramNumbersRange
     ) throws SerialException {
         try {
             int[] paramNumbers = parseParamNumbersArgument(paramNumbersRange);
@@ -83,10 +79,11 @@ public class NodeParameterCommands {
         }
     }
 
-    @ShellMethod(value = "Set parameter value", key = {"param set", "ps"})
+    @Command(command = "param set", alias = "ps", description = "Set parameter value")
+    @CommandAvailability(provider = {"nodeAvailability", "dongleAvailability"})
     public String setParameterValue(
-            @ShellOption(value = {"--param-number", "-pn"}) int paramNumber,
-            @ShellOption(value = {"--param-value", "-pv"}) long paramValue
+        @Option(longNames = "param-number", shortNames = 'p') int paramNumber,
+        @Option(longNames = "param-value", shortNames = 'w') int paramValue
     ) throws SerialException {
         int nodeId = nodeScopeContext.getCurrentNodeId();
 
@@ -100,24 +97,6 @@ public class NodeParameterCommands {
         } else {
             return "Something went wrong and parameter value has not been changed";
         }
-    }
-
-    @ShellMethodAvailability(value = {"param learn", "param set"})
-    public Availability checkRemoteAvailability() {
-        if (!nodeScopeContext.isAnyNodeSelected()) {
-            return Availability.unavailable("No node is selected in the working context, try to select or fetch one");
-        }
-
-        return shellContext.getDongleDevicePath() != null ?
-                Availability.available() :
-                Availability.unavailable("ZWave dongle device is not specified");
-    }
-
-    @ShellMethodAvailability({"param print"})
-    public Availability checkLocalAvailability() {
-        return nodeScopeContext.isAnyNodeSelected() ?
-                Availability.available() :
-                Availability.unavailable("No node is selected in the working context, try to select or fetch one");
     }
 
     private int[] parseParamNumbersArgument(String paramNumbersRange) throws ParseException {
