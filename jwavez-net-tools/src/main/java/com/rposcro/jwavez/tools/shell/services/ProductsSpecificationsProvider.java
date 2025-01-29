@@ -1,7 +1,10 @@
 package com.rposcro.jwavez.tools.shell.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jwavez.jwavez.products.model.AssociationGroup;
+import com.jwavez.jwavez.products.model.Parameter;
 import com.jwavez.jwavez.products.model.Product;
+import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,9 @@ public class ProductsSpecificationsProvider {
     private final Map<ProductKey, Product> productsMap;
 
     @Autowired
+    private NodeInformationCache nodeInformationCache;
+
+    @Autowired
     public ProductsSpecificationsProvider(
         @Value("${jwz-shell.products.path}") String productsPath,
         ObjectMapper objectMapper) throws IOException {
@@ -28,6 +34,70 @@ public class ProductsSpecificationsProvider {
         Product[] products = objectMapper.readValue(productsFile, Product[].class);
         this.productsMap = Stream.of(products)
             .collect(Collectors.toMap(this::productKey, Function.identity()));
+    }
+
+    public Product findProduct(int nodeId) {
+        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
+        return findProduct(nodeInformation);
+    }
+
+    public Product findProduct(NodeInformation nodeInformation) {
+        Product product = productsMap.get(productKey(nodeInformation));
+        if (product == null) {
+            throw new IllegalStateException(
+                String.format("Product not defined for productId: %s, productTypeId: %s, manufacturerId: %s",
+                    nodeInformation.getProductInformation().getProductId(),
+                    nodeInformation.getProductInformation().getProductTypeId(),
+                    nodeInformation.getProductInformation().getManufacturerId()
+                ));
+        }
+        return product;
+    }
+
+    public Parameter findParameter(int nodeId, int parameterNumber) {
+        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
+        return findParameter(nodeInformation, parameterNumber);
+    }
+
+    public Parameter findParameter(NodeInformation nodeInformation, int parameterNumber) {
+        Product product = findProduct(nodeInformation);
+        return product.findParameter(parameterNumber);
+    }
+
+    public int[] findAssociationsGroupsIds(int nodeId) {
+        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
+        Product product = findProduct(nodeInformation);
+        return product.getAssociationGroups().stream()
+            .mapToInt(AssociationGroup::getGroupId)
+            .toArray();
+    }
+
+    public int[] findParameterNumbers(int nodeId) {
+        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
+        Product product = findProduct(nodeInformation);
+        return product.getParameters().stream()
+            .mapToInt(Parameter::getNumber)
+            .toArray();
+    }
+
+    public boolean hasAssociationGroup(int nodeId, int groupId) {
+        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
+        Product product = findProduct(nodeInformation);
+        return product.hasAssociationGroup(groupId);
+    }
+
+    public boolean hasParameter(int nodeId, int parameterNumber) {
+        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
+        Product product = findProduct(nodeInformation);
+        return product.hasParameter(parameterNumber);
+    }
+
+    private ProductKey productKey(NodeInformation nodeInformation) {
+        return new ProductKey(
+            nodeInformation.getProductInformation().getProductId(),
+            nodeInformation.getProductInformation().getProductTypeId(),
+            nodeInformation.getProductInformation().getManufacturerId()
+        );
     }
 
     private ProductKey productKey(Product product) {

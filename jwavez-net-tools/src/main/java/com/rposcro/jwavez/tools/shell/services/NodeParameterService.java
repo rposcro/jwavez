@@ -1,5 +1,6 @@
 package com.rposcro.jwavez.tools.shell.services;
 
+import com.jwavez.jwavez.products.model.Parameter;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;
@@ -11,8 +12,6 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
-import com.rposcro.jwavez.tools.shell.models.NodeInformation;
-import com.rposcro.jwavez.tools.shell.models.ParameterMeta;
 import com.rposcro.jwavez.tools.utils.SerialUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,24 +31,8 @@ public class NodeParameterService {
     @Autowired
     private SerialRequestFactory serialRequestFactory;
 
-    public void updateOrCreateMeta(int nodeId, int paramNumber, int sizeInBits, String memo) {
-        ParameterMeta parameterMeta = ParameterMeta.builder()
-                .number(paramNumber)
-                .sizeInBits(sizeInBits)
-                .memo(memo)
-                .build();
-        nodeInformationCache.getNodeDetails(nodeId).getParametersInformation().addOrReplaceParameterMeta(parameterMeta);
-    }
-
-    public void cloneParametersMetas(int sourceNodeId, int targetNodeId) {
-        NodeInformation sourceNode = nodeInformationCache.getNodeDetails(sourceNodeId);
-        NodeInformation targetNode = nodeInformationCache.getNodeDetails(targetNodeId);
-        targetNode.getParametersInformation().wipeOutAll();
-
-        sourceNode.getParametersInformation().getParameterMetas().stream().forEach(meta -> {
-            targetNode.getParametersInformation().addOrReplaceParameterMeta(meta);
-        });
-    }
+    @Autowired
+    private ProductsSpecificationsProvider productsSpecificationsProvider;
 
     public Long fetchParameterValue(int nodeId, int paramNumber) throws SerialException {
         final NodeId nodeID = NodeId.forId(nodeId);
@@ -68,10 +51,10 @@ public class NodeParameterService {
 
     public boolean sendParameterValue(int nodeId, int paramNumber, long requestedValue) throws SerialException {
         final NodeId nodeID = NodeId.forId(nodeId);
-        final ParameterMeta parameterMeta = nodeInformationCache.getNodeDetails(nodeId).getParametersInformation().findParameterMeta(paramNumber);
+        final Parameter parameter = productsSpecificationsProvider.findParameter(nodeId, paramNumber);
         boolean sendResult = serialCommunicationService.runBasicSynchronousFunction((executor) -> {
             ZWaveControlledCommand command = configurationCommandBuilder.v1()
-                    .buildSetParameterCommand(paramNumber, (int) requestedValue, BitLength.ofBytesNumber(parameterMeta.getSizeInBytes()));
+                    .buildSetParameterCommand(paramNumber, (int) requestedValue, BitLength.ofBitsNumber(parameter.getBitSize()));
             SendDataCallback callback = executor.requestCallbackFlow(
                     serialRequestFactory.networkTransportRequestBuilder().createSendDataRequest(nodeID, command, SerialUtils.nextFlowId()));
             return callback.getTransmitCompletionStatus() == TransmitCompletionStatus.TRANSMIT_COMPLETE_OK;

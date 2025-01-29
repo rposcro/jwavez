@@ -1,15 +1,15 @@
 package com.rposcro.jwavez.tools.shell.commands.node;
 
+import com.jwavez.jwavez.products.model.Parameter;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
-import com.rposcro.jwavez.tools.shell.models.ParameterMeta;
 import com.rposcro.jwavez.tools.shell.scopes.NodeScopeContext;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
-import com.rposcro.jwavez.tools.shell.services.NodeInformationService;
 import com.rposcro.jwavez.tools.shell.services.NodeParameterService;
 import com.rposcro.jwavez.tools.shell.services.NumberRangeParser;
+import com.rposcro.jwavez.tools.shell.services.ProductsSpecificationsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.Availability;
 import org.springframework.shell.standard.ShellCommandGroup;
@@ -34,65 +34,18 @@ public class NodeParameterCommands {
     private NodeInformationCache nodeInformationCache;
 
     @Autowired
-    private NodeInformationService nodeInformationService;
-
-    @Autowired
     private NodeParameterService nodeParameterService;
 
     @Autowired
     private NumberRangeParser numberRangeParser;
 
-    @ShellMethod(value = "Define node parameter", key = {"param define", "pd"})
-    public String defineParameter(
-            @ShellOption(value = {"--param-number", "-pn"}) int paramNumber,
-            @ShellOption(value = {"--param-memo", "-memo"}) String paramMemo,
-            @ShellOption(value = {"--size-in-bytes", "-sib"}) int sizeInBytes
-    ) {
-        int nodeId = nodeScopeContext.getCurrentNodeId();
-        int sizeInBits = sizeInBytes * 8;
-        nodeParameterService.updateOrCreateMeta(nodeId, paramNumber, sizeInBits, paramMemo);
-        return String.format("Parameter defined:\n  node id: %s\n  number: %s\n  size in bits: %s\n  memo: %s"
-                , nodeId, paramNumber, sizeInBits, paramMemo);
-    }
-
-    @ShellMethod(value = "Clone node parameters definitions from given node to current", key = {"param clone"})
-    public String cloneParameters(
-            @ShellOption(value = {"--node-id", "-id"}) int sourceNodeId
-    ) {
-        int currentNodeId = nodeScopeContext.getCurrentNodeId();
-        NodeInformation currentNode = nodeInformationCache.getNodeDetails(currentNodeId);
-        NodeInformation sourceNode = nodeInformationCache.getNodeDetails(sourceNodeId);
-
-        if (sourceNode != null) {
-            if (nodeInformationService.nodesMatch(currentNode, sourceNode)) {
-                nodeParameterService.cloneParametersMetas(sourceNodeId, currentNodeId);
-                return "Parameters definitions cloned to current node";
-            } else {
-                return "Node " + sourceNodeId + " doesn't match the current one, cannot clone from it";
-            }
-        } else {
-            return "Node " + sourceNodeId + " is unknown, cannot clone from it";
-        }
-    }
-
-    @ShellMethod(value = "Delete node parameter definition", key = {"param delete"})
-    public String deleteParameterDefinitionAndValue(
-            @ShellOption(value = {"--param-number", "-pn"}) int paramNumber
-    ) throws SerialException {
-        int nodeId = nodeScopeContext.getCurrentNodeId();
-        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
-        if (nodeInformation.getParametersInformation().removeParameterMeta(paramNumber) != null) {
-            nodeInformation.getParametersInformation().removeParameterValue(paramNumber);
-            return "Parameter " + paramNumber + " deleted";
-        } else {
-            return "Unknown parameter " + paramNumber;
-        }
-    }
+    @Autowired
+    private ProductsSpecificationsProvider productsSpecificationsProvider;
 
     @ShellMethod(value = "Print parameter(s)", key = {"param print", "pp"})
     public String printParametersDetails(
             @ShellOption(value = {"--param-numbers", "-pns"}, defaultValue = ShellOption.NULL) String paramNumbersRange,
-            @ShellOption(defaultValue = "false") boolean verbose
+            @ShellOption(value = {"--verbose", "-v"}, defaultValue = "false") boolean verbose
     ) {
         try {
             int[] paramNumbers = parseParamNumbersArgument(paramNumbersRange);
@@ -136,9 +89,8 @@ public class NodeParameterCommands {
             @ShellOption(value = {"--param-value", "-pv"}) long paramValue
     ) throws SerialException {
         int nodeId = nodeScopeContext.getCurrentNodeId();
-        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
 
-        if (!nodeInformation.getParametersInformation().isParameterDefined(paramNumber)) {
+        if (!productsSpecificationsProvider.hasParameter(nodeId, paramNumber)) {
             return "Parameter " + paramNumber + " is not known for node " + nodeId;
         }
 
@@ -161,7 +113,7 @@ public class NodeParameterCommands {
                 Availability.unavailable("ZWave dongle device is not specified");
     }
 
-    @ShellMethodAvailability({"param clone", "param define", "param delete", "param print"})
+    @ShellMethodAvailability({"param print"})
     public Availability checkLocalAvailability() {
         return nodeScopeContext.isAnyNodeSelected() ?
                 Availability.available() :
@@ -172,41 +124,38 @@ public class NodeParameterCommands {
         if (paramNumbersRange != null && !"*".equals(paramNumbersRange)) {
             return numberRangeParser.parseNumberRange(paramNumbersRange);
         } else {
-            return nodeInformationCache.getNodeDetails(nodeScopeContext.getCurrentNodeId())
-                    .getParametersInformation().getParameterMetas().stream()
-                    .mapToInt(ParameterMeta::getNumber)
-                    .toArray();
+            return productsSpecificationsProvider.findParameterNumbers(nodeScopeContext.getCurrentNodeId());
         }
     }
 
     private String formatParamValueLine(NodeInformation nodeInformation, int paramNumber) {
-        ParameterMeta parameterMeta = nodeInformation.getParametersInformation().findParameterMeta(paramNumber);
+        Parameter parameter = productsSpecificationsProvider.findParameter(nodeInformation, paramNumber);
         Long paramValue = nodeInformation.getParametersInformation().findParameterValue(paramNumber);
         String line;
 
-        if (parameterMeta == null) {
+        if (parameter == null) {
             line = "Param " + paramNumber + ": <param unknown>";
         } else if (paramValue == null) {
             line = "Param " + paramNumber + ": <value unknown>";
         } else {
-            line = String.format("Param %s: %0" + (parameterMeta.getSizeInBits() / 4) + "X", paramNumber, paramValue);
+            line = String.format("Param %s: %s (x%0" + (parameter.getBitSize() / 4) + "x)", paramNumber, paramValue, paramValue);
         }
         return line;
     }
 
     private String formatParamVerboseLine(NodeInformation nodeInformation, int paramNumber) {
-        ParameterMeta parameterMeta = nodeInformation.getParametersInformation().findParameterMeta(paramNumber);
+        Parameter parameter = productsSpecificationsProvider.findParameter(nodeInformation, paramNumber);
         Long paramValue = nodeInformation.getParametersInformation().findParameterValue(paramNumber);
         String line;
 
-        if (parameterMeta == null) {
+        if (parameter == null) {
             line = "Param " + paramNumber + ": <param unknown>";
         } else {
             line = String.format("Param %s:\n  size in bits: %s\n  memo: %s\n  value: %s",
-                    parameterMeta.getNumber(),
-                    parameterMeta.getSizeInBits(),
-                    parameterMeta.getMemo(),
-                    paramValue != null ? String.format("%0" + (parameterMeta.getSizeInBits() / 4) + "X", paramValue) : "<value unknown>"
+                parameter.getNumber(),
+                parameter.getBitSize(),
+                parameter.getDescription(),
+                paramValue != null ? String.format("%s (x%0" + (parameter.getBitSize() / 4) + "x)", paramValue, paramValue) : "<value unknown>"
             );
         }
 

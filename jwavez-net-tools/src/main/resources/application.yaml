@@ -12,7 +12,7 @@ spring:
 
 jwz-shell:
   products:
-    path: "${user.home}/.config/jwavez/shell/devices.json"
+    path: "${user.home}/.config/jwavez/shell/products.json"
   repo:
     location: "${user.home}/.config/jwavez/shell/repo"
 
