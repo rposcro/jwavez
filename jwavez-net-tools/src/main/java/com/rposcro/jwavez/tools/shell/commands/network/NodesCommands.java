@@ -5,17 +5,14 @@ import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.DongleNetworkInformation;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
-import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Availability;
-import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.CommandAvailability;
 import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellMethodAvailability;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,11 +23,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @ShellComponent
-@ShellCommandGroup(CommandGroup.NETWORK)
+@Command(group = CommandGroup.NETWORK)
 public class NodesCommands {
-
-    @Autowired
-    private JWaveZShellContext shellContext;
 
     @Autowired
     private DongleInformationService dongleInformationService;
@@ -44,7 +38,8 @@ public class NodesCommands {
     @Autowired
     private ConsoleAccessor console;
 
-    @ShellMethod(value = "Check consistency of nodes on the network", key = {"check nodes"})
+    @Command(command = "check nodes", description = "Check consistency of nodes on the network")
+    @CommandAvailability(provider = "dongleAvailability")
     public String checkNodes() throws SerialException {
         List<NodeInformation> cachedNodes = nodeInformationCache.getOrderedNodeList();
         console.flushLine(String.format("Cache holds information about %s node(s)", cachedNodes.size()));
@@ -92,18 +87,6 @@ public class NodesCommands {
                 .append("\n");
 
         return "\n" + summary.toString();
-    }
-
-    @ShellMethodAvailability
-    public Availability checkAvailability() {
-
-        if (ShellScope.NETWORK != shellContext.getScopeContext().getScope()) {
-            return Availability.unavailable("Command not available in current scope");
-        }
-
-        return shellContext.getDongleDevicePath() != null ?
-                Availability.available() :
-                Availability.unavailable("ZWave dongle device is not specified");
     }
 
     private class NodeReport {

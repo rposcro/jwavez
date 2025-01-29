@@ -1,29 +1,22 @@
 package com.rposcro.jwavez.tools.shell.commands.network;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.formatters.NodeInformationFormatter;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
-import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.shell.services.NetworkManagementService;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Availability;
-import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.CommandAvailability;
+import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellMethodAvailability;
-import org.springframework.shell.standard.ShellOption;
 
 @ShellComponent
-@ShellCommandGroup(CommandGroup.NETWORK)
+@Command(group = CommandGroup.NETWORK)
 public class InclusionCommands {
-
-    @Autowired
-    private JWaveZShellContext shellContext;
 
     @Autowired
     private NetworkManagementService networkManagementService;
@@ -40,8 +33,9 @@ public class InclusionCommands {
     @Autowired
     private ConsoleAccessor console;
 
-    @ShellMethod(value = "Include new node into network", key = "include")
-    public String includeNode(@ShellOption(value = {"--timeout", "-to"}, defaultValue = "60") int timeout) throws SerialException {
+    @Command(command = "include", description = "Include new node into network")
+    @CommandAvailability(provider = "dongleAvailability")
+    public String includeNode(@Option(longNames = "timeout", shortNames = 't', defaultValue = "60") int timeout) throws SerialException {
         if (timeout > 60) {
             return "Maximum timeout value is 60 seconds";
         }
@@ -60,8 +54,9 @@ public class InclusionCommands {
         }
     }
 
-    @ShellMethod(value = "Exclude node from network", key = "exclude")
-    public String excludeNode(@ShellOption(value = {"--timeout", "-to"}, defaultValue = "60") int timeout) throws SerialException {
+    @Command(command = "exclude", description = "Exclude node from network")
+    @CommandAvailability(provider = "dongleAvailability")
+    public String excludeNode(@Option(longNames = "timeout", shortNames = 't', defaultValue = "60") int timeout) throws SerialException {
         if (timeout > 60) {
             return "Maximum timeout value is 60 seconds";
         }
@@ -75,17 +70,5 @@ public class InclusionCommands {
         } else {
             return String.format("No node detected to exclude");
         }
-    }
-
-    @ShellMethodAvailability
-    public Availability checkAvailability() {
-
-        if (ShellScope.NETWORK != shellContext.getScopeContext().getScope()) {
-            return Availability.unavailable("Command not available in current scope");
-        }
-
-        return shellContext.getDongleDevicePath() != null ?
-                Availability.available() :
-                Availability.unavailable("ZWave dongle device is not specified");
     }
 }
