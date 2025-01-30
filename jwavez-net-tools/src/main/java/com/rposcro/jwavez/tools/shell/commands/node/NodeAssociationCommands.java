@@ -58,7 +58,7 @@ public class NodeAssociationCommands {
     @Command(command = "association print", alias = "ap", description = "Print association group(s)")
     @CommandAvailability(provider = {"nodeAvailability"})
     public String printAssociationGroupDetails(
-            @Option(longNames = "group-ids", shortNames = 'g') String groupIdRange,
+            @Option(longNames = "group-ids", shortNames = 'g', required = true) String groupIdRange,
             @Option(longNames = "verbose", shortNames = 'v', defaultValue = "false") boolean verbose
     ) {
         try {
@@ -78,7 +78,7 @@ public class NodeAssociationCommands {
     @Command(command = "association learn", alias = "al", description = "Learn about group associations")
     @CommandAvailability(provider = {"dongleAvailability", "nodeAvailability"})
     public String fetchGroupAssociations(
-            @Option(longNames = "group-ids", shortNames = 'g') String groupIdsRange,
+            @Option(longNames = "group-ids", shortNames = 'g', required = true) String groupIdsRange,
             @Option(longNames = "multichannel", shortNames = 'm', defaultValue = "true") boolean useMultiChannel
     ) throws SerialException {
         try {

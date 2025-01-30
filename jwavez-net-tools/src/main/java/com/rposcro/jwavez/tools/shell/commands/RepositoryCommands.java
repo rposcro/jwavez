@@ -3,17 +3,15 @@ package com.rposcro.jwavez.tools.shell.commands;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.services.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Availability;
-import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.CommandAvailability;
+import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellMethodAvailability;
-import org.springframework.shell.standard.ShellOption;
 
 import java.io.IOException;
 
 @ShellComponent
-@ShellCommandGroup(CommandGroup.GENERIC)
+@Command(group = CommandGroup.GENERIC)
 public class RepositoryCommands {
 
     @Autowired
@@ -22,7 +20,7 @@ public class RepositoryCommands {
     @Autowired
     private RepositoryService repositoryService;
 
-    @ShellMethod(value = "Show current repository", key = {"repository", "repo"})
+    @Command(command = "repository", alias = "repo", description = "Shows current repository")
     public String showRepository() {
         if (shellContext.isRepositoryOpened()) {
             return "Current repository is " + shellContext.getRepositoryName();
@@ -31,9 +29,10 @@ public class RepositoryCommands {
         }
     }
 
-    @ShellMethod(value = "Create new repository", key = {"repository create", "repo create"})
+    @Command(command = "repository create", alias = "repo create", description = "Creates new repository")
+    @CommandAvailability(provider = "dongleAvailability")
     public String createRepository(
-            @ShellOption(value = {"--repository-name", "-rn"}) String repositoryName
+            @Option(longNames = "repository-name", required = true) String repositoryName
     ) throws IOException {
         if (repositoryService.repositoryExists(repositoryName)) {
             return "Repository " + repositoryName + " already exists, cannot override!";
@@ -43,9 +42,9 @@ public class RepositoryCommands {
         return "Repository " + repositoryName + " created";
     }
 
-    @ShellMethod(value = "Open repository", key = {"repository open", "repo open"})
+    @Command(command = "repository open", alias = "repo open", description = "Opens repository")
     public String openRepository(
-            @ShellOption(value = {"--repository-name", "-rn"}) String repositoryName
+            @Option(longNames = "repository-name", required = true) String repositoryName
     ) throws IOException {
         if (!shellContext.isDeviceReady()) {
             repositoryService.openRepositoryWithoutCheck(repositoryName);
@@ -57,29 +56,10 @@ public class RepositoryCommands {
         }
     }
 
-    @ShellMethod(value = "Persist repository", key = {"repository persist", "repo persist"})
+    @Command(command = "repository persist", alias = "repo persist", description = "Persists repository")
+    @CommandAvailability(provider = {"dongleAvailability", "repositoryAvailability"})
     public String persistRepository() throws IOException {
         repositoryService.persistRepository();
         return "Repository " + shellContext.getRepositoryName() + " persisted";
-    }
-
-    @ShellMethodAvailability(value = {"repository create"})
-    public Availability checkRepositoryCreateAvailability() {
-        return shellContext.isDeviceReady() ?
-                Availability.available() :
-                Availability.unavailable("no ZWave dongle device is ready");
-    }
-
-    @ShellMethodAvailability(value = {"repository persist"})
-    public Availability checkRepositoryPersistAvailability() {
-        if (!shellContext.isDeviceReady()) {
-            return Availability.unavailable("no ZWave dongle device is ready");
-        }
-
-        if (!shellContext.isRepositoryOpened()) {
-            return Availability.unavailable("no repository is opened");
-        }
-
-        return Availability.available();
     }
 }

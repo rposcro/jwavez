@@ -14,7 +14,7 @@ import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
 
 @ShellComponent
-@Command(command = CommandGroup.TOP)
+@Command(group = CommandGroup.TOP)
 public class TopScopeCommands {
 
     @Autowired

@@ -24,7 +24,7 @@ public class NodeContextCommands {
     private NodeInformationFormatter nodeInformationFormatter;
 
     @Command(command = "select", description = "Select known node")
-    public String selectCurrentNodeId(@Option(longNames = "node-id", shortNames = 'n') int nodeId) {
+    public String selectCurrentNodeId(@Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId) {
         NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
         if (nodeInformation == null) {
             return String.format("Node %s is unknown, try to fetch it first", nodeId);

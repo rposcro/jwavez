@@ -7,28 +7,21 @@ import com.rposcro.jwavez.core.commands.supported.multichannel.MultiChannelComma
 import com.rposcro.jwavez.core.commands.types.MultiChannelCommandType;
 import com.rposcro.jwavez.core.commands.types.SwitchBinaryCommandType;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.commands.EncapsulationBuilder;
-import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.TalkCommunicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Availability;
-import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.CommandAvailability;
+import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellMethodAvailability;
-import org.springframework.shell.standard.ShellOption;
 
 @ShellComponent
-@ShellCommandGroup(CommandGroup.TALK)
+@Command(group = CommandGroup.TALK)
 public class SwitchBinaryCommands {
 
     @Autowired
     private TalkCommunicationService talkCommunicationService;
-
-    @Autowired
-    private JWaveZShellContext shellContext;
 
     @Autowired
     EncapsulationBuilder encapsulationBuilder;
@@ -36,10 +29,11 @@ public class SwitchBinaryCommands {
     @Autowired
     private SwitchBinaryCommandBuilder switchBinaryCommandBuilder;
 
-    @ShellMethod(value = "Request binary report", key = {"switchbinary report", "sb report"})
+    @Command(command = "switch-binary report", alias = "sb report", description = "Request binary report")
+    @CommandAvailability(provider = "dongleAvailability")
     public String executeBinaryReport(
-            @ShellOption(value = {"--node-id", "-id"}) int nodeId,
-            @ShellOption(value = {"--encapsulate", "-encap", "-ec"}, defaultValue = ShellOption.NULL) String encapsulationParameter
+            @Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId,
+            @Option(longNames = "encapsulation", shortNames = 'e') String encapsulationParameter
     ) throws SerialException {
         ZWaveControlledCommand command = switchBinaryCommandBuilder.v1().buildGetCommand();
         short reportValue;
@@ -57,11 +51,12 @@ public class SwitchBinaryCommands {
         return String.format("Binary value reported: 0x%02X\n", reportValue);
     }
 
-    @ShellMethod(value = "Binary set request", key = {"switchbinary set", "sb set"})
+    @Command(command = "switch-binary set", alias = "sb set", description = "Binary set request")
+    @CommandAvailability(provider = "dongleAvailability")
     public String executeBinarySet(
-            @ShellOption(value = {"--node-id", "-id"}) int nodeId,
-            @ShellOption(value = {"--binary-value", "-value"}) int binaryValue,
-            @ShellOption(value = {"--encapsulate", "-encap", "-ec"}, defaultValue = ShellOption.NULL) String encapsulationParameter
+            @Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId,
+            @Option(longNames = "value", shortNames = 'w', required = true) int binaryValue,
+            @Option(longNames = "encapsulation", shortNames = 'e') String encapsulationParameter
     ) throws SerialException {
         ZWaveControlledCommand command = switchBinaryCommandBuilder.v1().buildSetCommand((byte) binaryValue);
 
@@ -71,17 +66,5 @@ public class SwitchBinaryCommands {
 
         talkCommunicationService.sendCommand(nodeId, command);
         return String.format("Command %s successfully sent to node %s\n", SwitchBinaryCommandType.BINARY_SWITCH_SET, nodeId);
-    }
-
-    @ShellMethodAvailability
-    public Availability checkAvailability() {
-
-        if (ShellScope.TALK != shellContext.getScopeContext().getScope()) {
-            return Availability.unavailable("Command not available in current scope");
-        }
-
-        return shellContext.getDongleDevicePath() != null ?
-                Availability.available() :
-                Availability.unavailable("ZWave dongle device is not specified");
     }
 }

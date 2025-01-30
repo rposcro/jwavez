@@ -1,7 +1,6 @@
 package com.rposcro.jwavez.tools.shell.commands.node;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.formatters.NodeInformationFormatter;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
@@ -19,9 +18,6 @@ import org.springframework.shell.standard.ShellComponent;
 public class NodeInformationCommands {
 
     @Autowired
-    private JWaveZShellContext shellContext;
-
-    @Autowired
     private NodeScopeContext nodeScopeContext;
 
     @Autowired
@@ -35,7 +31,7 @@ public class NodeInformationCommands {
 
     @Command(command = "learn", description = "Learn about node on network and select it")
     @CommandAvailability(provider = "dongleAvailability")
-    public String fetchNodeInformation(@Option(longNames = "node-id", shortNames = 'n') int nodeId) throws SerialException {
+    public String fetchNodeInformation(@Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId) throws SerialException {
         NodeInformation nodeInformation = nodeInformationService.fetchNodeInformation(nodeId);
         nodeInformationCache.cacheNodeInformation(nodeInformation);
         nodeScopeContext.setCurrentNodeId(nodeId);

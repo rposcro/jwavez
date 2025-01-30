@@ -7,17 +7,13 @@ import com.rposcro.jwavez.core.commands.supported.switchcolor.SwitchColorSupport
 import com.rposcro.jwavez.core.commands.types.SwitchColorCommandType;
 import com.rposcro.jwavez.core.model.ColorComponent;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
-import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.TalkCommunicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Availability;
-import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.CommandAvailability;
+import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellMethodAvailability;
-import org.springframework.shell.standard.ShellOption;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +21,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @ShellComponent
-@ShellCommandGroup(CommandGroup.TALK)
+@Command(group = CommandGroup.TALK)
 public class SwitchColorCommands {
 
     private final static Pattern COLOR_PATTERN = Pattern.compile("(?:[a-fA-F0-9]{2})+");
@@ -34,13 +30,11 @@ public class SwitchColorCommands {
     private TalkCommunicationService talkCommunicationService;
 
     @Autowired
-    private JWaveZShellContext shellContext;
-
-    @Autowired
     private SwitchColorCommandBuilder switchColorCommandBuilder;
 
-    @ShellMethod(value = "Request color report", key = {"switchcolor report", "sc report"})
-    public String executeColorReport(@ShellOption(value = {"--node-id", "-id"}) int nodeId) throws SerialException {
+    @Command(command = "switch-color report", alias = "sc report", description = "Request color report")
+    @CommandAvailability(provider = "dongleAvailability")
+    public String executeColorReport(@Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId) throws SerialException {
         ZWaveControlledCommand command = switchColorCommandBuilder.v1().buildSupportedGetCommand();
         SwitchColorSupportedReport supportedReport = talkCommunicationService.requestTalk(nodeId, command, SwitchColorCommandType.SWITCH_COLOR_SUPPORTED_REPORT);
 
@@ -56,11 +50,12 @@ public class SwitchColorCommands {
         return message.toString() + "\n";
     }
 
-    @ShellMethod(value = "Send color set request", key = {"switchcolor set", "sc set"})
+    @Command(command = "switch-color set", alias = "sc set", description = "Send color set request")
+    @CommandAvailability(provider = "dongleAvailability")
     public String executeColorSet(
-            @ShellOption(value = {"--node-id", "-id"}) int nodeId,
-            @ShellOption(value = {"--color-mode", "-mode"}) String colorMode,
-            @ShellOption(value = {"--color-value", "-color"}) String colorValue
+            @Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId,
+            @Option(longNames = "color-mode", shortNames = 's', required = true) String colorMode,
+            @Option(longNames = "color-value", shortNames = 'w', required = true) String colorValue
     ) throws SerialException {
         String errorMessage = validateArguments(colorMode, colorValue);
         if (errorMessage != null) {
@@ -102,18 +97,6 @@ public class SwitchColorCommands {
             return "Unknown color mode " + colorMode + ", available modes: "
                     + Arrays.stream(ColorMode.values()).map(ColorMode::name).collect(Collectors.joining(", "));
         }
-    }
-
-    @ShellMethodAvailability
-    public Availability checkAvailability() {
-
-        if (ShellScope.TALK != shellContext.getScopeContext().getScope()) {
-            return Availability.unavailable("Command not available in current scope");
-        }
-
-        return shellContext.getDongleDevicePath() != null ?
-                Availability.available() :
-                Availability.unavailable("ZWave dongle device is not specified");
     }
 
     private final static byte WARM_WHITE = 0;

@@ -47,7 +47,7 @@ public class DynamicCommandCatalog implements CommandCatalog {
         for (CommandRegistration registration : registrations) {
             commandRegistrations.put(commandKey(registration), registration);
             for (CommandAlias alias : registration.getAliases()) {
-                commandRegistrations.put(commandKey(alias), registration);
+                commandRegistrations.put(commandKey(alias, registration.getGroup()), registration);
             }
         }
     }
@@ -57,7 +57,7 @@ public class DynamicCommandCatalog implements CommandCatalog {
         for (CommandRegistration registration : registrations) {
             commandRegistrations.remove(commandKey(registration));
             for (CommandAlias alias : registration.getAliases()) {
-                commandRegistrations.remove(commandKey(alias));
+                commandRegistrations.remove(commandKey(alias, registration.getGroup()));
             }
         }
     }
@@ -81,8 +81,8 @@ public class DynamicCommandCatalog implements CommandCatalog {
         return new CommandKey(registration.getCommand(), registration.getGroup());
     }
 
-    private CommandKey commandKey(CommandAlias registration) {
-        return new CommandKey(registration.getCommand(), registration.getGroup());
+    private CommandKey commandKey(CommandAlias registration, String group) {
+        return new CommandKey(registration.getCommand(), group);
     }
 
     /**
