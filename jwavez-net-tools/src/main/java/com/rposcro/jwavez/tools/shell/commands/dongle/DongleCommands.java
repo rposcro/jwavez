@@ -13,7 +13,7 @@ import org.springframework.shell.command.annotation.CommandAvailability;
 import org.springframework.shell.standard.ShellComponent;
 
 @ShellComponent
-@Command(command = CommandGroup.DONGLE)
+@Command(group = CommandGroup.DONGLE)
 public class DongleCommands {
 
     @Autowired
