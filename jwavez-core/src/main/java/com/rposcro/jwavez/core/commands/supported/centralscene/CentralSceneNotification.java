@@ -26,7 +26,7 @@ public class CentralSceneNotification extends ZWaveSupportedCommand<CentralScene
     @Override
     public String asNiceString() {
         return String.format("%s sequenceNumber(%02x) keyAttributes(%02x) sceneNumber(%02x)",
-                super.asNiceString(), sequenceNumber, keyAttributes, sequenceNumber
+                super.asNiceString(), sequenceNumber, keyAttributes, sceneNumber
         );
     }
 }

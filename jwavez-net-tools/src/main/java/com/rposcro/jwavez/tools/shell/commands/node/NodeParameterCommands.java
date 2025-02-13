@@ -39,7 +39,7 @@ public class NodeParameterCommands {
     @Command(command = "param print", alias = "pp", description = "Print parameter(s)")
     @CommandAvailability(provider = "nodeAvailability")
     public String printParametersDetails(
-            @Option(longNames = "param-numbers", shortNames = 'p', required = true) String paramNumbersRange,
+            @Option(longNames = "param-numbers", shortNames = 'p', defaultValue = "*") String paramNumbersRange,
             @Option(longNames = "verbose", shortNames = 'v', defaultValue = "false") boolean verbose
     ) {
         try {
@@ -59,7 +59,7 @@ public class NodeParameterCommands {
     @Command(command = "param learn", alias = "pl", description = "Learn about parameter(s) value")
     @CommandAvailability(provider = {"nodeAvailability", "dongleAvailability"})
     public String fetchParametersValues(
-        @Option(longNames = "param-numbers", shortNames = 'p', required = true) String paramNumbersRange
+        @Option(longNames = "param-numbers", shortNames = 'p', defaultValue = "*") String paramNumbersRange
     ) throws SerialException {
         try {
             int[] paramNumbers = parseParamNumbersArgument(paramNumbersRange);

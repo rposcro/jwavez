@@ -11,7 +11,7 @@ import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
 
 @ShellComponent
-@Command(command = CommandGroup.NODE)
+@Command(group = CommandGroup.NODE)
 public class NodeContextCommands {
 
     @Autowired

@@ -58,7 +58,7 @@ public class NodeAssociationCommands {
     @Command(command = "association print", alias = "ap", description = "Print association group(s)")
     @CommandAvailability(provider = {"nodeAvailability"})
     public String printAssociationGroupDetails(
-            @Option(longNames = "group-ids", shortNames = 'g', required = true) String groupIdRange,
+            @Option(longNames = "group-ids", shortNames = 'g', defaultValue = "*") String groupIdRange,
             @Option(longNames = "verbose", shortNames = 'v', defaultValue = "false") boolean verbose
     ) {
         try {

@@ -109,8 +109,15 @@ public enum SpecificDeviceClass {
     }
 
     public static SpecificDeviceClass ofCode(byte code, GenericDeviceClass genericDeviceClass) {
-        return Optional.ofNullable(codeToClassMap.get(key(code, genericDeviceClass)))
-                .orElseThrow(() -> new IllegalArgumentException("Unknown code: " + code + " of " + genericDeviceClass));
+        SpecificDeviceClass specificDeviceClass = codeToClassMap.get(key((byte) code, genericDeviceClass));
+
+        if (specificDeviceClass != null) {
+            return specificDeviceClass;
+        } else if (code == 0) {
+            return SPECIFIC_TYPE_NOT_USED;
+        } else {
+            throw new IllegalArgumentException("Unknown code: " + code + " of " + genericDeviceClass);
+        }
     }
 
     public static Optional<SpecificDeviceClass> ofCodeOptional(byte code, GenericDeviceClass genericDeviceClass) {

@@ -100,7 +100,7 @@ public class AddNodeToNetworkController extends AbstractInclusionController<AddN
     public static void main(String... args) throws SerialException {
         try (
                 AddNodeToNetworkController controller = AddNodeToNetworkController.builder()
-                        .dongleDevice("/dev/tty.usbmodem1411")
+                        .dongleDevice("/dev/cu.usbmodem21201")
                         .build()
         ) {
             controller.connect();
