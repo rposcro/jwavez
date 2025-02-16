@@ -6,15 +6,14 @@ import com.rposcro.jwavez.tools.shell.models.DongleInformation;
 import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
 import com.rposcro.jwavez.tools.shell.services.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.standard.ShellCommandGroup;
+import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 
 import java.io.File;
 
 @ShellComponent
-@ShellCommandGroup(CommandGroup.GENERIC)
+@Command(group = CommandGroup.GENERIC)
 public class ContextCommands {
 
     @Autowired
@@ -26,7 +25,7 @@ public class ContextCommands {
     @Autowired
     private RepositoryService repositoryService;
 
-    @ShellMethod(value = "Print current context information", key = "pwc")
+    @Command(command = "pwc", description = "Print current context information")
     public String printContextInformation() {
         StringBuffer message = new StringBuffer();
         message.append("Current working scope is " + shellContext.getShellScope().getScopePath()).append("\n");
@@ -38,12 +37,12 @@ public class ContextCommands {
         return message.toString();
     }
 
-    @ShellMethod(value = "About")
+    @Command(command = "About")
     public String about() {
         return "JWaveZ Network Shell";
     }
 
-    @ShellMethod(value = "Set current device", key = "device")
+    @Command(command = "device", description = "Set current device")
     public String setCurrentDevice(@ShellOption(value = {"--path-to-device", "-path"}) String pathToDevice
     ) throws SerialException {
         File deviceFile = new File(pathToDevice);

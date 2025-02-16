@@ -1,9 +1,14 @@
 package com.rposcro.jwavez.serial.controllers.inclusion;
 
+import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.core.model.NodeId;
+import com.rposcro.jwavez.core.utils.BuffersUtil;
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
+import com.rposcro.jwavez.serial.utils.FramesUtil;
+import lombok.extern.slf4j.Slf4j;
 
-abstract class AbstractFlowHandler {
+@Slf4j
+public abstract class AbstractFlowHandler {
 
     abstract void startOver(byte callbackFlowId);
 
@@ -13,5 +18,5 @@ abstract class AbstractFlowHandler {
 
     abstract NodeId getNodeId();
 
-    abstract void handleCallback(ZWaveCallback zWaveCallback);
+    public abstract void handleCallback(ZWaveCallback zWaveCallback);
 }

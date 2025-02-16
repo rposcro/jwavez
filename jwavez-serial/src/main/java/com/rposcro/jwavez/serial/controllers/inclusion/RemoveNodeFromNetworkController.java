@@ -82,7 +82,8 @@ public class RemoveNodeFromNetworkController extends AbstractInclusionController
                 JwzSerialSupport.defaultSupport().serialRequestFactory().removeNodeFromNetworkRequestBuilder() :
                 serialRequestFactory.removeNodeFromNetworkRequestBuilder();
         RemoveNodeFromNetworkController controller = new RemoveNodeFromNetworkController();
-        controller.transactionKeeper = new TransactionKeeper<>(controller::transactionStateChanged);
+        controller.transactionKeeper = new TransactionKeeper<>();
+        controller.transactionKeeper.setStateChangeListener(controller::transactionStateChanged);
         controller.flowHandler = new RemoveNodeFromNetworkFlowHandler(controller.transactionKeeper, requestBuilder);
 
         InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();

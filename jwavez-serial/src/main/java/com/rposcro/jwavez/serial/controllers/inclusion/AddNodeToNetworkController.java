@@ -8,6 +8,7 @@ import static com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkFl
 import com.rposcro.jwavez.core.model.NodeInfo;
 import com.rposcro.jwavez.serial.JwzSerialSupport;
 import com.rposcro.jwavez.serial.SerialRequestFactory;
+import com.rposcro.jwavez.serial.controllers.builders.AddNodeToNetworkControllerBuilder;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
@@ -33,6 +34,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AddNodeToNetworkController extends AbstractInclusionController<AddNodeToNetworkFlowState, AddNodeToNetworkController> {
+
+    public AddNodeToNetworkController(AddNodeToNetworkControllerBuilder builder) {
+        super(builder);
+    }
 
     public Optional<NodeInfo> listenForNodeToAdd() throws FlowException {
         runTransaction("add");
@@ -72,7 +77,8 @@ public class AddNodeToNetworkController extends AbstractInclusionController<AddN
         }
     }
 
-    @Builder
+    @Builder(builderClassName = "LombokAddNodeToNetworkControllerBuilder")
+    @Deprecated(forRemoval = true)
     public static AddNodeToNetworkController build(
             @NonNull String dongleDevice,
             RxTxConfiguration rxTxConfiguration,
@@ -84,7 +90,8 @@ public class AddNodeToNetworkController extends AbstractInclusionController<AddN
                 JwzSerialSupport.defaultSupport().serialRequestFactory().addNodeToNetworkRequestsBuilder()
                 : serialRequestFactory.addNodeToNetworkRequestsBuilder();
         AddNodeToNetworkController controller = new AddNodeToNetworkController();
-        controller.transactionKeeper = new TransactionKeeper<>(controller::transactionStateChanged);
+        controller.transactionKeeper = new TransactionKeeper<>();
+        controller.transactionKeeper.setStateChangeListener(controller::transactionStateChanged);
         controller.flowHandler = new AddNodeToNetworkFlowHandler(controller.transactionKeeper, requestBuilder);
 
         InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();

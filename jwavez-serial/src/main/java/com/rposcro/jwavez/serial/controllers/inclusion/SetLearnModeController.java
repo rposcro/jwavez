@@ -73,7 +73,8 @@ public class SetLearnModeController extends AbstractInclusionController<SetLearn
                 JwzSerialSupport.defaultSupport().serialRequestFactory().setLearnModeRequestBuilder()
                 : serialRequestFactory.setLearnModeRequestBuilder();
         SetLearnModeController controller = new SetLearnModeController();
-        controller.transactionKeeper = new TransactionKeeper<>(controller::transactionStateChanged);
+        controller.transactionKeeper = new TransactionKeeper<>();
+        controller.transactionKeeper.setStateChangeListener(controller::transactionStateChanged);
         controller.flowHandler = new SetLearnModeFlowHandler(controller.transactionKeeper, requestBuilder);
 
         InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();

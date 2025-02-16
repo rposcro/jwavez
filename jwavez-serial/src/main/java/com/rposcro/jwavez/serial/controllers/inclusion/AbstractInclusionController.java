@@ -2,6 +2,7 @@ package com.rposcro.jwavez.serial.controllers.inclusion;
 
 import com.rposcro.jwavez.core.model.NodeId;
 import com.rposcro.jwavez.serial.controllers.AbstractAsynchronousController;
+import com.rposcro.jwavez.serial.controllers.builders.AbstractInclusionControllerBuilder;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
 import com.rposcro.jwavez.serial.controllers.helpers.TransactionState;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
@@ -16,10 +17,10 @@ import java.util.concurrent.Semaphore;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public abstract class AbstractInclusionController<T extends TransactionState, S extends AbstractInclusionController> extends AbstractAsynchronousController<S> {
+public abstract class AbstractInclusionController<S extends TransactionState, T extends AbstractInclusionController> extends AbstractAsynchronousController<T> {
 
     protected Semaphore controllerLock;
-    protected TransactionKeeper<T> transactionKeeper;
+    protected TransactionKeeper<S> transactionKeeper;
     protected AbstractFlowHandler flowHandler;
 
     protected long waitForTouchTimeout;
@@ -31,13 +32,24 @@ public abstract class AbstractInclusionController<T extends TransactionState, S 
         this.controllerLock = new Semaphore(1);
     }
 
-    protected abstract boolean isWaitingForTouchState(T state);
+    protected AbstractInclusionController(AbstractInclusionControllerBuilder builder) {
+        super(builder);
+        this.controllerLock = new Semaphore(1);
+        this.transactionKeeper = builder.getTransactionKeeper();
+        this.flowHandler = builder.getFlowHandler();
+        this.waitForTouchTimeout = builder.getWaitForTouchTimeout();
+        this.waitForProgressTimeout = builder.getWaitForProgressTimeout();
 
-    protected abstract boolean isFinalState(T state);
+        transactionKeeper.setStateChangeListener(this::transactionStateChanged);
+    }
 
-    protected abstract void finalizeTransaction(T state);
+    protected abstract boolean isWaitingForTouchState(S state);
 
-    protected abstract void timeoutTransaction(T state);
+    protected abstract boolean isFinalState(S state);
+
+    protected abstract void finalizeTransaction(S state);
+
+    protected abstract void timeoutTransaction(S state);
 
     protected Optional<NodeId> runTransaction(String processName) throws FlowException {
         long transactionId = System.currentTimeMillis();
@@ -78,7 +90,7 @@ public abstract class AbstractInclusionController<T extends TransactionState, S 
                 rxTxRouterProcess.sendRequest(request);
             }
 
-            T state = transactionKeeper.getState();
+            S state = transactionKeeper.getState();
             if (isFinalState(state)) {
                 finalizeTransaction(state);
             } else if (System.currentTimeMillis() > transitTimeoutPoint) {
@@ -99,7 +111,7 @@ public abstract class AbstractInclusionController<T extends TransactionState, S 
         }
     }
 
-    protected void transactionStateChanged(T newState) {
+    protected void transactionStateChanged(S newState) {
         if (isWaitingForTouchState(newState) && waitForTouchTimeout > 0) {
             transitTimeoutPoint = System.currentTimeMillis() + waitForTouchTimeout;
         } else if (!isFinalState(newState) && waitForProgressTimeout > 0) {

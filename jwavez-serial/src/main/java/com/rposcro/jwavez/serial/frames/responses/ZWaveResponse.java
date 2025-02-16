@@ -15,4 +15,8 @@ public class ZWaveResponse {
         this.length = frameBuffer.getByte(SerialFrameConstants.FRAME_OFFSET_LENGTH) & 0xff;
         this.serialCommand = SerialCommand.ofCode(frameBuffer.getByte(SerialFrameConstants.FRAME_OFFSET_COMMAND));
     }
+
+    public String asFineString() {
+        return String.format("%s(%02x)", serialCommand.name(), serialCommand.getCode());
+    }
 }

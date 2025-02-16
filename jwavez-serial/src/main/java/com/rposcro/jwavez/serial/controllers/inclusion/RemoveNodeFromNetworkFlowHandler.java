@@ -57,7 +57,7 @@ class RemoveNodeFromNetworkFlowHandler extends AbstractFlowHandler {
     }
 
     @Override
-    void handleCallback(ZWaveCallback zWaveCallback) {
+    public void handleCallback(ZWaveCallback zWaveCallback) {
         RemoveNodeFromNetworkCallback callback = verifyAndConvertCallback(zWaveCallback);
         RemoveNodeFromNetworkFlowState state = transactionKeeper.getState();
         RemoveNodeFromNeworkStatus status = callback.getStatus();

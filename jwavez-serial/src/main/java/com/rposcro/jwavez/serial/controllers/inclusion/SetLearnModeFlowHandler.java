@@ -47,7 +47,7 @@ class SetLearnModeFlowHandler extends AbstractFlowHandler {
     }
 
     @Override
-    void handleCallback(ZWaveCallback zWaveCallback) {
+    public void handleCallback(ZWaveCallback zWaveCallback) {
         SetLearnModeCallback callback = verifyAndConvertCallback(zWaveCallback);
 
         if (callback == null) {

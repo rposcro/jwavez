@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,16 +25,15 @@ public class TransactionKeeper<T extends TransactionState> {
     private Throwable nextException;
     private Semaphore lock = new Semaphore(1);
 
+    @Setter
     private Consumer<T> stateChangeListener;
-
-    public TransactionKeeper(@NonNull Consumer<T> stateChangeListener) {
-        this.stateChangeListener = stateChangeListener;
-    }
 
     public void reset() {
         this.nextRequest = null;
+        this.nextException = null;
         this.successful = false;
         this.failed = false;
+        this.cancelled = false;
     }
 
     public void transitAndSchedule(T state, SerialRequest transitRequest) {
