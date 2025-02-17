@@ -70,22 +70,24 @@ public class TransactionKeeper<T extends TransactionState> {
 
     public void complete() {
         executeSynchronous(() -> {
+            log.debug("TransactionKeeper complete requested");
             this.successful = true;
         });
     }
 
     public void cancel() {
         executeSynchronous(() -> {
+            log.debug("TransactionKeeper cancel requested");
             this.cancelled = true;
         });
     }
 
     public void fail() {
         executeSynchronous(() -> {
+            log.debug("TransactionKeeper fail requested");
             this.failed = true;
         });
     }
-
 
     public T getState() {
         return getSynchronous(() -> this.state);
@@ -110,6 +112,7 @@ public class TransactionKeeper<T extends TransactionState> {
 
     private void doTransit(T newState, SerialRequest nextRequest) {
         if (!transitAllowed()) {
+            log.debug("TransactionKeeper transition forbidden");
             nextException = new FlowException("Cannot transit when prior transition hasn't been consumed yet");
         } else {
             log.info("Transiting from {} to {} state, {}", this.state, newState, nextRequest != null ? "flow id " + nextRequest.getCallbackFlowId() : "no request");

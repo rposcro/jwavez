@@ -7,27 +7,23 @@ import static com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetw
 import static com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetworkFlowState.WAITING_FOR_NODE;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.JwzSerialSupport;
-import com.rposcro.jwavez.serial.SerialRequestFactory;
-import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
+import com.rposcro.jwavez.serial.controllers.builders.RemoveNodeFromNetworkControllerBuilder;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.frames.requests.RemoveNodeFromNetworkRequestBuilder;
-import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
-import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RemoveNodeFromNetworkController extends AbstractInclusionController<RemoveNodeFromNetworkFlowState, RemoveNodeFromNetworkController> {
+
+    public RemoveNodeFromNetworkController(RemoveNodeFromNetworkControllerBuilder builder) {
+        super(builder);
+    }
 
     public Optional<NodeInfo> listenForNodeToRemove() throws FlowException {
         runTransaction("remove");
@@ -70,35 +66,9 @@ public class RemoveNodeFromNetworkController extends AbstractInclusionController
         }
     }
 
-    @Builder
-    public static RemoveNodeFromNetworkController build(
-            @NonNull String dongleDevice,
-            RxTxConfiguration rxTxConfiguration,
-            ExecutorService executorService,
-            SerialRequestFactory serialRequestFactory,
-            long waitForTouchTimeout,
-            long waitForProgressTimeout) {
-        RemoveNodeFromNetworkRequestBuilder requestBuilder = serialRequestFactory == null ?
-                JwzSerialSupport.defaultSupport().serialRequestFactory().removeNodeFromNetworkRequestBuilder() :
-                serialRequestFactory.removeNodeFromNetworkRequestBuilder();
-        RemoveNodeFromNetworkController controller = new RemoveNodeFromNetworkController();
-        controller.transactionKeeper = new TransactionKeeper<>();
-        controller.transactionKeeper.setStateChangeListener(controller::transactionStateChanged);
-        controller.flowHandler = new RemoveNodeFromNetworkFlowHandler(controller.transactionKeeper, requestBuilder);
-
-        InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
-        controller.helpWithBuild(dongleDevice, rxTxConfiguration, null, callbackHandler, executorService);
-
-        controller.waitForTouchTimeout = waitForTouchTimeout;
-        controller.waitForProgressTimeout = waitForProgressTimeout;
-
-        callbackHandler.addCallbackInterceptor(controller.flowHandler::handleCallback);
-        return controller;
-    }
-
     public static void main(String... args) throws SerialException {
         try (
-                RemoveNodeFromNetworkController controller = RemoveNodeFromNetworkController.builder()
+                RemoveNodeFromNetworkController controller = new RemoveNodeFromNetworkControllerBuilder()
                         .dongleDevice("/dev/tty.usbmodem1411")
                         .build()
         ) {

@@ -12,15 +12,16 @@ import lombok.Getter;
 public class AddNodeToNetworkControllerBuilder extends AbstractInclusionControllerBuilder<AddNodeToNetworkFlowState, AddNodeToNetworkControllerBuilder> {
 
     public AddNodeToNetworkController build() {
-        ensureBuildReadiness();
+        fillDefaults();
+        assureReadiness();
         return new AddNodeToNetworkController(this);
     }
 
-    protected void ensureBuildReadiness() {
+    protected void assureReadiness() {
         TransactionKeeper transactionKeeper = new TransactionKeeper();
         AddNodeToNetworkRequestBuilder requestBuilder = JwzSerialSupport.defaultSupport().serialRequestFactory().addNodeToNetworkRequestsBuilder();
         AddNodeToNetworkFlowHandler flowHandler = new AddNodeToNetworkFlowHandler(transactionKeeper, requestBuilder);
 
-        super.ensureBuildReadiness(transactionKeeper, flowHandler);
+        super.assureReadiness(transactionKeeper, flowHandler);
     }
 }

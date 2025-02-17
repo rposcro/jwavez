@@ -1,6 +1,7 @@
 package com.rposcro.jwavez.tools.cli.commands.network;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
+import com.rposcro.jwavez.serial.controllers.builders.RemoveNodeFromNetworkControllerBuilder;
 import com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetworkController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.cli.commands.Command;
@@ -34,7 +35,7 @@ public class ExcludeNodeCommand implements Command {
 
     private void runExclusion() throws SerialException {
         try (
-                RemoveNodeFromNetworkController controller = RemoveNodeFromNetworkController.builder()
+                RemoveNodeFromNetworkController controller = new RemoveNodeFromNetworkControllerBuilder()
                         .dongleDevice(options.getDevice())
                         .build()
         ) {

@@ -60,6 +60,7 @@ public class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
 
     @Override
     void startOver(byte callbackFlowId) {
+        log.debug("AddNodeToNetworkFlowHandler startOver requested");
         this.nodeInfo = null;
         this.callbackFlowId = callbackFlowId;
         this.transactionKeeper.transitAndSchedule(
@@ -69,6 +70,7 @@ public class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
 
     @Override
     void stopTransaction() {
+        log.debug("AddNodeToNetworkFlowHandler stop transaction requested");
         this.transactionKeeper.transitAndSchedule(
                 AddNodeToNetworkFlowState.CANCELLATION_STOP_SENT,
                 finalStopFrame());
@@ -76,6 +78,7 @@ public class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
 
     @Override
     void killTransaction() {
+        log.debug("AddNodeToNetworkFlowHandler kill transaction requested");
         this.transactionKeeper.transitAndSchedule(
                 AddNodeToNetworkFlowState.FAILURE_STOP_SENT,
                 finalStopFrame());

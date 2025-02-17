@@ -6,6 +6,7 @@ import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.formatters.DongleInformationFormatter;
 import com.rposcro.jwavez.tools.shell.models.DongleInformation;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
+import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
 import com.rposcro.jwavez.tools.shell.services.DongleManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.command.annotation.Command;
@@ -23,15 +24,34 @@ public class DongleCommands {
     private DongleManagementService dongleManagementService;
 
     @Autowired
+    private DongleInformationService dongleInformationService;
+
+    @Autowired
     private DongleInformationFormatter dongleInformationFormatter;
 
     @Autowired
     private ConsoleAccessor console;
 
-    @Command(command = "info", description = "Show current dongle information")
+    @Command(command = "info", description = "Show current dongle information from cache")
     @CommandAvailability(provider = "dongleAvailability")
     public String showInfo() throws SerialException {
         DongleInformation dongleInformation = shellContext.getDongleInformation();
+        return String.format("\n** Network Information\n%s\n\n"
+                        + "** Dongle Role Information\n%s\n\n"
+                        + "** Device Information\n%s\n\n"
+                        + "** Functions\n%s\n"
+                , dongleInformationFormatter.formatNetworkInfo(dongleInformation.getDongleNetworkInformation())
+                , dongleInformationFormatter.formatRoleInfo(dongleInformation.getDongleRoleInformation())
+                , dongleInformationFormatter.formatDeviceInfo(dongleInformation.getDongleDeviceInformation())
+                , dongleInformationFormatter.formatFunctionsInfo(dongleInformation.getDongleCommandInformation().getSupportedSerialCommandIds())
+        );
+    }
+
+    @Command(command = "fetch", description = "Fetches dongle information from the device")
+    @CommandAvailability(provider = "dongleAvailability")
+    public String fetchInfo() throws SerialException {
+        DongleInformation dongleInformation = dongleInformationService.collectDongleInformation();
+        shellContext.setDongleInformation(dongleInformation);
         return String.format("\n** Network Information\n%s\n\n"
                         + "** Dongle Role Information\n%s\n\n"
                         + "** Device Information\n%s\n\n"

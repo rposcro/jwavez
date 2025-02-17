@@ -1,6 +1,5 @@
 package com.rposcro.jwavez.serial.controllers.builders;
 
-import com.rposcro.jwavez.core.exceptions.AssertionException;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
 import com.rposcro.jwavez.serial.controllers.helpers.CallbackFlowIdDispatcher;
 import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
@@ -49,10 +48,25 @@ public class AbstractAsynchronousControllerBuilder<T extends AbstractAsynchronou
         return (T) this;
     }
 
-    protected void ensureBuildReadiness(ResponseHandler responseHandler, CallbackHandler callbackHandler) {
+    protected void fillDefaults() {
+        super.fillDefaults();
+
+        if (callbackFlowIdDispatcher == null) {
+            callbackFlowIdDispatcher = CallbackFlowIdDispatcher.shared();
+        }
+
+        if (executorService == null) {
+            executorService = Executors.newSingleThreadExecutor(this::makeThread);
+            this.selfExecutor = true;
+        }
+    }
+
+    protected void assureReadiness(ResponseHandler responseHandler, CallbackHandler callbackHandler) {
         if (rxTxRouterProcess == null && getRxTxConfiguration() == null) {
-            throw new AssertionException("Either RxTxRouterProcess or RxTxRouterConfiguration needs to be set!");
-        } else if (rxTxRouterProcess == null) {
+            super.rxTxConfiguration(RxTxConfiguration.defaultConfiguration());
+        }
+
+        if (rxTxRouterProcess == null) {
             this.rxTxRouterProcess = RxTxRouterProcess.builder()
                 .configuration(getRxTxConfiguration())
                 .serialPort(getSerialPort())
@@ -61,16 +75,7 @@ public class AbstractAsynchronousControllerBuilder<T extends AbstractAsynchronou
                 .build();
         }
 
-        if (callbackFlowIdDispatcher == null) {
-            callbackFlowIdDispatcher = CallbackFlowIdDispatcher.shared();
-        }
-
-        if (executorService == null) {
-            Executors.newSingleThreadExecutor(this::makeThread);
-            this.selfExecutor = true;
-        }
-
-        super.ensureBuildReadiness();
+        super.assureReadiness();
     }
 
     private Thread makeThread(Runnable runnable) {

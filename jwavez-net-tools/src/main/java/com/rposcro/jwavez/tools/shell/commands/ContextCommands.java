@@ -50,9 +50,9 @@ public class ContextCommands {
             return "Incorrect device file! Current device not changed";
         }
 
+        shellContext.setDongleDevicePath(pathToDevice);
         DongleInformation dongleInformation = dongleInformationService.collectDongleInformation();
         shellContext.setDongleInformation(dongleInformation);
-        shellContext.setDongleDevicePath(pathToDevice);
 
         String message = "Current device changed to " + pathToDevice;
         if (shellContext.isRepositoryOpened()) {

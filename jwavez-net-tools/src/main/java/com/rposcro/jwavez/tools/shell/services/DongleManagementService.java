@@ -2,6 +2,7 @@ package com.rposcro.jwavez.tools.shell.services;
 
 import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
+import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
 import com.rposcro.jwavez.tools.utils.SerialUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,8 @@ public class DongleManagementService {
 
     public void resetToFactoryDefaults() throws SerialException {
         serialCommunicationService.runBasicSynchronousFunction(controller -> {
-            serialRequestFactory.deviceManagementRequestBuilder().createSetDefaultRequest(SerialUtils.nextFlowId());
+            SerialRequest resetRequest = serialRequestFactory.deviceManagementRequestBuilder().createSetDefaultRequest(SerialUtils.nextFlowId());
+            controller.requestResponseFlow(resetRequest);
             return true;
         });
     }

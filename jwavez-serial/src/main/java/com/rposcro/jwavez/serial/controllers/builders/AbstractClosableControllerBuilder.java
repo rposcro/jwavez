@@ -29,12 +29,14 @@ public class AbstractClosableControllerBuilder<T extends AbstractClosableControl
         return (T) this;
     }
 
-    protected void ensureBuildReadiness() {
-        nonNull(this.dongleDevice, "Dongle device cannot be null!");
-        nonNull(this.rxTxConfiguration, "RxTxConfiguration cannot be null!");
-
-        if (serialPort != null) {
+    protected void fillDefaults() {
+        if (serialPort == null) {
             this.serialPort = new JSerialComPort();
         }
+    }
+
+    protected void assureReadiness() {
+        nonNull(this.dongleDevice, "Dongle device cannot be null!");
+        nonNull(this.rxTxConfiguration, "RxTxConfiguration cannot be null!");
     }
 }

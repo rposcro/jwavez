@@ -32,7 +32,7 @@ public class AbstractInclusionControllerBuilder<S extends TransactionState, T ex
         return (T) this;
     }
 
-    protected void ensureBuildReadiness(TransactionKeeper<S> transactionKeeper, AbstractFlowHandler flowHandler) {
+    protected void assureReadiness(TransactionKeeper<S> transactionKeeper, AbstractFlowHandler flowHandler) {
         AssertUtil.nonNull(transactionKeeper, "TransactionKeeper cannot be null!");
         AssertUtil.nonNull(flowHandler, "FlowHandler cannot be null!");
 
@@ -46,7 +46,7 @@ public class AbstractInclusionControllerBuilder<S extends TransactionState, T ex
         InterceptableResponseHandler responseHandler = new InterceptableResponseHandler();
         responseHandler.addFrameBufferInterceptor(this::logResponse);
 
-        super.ensureBuildReadiness(responseHandler, callbackHandler);
+        super.assureReadiness(responseHandler, callbackHandler);
     }
 
     public void logCallback(ImmutableBuffer frameBuffer) {

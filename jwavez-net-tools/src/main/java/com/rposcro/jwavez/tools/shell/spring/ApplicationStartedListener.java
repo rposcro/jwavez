@@ -2,7 +2,6 @@ package com.rposcro.jwavez.tools.shell.spring;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
-import com.rposcro.jwavez.tools.shell.models.DongleInformation;
 import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,6 @@ public class ApplicationStartedListener implements ApplicationListener<Applicati
         try {
             log.info("Application started event caught ...");
             String devicePath = determineDevice();
-            DongleInformation dongleInformation = null;
             if (devicePath != null) {
                 log.info("Collecting dongle information from " + devicePath);
                 System.out.println("Collecting dongle information from " + devicePath);
