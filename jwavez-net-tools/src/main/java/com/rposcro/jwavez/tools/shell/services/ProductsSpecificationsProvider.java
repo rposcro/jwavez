@@ -44,12 +44,7 @@ public class ProductsSpecificationsProvider {
     public Product findProduct(NodeInformation nodeInformation) {
         Product product = productsMap.get(productKey(nodeInformation));
         if (product == null) {
-            throw new IllegalStateException(
-                String.format("Product not defined for productId: %s, productTypeId: %s, manufacturerId: %s",
-                    nodeInformation.getProductInformation().getProductId(),
-                    nodeInformation.getProductInformation().getProductTypeId(),
-                    nodeInformation.getProductInformation().getManufacturerId()
-                ));
+            product = unknownProduct(nodeInformation);
         }
         return product;
     }
@@ -90,6 +85,15 @@ public class ProductsSpecificationsProvider {
         NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
         Product product = findProduct(nodeInformation);
         return product.hasParameter(parameterNumber);
+    }
+
+    private Product unknownProduct(NodeInformation nodeInformation) {
+        Product product = new Product();
+        product.setManufacturerId(nodeInformation.getProductInformation().getManufacturerId());
+        product.setProductId(nodeInformation.getProductInformation().getProductId());
+        product.setProductTypeId(nodeInformation.getProductInformation().getProductTypeId());
+        product.setProductName("Unknown product");
+        return product;
     }
 
     private ProductKey productKey(NodeInformation nodeInformation) {

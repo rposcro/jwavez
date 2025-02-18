@@ -18,7 +18,7 @@ public class GenericScopeCommands {
     @Autowired
     private ScopeSwitchService scopeSwitchService;
 
-    @Command(command = "scope", alias = "\\", description = "Show or change current working scope")
+    @Command(command = "scope", description = "Show or change current working scope")
     public String manageCurrentScope(@Option(longNames = "scope-name") String scopeName) {
 
         if (scopeName == null) {

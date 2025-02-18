@@ -40,7 +40,11 @@ public class KnownNodesCommands {
         return nodeInformationCache.getOrderedNodeList().stream()
                 .map(node -> {
                     Product product = productsSpecificationsProvider.findProduct(node.getNodeId());
-                    return String.format("Id %3s (%02x): %s: %srepo ", node.getNodeId(), node.getNodeId(), node.getNodeMemo(), product.getProductName());
+                    return String.format("Id %3s (0x%02x): %s: %s",
+                        node.getNodeId(),
+                        node.getNodeId(),
+                        node.getNodeMemo(),
+                        product.getProductName());
                 })
                 .collect(Collectors.joining("\n"));
     }
@@ -72,6 +76,25 @@ public class KnownNodesCommands {
         if (nodeInformation != null) {
             return verbose ? nodeInformationFormatter.formatVerboseNodeInfo(nodeInformation)
                     : nodeInformationFormatter.formatShortNodeInfo(nodeInformation);
+        } else {
+            return String.format("Node %s (%02x) is unknown, try to fetch it first", nodeId, nodeId);
+        }
+    }
+
+    @Command(command = "memo", description = "Sets node memo")
+    public String setNodeMemo(
+            @Option(longNames = "node-id", shortNames = 'n') Integer nodeIdArg,
+            @Option(longNames = "memo", shortNames = 'm', required = true) String memo
+    ) {
+        if (nodeIdArg == null && !nodeScopeContext.isAnyNodeSelected()) {
+            return "No node selected, --node-id needs to be provided";
+        }
+
+        int nodeId = nodeIdArg != null ? nodeIdArg : nodeScopeContext.getCurrentNodeId();
+        NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
+        if (nodeInformation != null) {
+            nodeInformation.setNodeMemo(memo);
+            return String.format("Node %s (%02x) is now called %s", nodeId, nodeId, memo);
         } else {
             return String.format("Node %s (%02x) is unknown, try to fetch it first", nodeId, nodeId);
         }

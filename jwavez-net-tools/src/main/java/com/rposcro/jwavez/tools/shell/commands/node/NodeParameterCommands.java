@@ -17,6 +17,8 @@ import org.springframework.shell.standard.ShellComponent;
 
 import java.text.ParseException;
 
+import static java.lang.String.format;
+
 @ShellComponent
 @Command(group = CommandGroup.NODE)
 public class NodeParameterCommands {
@@ -44,8 +46,9 @@ public class NodeParameterCommands {
     ) {
         try {
             int[] paramNumbers = parseParamNumbersArgument(paramNumbersRange);
-            StringBuffer paramDetails = new StringBuffer();
             NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeScopeContext.getCurrentNodeId());
+            int nodeId = nodeInformation.getNodeId();
+            StringBuffer paramDetails = new StringBuffer(format("Parameters of node %s (0x%02x):\n\n", nodeId, nodeId));
             for (int number : paramNumbers) {
                 paramDetails.append(verbose ? formatParamVerboseLine(nodeInformation, number) : formatParamValueLine(nodeInformation, number));
                 paramDetails.append('\n');
@@ -93,7 +96,7 @@ public class NodeParameterCommands {
 
         boolean success = nodeParameterService.sendParameterValue(nodeId, paramNumber, paramValue);
         if (success) {
-            return String.format("Parameter %s of node %s is now %04x", paramNumber, nodeId, paramValue);
+            return format("Parameter %s of node %s is now %04x", paramNumber, nodeId, paramValue);
         } else {
             return "Something went wrong and parameter value has not been changed";
         }
@@ -117,7 +120,7 @@ public class NodeParameterCommands {
         } else if (paramValue == null) {
             line = "Param " + paramNumber + ": <value unknown>";
         } else {
-            line = String.format("Param %s: %s (x%0" + (parameter.getBitSize() / 4) + "x)", paramNumber, paramValue, paramValue);
+            line = format("Param %s: %s (x%0" + (parameter.getBitSize() / 4) + "x)", paramNumber, paramValue, paramValue);
         }
         return line;
     }
@@ -130,11 +133,11 @@ public class NodeParameterCommands {
         if (parameter == null) {
             line = "Param " + paramNumber + ": <param unknown>";
         } else {
-            line = String.format("Param %s:\n  size in bits: %s\n  memo: %s\n  value: %s",
+            line = format("Param %s:\n  size in bits: %s\n  name: %s\n  value: %s",
                 parameter.getNumber(),
                 parameter.getBitSize(),
-                parameter.getDescription(),
-                paramValue != null ? String.format("%s (x%0" + (parameter.getBitSize() / 4) + "x)", paramValue, paramValue) : "<value unknown>"
+                parameter.getName(),
+                paramValue != null ? format("%s (x%0" + (parameter.getBitSize() / 4) + "x)", paramValue, paramValue) : "<value unknown>"
             );
         }
 

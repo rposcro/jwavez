@@ -63,8 +63,9 @@ public class NodeAssociationCommands {
     ) {
         try {
             int[] groupIds = parseGroupIdsArgument(groupIdRange);
-            StringBuffer groupDetails = new StringBuffer();
             NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeScopeContext.getCurrentNodeId());
+            int nodeId = nodeInformation.getNodeId();
+            StringBuffer groupDetails = new StringBuffer(format("Association groups of node %s (0x%02x):\n\n", nodeId, nodeId));
             for (int groupId : groupIds) {
                 groupDetails.append(verbose ? formatVerboseLine(nodeInformation, groupId) : formatValueLine(nodeInformation, groupId));
                 groupDetails.append('\n');
@@ -212,9 +213,9 @@ public class NodeAssociationCommands {
         if (associationGroup == null) {
             line = format("Association group %02x: <group unknown>", groupId);
         } else {
-            line = format("Association group %02x:\n  memo: %s\n  nodes: [ %s ]\n  endPoints: [ %s ]",
+            line = format("Association group %02x:\n  name: %s\n  nodes: [ %s ]\n  endPoints: [ %s ]",
                 associationGroup.getGroupId(),
-                associationGroup.getDescription(),
+                associationGroup.getName(),
                 formatNodesList(associations.findNodeAssociations(groupId)),
                 formatEndPointsList(associations.findEndPointAssociations(groupId)));
         }

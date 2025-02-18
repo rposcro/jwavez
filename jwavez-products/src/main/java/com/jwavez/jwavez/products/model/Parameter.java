@@ -9,5 +9,6 @@ public class Parameter {
 
     private int number;
     private short bitSize;
+    private String name;
     private String description;
 }

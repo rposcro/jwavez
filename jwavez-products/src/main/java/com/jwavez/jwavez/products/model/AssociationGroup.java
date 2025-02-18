@@ -8,5 +8,6 @@ import lombok.Setter;
 public class AssociationGroup {
 
     private int groupId;
+    private String name;
     private String description;
 }
