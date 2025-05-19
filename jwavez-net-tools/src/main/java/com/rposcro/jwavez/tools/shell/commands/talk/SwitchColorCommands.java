@@ -8,6 +8,7 @@ import com.rposcro.jwavez.core.commands.types.SwitchColorCommandType;
 import com.rposcro.jwavez.core.model.ColorComponent;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
+import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.shell.services.TalkCommunicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.command.annotation.Command;
@@ -20,11 +21,16 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
+
 @ShellComponent
 @Command(group = CommandGroup.TALK)
 public class SwitchColorCommands {
 
     private final static Pattern COLOR_PATTERN = Pattern.compile("(?:[a-fA-F0-9]{2})+");
+
+    @Autowired
+    private ConsoleAccessor console;
 
     @Autowired
     private TalkCommunicationService talkCommunicationService;
@@ -39,12 +45,15 @@ public class SwitchColorCommands {
         SwitchColorSupportedReport supportedReport = talkCommunicationService.requestTalk(nodeId, command, SwitchColorCommandType.SWITCH_COLOR_SUPPORTED_REPORT);
 
         List<ColorComponent> colorComponents = supportedReport.getColorComponents();
+        console.flushLine(format("Color components found for node %s: %s", nodeId,
+            colorComponents.stream().map(ColorComponent::toString).collect(Collectors.joining(", "))));
+
         StringBuffer message = new StringBuffer("Color components report for node " + nodeId);
 
         for (ColorComponent colorComponent : colorComponents) {
             command = switchColorCommandBuilder.v1().buildGetCommand(colorComponent.getCode());
             SwitchColorReport colorReport = talkCommunicationService.requestTalk(nodeId, command, SwitchColorCommandType.SWITCH_COLOR_REPORT);
-            message.append(String.format("\n  %s (%s): 0x%02X", colorComponent.name(), colorComponent.getCode(), colorReport.getCurrentValue()));
+            message.append(format("\n  %s (%s): 0x%02X", colorComponent.name(), colorComponent.getCode(), colorReport.getCurrentValue()));
         }
 
         return message.toString() + "\n";
@@ -64,10 +73,10 @@ public class SwitchColorCommands {
 
         ColorMode mode = ColorMode.valueOf(colorMode.toUpperCase());
         byte[] componentsFrame = constructComponentsFrame(mode, colorValue);
-        ZWaveControlledCommand command = switchColorCommandBuilder.v1().buildSetCommand((byte) 0, componentsFrame);
+        ZWaveControlledCommand command = switchColorCommandBuilder.v2().buildSetCommand((byte) 0, componentsFrame);
         talkCommunicationService.sendCommand(nodeId, command);
 
-        return String.format("Command %s successfully sent to node %s", SwitchColorCommandType.SWITCH_COLOR_SET, nodeId);
+        return format("Command %s successfully sent to node %s", SwitchColorCommandType.SWITCH_COLOR_SET, nodeId);
     }
 
     private byte[] constructComponentsFrame(ColorMode mode, String colorValue) {

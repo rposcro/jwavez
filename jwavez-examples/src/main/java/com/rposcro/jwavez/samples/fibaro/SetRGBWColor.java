@@ -43,7 +43,7 @@ public class SetRGBWColor extends AbstractExample implements AutoCloseable {
     public void switchColor(int red, int green, int blue, int white) {
         try {
             System.out.println("Sending color switch request");
-            ZWaveControlledCommand command = new SwitchColorCommandBuilder().v1().buildSetWarmRGBWCommand(
+            ZWaveControlledCommand command = new SwitchColorCommandBuilder().v2().buildSetWarmRGBWCommand(
                     (byte) red, (byte) green, (byte) blue, (byte) white, (byte) 1);
             SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().networkTransportRequestBuilder()
                     .createSendDataRequest(addresseeId, command, callbackFlowId);

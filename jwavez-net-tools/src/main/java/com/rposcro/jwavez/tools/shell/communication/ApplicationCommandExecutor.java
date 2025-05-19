@@ -32,10 +32,12 @@ public class ApplicationCommandExecutor {
 
     private GeneralAsynchronousController controller;
     private NetworkTransportRequestBuilder transportRequestBuilder;
-    private CompletableFuture<ApplicationCommandResult> futureCommand;
 
-    private CommandType expectedCommandType;
+    // Session based members
+    private CompletableFuture<ApplicationCommandResult> futureCommand;
     private ApplicationCommandResult.ApplicationCommandResultBuilder resultBuilder = ApplicationCommandResult.builder();
+    private CommandType expectedCommandType;
+    private String sessionId;
 
     @Builder
     public ApplicationCommandExecutor(@NonNull String device, Long timeoutMillis, NetworkTransportRequestBuilder transportRequestBuilder)
@@ -94,12 +96,13 @@ public class ApplicationCommandExecutor {
             long timeout)
             throws SerialException {
         try {
-            initExecutionContext(expectedCommandType);
-            this.futureCommand = new CompletableFuture<>();
+            initExecutionSession(expectedCommandType);
+            log.debug("{}: Requesting application command {} expecting response type {}", sessionId, request.getSerialCommand(), expectedCommandType);
 
             SendDataCallback callback = controller.requestCallbackFlow(request);
+            log.debug("{}: Received callback {}", sessionId, callback.asFineString());
             if (callback.getTransmitCompletionStatus() != TransmitCompletionStatus.TRANSMIT_COMPLETE_OK) {
-                throw new FlowException("Dongle failed to deliver data: " + callback.getTransmitCompletionStatus());
+                throw new FlowException("Dongle failed to deliver data, transmit status received is: " + callback.getTransmitCompletionStatus());
             }
 
             try {
@@ -110,38 +113,68 @@ public class ApplicationCommandExecutor {
                 throw new FlowException("Unexpected exception occurred");
             }
         } finally {
-            cancelExecutionContext();
+            cancelExecutionSession();
         }
     }
 
     private void handleSerialResponse(ImmutableBuffer responseBuffer) {
-        resultBuilder.serialResponsePayload(responseBuffer.cloneBytes());
-    }
-
-    private void interceptSerialCallback(ZWaveCallback callback) {
-        resultBuilder.serialCallback(callback);
-    }
-
-    private void interceptSerialCallbackBuffer(ImmutableBuffer callbackBuffer) {
-        resultBuilder.serialCallbackPayload(callbackBuffer.cloneBytes());
-    }
-
-    private void handleApplicationCommand(ZWaveSupportedCommand command) {
-        if (expectedCommandType == null || expectedCommandType == command.getCommandType()) {
-            resultBuilder.acquiredSupportedCommand(command);
-            futureCommand.complete(resultBuilder.build());
+        if (isSessionActive()) {
+            log.debug("{}: Received response buffer", sessionId);
+            resultBuilder.serialResponsePayload(responseBuffer.cloneBytes());
         } else {
-            log.info("Skipped application command: %s", command.asNiceString());
+            log.debug("Received response outside of any session");
         }
     }
 
-    private void initExecutionContext(CommandType commandType) {
-        this.expectedCommandType = commandType;
-        this.resultBuilder = ApplicationCommandResult.builder();
+    private void interceptSerialCallback(ZWaveCallback callback) {
+        if (isSessionActive()) {
+            log.debug("{}: Received callback {}", sessionId, callback.asFineString());
+            resultBuilder.serialCallback(callback);
+        } else {
+            log.debug("Received callback outside of any session {}", callback.asFineString());
+        }
     }
 
-    private void cancelExecutionContext() {
-        this.expectedCommandType = null;
+    private void interceptSerialCallbackBuffer(ImmutableBuffer callbackBuffer) {
+        if (isSessionActive()) {
+            log.debug("{}: Received callback buffer", sessionId);
+            resultBuilder.serialCallbackPayload(callbackBuffer.cloneBytes());
+        } else {
+            log.debug("Received callback outside of any session");
+        }
+    }
+
+    private void handleApplicationCommand(ZWaveSupportedCommand command) {
+        if (isSessionActive()) {
+            log.debug("{}: Received supported command {}", sessionId, command.asNiceString());
+            if (expectedCommandType == null || expectedCommandType == command.getCommandType()) {
+                resultBuilder.acquiredSupportedCommand(command);
+                futureCommand.complete(resultBuilder.build());
+            } else {
+                log.info("Skipped application command: %s", command.asNiceString());
+            }
+        } else {
+            log.debug("Received supported command outside of any session {}", command.asNiceString());
+        }
+    }
+
+    private void initExecutionSession(CommandType commandType) {
+        this.futureCommand = new CompletableFuture<>();
+        this.resultBuilder = ApplicationCommandResult.builder();
+        this.expectedCommandType = commandType;
+        this.sessionId = System.currentTimeMillis() + "";
+        log.debug("{}: Session initialized", sessionId);
+    }
+
+    private void cancelExecutionSession() {
+        log.debug("{}: Session closed", sessionId);
+        this.futureCommand = null;
         this.resultBuilder = null;
+        this.expectedCommandType = null;
+        this.sessionId = null;
+    }
+
+    private boolean isSessionActive() {
+        return this.sessionId != null;
     }
 }
