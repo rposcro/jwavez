@@ -25,7 +25,7 @@ public class NodesRelatedCommands {
         return nodeInformationCache.getOrderedNodeList().stream()
             .map(node -> {
                 Product product = productsSpecificationsProvider.findProduct(node.getNodeId());
-                return String.format("Id %3s (%02x): %s: %srepo ", node.getNodeId(), node.getNodeId(), node.getNodeMemo(), product.getProductName());
+                return String.format("Id %3s (%02x): %s: %s", node.getNodeId(), node.getNodeId(), node.getNodeMemo(), product.getProductName());
             })
             .collect(Collectors.joining("\n"));
     }

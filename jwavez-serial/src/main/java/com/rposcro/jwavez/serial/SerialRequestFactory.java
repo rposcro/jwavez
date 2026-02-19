@@ -7,21 +7,23 @@ import com.rposcro.jwavez.serial.frames.requests.DeviceStatusRequestBuilder;
 import com.rposcro.jwavez.serial.frames.requests.DeviceCapabilityRequestBuilder;
 import com.rposcro.jwavez.serial.frames.requests.NetworkManagementRequestBuilder;
 import com.rposcro.jwavez.serial.frames.requests.NetworkTransportRequestBuilder;
+import com.rposcro.jwavez.serial.frames.requests.DeviceNvmRequestBuilder;
 import com.rposcro.jwavez.serial.frames.requests.RemoveNodeFromNetworkRequestBuilder;
 import com.rposcro.jwavez.serial.frames.requests.SetLearnModeRequestBuilder;
 import com.rposcro.jwavez.serial.frames.requests.SucRequestBuilder;
 
 public class SerialRequestFactory {
 
-    private AddNodeToNetworkRequestBuilder addNodeToNetworkRequestBuilder;
-    private RemoveNodeFromNetworkRequestBuilder removeNodeFromNetworkRequestBuilder;
-    private SetLearnModeRequestBuilder setLearnModeRequestBuilder;
-    private SucRequestBuilder sucRequestBuilder;
-    private DeviceCapabilityRequestBuilder deviceCapabilityRequestBuilder;
-    private DeviceStatusRequestBuilder deviceStatusRequestBuilder;
-    private DeviceManagementRequestBuilder deviceManagementRequestBuilder;
-    private NetworkManagementRequestBuilder networkManagementRequestBuilder;
-    private NetworkTransportRequestBuilder networkTransportRequestBuilder;
+    private final AddNodeToNetworkRequestBuilder addNodeToNetworkRequestBuilder;
+    private final RemoveNodeFromNetworkRequestBuilder removeNodeFromNetworkRequestBuilder;
+    private final SetLearnModeRequestBuilder setLearnModeRequestBuilder;
+    private final SucRequestBuilder sucRequestBuilder;
+    private final DeviceCapabilityRequestBuilder deviceCapabilityRequestBuilder;
+    private final DeviceStatusRequestBuilder deviceStatusRequestBuilder;
+    private final DeviceManagementRequestBuilder deviceManagementRequestBuilder;
+    private final NetworkManagementRequestBuilder networkManagementRequestBuilder;
+    private final NetworkTransportRequestBuilder networkTransportRequestBuilder;
+    private final DeviceNvmRequestBuilder deviceNvmRequestBuilder;
 
     public SerialRequestFactory(ByteBufferManager byteBufferManager) {
         this.addNodeToNetworkRequestBuilder = new AddNodeToNetworkRequestBuilder(byteBufferManager);
@@ -33,6 +35,7 @@ public class SerialRequestFactory {
         this.deviceManagementRequestBuilder = new DeviceManagementRequestBuilder(byteBufferManager);
         this.networkManagementRequestBuilder = new NetworkManagementRequestBuilder(byteBufferManager);
         this.networkTransportRequestBuilder = new NetworkTransportRequestBuilder(byteBufferManager);
+        this.deviceNvmRequestBuilder = new DeviceNvmRequestBuilder(byteBufferManager);
     }
 
     public AddNodeToNetworkRequestBuilder addNodeToNetworkRequestsBuilder() {
@@ -51,7 +54,12 @@ public class SerialRequestFactory {
         return this.sucRequestBuilder;
     }
 
+    @Deprecated(forRemoval = true)
     public DeviceCapabilityRequestBuilder dongleFactsRequestBuilder() {
+        return this.deviceCapabilityRequestBuilder;
+    }
+
+    public DeviceCapabilityRequestBuilder deviceCapabilityRequestBuilder() {
         return this.deviceCapabilityRequestBuilder;
     }
 
@@ -63,11 +71,19 @@ public class SerialRequestFactory {
         return this.deviceManagementRequestBuilder;
     }
 
+    public DeviceNvmRequestBuilder deviceNvmRequestBuilder() {
+        return this.deviceNvmRequestBuilder;
+    }
+
     public NetworkManagementRequestBuilder networkManagementRequestBuilder() {
         return this.networkManagementRequestBuilder;
     }
 
     public NetworkTransportRequestBuilder networkTransportRequestBuilder() {
         return this.networkTransportRequestBuilder;
+    }
+
+    public DeviceNvmRequestBuilder nvmManagementRequestBuilder() {
+        return this.deviceNvmRequestBuilder;
     }
 }

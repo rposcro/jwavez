@@ -33,6 +33,7 @@ public enum SerialCommand implements EncodableConstant {
     NVM_EXT_WRITE_LONG_BUFFER(0x2b),
     NVM_EXT_READ_LONG_BYTE(0x2c),
     NVM_EXT_WRITE_LONG_BYTE(0x2d),
+    NVM_BACKUP_RESTORE(0x2e),
     GET_NETWORK_STATS(0x3a),
     GET_BACKGROUND_RSSI(0x3b),
     SET_LEARN_NODE_STATE(0x40),

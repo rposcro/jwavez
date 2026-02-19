@@ -10,7 +10,7 @@ import static com.rposcro.jwavez.serial.enums.SerialCommand.GET_LIBRARY_TYPE;
 import static com.rposcro.jwavez.serial.enums.SerialCommand.GET_VERSION;
 import static com.rposcro.jwavez.serial.enums.SerialCommand.MEMORY_GET_ID;
 
-public class DeviceCapabilityRequestBuilder extends AbstractRequestBuilder {
+public class  DeviceCapabilityRequestBuilder extends AbstractRequestBuilder {
 
     public DeviceCapabilityRequestBuilder(ByteBufferManager byteBufferManager) {
         super(byteBufferManager);

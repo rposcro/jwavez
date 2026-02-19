@@ -16,14 +16,14 @@ public class MultiChannelCommandBuilderV3 {
                 MultiChannelCommandType.MULTI_CHANNEL_END_POINT_GET.getCode());
     }
 
-    public ZWaveControlledCommand buildCapabilityGet(byte endpointNumber) {
+    public ZWaveControlledCommand buildCapabilityGetCommand(byte endpointNumber) {
         return new ZWaveControlledCommand(
                 CommandClass.CMD_CLASS_MULTI_CHANNEL.getCode(),
                 MultiChannelCommandType.MULTI_CHANNEL_CAPABILITY_GET.getCode(),
                 endpointNumber);
     }
 
-    public ZWaveControlledCommand buildEndPointFind(SpecificDeviceClass specificDevice) {
+    public ZWaveControlledCommand buildEndPointFindCommand(SpecificDeviceClass specificDevice) {
         return new ZWaveControlledCommand(
                 CommandClass.CMD_CLASS_MULTI_CHANNEL.getCode(),
                 MultiChannelCommandType.MULTI_CHANNEL_END_POINT_FIND.getCode(),
