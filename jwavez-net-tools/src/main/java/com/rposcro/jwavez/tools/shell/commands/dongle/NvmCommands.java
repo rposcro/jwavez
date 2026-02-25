@@ -3,9 +3,9 @@ package com.rposcro.jwavez.tools.shell.commands.dongle;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
-import com.rposcro.jwavez.tools.shell.formatters.BufferFormatter;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.shell.services.DongleNvmService;
+import com.rposcro.jwavez.tools.utils.text.ByteBufferFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.CommandAvailability;
@@ -20,11 +20,10 @@ import java.time.format.DateTimeFormatter;
 @Command(group = CommandGroup.DONGLE)
 public class NvmCommands {
 
-    @Autowired
-    private DongleNvmService dongleNvmService;
+    private static final ByteBufferFormatter BUFFER_FORMATTER = createFormatter();
 
     @Autowired
-    private BufferFormatter bufferFormatter;
+    private DongleNvmService dongleNvmService;
 
     @Autowired
     private JWaveZShellContext shellContext;
@@ -37,7 +36,7 @@ public class NvmCommands {
     public String nvmBackup()
     throws SerialException {
         byte[] dongleNvm = dongleNvmService.readNvmData();
-        String formattedBuffer = bufferFormatter.formatBufferAsHexString(dongleNvm);
+        String formattedBuffer = BUFFER_FORMATTER.formatBufferAsHexString(dongleNvm);
         consoleAccessor.flushLine("NVM content read from dongle: " + formattedBuffer + "\n");
         File filePath = backupFilePath();
 
@@ -58,5 +57,14 @@ public class NvmCommands {
             DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())
         );
         return new File(filePath);
+    }
+
+    private static ByteBufferFormatter createFormatter() {
+        return ByteBufferFormatter.builder()
+            .lineLength(32)
+            .byteFormat("%02X")
+            .byteSeparator("")
+            .linePrefixFunction(lineNumber -> String.format("%04X:", lineNumber * 32))
+            .build();
     }
 }

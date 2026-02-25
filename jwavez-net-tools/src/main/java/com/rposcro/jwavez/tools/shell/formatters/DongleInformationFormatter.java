@@ -4,13 +4,12 @@ import com.rposcro.jwavez.serial.enums.SerialCommand;
 import com.rposcro.jwavez.tools.shell.models.DongleDeviceInformation;
 import com.rposcro.jwavez.tools.shell.models.DongleNetworkInformation;
 import com.rposcro.jwavez.tools.shell.models.DongleRoleInformation;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-@Service
+@Component
 public class DongleInformationFormatter {
 
     public String formatNetworkInfo(DongleNetworkInformation dongleNetworkInformation) {

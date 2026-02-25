@@ -13,7 +13,7 @@ import com.rposcro.jwavez.serial.frames.callbacks.ApplicationCommandHandlerCallb
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.utils.FramesUtil;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
-import com.rposcro.jwavez.tools.utils.BeanPropertiesFormatter;
+import com.rposcro.jwavez.tools.utils.text.BeanPropertiesFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;

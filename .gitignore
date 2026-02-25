@@ -2,6 +2,7 @@
 /**/build/
 /**/target/
 .gradle
+*.hex
 
 # MacOS 
 /**/.DS_Store

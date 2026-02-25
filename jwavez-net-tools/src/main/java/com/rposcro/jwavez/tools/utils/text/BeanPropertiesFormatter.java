@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.tools.utils;
+package com.rposcro.jwavez.tools.utils.text;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
