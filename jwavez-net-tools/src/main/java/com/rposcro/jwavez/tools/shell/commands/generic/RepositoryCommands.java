@@ -1,6 +1,7 @@
-package com.rposcro.jwavez.tools.shell.commands;
+package com.rposcro.jwavez.tools.shell.commands.generic;
 
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
+import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.services.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.command.annotation.Command;

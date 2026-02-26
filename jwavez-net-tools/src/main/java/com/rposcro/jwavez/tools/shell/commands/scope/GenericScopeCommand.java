@@ -1,6 +1,7 @@
-package com.rposcro.jwavez.tools.shell.commands;
+package com.rposcro.jwavez.tools.shell.commands.scope;
 
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
+import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.ScopeSwitchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +10,8 @@ import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
 
 @ShellComponent
-@Command(group = CommandGroup.GENERIC)
-public class GenericScopeCommands {
+@Command(group = CommandGroup.SCOPE)
+public class GenericScopeCommand {
 
     @Autowired
     private JWaveZShellContext shellContext;

@@ -26,7 +26,11 @@ import java.util.stream.Stream;
  */
 public class DynamicCommandCatalog implements CommandCatalog {
 
-    private static final String[] GROUPS_ALWAYS_ON = {"Built-In Commands", CommandGroup.GENERIC};
+    private static final String[] GROUPS_ALWAYS_ON = {
+        "Built-In Commands",
+        CommandGroup.GENERIC,
+        CommandGroup.SCOPE
+    };
 
     private final Map<CommandKey, CommandRegistration> commandRegistrations = new HashMap<>();
     private final Collection<CommandResolver> resolvers = new ArrayList<>();

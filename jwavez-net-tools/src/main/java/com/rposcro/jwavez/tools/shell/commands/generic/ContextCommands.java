@@ -1,7 +1,8 @@
-package com.rposcro.jwavez.tools.shell.commands;
+package com.rposcro.jwavez.tools.shell.commands.generic;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
+import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.DongleInformation;
 import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
 import com.rposcro.jwavez.tools.shell.services.RepositoryService;
@@ -37,7 +38,7 @@ public class ContextCommands {
         return message.toString();
     }
 
-    @Command(command = "About")
+    @Command(command = "about", description = "Print information about this application")
     public String about() {
         return "JWaveZ Network Shell";
     }
