@@ -2,7 +2,7 @@ package com.rposcro.jwavez.tools.shell.spring;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
-import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
+import com.rposcro.jwavez.tools.shell.services.dongle.DongleInformationService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationStartedEvent;

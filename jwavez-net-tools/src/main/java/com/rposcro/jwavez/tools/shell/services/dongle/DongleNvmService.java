@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.tools.shell.services;
+package com.rposcro.jwavez.tools.shell.services.dongle;
 
 import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.controllers.BasicSynchronousController;
@@ -7,6 +7,7 @@ import com.rposcro.jwavez.serial.frames.responses.NvmBackupRestoreResponse;
 import com.rposcro.jwavez.serial.model.NvmBackupRestoreResult;
 import com.rposcro.jwavez.tools.shell.commands.exception.ServiceFlowBrokenException;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
+import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.utils.SerialFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class DongleNvmService {
     @Autowired
     private ConsoleAccessor consoleAccessor;
 
-    public byte[] readNvmData() throws SerialException {
+    public byte[] pullNvmDataFromDevice() throws SerialException {
         int nvmLength = openNvm();
         byte[] buffer = new byte[nvmLength];
         int bytesRead = 0;
@@ -41,6 +42,11 @@ public class DongleNvmService {
 
         closeNvm();
         return buffer;
+    }
+
+    public byte[] readNvmDataFromFile(String pathToFile) {
+        //TODO implement
+        return new byte[0];
     }
 
     private NvmBackupRestoreResponse readNvmChunk(int offset) throws SerialException {

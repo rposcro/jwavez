@@ -1,4 +1,4 @@
-package com.rposcro.jwavez.tools.shell.services;
+package com.rposcro.jwavez.tools.shell.services.dongle;
 
 import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.exceptions.SerialException;

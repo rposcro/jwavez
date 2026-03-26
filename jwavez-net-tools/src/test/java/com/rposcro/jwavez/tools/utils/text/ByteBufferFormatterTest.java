@@ -21,7 +21,7 @@ public class ByteBufferFormatterTest {
     @Test
     public void testFormatBufferAsHexString_defaultFormat_emptyBuffer() {
         ByteBufferFormatter formatter = ByteBufferFormatter.builder().build();
-        String result = formatter.formatBufferAsHexString(new byte[0]);
+        String result = formatter.formatBufferAsHexString(new byte[0]).toString();
         assertEquals("", result);
     }
 
@@ -29,7 +29,7 @@ public class ByteBufferFormatterTest {
     public void testFormatBufferAsHexString_defaultFormat_singlePartLine() {
         ByteBufferFormatter formatter = ByteBufferFormatter.builder().build();
         byte[] buffer = Arrays.copyOfRange(HEX_ARRAY, 0x7d, 0x83);
-        String result = formatter.formatBufferAsHexString(buffer);
+        String result = formatter.formatBufferAsHexString(buffer).toString();
         assertEquals("7D7E7F808182", result);
     }
 
@@ -37,7 +37,7 @@ public class ByteBufferFormatterTest {
     public void testFormatBufferAsHexString_defaultFormat_singleFullLine() {
         ByteBufferFormatter formatter = ByteBufferFormatter.builder().build();
         byte[] buffer = Arrays.copyOfRange(HEX_ARRAY, 0, 16);
-        String result = formatter.formatBufferAsHexString(buffer);
+        String result = formatter.formatBufferAsHexString(buffer).toString();
         assertEquals("000102030405060708090A0B0C0D0E0F", result);
     }
 
@@ -47,7 +47,7 @@ public class ByteBufferFormatterTest {
             .byteFormat("%02x")
             .build();
         byte[] buffer = Arrays.copyOfRange(HEX_ARRAY, 8, 17);
-        String result = formatter.formatBufferAsHexString(buffer);
+        String result = formatter.formatBufferAsHexString(buffer).toString();
         assertEquals("08090a0b0c0d0e0f10", result);
     }
 
@@ -57,7 +57,7 @@ public class ByteBufferFormatterTest {
             .byteSeparator(",")
             .build();
         byte[] buffer = Arrays.copyOfRange(HEX_ARRAY, 8, 17);
-        String result = formatter.formatBufferAsHexString(buffer);
+        String result = formatter.formatBufferAsHexString(buffer).toString();
         assertEquals("08,09,0A,0B,0C,0D,0E,0F,10", result);
     }
 
@@ -71,7 +71,7 @@ public class ByteBufferFormatterTest {
             .linePrefixFunction(linePrefixFunction)
             .build();
         byte[] buffer = Arrays.copyOfRange(HEX_ARRAY, 16, 32);
-        String result = formatter.formatBufferAsHexString(buffer);
+        String result = formatter.formatBufferAsHexString(buffer).toString();
         assertEquals("0000: 10111213\n0004: 14151617\n0008: 18191A1B\n000C: 1C1D1E1F", result);
     }
 
@@ -85,7 +85,7 @@ public class ByteBufferFormatterTest {
             .lineSuffixFunction(lineSuffixFunction)
             .build();
         byte[] buffer = Arrays.copyOfRange(HEX_ARRAY, 16, 22);
-        String result = formatter.formatBufferAsHexString(buffer);
+        String result = formatter.formatBufferAsHexString(buffer).toString();
         assertEquals("10111213: 0000\n1415: 0004", result);
     }
 }

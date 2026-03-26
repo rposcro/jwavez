@@ -1,12 +1,11 @@
 package com.rposcro.jwavez.tools.shell.commands.network;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.DongleNetworkInformation;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
-import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
+import com.rposcro.jwavez.tools.shell.services.dongle.DongleInformationService;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationService;
 import org.springframework.beans.factory.annotation.Autowired;

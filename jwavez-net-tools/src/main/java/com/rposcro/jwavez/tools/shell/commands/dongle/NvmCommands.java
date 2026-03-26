@@ -4,26 +4,30 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
-import com.rposcro.jwavez.tools.shell.services.DongleNvmService;
-import com.rposcro.jwavez.tools.utils.text.ByteBufferFormatter;
+import com.rposcro.jwavez.tools.shell.services.dongle.DongleNvmService;
+import com.rposcro.jwavez.tools.shell.services.dongle.NvmFileRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.CommandAvailability;
 import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.standard.ShellOption;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
+import static java.lang.String.format;
+
 @ShellComponent
 @Command(group = CommandGroup.DONGLE)
 public class NvmCommands {
 
-    private static final ByteBufferFormatter BUFFER_FORMATTER = createFormatter();
-
     @Autowired
     private DongleNvmService dongleNvmService;
+
+    @Autowired
+    private NvmFileRenderer nvmFileRenderer;
 
     @Autowired
     private JWaveZShellContext shellContext;
@@ -35,13 +39,12 @@ public class NvmCommands {
     @CommandAvailability(provider = "dongleAvailability")
     public String nvmBackup()
     throws SerialException {
-        byte[] dongleNvm = dongleNvmService.readNvmData();
-        String formattedBuffer = BUFFER_FORMATTER.formatBufferAsHexString(dongleNvm);
-        consoleAccessor.flushLine("NVM content read from dongle: " + formattedBuffer + "\n");
+        byte[] dongleNvm = dongleNvmService.pullNvmDataFromDevice();
+        consoleAccessor.flushLine(format("NVM content of size %s successfully read from dongle\n", dongleNvm.length));
         File filePath = backupFilePath();
 
         try(FileWriter fileWriter = new FileWriter(filePath)) {
-            fileWriter.write(formattedBuffer);
+            fileWriter.write(nvmFileRenderer.renderNvmFileContent(dongleNvm));
         } catch (Exception e) {
             return "Failed to write NVM content to file: " + e.getMessage() + "\n";
         }
@@ -49,22 +52,20 @@ public class NvmCommands {
         return "NVM content flushed to file: " + filePath.getAbsolutePath() + "\n";
     }
 
+    @Command(command = "nvm restore", description = "Restores dongle NVM from a file")
+    @CommandAvailability(provider = "dongleAvailability")
+    public String nvmRestore(@ShellOption(value = {"--path-to-file", "-path"}) String pathToFile)
+    throws SerialException {
+        return "NVM content not restored since it's placeholder still\n";
+    }
+
     private File backupFilePath() {
-        String filePath = String.format("nvm-%04x-%02x-%02x-%s.hex",
+        String filePath = format("nvm-%04x-%02x-%02x-%s.hex",
             shellContext.getDongleInformation().getDongleDeviceInformation().getManufacturerId(),
             shellContext.getDongleInformation().getDongleDeviceInformation().getChipType(),
             shellContext.getDongleInformation().getDongleDeviceInformation().getChipVersion(),
             DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(LocalDateTime.now())
         );
         return new File(filePath);
-    }
-
-    private static ByteBufferFormatter createFormatter() {
-        return ByteBufferFormatter.builder()
-            .lineLength(32)
-            .byteFormat("%02X")
-            .byteSeparator("")
-            .linePrefixFunction(lineNumber -> String.format("%04X:", lineNumber * 32))
-            .build();
     }
 }

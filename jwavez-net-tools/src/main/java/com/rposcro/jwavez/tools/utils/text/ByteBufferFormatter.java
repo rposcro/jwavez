@@ -22,8 +22,12 @@ public class ByteBufferFormatter {
     @Builder.Default
     private final Function<Integer, String> lineSuffixFunction = (lineNumber) -> "";
 
-    public String formatBufferAsHexString(byte[] buffer) {
+    public StringBuilder formatBufferAsHexString(byte[] buffer) {
         StringBuilder sb = new StringBuilder();
+        return formatBufferAsHexString(buffer, sb);
+    }
+
+    public StringBuilder formatBufferAsHexString(byte[] buffer, StringBuilder sb) {
         int formatted = 0;
         int lineNumber = 0;
 
@@ -42,6 +46,6 @@ public class ByteBufferFormatter {
             lineNumber++;
         }
 
-        return sb.toString().trim();
+        return sb;
     }
 }
