@@ -10,14 +10,12 @@ import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
 import com.rposcro.jwavez.tools.shell.services.DongleManagementService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Availability;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellMethodAvailability;
+import org.springframework.context.annotation.Bean;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.availability.Availability;
+import org.springframework.shell.core.command.availability.AvailabilityProvider;
 
-@ShellComponent
-@ShellCommandGroup(CommandGroup.DONGLE)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.DONGLE)
 public class DongleCommands {
 
     @Autowired
@@ -35,7 +33,8 @@ public class DongleCommands {
     @Autowired
     private ConsoleAccessor console;
 
-    @ShellMethod(value = "Show current dongle information", key = "info")
+    @Command(name = "info", description = "Show current dongle information",
+        availabilityProvider = "dongleCommandsAvailability")
     public String showInfo() throws SerialException {
         DongleInformation dongleInformation = shellContext.getDongleInformation();
         return String.format("\n** Network Information\n%s\n\n"
@@ -49,7 +48,8 @@ public class DongleCommands {
         );
     }
 
-    @ShellMethod(value = "Reset dongle to factory defaults", key = "wipeout")
+    @Command(name = "wipeout", description = "Reset dongle to factory defaults",
+        availabilityProvider = "dongleCommandsAvailability")
     public String factoryReset() throws SerialException {
         String answer = console.readLine("NOTE!\n"
                 + "If you continue, ALL device settings will be reset to factory defaults and your custom changes will be lost.\n"
@@ -66,15 +66,19 @@ public class DongleCommands {
         }
     }
 
-    @ShellMethodAvailability
-    public Availability checkAvailability() {
+    @Bean
+    public AvailabilityProvider dongleCommandsAvailability() {
+
+        Availability availability;
 
         if (ShellScope.DONGLE != shellContext.getScopeContext().getScope()) {
-            return Availability.unavailable("Command not available in current scope");
+            availability = Availability.unavailable("Command not available in current scope");
+        } else {
+            availability = shellContext.getDongleDevicePath() != null ?
+                    Availability.available() :
+                    Availability.unavailable("ZWave dongle device is not specified");
         }
 
-        return shellContext.getDongleDevicePath() != null ?
-                Availability.available() :
-                Availability.unavailable("ZWave dongle device is not specified");
+        return AvailabilityProvider.of(availability);
     }
 }

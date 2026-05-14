@@ -18,12 +18,11 @@ import com.rposcro.jwavez.tools.shell.services.NodeMultiChannelAssociationServic
 import com.rposcro.jwavez.tools.shell.services.NumberRangeParser;
 import com.rposcro.jwavez.tools.utils.SerialFunction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Availability;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellMethodAvailability;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.context.annotation.Bean;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
+import org.springframework.shell.core.command.availability.Availability;
+import org.springframework.shell.core.command.availability.AvailabilityProvider;
 
 import java.text.ParseException;
 import java.util.List;
@@ -32,8 +31,7 @@ import java.util.stream.Stream;
 
 import static java.lang.String.format;
 
-@ShellComponent
-@ShellCommandGroup(CommandGroup.NODE)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.NODE)
 public class NodeAssociationCommands {
 
     @Autowired
@@ -57,10 +55,11 @@ public class NodeAssociationCommands {
     @Autowired
     private NumberRangeParser numberRangeParser;
 
-    @ShellMethod(value = "Print association group(s)", key = {"association print", "ap"})
+    @Command(name = "association print", alias = "ap", description = "Print association group(s)",
+        availabilityProvider = "associationPrintCommandAvailability")
     public String printAssociationGroupDetails(
-            @ShellOption(value = {"--gropup-ids", "-gis"}, defaultValue = ShellOption.NULL) String groupIdRange,
-            @ShellOption(defaultValue = "false") boolean verbose
+            @Option(shortName = 'g', longName = "gropup-ids") String groupIdRange,
+            @Option(longName = "verbose", defaultValue = "false") boolean verbose
     ) {
         try {
             int[] groupIds = parseGroupIdsArgument(groupIdRange);
@@ -76,9 +75,10 @@ public class NodeAssociationCommands {
         }
     }
 
-    @ShellMethod(value = "Learn about group associations", key = {"association learn", "al"})
+    @Command(name = "association learn", alias = "al", description = "Learn about group associations",
+        availabilityProvider = "associationCommandsAvailability")
     public String fetchGroupAssociations(
-            @ShellOption(value = {"--group-ids", "-gis"}, defaultValue = ShellOption.NULL) String groupIdsRange
+            @Option(shortName = 'g', longName = "group-ids") String groupIdsRange
     ) throws SerialException {
         try {
             int[] groupIds = parseGroupIdsArgument(groupIdsRange);
@@ -102,10 +102,11 @@ public class NodeAssociationCommands {
         }
     }
 
-    @ShellMethod(value = "Add association to given group", key = {"association add", "aa"})
+    @Command(name = "association add", alias = "aa", description = "Add association to given group",
+        availabilityProvider = "associationCommandsAvailability")
     public String addAssociation(
-            @ShellOption(value = {"--group-id", "-gi"}) int groupId,
-            @ShellOption(value = {"--destination-id", "-di"}) String destinationId
+            @Option(shortName = 'g', longName = "group-id", required = true) int groupId,
+            @Option(shortName = 'd', longName = "destination-id", required = true) String destinationId
     ) throws SerialException {
         NodeInformation nodeInformation = executeAssociationAction(
                 "add",
@@ -116,10 +117,11 @@ public class NodeAssociationCommands {
         return formatValueLine(nodeInformation, groupId) + "\n";
     }
 
-    @ShellMethod(value = "Remove association from given group", key = {"association remove", "ar"})
+    @Command(name = "association remove", alias ="ar", description = "Remove association from given group",
+        availabilityProvider = "associationCommandsAvailability")
     public String removeAssociation(
-            @ShellOption(value = {"--group-id", "-gi"}) int groupId,
-            @ShellOption(value = {"--destination-id", "-di"}) String destinationId
+            @Option(shortName = 'g', longName = "group-id", required = true) int groupId,
+            @Option(shortName = 'd', longName = "destination-id", required = true) String destinationId
     ) throws SerialException {
         NodeInformation nodeInformation = executeAssociationAction(
                 "remove",
@@ -130,22 +132,26 @@ public class NodeAssociationCommands {
         return formatValueLine(nodeInformation, groupId) + "\n";
     }
 
-    @ShellMethodAvailability(value = {"association learn", "association add", "association remove"})
-    public Availability checkRemoteAvailability() {
+    @Bean
+    public AvailabilityProvider associationCommandsAvailability() {
+        Availability availability;
+
         if (!nodeScopeContext.isAnyNodeSelected()) {
-            return Availability.unavailable("No node is selected in the working context, try to select or fetch one");
+            availability = Availability.unavailable("No node is selected in the working context, try to select or fetch one");
+        } else {
+            availability = shellContext.getDongleDevicePath() != null ?
+                    Availability.available() :
+                    Availability.unavailable("ZWave dongle device is not specified");
         }
 
-        return shellContext.getDongleDevicePath() != null ?
-                Availability.available() :
-                Availability.unavailable("ZWave dongle device is not specified");
+        return AvailabilityProvider.of(availability);
     }
 
-    @ShellMethodAvailability({"association print"})
-    public Availability checkLocalAvailability() {
-        return nodeScopeContext.isAnyNodeSelected() ?
+    @Bean
+    public AvailabilityProvider associationPrintCommandAvailability() {
+        return AvailabilityProvider.of(nodeScopeContext.isAnyNodeSelected() ?
                 Availability.available() :
-                Availability.unavailable("No node is selected in the working context, try to select or fetch one");
+                Availability.unavailable("No node is selected in the working context, try to select or fetch one"));
     }
 
     private NodeInformation executeAssociationAction(
@@ -190,7 +196,7 @@ public class NodeAssociationCommands {
     }
 
     private int[] parseGroupIdsArgument(String groupIdsRange) throws ParseException {
-        if (groupIdsRange != null && !"*".equals(groupIdsRange)) {
+        if (groupIdsRange != null && !groupIdsRange.trim().isEmpty() && !"*".equals(groupIdsRange)) {
             return numberRangeParser.parseNumberRange(groupIdsRange);
         } else {
             return nodeInformationCache.getNodeDetails(nodeScopeContext.getCurrentNodeId())

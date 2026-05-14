@@ -10,16 +10,16 @@ import com.rposcro.jwavez.core.commands.types.BasicCommandType;
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SupportedCommandDispatcherTest {
 
     @Test

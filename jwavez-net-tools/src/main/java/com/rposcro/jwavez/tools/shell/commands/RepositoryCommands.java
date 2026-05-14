@@ -3,17 +3,15 @@ package com.rposcro.jwavez.tools.shell.commands;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.services.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Availability;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellMethodAvailability;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.context.annotation.Bean;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
+import org.springframework.shell.core.command.availability.Availability;
+import org.springframework.shell.core.command.availability.AvailabilityProvider;
 
 import java.io.IOException;
 
-@ShellComponent
-@ShellCommandGroup(CommandGroup.GENERIC)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.GENERIC)
 public class RepositoryCommands {
 
     @Autowired
@@ -22,7 +20,7 @@ public class RepositoryCommands {
     @Autowired
     private RepositoryService repositoryService;
 
-    @ShellMethod(value = "Show current repository", key = {"repository", "repo"})
+    @Command(name = "repository", alias = "repo", description = "Show current repository")
     public String showRepository() {
         if (shellContext.isRepositoryOpened()) {
             return "Current repository is " + shellContext.getRepositoryName();
@@ -31,9 +29,10 @@ public class RepositoryCommands {
         }
     }
 
-    @ShellMethod(value = "Create new repository", key = {"repository create", "repo create"})
+    @Command(name = "repository create", alias = "repo create", description = "Create new repository",
+        availabilityProvider = "repositoryCreateAvailability")
     public String createRepository(
-            @ShellOption(value = {"--repository-name", "-rn"}) String repositoryName
+            @Option(shortName = 'r', longName = "repository-name", required = true) String repositoryName
     ) throws IOException {
         if (repositoryService.repositoryExists(repositoryName)) {
             return "Repository " + repositoryName + " already exists, cannot override!";
@@ -43,9 +42,9 @@ public class RepositoryCommands {
         return "Repository " + repositoryName + " created";
     }
 
-    @ShellMethod(value = "Open repository", key = {"repository open", "repo open"})
+    @Command(name = "repository open", alias = "repo open", description = "Opens repository")
     public String openRepository(
-            @ShellOption(value = {"--repository-name", "-rn"}) String repositoryName
+            @Option(shortName = 'r', longName = "repository-name", required = true) String repositoryName
     ) throws IOException {
         if (!shellContext.isDeviceReady()) {
             repositoryService.openRepositoryWithoutCheck(repositoryName);
@@ -57,29 +56,32 @@ public class RepositoryCommands {
         }
     }
 
-    @ShellMethod(value = "Persist repository", key = {"repository persist", "repo persist"})
+    @Command(name = "repository persist", alias = "repo persist", description = "Persists repository",
+            availabilityProvider = "respositoryPersistPersistAvailability")
     public String persistRepository() throws IOException {
         repositoryService.persistRepository();
         return "Repository " + shellContext.getRepositoryName() + " persisted";
     }
 
-    @ShellMethodAvailability(value = {"repository create"})
-    public Availability checkRepositoryCreateAvailability() {
-        return shellContext.isDeviceReady() ?
+    @Bean
+    public AvailabilityProvider repositoryCreateAvailability() {
+        return AvailabilityProvider.of(shellContext.isDeviceReady() ?
                 Availability.available() :
-                Availability.unavailable("no ZWave dongle device is ready");
+                Availability.unavailable("no ZWave dongle device is ready"));
     }
 
-    @ShellMethodAvailability(value = {"repository persist"})
-    public Availability checkRepositoryPersistAvailability() {
+    @Bean
+    public AvailabilityProvider respositoryPersistPersistAvailability() {
+        Availability availability;
+
         if (!shellContext.isDeviceReady()) {
-            return Availability.unavailable("no ZWave dongle device is ready");
+            availability = Availability.unavailable("no ZWave dongle device is ready");
+        } else if (!shellContext.isRepositoryOpened()) {
+            availability = Availability.unavailable("no repository is opened");
+        } else {
+            availability =  Availability.available();
         }
 
-        if (!shellContext.isRepositoryOpened()) {
-            return Availability.unavailable("no repository is opened");
-        }
-
-        return Availability.available();
+        return AvailabilityProvider.of(availability);
     }
 }

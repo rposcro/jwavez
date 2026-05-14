@@ -25,3 +25,17 @@ here: [JWaveZ CLI Network Tool](https://github.com/rposcro/jwavez/wiki/JWaveZ-CL
 Just snippets of code to show, test, and check how the code really works. It's doubtful to actively continue development
 here as the network tool module is taking precendence over it. Possibly to be removed in the future when it becomes too
 absorbing to keep it up to dated.
+
+## Others
+
+Explaining short option names
+* -d destination id
+* -e encapsulation to be used
+* -g group id
+* -m value mode
+* -n node id
+* -p path to dongle device
+* -r repository name
+* -s scope name
+* -t timeout
+* -v first command value

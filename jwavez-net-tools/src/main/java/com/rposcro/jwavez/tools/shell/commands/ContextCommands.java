@@ -6,15 +6,12 @@ import com.rposcro.jwavez.tools.shell.models.DongleInformation;
 import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
 import com.rposcro.jwavez.tools.shell.services.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
 import java.io.File;
 
-@ShellComponent
-@ShellCommandGroup(CommandGroup.GENERIC)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.GENERIC)
 public class ContextCommands {
 
     @Autowired
@@ -26,7 +23,7 @@ public class ContextCommands {
     @Autowired
     private RepositoryService repositoryService;
 
-    @ShellMethod(value = "Print current context information", key = "pwc")
+    @Command(name = "pwc", description = "Print current context information")
     public String printContextInformation() {
         StringBuffer message = new StringBuffer();
         message.append("Current working scope is " + shellContext.getShellScope().getScopePath()).append("\n");
@@ -38,13 +35,13 @@ public class ContextCommands {
         return message.toString();
     }
 
-    @ShellMethod(value = "About")
+    @Command(name = "about")
     public String about() {
         return "JWaveZ Network Shell";
     }
 
-    @ShellMethod(value = "Set current device", key = "device")
-    public String setCurrentDevice(@ShellOption(value = {"--path-to-device", "-path"}) String pathToDevice
+    @Command(name = "device", description = "Set current device")
+    public String setCurrentDevice(@Option(shortName = 'p', longName = "path-to-device", required = true) String pathToDevice
     ) throws SerialException {
         File deviceFile = new File(pathToDevice);
         if (!deviceFile.exists()) {

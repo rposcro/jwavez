@@ -1,8 +1,5 @@
 package com.rposcro.jwavez.tools.shell.models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
