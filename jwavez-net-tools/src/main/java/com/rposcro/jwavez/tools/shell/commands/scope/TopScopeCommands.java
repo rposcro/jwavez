@@ -9,12 +9,10 @@ import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import com.rposcro.jwavez.tools.shell.services.ScopeSwitchService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
-@ShellComponent
-@Command(group = CommandGroup.SCOPE)
+@CommandGroup(name = com.rposcro.jwavez.tools.shell.commands.CommandGroup.TOP)
 public class TopScopeCommands {
 
     @Autowired
@@ -32,23 +30,23 @@ public class TopScopeCommands {
     @Autowired
     private NodeScopeContext nodeScopeContext;
 
-    @Command(command = "dongle", description = "Change working scope to Dongle")
+    @Command(name = "dongle", description = "Change working scope to Dongle")
     public String switchToDongleScope() {
         return switchToTopScope(ShellScope.DONGLE);
     }
 
-    @Command(command = "network", description = "Change working scope to Network")
+    @Command(name = "network", description = "Change working scope to Network")
     public String switchToNetworkScope() {
         return switchToTopScope(ShellScope.NETWORK);
     }
 
-    @Command(command = "talk", description = "Change working scope to Talk")
+    @Command(name = "talk", description = "Change working scope to Talk")
     public String switchToTalkScope() {
         return switchToTopScope(ShellScope.TALK);
     }
 
-    @Command(command = "node", description = "Change working scope to Node")
-    public String switchToNodeScope(@Option(longNames = "node-id", shortNames = 'n') Integer nodeId) {
+    @Command(name = "node", description = "Change working scope to Node")
+    public String switchToNodeScope(@Option(shortName = 'n', longName = "node-id", defaultValue = "null") Integer nodeId) {
         switchToTopScope(ShellScope.NODE);
         String message = "Scope changed to " + ShellScope.NODE;
         if (nodeId != null && nodeInformationCache.isNodeKnown(nodeId)) {

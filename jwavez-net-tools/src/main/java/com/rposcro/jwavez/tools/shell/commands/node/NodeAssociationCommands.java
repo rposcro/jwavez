@@ -1,7 +1,7 @@
 package com.rposcro.jwavez.tools.shell.commands.node;
 
-import com.jwavez.jwavez.products.model.AssociationGroup;
 import com.rposcro.jwavez.core.classes.CommandClass;
+import com.rposcro.jwavez.products.model.AssociationGroup;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.CommandClassMeta;
@@ -18,10 +18,8 @@ import com.rposcro.jwavez.tools.shell.services.NumberRangeParser;
 import com.rposcro.jwavez.tools.shell.services.ProductsSpecificationsProvider;
 import com.rposcro.jwavez.tools.utils.SerialFunction;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
 import java.text.ParseException;
 import java.util.List;
@@ -30,8 +28,7 @@ import java.util.stream.Stream;
 
 import static java.lang.String.format;
 
-@ShellComponent
-@Command(group = CommandGroup.NODE)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.NODE)
 public class NodeAssociationCommands {
 
     @Autowired
@@ -55,11 +52,11 @@ public class NodeAssociationCommands {
     @Autowired
     private ProductsSpecificationsProvider productsSpecificationsProvider;
 
-    @Command(command = "association print", alias = "ap", description = "Print association group(s)")
-    @CommandAvailability(provider = {"nodeAvailability"})
+    @Command(name = "association print", alias = "ap", description = "Print association group(s)",
+        availabilityProvider = "nodeAvailability")
     public String printAssociationGroupDetails(
-            @Option(longNames = "group-ids", shortNames = 'g', defaultValue = "*") String groupIdRange,
-            @Option(longNames = "verbose", shortNames = 'v', defaultValue = "false") boolean verbose
+            @Option(shortName = 'g', longName = "gropup-ids") String groupIdRange,
+            @Option(longName = "verbose", defaultValue = "false") boolean verbose
     ) {
         try {
             int[] groupIds = parseGroupIdsArgument(groupIdRange);
@@ -76,11 +73,11 @@ public class NodeAssociationCommands {
         }
     }
 
-    @Command(command = "association learn", alias = "al", description = "Learn about group associations")
-    @CommandAvailability(provider = {"dongleAvailability", "nodeAvailability"})
+    @Command(name = "association learn", alias = "al", description = "Learn about group associations",
+        availabilityProvider = "dongleAvailability")
     public String fetchGroupAssociations(
-            @Option(longNames = "group-ids", shortNames = 'g', required = true) String groupIdsRange,
-            @Option(longNames = "multichannel", shortNames = 'm', defaultValue = "true") boolean useMultiChannel
+            @Option(shortName = 'g', longName = "group-ids", required = true) String groupIdsRange,
+            @Option(shortName = 'm', longName = "multichannel", defaultValue = "true") boolean useMultiChannel
     ) throws SerialException {
         try {
             int[] groupIds = parseGroupIdsArgument(groupIdsRange);
@@ -104,11 +101,11 @@ public class NodeAssociationCommands {
         }
     }
 
-    @Command(command = "association add", alias = "aa", description = "Add association to given group")
-    @CommandAvailability(provider = {"dongleAvailability", "nodeAvailability"})
+    @Command(name = "association add", alias = "aa", description = "Add association to given group",
+        availabilityProvider = "dongleAvailability")
     public String addAssociation(
-            @Option(longNames = "group-id", shortNames = 'g', required = true) int groupId,
-            @Option(longNames = "destination-id", shortNames = 'd', required = true) String destinationId
+            @Option(shortName = 'g', longName = "group-id", required = true) int groupId,
+            @Option(shortName = 'd', longName = "destination-id", required = true) String destinationId
     ) throws SerialException {
         NodeInformation nodeInformation = executeAssociationAction(
                 "add",
@@ -119,11 +116,11 @@ public class NodeAssociationCommands {
         return formatValueLine(nodeInformation, groupId) + "\n";
     }
 
-    @Command(command = "association remove", alias = "ar", description = "Remove association from given group")
-    @CommandAvailability(provider = {"dongleAvailability", "nodeAvailability"})
+    @Command(name = "association remove", alias ="ar", description = "Remove association from given group",
+        availabilityProvider = "dongleAvailability")
     public String removeAssociation(
-            @Option(longNames = "group-id", shortNames = 'g', required = true) int groupId,
-            @Option(longNames = "destination-id", shortNames = 'd', required = true) String destinationId
+            @Option(shortName = 'g', longName = "group-id", required = true) int groupId,
+            @Option(shortName = 'd', longName = "destination-id", required = true) String destinationId
     ) throws SerialException {
         NodeInformation nodeInformation = executeAssociationAction(
                 "remove",
@@ -176,7 +173,7 @@ public class NodeAssociationCommands {
     }
 
     private int[] parseGroupIdsArgument(String groupIdsRange) throws ParseException {
-        if (groupIdsRange != null && !"*".equals(groupIdsRange)) {
+        if (groupIdsRange != null && !groupIdsRange.trim().isEmpty() && !"*".equals(groupIdsRange)) {
             return numberRangeParser.parseNumberRange(groupIdsRange);
         } else {
             return productsSpecificationsProvider.findAssociationsGroupsIds(nodeScopeContext.getCurrentNodeId());

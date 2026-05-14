@@ -1,17 +1,15 @@
 package com.rposcro.jwavez.tools.shell.commands.talk;
 
-import com.jwavez.jwavez.products.model.Product;
+import com.rposcro.jwavez.products.model.Product;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import com.rposcro.jwavez.tools.shell.services.ProductsSpecificationsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Command;
 
 import java.util.stream.Collectors;
 
-@ShellComponent
-@Command(group = CommandGroup.TALK)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.TALK)
 public class NodesRelatedCommands {
 
     @Autowired
@@ -20,7 +18,7 @@ public class NodesRelatedCommands {
     @Autowired
     private ProductsSpecificationsProvider productsSpecificationsProvider;
 
-    @Command(command = "list", alias = "ls", description = "List known nodes")
+    @Command(name = "list", alias = "ls", description = "List known nodes")
     public String listKnownNodes() {
         return nodeInformationCache.getOrderedNodeList().stream()
             .map(node -> {

@@ -8,13 +8,10 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.services.TalkCommunicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
-@ShellComponent
-@Command(group = CommandGroup.TALK)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.TALK)
 public class MultilevelSwitchCommands {
 
     @Autowired
@@ -23,9 +20,9 @@ public class MultilevelSwitchCommands {
     @Autowired
     private SwitchMultiLevelCommandBuilder switchMultiLevelCommandBuilder;
 
-    @Command(command = "switch-multilevel report", alias = "sml report", description = "Request multilevel report")
-    @CommandAvailability(provider = "dongleAvailability")
-    public String executeMultilevelGet(@Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId) throws SerialException {
+    @Command(name = "switch-multilevel report", alias = "sml report", description = "Request multilevel report",
+            availabilityProvider = "dongleAvailability")
+    public String executeMultilevelGet(@Option(shortName = 'n', longName = "node-id", required = true) int nodeId) throws SerialException {
         ZWaveControlledCommand command = switchMultiLevelCommandBuilder.v1().buildGetCommand();
         SwitchMultilevelReport report = talkCommunicationService.requestTalk(nodeId, command, SwitchMultiLevelCommandType.SWITCH_MULTILEVEL_REPORT);
         return String.format(String.format("Multilevel report for node %s\nCurrent value: %s, Target value: %s, Duration: %s\n"
@@ -33,12 +30,13 @@ public class MultilevelSwitchCommands {
         ));
     }
 
-    @Command(command = "switch-multilevel set", alias = "sml set", description = "Send multilevel set")
-    @CommandAvailability(provider = "dongleAvailability")
+    @Command(name = "switch-multilevel set", alias = "sml set", description = "Send multilevel set",
+            availabilityProvider = "dongleAvailability")
     public String executeMultilevelSet(
-        @Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId,
-        @Option(longNames = "value", shortNames = 'w', required = true) int value,
-        @Option(longNames = "duration", defaultValue = "0") int duration) throws SerialException {
+            @Option(shortName = 'n', longName = "node-id", required = true) int nodeId,
+            @Option(shortName = 'v', longName = "value", required = true) int value,
+            @Option(longName = "duration", defaultValue = "0") int duration)
+            throws SerialException {
         ZWaveControlledCommand command = switchMultiLevelCommandBuilder.v2().buildSetCommand((byte) value, (byte) duration);
         boolean success = talkCommunicationService.sendCommand(nodeId, command);
         if (success) {

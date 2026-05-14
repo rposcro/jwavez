@@ -1,7 +1,6 @@
 package com.rposcro.jwavez.tools.shell.commands.network;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.DongleNetworkInformation;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
@@ -9,9 +8,7 @@ import com.rposcro.jwavez.tools.shell.services.dongle.DongleInformationService;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Command;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,8 +18,9 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@ShellComponent
-@Command(group = CommandGroup.NETWORK)
+import static com.rposcro.jwavez.tools.shell.commands.CommandGroup.NETWORK;
+
+@org.springframework.shell.core.command.annotation.CommandGroup(name = NETWORK)
 public class NodesCommands {
 
     @Autowired
@@ -37,8 +35,8 @@ public class NodesCommands {
     @Autowired
     private ConsoleAccessor console;
 
-    @Command(command = "check nodes", description = "Check consistency of nodes on the network")
-    @CommandAvailability(provider = "dongleAvailability")
+    @Command(name = "check nodes", description = "Check consistency of nodes on the network",
+        availabilityProvider = "dongleAvailability")
     public String checkNodes() throws SerialException {
         List<NodeInformation> cachedNodes = nodeInformationCache.getOrderedNodeList();
         console.flushLine(String.format("Cache holds information about %s node(s)", cachedNodes.size()));

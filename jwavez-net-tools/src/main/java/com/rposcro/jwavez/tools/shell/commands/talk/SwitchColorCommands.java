@@ -11,10 +11,11 @@ import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.shell.services.TalkCommunicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.context.annotation.Bean;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
+import org.springframework.shell.core.command.availability.Availability;
+import org.springframework.shell.core.command.availability.AvailabilityProvider;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,8 +24,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
-@ShellComponent
-@Command(group = CommandGroup.TALK)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.TALK)
 public class SwitchColorCommands {
 
     private final static Pattern COLOR_PATTERN = Pattern.compile("(?:[a-fA-F0-9]{2})+");
@@ -38,14 +38,15 @@ public class SwitchColorCommands {
     @Autowired
     private SwitchColorCommandBuilder switchColorCommandBuilder;
 
-    @Command(command = "switch-color report", alias = "sc report", description = "Request color report")
-    @CommandAvailability(provider = "dongleAvailability")
-    public String executeColorReport(@Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId) throws SerialException {
+    @Command(name = "switch-color report", alias = "sc report", description = "Request color report",
+        availabilityProvider = "dongleAvailability")
+    public String executeColorReport(@Option(shortName = 'n', longName = "node-id", required = true) int nodeId)
+            throws SerialException {
         ZWaveControlledCommand command = switchColorCommandBuilder.v1().buildSupportedGetCommand();
         SwitchColorSupportedReport supportedReport = talkCommunicationService.requestTalk(nodeId, command, SwitchColorCommandType.SWITCH_COLOR_SUPPORTED_REPORT);
 
         List<ColorComponent> colorComponents = supportedReport.getColorComponents();
-        console.flushLine(format("Color components found for node %s: %s", nodeId,
+        console.flushLine("Color components found for node %s: %s".formatted(nodeId,
             colorComponents.stream().map(ColorComponent::toString).collect(Collectors.joining(", "))));
 
         StringBuffer message = new StringBuffer("Color components report for node " + nodeId);
@@ -59,12 +60,12 @@ public class SwitchColorCommands {
         return message.toString() + "\n";
     }
 
-    @Command(command = "switch-color set", alias = "sc set", description = "Send color set request")
-    @CommandAvailability(provider = "dongleAvailability")
+    @Command(name = "switchcolor set", alias = "sc set", description = "Send color set request",
+        availabilityProvider = "dongleAvailability")
     public String executeColorSet(
-            @Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId,
-            @Option(longNames = "color-mode", shortNames = 's', required = true) String colorMode,
-            @Option(longNames = "color-value", shortNames = 'w', required = true) String colorValue
+            @Option(shortName = 'n', longName = "node-id", required = true) int nodeId,
+            @Option(shortName = 'm', longName = "color-mode", required = true) String colorMode,
+            @Option(shortName = 'v', longName = "color-value", required = true) String colorValue
     ) throws SerialException {
         String errorMessage = validateArguments(colorMode, colorValue);
         if (errorMessage != null) {

@@ -1,4 +1,4 @@
-package com.jwavez.jwavez.products.model;
+package com.rposcro.jwavez.products.model;
 
 import lombok.Getter;
 import lombok.Setter;

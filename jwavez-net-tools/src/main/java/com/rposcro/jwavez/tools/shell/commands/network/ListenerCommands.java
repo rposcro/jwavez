@@ -5,12 +5,9 @@ import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.shell.services.NetworkListeningService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Command;
 
-@ShellComponent
-@Command(group = CommandGroup.NETWORK)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.NETWORK)
 public class ListenerCommands {
 
     @Autowired
@@ -19,8 +16,8 @@ public class ListenerCommands {
     @Autowired
     private NetworkListeningService networkListeningService;
 
-    @Command(command = "listen", description = "Enters command listener mode")
-    @CommandAvailability(provider = "dongleAvailability")
+    @Command(name = "listen", description = "Enters command listener mode",
+        availabilityProvider = "dongleAvailability")
     public String listenCommand() throws SerialException {
         networkListeningService.startListening();
         console.flushLine("Entered listening mode, press <Enter> to quit");

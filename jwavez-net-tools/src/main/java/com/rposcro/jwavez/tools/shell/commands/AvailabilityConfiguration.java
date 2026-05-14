@@ -5,8 +5,8 @@ import com.rposcro.jwavez.tools.shell.scopes.NodeScopeContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.shell.Availability;
-import org.springframework.shell.AvailabilityProvider;
+import org.springframework.shell.core.command.availability.Availability;
+import org.springframework.shell.core.command.availability.AvailabilityProvider;
 
 @Configuration
 public class AvailabilityConfiguration {

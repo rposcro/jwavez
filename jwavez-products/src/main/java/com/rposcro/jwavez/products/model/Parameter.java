@@ -1,13 +1,14 @@
-package com.jwavez.jwavez.products.model;
+package com.rposcro.jwavez.products.model;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class AssociationGroup {
+public class Parameter {
 
-    private int groupId;
+    private int number;
+    private short bitSize;
     private String name;
     private String description;
 }

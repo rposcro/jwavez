@@ -1,9 +1,9 @@
 package com.rposcro.jwavez.tools.shell.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jwavez.jwavez.products.model.AssociationGroup;
-import com.jwavez.jwavez.products.model.Parameter;
-import com.jwavez.jwavez.products.model.Product;
+import com.rposcro.jwavez.products.model.AssociationGroup;
+import com.rposcro.jwavez.products.model.Parameter;
+import com.rposcro.jwavez.products.model.Product;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

@@ -1,0 +1,24 @@
+[versions]
+orgReflections = "org.reflections:reflections:0.9.11"
+orgJunitJupiter = "org.junit.jupiter:junit-jupiter:6.0.3"
+orgJunitLauncher = "org.junit.platform:junit-platform-launcher:6.0.3"
+orgMockitoMockitoCore = "org.mockito:mockito-core:2.+"
+orgMockitoMockitoJupiter = "org.mockito:mockito-junit-jupiter:2.+"
+orgProjectLombok = "org.projectlombok:lombok:1.18.30"
+orgSlf4j = "org.slf4j:slf4j-api:1.7.30"
+comNeuronrobotics = "com.neuronrobotics:nrjavaserial:5.2.1"
+comFazecast = "com.fazecast:jSerialComm:2.10.3"
+
+orgSpringBootStarter = "org.springframework.boot:spring-boot-starter:4.0.6"
+orgSpringBootStarterTest = "org.springframework.boot:spring-boot-starter-test:4.0.6"
+orgSpringBootJackson = "org.springframework.boot:spring-boot-jackson2:4.0.6"
+orgSpringShellStarter = "org.springframework.shell:spring-shell-starter:4.0.2"
+
+springBootVersion = "4.0.6"
+
+[plugins]
+application = { id = "application" }
+java = { id = "java" }
+javaLibrary = { id = "java-library" }
+mavenPublish = { id = "maven-publish" }
+springBoot = { id = "org.springframework.boot", version.ref = "springBootVersion" }

@@ -9,13 +9,10 @@ import com.rposcro.jwavez.tools.shell.services.NetworkManagementService;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
-@ShellComponent
-@Command(group = CommandGroup.NETWORK)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.NETWORK)
 public class InclusionCommands {
 
     @Autowired
@@ -33,9 +30,9 @@ public class InclusionCommands {
     @Autowired
     private ConsoleAccessor console;
 
-    @Command(command = "include", description = "Include new node into network")
-    @CommandAvailability(provider = "dongleAvailability")
-    public String includeNode(@Option(longNames = "timeout", shortNames = 't', defaultValue = "60") int timeout) throws SerialException {
+    @Command(name = "include", description = "Include new node into network",
+        availabilityProvider = "dongleAvailability")
+    public String includeNode(@Option(shortName = 't', longName = "timeout", defaultValue = "60") int timeout) throws SerialException {
         if (timeout > 60) {
             return "Maximum timeout value is 60 seconds";
         }
@@ -54,9 +51,9 @@ public class InclusionCommands {
         }
     }
 
-    @Command(command = "exclude", description = "Exclude node from network")
-    @CommandAvailability(provider = "dongleAvailability")
-    public String excludeNode(@Option(longNames = "timeout", shortNames = 't', defaultValue = "60") int timeout) throws SerialException {
+    @Command(name = "exclude", description = "Exclude node from network",
+        availabilityProvider = "dongleAvailability")
+    public String excludeNode(@Option(shortName = 't', longName = "timeout", defaultValue = "60") int timeout) throws SerialException {
         if (timeout > 60) {
             return "Maximum timeout value is 60 seconds";
         }

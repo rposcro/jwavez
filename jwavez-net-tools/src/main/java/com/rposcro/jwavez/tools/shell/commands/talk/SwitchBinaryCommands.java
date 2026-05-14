@@ -11,13 +11,10 @@ import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.commands.EncapsulationBuilder;
 import com.rposcro.jwavez.tools.shell.services.TalkCommunicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
-@ShellComponent
-@Command(group = CommandGroup.TALK)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.TALK)
 public class SwitchBinaryCommands {
 
     @Autowired
@@ -29,16 +26,16 @@ public class SwitchBinaryCommands {
     @Autowired
     private SwitchBinaryCommandBuilder switchBinaryCommandBuilder;
 
-    @Command(command = "switch-binary report", alias = "sb report", description = "Request binary report")
-    @CommandAvailability(provider = "dongleAvailability")
+    @Command(name = "switch-binary report", alias = "sb report", description = "Request binary report",
+        availabilityProvider = "dongleAvailability")
     public String executeBinaryReport(
-            @Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId,
-            @Option(longNames = "encapsulation", shortNames = 'e') String encapsulationParameter
+            @Option(shortName = 'n', longName = "node-id", required = true) int nodeId,
+            @Option(shortName = 'e', longName = "--encapsulate") String encapsulationParameter
     ) throws SerialException {
         ZWaveControlledCommand command = switchBinaryCommandBuilder.v1().buildGetCommand();
         short reportValue;
 
-        if (encapsulationParameter == null) {
+        if (encapsulationParameter == null || encapsulationParameter.trim().isEmpty()) {
             BinarySwitchReport binaryReport = talkCommunicationService.requestTalk(nodeId, command, SwitchBinaryCommandType.BINARY_SWITCH_REPORT);
             reportValue = binaryReport.getValue();
         } else {
@@ -51,16 +48,16 @@ public class SwitchBinaryCommands {
         return String.format("Binary value reported: 0x%02X\n", reportValue);
     }
 
-    @Command(command = "switch-binary set", alias = "sb set", description = "Binary set request")
-    @CommandAvailability(provider = "dongleAvailability")
+    @Command(name = "switch-binary set", alias = "sb set", description = "Binary set request",
+            availabilityProvider = "dongleAvailability")
     public String executeBinarySet(
-            @Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId,
-            @Option(longNames = "value", shortNames = 'w', required = true) int binaryValue,
-            @Option(longNames = "encapsulation", shortNames = 'e') String encapsulationParameter
+            @Option(shortName = 'n', longName = "node-id", required = true) int nodeId,
+            @Option(shortName = 'v', longName = "value", required = true) int binaryValue,
+            @Option(shortName = 'e', longName = "encapsulate") String encapsulationParameter
     ) throws SerialException {
         ZWaveControlledCommand command = switchBinaryCommandBuilder.v1().buildSetCommand((byte) binaryValue);
 
-        if (encapsulationParameter != null) {
+        if (encapsulationParameter != null && !encapsulationParameter.trim().isEmpty()) {
             command = encapsulationBuilder.encapsulateCommand(command, encapsulationParameter);
         }
 

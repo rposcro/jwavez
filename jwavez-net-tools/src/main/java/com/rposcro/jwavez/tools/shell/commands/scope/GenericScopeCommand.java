@@ -1,17 +1,14 @@
-package com.rposcro.jwavez.tools.shell.commands.scope;
+package com.rposcro.jwavez.tools.shell.commands;
 
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
-import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.ScopeSwitchService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
-@ShellComponent
-@Command(group = CommandGroup.SCOPE)
-public class GenericScopeCommand {
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.GENERIC)
+public class GenericScopeCommands {
 
     @Autowired
     private JWaveZShellContext shellContext;
@@ -19,10 +16,10 @@ public class GenericScopeCommand {
     @Autowired
     private ScopeSwitchService scopeSwitchService;
 
-    @Command(command = "scope", description = "Show or change current working scope")
-    public String manageCurrentScope(@Option(longNames = "scope-name") String scopeName) {
+    @Command(name = "scope", description = "Show or change current working scope")
+    public String manageCurrentScope(@Option(shortName = 's', longName = "--scope-name", required = true) String scopeName) {
 
-        if (scopeName == null) {
+        if (scopeName == null || scopeName.trim().isEmpty()) {
             return "Current working scope is " + shellContext.getShellScope().getScopePath();
         }
 

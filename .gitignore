@@ -23,3 +23,9 @@ hs_err_pid*
 
 # ignored files
 .ignore
+
+# Ignore Gradle build output directory
+build
+
+# Ignore Kotlin plugin data
+.kotlin

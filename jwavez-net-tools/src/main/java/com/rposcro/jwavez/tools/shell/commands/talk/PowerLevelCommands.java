@@ -8,13 +8,10 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.services.TalkCommunicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
-@ShellComponent
-@Command(group = CommandGroup.TALK)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.GENERIC)
 public class PowerLevelCommands {
 
     @Autowired
@@ -23,20 +20,21 @@ public class PowerLevelCommands {
     @Autowired
     private PowerLevelCommandBuilder powerLevelCommandBuilder;
 
-    @Command(command = "power-level report", alias = "pl report", description = "Request power level report")
-    @CommandAvailability(provider = "dongleAvailability")
-    public String executePowerLevelReport(@Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId) throws SerialException {
+    @Command(name = {"power-level report", "pl report"}, description = "Request power level report",
+        availabilityProvider = "dongleAvailability")
+    public String executePowerLevelReport(@Option(shortName = 'n', longName = "--node-id", required = true) int nodeId)
+            throws SerialException {
         ZWaveControlledCommand command = powerLevelCommandBuilder.v1().buildGetCommand();
         PowerLevelReport powerLevelReport = talkCommunicationService.requestTalk(nodeId, command, PowerLevelCommandType.POWER_LEVEL_REPORT);
         return String.format("Power level reported: 0x%02X, timeout is: %s[s]\n", powerLevelReport.getPowerLevel(), powerLevelReport.getTimeout());
     }
 
-    @Command(command = "power-level set", alias = "pl set", description = "Power level set request")
-    @CommandAvailability(provider = "dongleAvailability")
+    @Command(name = {"power-level set", "pl set"}, description = "Power level set request",
+        availabilityProvider = "dongleAvailability")
     public String executePowerLevelSet(
-            @Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId,
-            @Option(longNames = "value", shortNames = 'w', required = true) int powerLevel,
-            @Option(longNames = "timeout", shortNames = 't', required = true) int powerLevelTimeout
+            @Option(shortName = 'n', longName = "node-id", required = true) int nodeId,
+            @Option(shortName = 't', longName = "timeout", required = true) int powerLevelTimeout,
+            @Option(shortName = 'v', longName = "power-level", required = true) int powerLevel
     ) throws SerialException {
         ZWaveControlledCommand command = powerLevelCommandBuilder.v1()
                 .buildSetCommand((byte) powerLevel, (byte) powerLevelTimeout);

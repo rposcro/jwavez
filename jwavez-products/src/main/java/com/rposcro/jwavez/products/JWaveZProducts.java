@@ -1,4 +1,4 @@
-package com.jwavez.jwavez.products;
+package com.rposcro.jwavez.products;
 
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

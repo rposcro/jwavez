@@ -4,15 +4,12 @@ import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.services.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
 import java.io.IOException;
 
-@ShellComponent
-@Command(group = CommandGroup.GENERIC)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.GENERIC)
 public class RepositoryCommands {
 
     @Autowired
@@ -21,7 +18,7 @@ public class RepositoryCommands {
     @Autowired
     private RepositoryService repositoryService;
 
-    @Command(command = "repository", alias = "repo", description = "Shows current repository")
+    @Command(name = "repository", alias = "repo", description = "Show current repository")
     public String showRepository() {
         if (shellContext.isRepositoryOpened()) {
             return "Current repository is " + shellContext.getRepositoryName();
@@ -30,10 +27,10 @@ public class RepositoryCommands {
         }
     }
 
-    @Command(command = "repository create", alias = "repo create", description = "Creates new repository")
-    @CommandAvailability(provider = "dongleAvailability")
+    @Command(name = "repository create", alias = "repo create", description = "Create new repository",
+        availabilityProvider = "dongleAvailability")
     public String createRepository(
-            @Option(longNames = "repository-name", required = true) String repositoryName
+            @Option(shortName = 'r', longName = "repository-name", required = true) String repositoryName
     ) throws IOException {
         if (repositoryService.repositoryExists(repositoryName)) {
             return "Repository " + repositoryName + " already exists, cannot override!";
@@ -43,9 +40,9 @@ public class RepositoryCommands {
         return "Repository " + repositoryName + " created";
     }
 
-    @Command(command = "repository open", alias = "repo open", description = "Opens repository")
+    @Command(name = "repository open", alias = "repo open", description = "Opens repository")
     public String openRepository(
-            @Option(longNames = "repository-name", required = true) String repositoryName
+            @Option(shortName = 'r', longName = "repository-name", required = true) String repositoryName
     ) throws IOException {
         if (!shellContext.isDeviceReady()) {
             repositoryService.openRepositoryWithoutCheck(repositoryName);
@@ -57,8 +54,8 @@ public class RepositoryCommands {
         }
     }
 
-    @Command(command = "repository persist", alias = "repo persist", description = "Persists repository")
-    @CommandAvailability(provider = {"dongleAvailability", "repositoryAvailability"})
+    @Command(name = "repository persist", alias = "repo persist", description = "Persists repository",
+            availabilityProvider = "repositoryAvailability")
     public String persistRepository() throws IOException {
         repositoryService.persistRepository();
         return "Repository " + shellContext.getRepositoryName() + " persisted";

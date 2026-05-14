@@ -1,20 +1,17 @@
-package com.rposcro.jwavez.tools.shell.commands.generic;
+package com.rposcro.jwavez.tools.shell.commands;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
-import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.DongleInformation;
-import com.rposcro.jwavez.tools.shell.services.dongle.DongleInformationService;
+import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
 import com.rposcro.jwavez.tools.shell.services.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
 import java.io.File;
 
-@ShellComponent
-@Command(group = CommandGroup.GENERIC)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.GENERIC)
 public class ContextCommands {
 
     @Autowired
@@ -26,7 +23,7 @@ public class ContextCommands {
     @Autowired
     private RepositoryService repositoryService;
 
-    @Command(command = "pwc", description = "Print current context information")
+    @Command(name = "pwc", description = "Print current context information")
     public String printContextInformation() {
         StringBuffer message = new StringBuffer();
         message.append("Current working scope is " + shellContext.getShellScope().getScopePath()).append("\n");
@@ -38,13 +35,13 @@ public class ContextCommands {
         return message.toString();
     }
 
-    @Command(command = "about", description = "Print information about this application")
+    @Command(name = "about")
     public String about() {
         return "JWaveZ Network Shell";
     }
 
-    @Command(command = "device", description = "Set current device")
-    public String setCurrentDevice(@ShellOption(value = {"--path-to-device", "-path"}) String pathToDevice
+    @Command(name = "device", description = "Set current device")
+    public String setCurrentDevice(@Option(shortName = 'p', longName = "path-to-device", required = true) String pathToDevice
     ) throws SerialException {
         File deviceFile = new File(pathToDevice);
         if (!deviceFile.exists()) {
