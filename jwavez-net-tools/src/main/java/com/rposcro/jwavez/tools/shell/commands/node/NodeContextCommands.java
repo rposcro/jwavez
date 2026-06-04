@@ -6,12 +6,11 @@ import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import com.rposcro.jwavez.tools.shell.scopes.NodeScopeContext;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Argument;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
-@ShellComponent
-@Command(group = CommandGroup.NODE)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.NODE)
 public class NodeContextCommands {
 
     @Autowired
@@ -23,8 +22,8 @@ public class NodeContextCommands {
     @Autowired
     private NodeInformationFormatter nodeInformationFormatter;
 
-    @Command(command = "select", description = "Select known node")
-    public String selectCurrentNodeId(@Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId) {
+    @Command(name = "select", description = "Select known node")
+    public String selectCurrentNodeId(@Argument(index = 0, description = "Node id to be selected") int nodeId) {
         NodeInformation nodeInformation = nodeInformationCache.getNodeDetails(nodeId);
         if (nodeInformation == null) {
             return String.format("Node %s is unknown, try to fetch it first", nodeId);

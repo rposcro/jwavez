@@ -6,14 +6,11 @@ import com.rposcro.jwavez.tools.shell.models.NodeMultiChannelInformation;
 import com.rposcro.jwavez.tools.shell.scopes.NodeScopeContext;
 import com.rposcro.jwavez.tools.shell.services.NodeMultiChannelService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Command;
 
 import java.util.Arrays;
 
-@ShellComponent
-@Command(group = CommandGroup.NODE)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.NODE)
 public class NodeMultiChannelCommands {
 
     @Autowired
@@ -22,8 +19,8 @@ public class NodeMultiChannelCommands {
     @Autowired
     private NodeMultiChannelService nodeMultiChannelService;
 
-    @Command(command = "multichannel learn", alias = "ml", description = "Learns about multichannel specifics")
-    @CommandAvailability(provider = "nodeAvailability")
+    @Command(name = "multichannel learn", alias = "ml", description = "Learns about multichannel specifics",
+        availabilityProvider = "dongleRepositoryNodeAvailabilityhe")
     public String learnMultiChannelAvailabilities() throws SerialException {
         int nodeId = nodeScopeContext.getCurrentNodeId();
         NodeMultiChannelInformation information = nodeMultiChannelService.fetchMultiChannelAvailabilities(nodeId);

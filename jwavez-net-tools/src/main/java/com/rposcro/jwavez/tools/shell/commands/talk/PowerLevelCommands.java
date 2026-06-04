@@ -8,6 +8,7 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.services.TalkCommunicationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.shell.core.command.annotation.Argument;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 
@@ -22,7 +23,8 @@ public class PowerLevelCommands {
 
     @Command(name = {"power-level report", "pl report"}, description = "Request power level report",
         availabilityProvider = "dongleAvailability")
-    public String executePowerLevelReport(@Option(shortName = 'n', longName = "--node-id", required = true) int nodeId)
+    public String executePowerLevelReport(
+            @Argument(index = 0, description = "Node id to send the power level report request to") int nodeId)
             throws SerialException {
         ZWaveControlledCommand command = powerLevelCommandBuilder.v1().buildGetCommand();
         PowerLevelReport powerLevelReport = talkCommunicationService.requestTalk(nodeId, command, PowerLevelCommandType.POWER_LEVEL_REPORT);
@@ -32,9 +34,9 @@ public class PowerLevelCommands {
     @Command(name = {"power-level set", "pl set"}, description = "Power level set request",
         availabilityProvider = "dongleAvailability")
     public String executePowerLevelSet(
-            @Option(shortName = 'n', longName = "node-id", required = true) int nodeId,
-            @Option(shortName = 't', longName = "timeout", required = true) int powerLevelTimeout,
-            @Option(shortName = 'v', longName = "power-level", required = true) int powerLevel
+            @Argument(index = 0, description = "Node id where the power level should be set") int nodeId,
+            @Argument(index = 1, description = "Power level value") int powerLevel,
+            @Option(shortName = 't', longName = "timeout", required = true) int powerLevelTimeout
     ) throws SerialException {
         ZWaveControlledCommand command = powerLevelCommandBuilder.v1()
                 .buildSetCommand((byte) powerLevel, (byte) powerLevelTimeout);

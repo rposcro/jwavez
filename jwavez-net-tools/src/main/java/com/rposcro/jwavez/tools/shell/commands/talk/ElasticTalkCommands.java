@@ -12,16 +12,14 @@ import com.rposcro.jwavez.tools.shell.communication.ApplicationCommandResult;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.shell.services.TalkCommunicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Argument;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
 import static com.rposcro.jwavez.core.classes.CommandClass.CMD_CLASS_MULTI_CHANNEL;
 import static java.lang.String.format;
 
-@ShellComponent
-@Command(group = CommandGroup.TALK)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.TALK)
 public class ElasticTalkCommands {
 
     @Autowired
@@ -33,11 +31,11 @@ public class ElasticTalkCommands {
     @Autowired
     private TalkCommunicationService talkCommunicationService;
 
-    @Command(command = "send", description = "Sends application command payload")
-    @CommandAvailability(provider = "dongleAvailability")
+    @Command(name = "send", description = "Sends application command payload",
+        availabilityProvider = "dongleAvailability")
     public String sendApplicationCommand(
-            @Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId,
-            @Option(longNames = "payload", required = true) String payload)
+            @Argument(index = 0, description = "Node id to send application command to") int nodeId,
+            @Argument(index = 1, description = "Application command payload to be sent") String payload)
             throws SerialException {
         byte[] payloadBytes = parsePayload(payload);
         console.flushLine(format("Sending application command to " + nodeId));

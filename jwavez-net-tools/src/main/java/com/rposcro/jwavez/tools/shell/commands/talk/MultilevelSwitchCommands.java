@@ -8,6 +8,7 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.services.TalkCommunicationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.shell.core.command.annotation.Argument;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 
@@ -22,7 +23,9 @@ public class MultilevelSwitchCommands {
 
     @Command(name = "switch-multilevel report", alias = "sml report", description = "Request multilevel report",
             availabilityProvider = "dongleAvailability")
-    public String executeMultilevelGet(@Option(shortName = 'n', longName = "node-id", required = true) int nodeId) throws SerialException {
+    public String executeMultilevelGet(
+            @Argument(index = 0, description = "Node id where the switch multilevel report should be requested from") int nodeId)
+            throws SerialException {
         ZWaveControlledCommand command = switchMultiLevelCommandBuilder.v1().buildGetCommand();
         SwitchMultilevelReport report = talkCommunicationService.requestTalk(nodeId, command, SwitchMultiLevelCommandType.SWITCH_MULTILEVEL_REPORT);
         return String.format(String.format("Multilevel report for node %s\nCurrent value: %s, Target value: %s, Duration: %s\n"
@@ -33,9 +36,9 @@ public class MultilevelSwitchCommands {
     @Command(name = "switch-multilevel set", alias = "sml set", description = "Send multilevel set",
             availabilityProvider = "dongleAvailability")
     public String executeMultilevelSet(
-            @Option(shortName = 'n', longName = "node-id", required = true) int nodeId,
-            @Option(shortName = 'v', longName = "value", required = true) int value,
-            @Option(longName = "duration", defaultValue = "0") int duration)
+            @Argument(index = 0, description = "Node id where the switch multilevel set command should be sent") int nodeId,
+            @Argument(index = 1, description = "Value to be sent to the node") int value,
+            @Option(shortName = 'd', longName = "duration", defaultValue = "0") int duration)
             throws SerialException {
         ZWaveControlledCommand command = switchMultiLevelCommandBuilder.v2().buildSetCommand((byte) value, (byte) duration);
         boolean success = talkCommunicationService.sendCommand(nodeId, command);

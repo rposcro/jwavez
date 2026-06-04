@@ -4,10 +4,8 @@ import org.springframework.boot.ResourceBanner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.shell.command.annotation.CommandScan;
 
 @SpringBootApplication
-@CommandScan
 public class JWaveZShell {
 
     public static void main(String[] args) {

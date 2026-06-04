@@ -18,6 +18,7 @@ import com.rposcro.jwavez.tools.shell.services.NumberRangeParser;
 import com.rposcro.jwavez.tools.shell.services.ProductsSpecificationsProvider;
 import com.rposcro.jwavez.tools.utils.SerialFunction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.shell.core.command.annotation.Argument;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 
@@ -55,8 +56,8 @@ public class NodeAssociationCommands {
     @Command(name = "association print", alias = "ap", description = "Print association group(s)",
         availabilityProvider = "nodeAvailability")
     public String printAssociationGroupDetails(
-            @Option(shortName = 'g', longName = "gropup-ids") String groupIdRange,
-            @Option(longName = "verbose", defaultValue = "false") boolean verbose
+            @Argument(index = 0, defaultValue = "*") String groupIdRange,
+            @Option(shortName = 'v', longName = "verbose", defaultValue = "false") boolean verbose
     ) {
         try {
             int[] groupIds = parseGroupIdsArgument(groupIdRange);
@@ -76,7 +77,7 @@ public class NodeAssociationCommands {
     @Command(name = "association learn", alias = "al", description = "Learn about group associations",
         availabilityProvider = "dongleAvailability")
     public String fetchGroupAssociations(
-            @Option(shortName = 'g', longName = "group-ids", required = true) String groupIdsRange,
+            @Argument(index = 0, defaultValue = "*") String groupIdsRange,
             @Option(shortName = 'm', longName = "multichannel", defaultValue = "true") boolean useMultiChannel
     ) throws SerialException {
         try {
@@ -102,10 +103,10 @@ public class NodeAssociationCommands {
     }
 
     @Command(name = "association add", alias = "aa", description = "Add association to given group",
-        availabilityProvider = "dongleAvailability")
+        availabilityProvider = "dongleRepositoryNodeAvailability")
     public String addAssociation(
-            @Option(shortName = 'g', longName = "group-id", required = true) int groupId,
-            @Option(shortName = 'd', longName = "destination-id", required = true) String destinationId
+            @Argument(index = 0, description = "Group id to add association to") int groupId,
+            @Argument(index = 1, description = "Destination id to be added") String destinationId
     ) throws SerialException {
         NodeInformation nodeInformation = executeAssociationAction(
                 "add",
@@ -117,10 +118,10 @@ public class NodeAssociationCommands {
     }
 
     @Command(name = "association remove", alias ="ar", description = "Remove association from given group",
-        availabilityProvider = "dongleAvailability")
+        availabilityProvider = "dongleRepositoryNodeAvailability")
     public String removeAssociation(
-            @Option(shortName = 'g', longName = "group-id", required = true) int groupId,
-            @Option(shortName = 'd', longName = "destination-id", required = true) String destinationId
+            @Argument(index = 0, description = "Group id to remove association from") int groupId,
+            @Argument(index = 1, description = "Destination id to be removed from the group") String destinationId
     ) throws SerialException {
         NodeInformation nodeInformation = executeAssociationAction(
                 "remove",

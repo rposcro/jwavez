@@ -8,13 +8,11 @@ import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.scopes.NodeScopeContext;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Argument;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
-@ShellComponent
-@Command(group = CommandGroup.NODE)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.NODE)
 public class NodeInformationCommands {
 
     @Autowired
@@ -29,9 +27,8 @@ public class NodeInformationCommands {
     @Autowired
     private NodeInformationFormatter nodeInformationFormatter;
 
-    @Command(command = "learn", description = "Learn about node on network and select it")
-    @CommandAvailability(provider = "dongleAvailability")
-    public String fetchNodeInformation(@Option(longNames = "node-id", shortNames = 'n', required = true) int nodeId) throws SerialException {
+    @Command(name = "learn", description = "Learn about node on network and select it", availabilityProvider = "dongleAvailability")
+    public String fetchNodeInformation(@Argument(index = 0, description = "Node id on network to learn about") int nodeId) throws SerialException {
         NodeInformation nodeInformation = nodeInformationService.fetchNodeInformation(nodeId);
         nodeInformationCache.cacheNodeInformation(nodeInformation);
         nodeScopeContext.setCurrentNodeId(nodeId);

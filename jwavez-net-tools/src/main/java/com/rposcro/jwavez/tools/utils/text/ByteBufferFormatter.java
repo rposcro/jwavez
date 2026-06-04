@@ -39,11 +39,13 @@ public class ByteBufferFormatter {
                 if (i < lineEnd - 1) {
                     sb.append(byteSeparator);
                 }
+                formatted++;
             }
             sb.append(lineSuffixFunction.apply(lineNumber));
-            sb.append("\n");
-            formatted += lineLength;
-            lineNumber++;
+            if (formatted < buffer.length) {
+                sb.append("\n");
+                lineNumber++;
+            }
         }
 
         return sb;

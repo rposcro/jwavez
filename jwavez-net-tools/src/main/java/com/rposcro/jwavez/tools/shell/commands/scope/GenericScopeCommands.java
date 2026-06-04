@@ -1,9 +1,11 @@
-package com.rposcro.jwavez.tools.shell.commands;
+package com.rposcro.jwavez.tools.shell.commands.scope;
 
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
+import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.ScopeSwitchService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.shell.core.command.annotation.Argument;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 
@@ -17,7 +19,7 @@ public class GenericScopeCommands {
     private ScopeSwitchService scopeSwitchService;
 
     @Command(name = "scope", description = "Show or change current working scope")
-    public String manageCurrentScope(@Option(shortName = 's', longName = "--scope-name", required = true) String scopeName) {
+    public String manageCurrentScope(@Argument(index = 0, description = "Scope to switch to or skip to show current scope") String scopeName) {
 
         if (scopeName == null || scopeName.trim().isEmpty()) {
             return "Current working scope is " + shellContext.getShellScope().getScopePath();

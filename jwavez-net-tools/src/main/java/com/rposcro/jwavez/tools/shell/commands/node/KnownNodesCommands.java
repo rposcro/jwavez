@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.shell.commands.node;
 
-import com.jwavez.jwavez.products.model.Product;
+import com.rposcro.jwavez.products.model.Product;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.formatters.NodeInformationFormatter;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
@@ -9,15 +9,13 @@ import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationService;
 import com.rposcro.jwavez.tools.shell.services.ProductsSpecificationsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Argument;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
 import java.util.stream.Collectors;
 
-@ShellComponent
-@Command(group = CommandGroup.NODE)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.NODE)
 public class KnownNodesCommands {
 
     @Autowired
@@ -35,7 +33,7 @@ public class KnownNodesCommands {
     @Autowired
     private ProductsSpecificationsProvider productsSpecificationsProvider;
 
-    @Command(command = "list", alias = "ls", description = "List known nodes")
+    @Command(name = "list", alias = "ls", description = "List known nodes")
     public String listKnownNodes() {
         return nodeInformationCache.getOrderedNodeList().stream()
                 .map(node -> {
@@ -49,9 +47,8 @@ public class KnownNodesCommands {
                 .collect(Collectors.joining("\n"));
     }
 
-    @Command(command = "ping", description = "Checks node responsiveness")
-    @CommandAvailability(provider = "dongleAvailability")
-    public String checkNodeResponsiveness(@Option(longNames = "node-id", shortNames = 'n') Integer nodeIdArg) {
+    @Command(name = "ping", description = "Checks node responsiveness", availabilityProvider = "dongleAvailability")
+    public String checkNodeResponsiveness(@Argument(index = 0, description = "Node id to be pinged") Integer nodeIdArg) {
         if (nodeIdArg == null && !nodeScopeContext.isAnyNodeSelected()) {
             return "No node selected, --node-id needs to be provided";
         }
@@ -62,10 +59,10 @@ public class KnownNodesCommands {
         return String.format("Node %3s (%02x) is %s", nodeId, nodeId, pingAnswer ? "Alive" : "Silent");
     }
 
-    @Command(command = "info", alias = "ni", description = "Show known node information")
+    @Command(name = "info", alias = "ni", description = "Show known node information")
     public String showNodeInformation(
-            @Option(longNames = "node-id", shortNames = 'n') Integer nodeIdArg,
-            @Option(longNames = "verbose", shortNames = 'v', defaultValue = "false") boolean verbose
+            @Argument(index = 0, description = "Node id to show info about") Integer nodeIdArg,
+            @Option(shortName = 'v', longName = "verbose", defaultValue = "false") boolean verbose
     ) {
         if (nodeIdArg == null && !nodeScopeContext.isAnyNodeSelected()) {
             return "No node selected, --node-id needs to be provided";
@@ -81,10 +78,10 @@ public class KnownNodesCommands {
         }
     }
 
-    @Command(command = "memo", description = "Sets node memo")
+    @Command(name = "memo", description = "Sets node memo")
     public String setNodeMemo(
-            @Option(longNames = "node-id", shortNames = 'n') Integer nodeIdArg,
-            @Option(longNames = "memo", shortNames = 'm', required = true) String memo
+            @Option(shortName = 'n', longName = "node-id") Integer nodeIdArg,
+            @Option(longName = "memo", required = true) String memo
     ) {
         if (nodeIdArg == null && !nodeScopeContext.isAnyNodeSelected()) {
             return "No node selected, --node-id needs to be provided";
@@ -100,8 +97,8 @@ public class KnownNodesCommands {
         }
     }
 
-    @Command(command = "remove", description = "Remove node from known list")
-    public String removeNodeInformation(@Option(longNames = "node-id", shortNames = 'n') int nodeId) {
+    @Command(name = "remove", description = "Remove node from known list")
+    public String removeNodeInformation(@Argument(index = 0, description = "Node id to remove from known list") int nodeId) {
         NodeInformation nodeInformation = nodeInformationCache.removeNodeInformation(nodeId);
         if (nodeScopeContext.isAnyNodeSelected() && nodeScopeContext.getCurrentNodeId() == nodeId) {
             nodeScopeContext.setCurrentNodeId(null);

@@ -15,7 +15,8 @@ import static com.rposcro.jwavez.core.classes.CommandClass.CMD_CLASS_SECURITY;
 import static com.rposcro.jwavez.core.classes.CommandClass.CMD_CLASS_SENSOR_MULTILEVEL;
 import static com.rposcro.jwavez.core.classes.CommandClass.CMD_CLASS_UNKNOWN;
 import static com.rposcro.jwavez.core.classes.CommandClass.CMD_CLASS_ZWAVE_PLUS_INFO;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MultiChannelCapabilityReportTest {
 
@@ -30,12 +31,11 @@ public class MultiChannelCapabilityReportTest {
         MultiChannelCapabilityReport report = new MultiChannelCapabilityReport(
             ImmutableBuffer.overBuffer(payload), new NodeId(SOURCE_NODE_ID));
 
-        assertEquals(report.getSourceNodeId().getId(), SOURCE_NODE_ID);
-        assertEquals(report.getEndPointId(), 8);
-        assertEquals(report.getDecodedGenericDeviceClass(), GenericDeviceClass.GENERIC_TYPE_MULTILEVEL_SENSOR);
-        assertEquals(report.getDecodedSpecificDeviceClass(), SpecificDeviceClass.SPECIFIC_TYPE_ROUTING_SENSOR_MULTILEVEL);
-        assertEquals(report.getDecodedCommandClasses(),
-            new CommandClass[] {
+        assertEquals(SOURCE_NODE_ID, report.getSourceNodeId().getId());
+        assertEquals(8, report.getEndPointId());
+        assertEquals(GenericDeviceClass.GENERIC_TYPE_MULTILEVEL_SENSOR, report.getDecodedGenericDeviceClass());
+        assertEquals(SpecificDeviceClass.SPECIFIC_TYPE_ROUTING_SENSOR_MULTILEVEL, report.getDecodedSpecificDeviceClass());
+        assertArrayEquals(new CommandClass[] {
                 CMD_CLASS_ZWAVE_PLUS_INFO,
                 CMD_CLASS_ASSOCIATION,
                 CMD_CLASS_MULTI_CHANNEL_ASSOCIATION,
@@ -44,6 +44,7 @@ public class MultiChannelCapabilityReportTest {
                 CMD_CLASS_NOTIFICATION,
                 CMD_CLASS_UNKNOWN,
                 CMD_CLASS_SECURITY,
-                CMD_CLASS_UNKNOWN});
+                CMD_CLASS_UNKNOWN},
+                report.getDecodedCommandClasses());
     }
 }

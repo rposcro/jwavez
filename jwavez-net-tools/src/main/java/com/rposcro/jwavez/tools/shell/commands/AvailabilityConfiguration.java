@@ -33,8 +33,31 @@ public class AvailabilityConfiguration {
 
     @Bean("nodeAvailability")
     public AvailabilityProvider nodeAvailabilityProvider() {
-        return () -> nodeContext.isAnyNodeSelected() ?
+        return () -> dongleAvailabilityProvider().get().isAvailable() && nodeContext.isAnyNodeSelected() ?
             Availability.available() :
             Availability.unavailable("No node is selected in the working context, select node or use node-id option");
+    }
+
+    @Bean("dongleRepositoryNodeAvailability")
+    public AvailabilityProvider dongleRepositoryNodeAvailability() {
+        return () -> {
+            Availability dongleAvailability = dongleAvailabilityProvider().get();
+            Availability repoAvailability = repositoryAvailabilityProvider().get();
+            Availability nodeAvailability = nodeAvailabilityProvider().get();
+
+            if (!dongleAvailability.isAvailable()) {
+                return Availability.unavailable(dongleAvailability.reason());
+            }
+
+            if (!repoAvailability.isAvailable()) {
+                return Availability.unavailable(repoAvailability.reason());
+            }
+
+            if (!nodeAvailability.isAvailable()) {
+                return Availability.unavailable(nodeAvailability.reason());
+            }
+
+            return Availability.available();
+        };
     }
 }

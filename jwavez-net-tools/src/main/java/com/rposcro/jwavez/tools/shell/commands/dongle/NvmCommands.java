@@ -7,10 +7,9 @@ import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.shell.services.dongle.DongleNvmService;
 import com.rposcro.jwavez.tools.shell.services.dongle.NvmFileRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.core.command.annotation.Argument;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -19,8 +18,7 @@ import java.time.format.DateTimeFormatter;
 
 import static java.lang.String.format;
 
-@ShellComponent
-@Command(group = CommandGroup.DONGLE)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.DONGLE)
 public class NvmCommands {
 
     @Autowired
@@ -35,8 +33,7 @@ public class NvmCommands {
     @Autowired
     private ConsoleAccessor consoleAccessor;
 
-    @Command(command = "nvm backup", description = "Backs up dongle NVM to a file")
-    @CommandAvailability(provider = "dongleAvailability")
+    @Command(name = "nvm backup", description = "Backs up dongle NVM to a file", availabilityProvider = "dongleAvailability")
     public String nvmBackup()
     throws SerialException {
         byte[] dongleNvm = dongleNvmService.pullNvmDataFromDevice();
@@ -52,9 +49,8 @@ public class NvmCommands {
         return "NVM content flushed to file: " + filePath.getAbsolutePath() + "\n";
     }
 
-    @Command(command = "nvm restore", description = "Restores dongle NVM from a file")
-    @CommandAvailability(provider = "dongleAvailability")
-    public String nvmRestore(@ShellOption(value = {"--path-to-file", "-path"}) String pathToFile)
+    @Command(name = "nvm restore", description = "Restores dongle NVM from a file", availabilityProvider = "dongleAvailability")
+    public String nvmRestore(@Argument(index = 0, description = "Path to hex file with NVM dump") String pathToFile)
     throws SerialException {
         return "NVM content not restored since it's placeholder still\n";
     }

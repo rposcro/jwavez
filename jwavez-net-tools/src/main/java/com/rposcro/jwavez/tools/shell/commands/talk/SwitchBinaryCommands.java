@@ -10,7 +10,9 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.commands.EncapsulationBuilder;
 import com.rposcro.jwavez.tools.shell.services.TalkCommunicationService;
+import com.rposcro.jwavez.tools.utils.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.shell.core.command.annotation.Argument;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 
@@ -29,7 +31,7 @@ public class SwitchBinaryCommands {
     @Command(name = "switch-binary report", alias = "sb report", description = "Request binary report",
         availabilityProvider = "dongleAvailability")
     public String executeBinaryReport(
-            @Option(shortName = 'n', longName = "node-id", required = true) int nodeId,
+            @Argument(index = 0, description = "Node id where the switch binary report request should be sent") int nodeId,
             @Option(shortName = 'e', longName = "--encapsulate") String encapsulationParameter
     ) throws SerialException {
         ZWaveControlledCommand command = switchBinaryCommandBuilder.v1().buildGetCommand();
@@ -51,13 +53,13 @@ public class SwitchBinaryCommands {
     @Command(name = "switch-binary set", alias = "sb set", description = "Binary set request",
             availabilityProvider = "dongleAvailability")
     public String executeBinarySet(
-            @Option(shortName = 'n', longName = "node-id", required = true) int nodeId,
-            @Option(shortName = 'v', longName = "value", required = true) int binaryValue,
+            @Argument(index = 0, description = "Node id where the switch binary set request should be sent to") int nodeId,
+            @Argument(index = 1, description = "Value for the binary switch") int binaryValue,
             @Option(shortName = 'e', longName = "encapsulate") String encapsulationParameter
     ) throws SerialException {
         ZWaveControlledCommand command = switchBinaryCommandBuilder.v1().buildSetCommand((byte) binaryValue);
 
-        if (encapsulationParameter != null && !encapsulationParameter.trim().isEmpty()) {
+        if (!Strings.isNullOrEmpty(encapsulationParameter)) {
             command = encapsulationBuilder.encapsulateCommand(command, encapsulationParameter);
         }
 

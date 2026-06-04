@@ -9,10 +9,11 @@ import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import com.rposcro.jwavez.tools.shell.services.ScopeSwitchService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.shell.core.command.annotation.Argument;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 
-@CommandGroup(name = com.rposcro.jwavez.tools.shell.commands.CommandGroup.TOP)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.GENERIC)
 public class TopScopeCommands {
 
     @Autowired
@@ -46,7 +47,7 @@ public class TopScopeCommands {
     }
 
     @Command(name = "node", description = "Change working scope to Node")
-    public String switchToNodeScope(@Option(shortName = 'n', longName = "node-id", defaultValue = "null") Integer nodeId) {
+    public String switchToNodeScope(@Argument(index = 0, description = "Node id to select once scope is switched to node") Integer nodeId) {
         switchToTopScope(ShellScope.NODE);
         String message = "Scope changed to " + ShellScope.NODE;
         if (nodeId != null && nodeInformationCache.isNodeKnown(nodeId)) {

@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.shell.commands.node;
 
-import com.jwavez.jwavez.products.model.Parameter;
+import com.rposcro.jwavez.products.model.Parameter;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
@@ -10,17 +10,15 @@ import com.rposcro.jwavez.tools.shell.services.NodeParameterService;
 import com.rposcro.jwavez.tools.shell.services.NumberRangeParser;
 import com.rposcro.jwavez.tools.shell.services.ProductsSpecificationsProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.CommandAvailability;
-import org.springframework.shell.command.annotation.Option;
-import org.springframework.shell.standard.ShellComponent;
+import org.springframework.shell.core.command.annotation.Argument;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
 import java.text.ParseException;
 
 import static java.lang.String.format;
 
-@ShellComponent
-@Command(group = CommandGroup.NODE)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.NODE)
 public class NodeParameterCommands {
 
     @Autowired
@@ -38,11 +36,11 @@ public class NodeParameterCommands {
     @Autowired
     private ProductsSpecificationsProvider productsSpecificationsProvider;
 
-    @Command(command = "param print", alias = "pp", description = "Print parameter(s)")
-    @CommandAvailability(provider = "nodeAvailability")
+    @Command(name = "param print", alias = "pp", description = "Print parameter(s)",
+        availabilityProvider = "nodeAvailability")
     public String printParametersDetails(
-            @Option(longNames = "param-numbers", shortNames = 'p', defaultValue = "*") String paramNumbersRange,
-            @Option(longNames = "verbose", shortNames = 'v', defaultValue = "false") boolean verbose
+            @Argument(index = 0, description = "Parameter number(s) to print information about", defaultValue = "*") String paramNumbersRange,
+            @Option(shortName = 'v', longName = "verbose", defaultValue = "false") boolean verbose
     ) {
         try {
             int[] paramNumbers = parseParamNumbersArgument(paramNumbersRange);
@@ -59,10 +57,10 @@ public class NodeParameterCommands {
         }
     }
 
-    @Command(command = "param learn", alias = "pl", description = "Learn about parameter(s) value")
-    @CommandAvailability(provider = {"nodeAvailability", "dongleAvailability"})
+    @Command(name = "param learn", alias = "pl", description = "Learn about parameter(s) value",
+        availabilityProvider = "dongleRepositoryNodeAvailability")
     public String fetchParametersValues(
-        @Option(longNames = "param-numbers", shortNames = 'p', defaultValue = "*") String paramNumbersRange
+        @Argument(index = 0, defaultValue = "*", description = "Parameter number(s) or * to learn all") String paramNumbersRange
     ) throws SerialException {
         try {
             int[] paramNumbers = parseParamNumbersArgument(paramNumbersRange);
@@ -82,11 +80,11 @@ public class NodeParameterCommands {
         }
     }
 
-    @Command(command = "param set", alias = "ps", description = "Set parameter value")
-    @CommandAvailability(provider = {"nodeAvailability", "dongleAvailability"})
+    @Command(name = "param set", alias = "ps", description = "Set parameter value",
+            availabilityProvider = "dongleRepositoryNodeAvailability")
     public String setParameterValue(
-        @Option(longNames = "param-number", shortNames = 'p', required = true) int paramNumber,
-        @Option(longNames = "param-value", shortNames = 'w', required = true) int paramValue
+        @Argument(index = 0, description = "Parameter number to set value for") int paramNumber,
+        @Argument(index = 1, description = "New parameter value to set") int paramValue
     ) throws SerialException {
         int nodeId = nodeScopeContext.getCurrentNodeId();
 

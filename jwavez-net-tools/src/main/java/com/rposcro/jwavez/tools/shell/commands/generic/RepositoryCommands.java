@@ -4,6 +4,7 @@ import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.services.RepositoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.shell.core.command.annotation.Argument;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 
@@ -30,7 +31,7 @@ public class RepositoryCommands {
     @Command(name = "repository create", alias = "repo create", description = "Create new repository",
         availabilityProvider = "dongleAvailability")
     public String createRepository(
-            @Option(shortName = 'r', longName = "repository-name", required = true) String repositoryName
+            @Argument(index = 0, description = "Name for new repository") String repositoryName
     ) throws IOException {
         if (repositoryService.repositoryExists(repositoryName)) {
             return "Repository " + repositoryName + " already exists, cannot override!";
@@ -42,7 +43,7 @@ public class RepositoryCommands {
 
     @Command(name = "repository open", alias = "repo open", description = "Opens repository")
     public String openRepository(
-            @Option(shortName = 'r', longName = "repository-name", required = true) String repositoryName
+            @Argument(index = 0, description = "Repository to open") String repositoryName
     ) throws IOException {
         if (!shellContext.isDeviceReady()) {
             repositoryService.openRepositoryWithoutCheck(repositoryName);

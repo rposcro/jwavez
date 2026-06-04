@@ -1,11 +1,14 @@
-package com.rposcro.jwavez.tools.shell.commands;
+package com.rposcro.jwavez.tools.shell.commands.generic;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
+import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.DongleInformation;
-import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
+import com.rposcro.jwavez.tools.shell.services.dongle.DongleInformationService;
 import com.rposcro.jwavez.tools.shell.services.RepositoryService;
+import com.rposcro.jwavez.tools.utils.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.shell.core.command.annotation.Argument;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 
@@ -41,8 +44,16 @@ public class ContextCommands {
     }
 
     @Command(name = "device", description = "Set current device")
-    public String setCurrentDevice(@Option(shortName = 'p', longName = "path-to-device", required = true) String pathToDevice
+    public String setCurrentDevice(@Argument(index = 0, description = "Path to dongle device to open communication with") String pathToDevice
     ) throws SerialException {
+        if (Strings.isNullOrEmpty(pathToDevice)) {
+            if (shellContext.getDongleDevicePath() == null) {
+                return "No dongle device is active";
+            } else {
+                return "Current dongle device is %s".formatted(shellContext.getDongleDevicePath());
+            }
+        }
+
         File deviceFile = new File(pathToDevice);
         if (!deviceFile.exists()) {
             return "Incorrect device file! Current device not changed";

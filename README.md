@@ -34,8 +34,13 @@ Explaining short option names
 * -g group id
 * -m value mode
 * -n node id
-* -p path to dongle device
+* -p 
+  * path to dongle device
+  * parameter number     
 * -r repository name
 * -s scope name
 * -t timeout
-* -v first command value
+* -v 
+  * command value
+  * verbose
+* 

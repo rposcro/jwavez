@@ -18,7 +18,7 @@ public class ApplicationStartedListener implements ApplicationListener<Applicati
     private final static String JWAVEZ_DEVICE_ENV = "JWAVEZ_DEVICE";
 
     @Autowired
-    JWaveZShellContext shellContext;
+    private JWaveZShellContext shellContext;
 
     @Autowired
     private DongleInformationService dongleInformationService;

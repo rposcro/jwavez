@@ -12,6 +12,7 @@ import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.shell.services.TalkCommunicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.shell.core.command.annotation.Argument;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 import org.springframework.shell.core.command.availability.Availability;
@@ -40,7 +41,8 @@ public class SwitchColorCommands {
 
     @Command(name = "switch-color report", alias = "sc report", description = "Request color report",
         availabilityProvider = "dongleAvailability")
-    public String executeColorReport(@Option(shortName = 'n', longName = "node-id", required = true) int nodeId)
+    public String executeColorReport(
+            @Argument(index = 0, description = "Node id where the switch color report request should be sent to") int nodeId)
             throws SerialException {
         ZWaveControlledCommand command = switchColorCommandBuilder.v1().buildSupportedGetCommand();
         SwitchColorSupportedReport supportedReport = talkCommunicationService.requestTalk(nodeId, command, SwitchColorCommandType.SWITCH_COLOR_SUPPORTED_REPORT);
@@ -60,12 +62,12 @@ public class SwitchColorCommands {
         return message.toString() + "\n";
     }
 
-    @Command(name = "switchcolor set", alias = "sc set", description = "Send color set request",
+    @Command(name = "switch-color set", alias = "sc set", description = "Send color set request",
         availabilityProvider = "dongleAvailability")
     public String executeColorSet(
-            @Option(shortName = 'n', longName = "node-id", required = true) int nodeId,
-            @Option(shortName = 'm', longName = "color-mode", required = true) String colorMode,
-            @Option(shortName = 'v', longName = "color-value", required = true) String colorValue
+            @Argument(index = 0, description = "Node id where the color should be set") int nodeId,
+            @Argument(index = 1, description = "Color mode to be used { RGB, RGBWW, RGBWC }") String colorMode,
+            @Argument(index = 2, description = "Color value to be sent") String colorValue
     ) throws SerialException {
         String errorMessage = validateArguments(colorMode, colorValue);
         if (errorMessage != null) {

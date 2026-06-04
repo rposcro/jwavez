@@ -1,6 +1,6 @@
 package com.rposcro.jwavez.tools.shell.services;
 
-import com.jwavez.jwavez.products.model.Parameter;
+import com.rposcro.jwavez.products.model.Parameter;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.controlled.builders.configuration.ConfigurationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.configuration.ConfigurationReport;

@@ -14,7 +14,7 @@ public class MemoryGetIdExample extends AbstractExample {
                 .build()
                 .connect();) {
 
-            SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder()
+            SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().deviceCapabilityRequestBuilder()
                     .createMemoryGetIdRequest();
             MemoryGetIdResponse response = controller.requestResponseFlow(request);
 

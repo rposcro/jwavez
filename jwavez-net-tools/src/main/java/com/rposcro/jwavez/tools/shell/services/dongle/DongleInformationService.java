@@ -134,7 +134,7 @@ public class DongleInformationService {
     private GetLibraryTypeResponse askForLibraryType() throws SerialException {
         SerialFunction<BasicSynchronousController, GetLibraryTypeResponse> function = (controller) -> {
             GetLibraryTypeResponse response = controller.requestResponseFlow(
-                    serialRequestFactory.dongleFactsRequestBuilder().createGetLibraryTypeRequest());
+                    serialRequestFactory.deviceCapabilityRequestBuilder().createGetLibraryTypeRequest());
             return response;
         };
         return controllerManager.runBasicSynchronousFunction(function);
@@ -152,7 +152,7 @@ public class DongleInformationService {
     private GetVersionResponse askForVersion() throws SerialException {
         SerialFunction<BasicSynchronousController, GetVersionResponse> function = (controller) -> {
             GetVersionResponse response = controller.requestResponseFlow(
-                    serialRequestFactory.dongleFactsRequestBuilder().createGetVersionRequest());
+                    serialRequestFactory.deviceCapabilityRequestBuilder().createGetVersionRequest());
             return response;
         };
         return controllerManager.runBasicSynchronousFunction(function);
@@ -161,7 +161,7 @@ public class DongleInformationService {
     private MemoryGetIdResponse askForNetworkIds() throws SerialException {
         SerialFunction<BasicSynchronousController, MemoryGetIdResponse> function = (controller) -> {
             MemoryGetIdResponse response = controller.requestResponseFlow(
-                    serialRequestFactory.dongleFactsRequestBuilder().createMemoryGetIdRequest());
+                    serialRequestFactory.deviceCapabilityRequestBuilder().createMemoryGetIdRequest());
             return response;
         };
         return controllerManager.runBasicSynchronousFunction(function);
@@ -179,7 +179,7 @@ public class DongleInformationService {
     private GetControllerCapabilitiesResponse askForControllerCapabilities() throws SerialException {
         SerialFunction<BasicSynchronousController, GetControllerCapabilitiesResponse> function = (controller) -> {
             GetControllerCapabilitiesResponse response = controller.requestResponseFlow(
-                    serialRequestFactory.dongleFactsRequestBuilder().createGetControllerCapabilitiesRequest());
+                    serialRequestFactory.deviceCapabilityRequestBuilder().createGetControllerCapabilitiesRequest());
             return response;
         };
         return controllerManager.runBasicSynchronousFunction(function);
@@ -188,7 +188,7 @@ public class DongleInformationService {
     private GetCapabilitiesResponse askForDongleCapabilities() throws SerialException {
         SerialFunction<BasicSynchronousController, GetCapabilitiesResponse> function = (controller) -> {
             GetCapabilitiesResponse response = controller.requestResponseFlow(
-                    serialRequestFactory.dongleFactsRequestBuilder().createGetCapabilitiesRequest());
+                    serialRequestFactory.deviceCapabilityRequestBuilder().createGetCapabilitiesRequest());
             return response;
         };
         return controllerManager.runBasicSynchronousFunction(function);
@@ -197,7 +197,7 @@ public class DongleInformationService {
     private GetInitDataResponse askForInitialData() throws SerialException {
         SerialFunction<BasicSynchronousController, GetInitDataResponse> function = (controller) -> {
             GetInitDataResponse response = controller.requestResponseFlow(
-                    serialRequestFactory.dongleFactsRequestBuilder().createGetInitDataRequest());
+                    serialRequestFactory.deviceCapabilityRequestBuilder().createGetInitDataRequest());
             return response;
         };
         return controllerManager.runBasicSynchronousFunction(function);

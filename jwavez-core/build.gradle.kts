@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.java)
     alias(libs.plugins.javaLibrary)
     alias(libs.plugins.mavenPublish)
+    alias(libs.plugins.lombok)
 }
 
 val jwavezVersion = providers.gradleProperty("jwavez.version")
@@ -31,11 +32,14 @@ dependencies {
     implementation(libs.versions.orgReflections)
     implementation(libs.versions.orgSlf4j)
 
-    annotationProcessor(libs.versions.orgProjectLombok)
-    compileOnly(libs.versions.orgProjectLombok)
+//    compileOnly(libs.versions.orgProjectLombok)
+//    annotationProcessor(libs.versions.orgProjectLombok)
 
     testImplementation(libs.versions.orgJunitJupiter)
     testImplementation(libs.versions.orgMockitoMockitoCore)
     testImplementation(libs.versions.orgMockitoMockitoJupiter)
+
     testRuntimeOnly(libs.versions.orgJunitLauncher)
+//    testCompileOnly(libs.versions.orgProjectLombok)
+//    testAnnotationProcessor(libs.versions.orgProjectLombok)
 }

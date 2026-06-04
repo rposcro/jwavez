@@ -1,6 +1,5 @@
 package com.rposcro.jwavez.tools.shell.services;
 
-import com.jwavez.jwavez.products.model.Product;
 import com.rposcro.jwavez.core.commands.controlled.ZWaveControlledCommand;
 import com.rposcro.jwavez.core.commands.controlled.builders.association.AssociationCommandBuilder;
 import com.rposcro.jwavez.core.commands.supported.association.AssociationReport;
@@ -11,7 +10,6 @@ import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.serial.frames.callbacks.SendDataCallback;
 import com.rposcro.jwavez.serial.model.TransmitCompletionStatus;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
-import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import com.rposcro.jwavez.tools.utils.SerialUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,9 +29,6 @@ public class NodeAssociationService {
 
     @Autowired
     private AssociationCommandBuilder associationCommandBuilder;
-
-    @Autowired
-    private ProductsSpecificationsProvider productsSpecificationsProvider;
 
     @Autowired
     private SerialRequestFactory serialRequestFactory;

@@ -73,7 +73,7 @@ public class SUCCommand extends AbstractSyncBasedCommand {
     private void setThisSUC() throws SerialException {
         System.out.println("Reading this dongle's id...");
         MemoryGetIdResponse response = controller.requestResponseFlow(
-                serialRequestFactory.dongleFactsRequestBuilder().createMemoryGetIdRequest());
+                serialRequestFactory.deviceCapabilityRequestBuilder().createMemoryGetIdRequest());
         NodeId thisId = response.getNodeId();
         System.out.printf("This dongle's id is 0x%02x\n", thisId.getId());
 
