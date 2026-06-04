@@ -32,20 +32,15 @@ tasks.withType(Test::class) {
 
 dependencies {
     implementation(project(":jwavez-core"))
-    implementation(libs.versions.orgSlf4j)
+    implementation(libs.orgSlf4j)
 
-    implementation(libs.versions.orgSpringBootStarter)
-    implementation(libs.versions.orgSpringBootJackson)
+    implementation(libs.orgSpringBootStarter)
+    implementation(libs.orgSpringBootJackson)
 
-//    compileOnly(libs.versions.orgProjectLombok)
-//    annotationProcessor(libs.versions.orgProjectLombok)
+    testImplementation(libs.orgJunitJupiter)
+    testImplementation(libs.orgMockitoMockitoCore)
+    testImplementation(libs.orgMockitoMockitoJupiter)
+    testImplementation(libs.orgSpringBootStarterTest)
 
-    testImplementation(libs.versions.orgJunitJupiter)
-    testImplementation(libs.versions.orgMockitoMockitoCore)
-    testImplementation(libs.versions.orgMockitoMockitoJupiter)
-    testImplementation(libs.versions.orgSpringBootStarterTest)
-
-    testRuntimeOnly(libs.versions.orgJunitLauncher)
-//    testCompileOnly(libs.versions.orgProjectLombok)
-//    testAnnotationProcessor(libs.versions.orgProjectLombok)
+    testRuntimeOnly(libs.orgJunitLauncher)
 }

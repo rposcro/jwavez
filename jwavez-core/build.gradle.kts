@@ -29,17 +29,12 @@ tasks.withType(Test::class) {
 }
 
 dependencies {
-    implementation(libs.versions.orgReflections)
-    implementation(libs.versions.orgSlf4j)
+    implementation(libs.orgReflections)
+    implementation(libs.orgSlf4j)
 
-//    compileOnly(libs.versions.orgProjectLombok)
-//    annotationProcessor(libs.versions.orgProjectLombok)
+    testImplementation(libs.orgJunitJupiter)
+    testImplementation(libs.orgMockitoMockitoCore)
+    testImplementation(libs.orgMockitoMockitoJupiter)
 
-    testImplementation(libs.versions.orgJunitJupiter)
-    testImplementation(libs.versions.orgMockitoMockitoCore)
-    testImplementation(libs.versions.orgMockitoMockitoJupiter)
-
-    testRuntimeOnly(libs.versions.orgJunitLauncher)
-//    testCompileOnly(libs.versions.orgProjectLombok)
-//    testAnnotationProcessor(libs.versions.orgProjectLombok)
+    testRuntimeOnly(libs.orgJunitLauncher)
 }

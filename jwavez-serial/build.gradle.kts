@@ -30,18 +30,13 @@ tasks.withType(Test::class) {
 
 dependencies {
     implementation(project(":jwavez-core"))
-    implementation(libs.versions.comNeuronrobotics)
-    implementation(libs.versions.comFazecast)
-    implementation(libs.versions.orgSlf4j)
+    implementation(libs.comNeuronrobotics)
+    implementation(libs.comFazecast)
+    implementation(libs.orgSlf4j)
 
-//    compileOnly(libs.versions.orgProjectLombok)
-//    annotationProcessor(libs.versions.orgProjectLombok)
+    testImplementation(libs.orgJunitJupiter)
+    testImplementation(libs.orgMockitoMockitoCore)
+    testImplementation(libs.orgMockitoMockitoJupiter)
 
-    testImplementation(libs.versions.orgJunitJupiter)
-    testImplementation(libs.versions.orgMockitoMockitoCore)
-    testImplementation(libs.versions.orgMockitoMockitoJupiter)
-
-    testRuntimeOnly(libs.versions.orgJunitLauncher)
-//    testCompileOnly(libs.versions.orgProjectLombok)
-//    testAnnotationProcessor(libs.versions.orgProjectLombok)
+    testRuntimeOnly(libs.orgJunitLauncher)
 }

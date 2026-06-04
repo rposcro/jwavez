@@ -1,24 +1,37 @@
 [versions]
-orgReflections = "org.reflections:reflections:0.9.11"
-orgJunitJupiter = "org.junit.jupiter:junit-jupiter:6.0.3"
-orgJunitLauncher = "org.junit.platform:junit-platform-launcher:6.0.3"
-orgMockitoMockitoCore = "org.mockito:mockito-core:2.+"
-orgMockitoMockitoJupiter = "org.mockito:mockito-junit-jupiter:2.+"
-orgProjectLombok = "org.projectlombok:lombok:1.18.32"
-orgSlf4j = "org.slf4j:slf4j-api:1.7.30"
-comNeuronrobotics = "com.neuronrobotics:nrjavaserial:5.2.1"
-comFazecast = "com.fazecast:jSerialComm:2.10.3"
-commonsCli = "commons-cli:commons-cli:1.4"
-orgJLineBundle = "org.jline:jline:4.1.0"
-
-orgSpringBootStarter = "org.springframework.boot:spring-boot-starter:4.0.6"
-orgSpringBootStarterTest = "org.springframework.boot:spring-boot-starter-test:4.0.6"
-orgSpringBootJackson = "org.springframework.boot:spring-boot-jackson2:4.0.6"
-orgSpringShellStarter = "org.springframework.shell:spring-shell-starter:4.0.2"
-orgSpringShellJLine = "org.springframework.shell:spring-shell-jline:4.0.2"
-
+orgReflectionsVersion = "0.9.11"
+orgJunitJupiterVersion = "6.0.3"
+orgJunitLauncherVersion = "6.0.3"
+orgMockitoMockitoCoreVersion = "2.+"
+orgMockitoMockitoJupiterVersion = "2.+"
+orgSlf4jVersion = "1.7.30"
+comNeuronroboticsVersion = "5.2.1"
+comFazecastVersion = "2.10.3"
+commonsCliVersion = "1.4"
+orgJLineBundleVersion = "4.1.0"
 springBootVersion = "4.0.6"
+springShellVersion = "4.0.2"
+
 lombokPluginVersion = "8.14.2"
+
+[libraries]
+comNeuronrobotics = { module = "com.neuronrobotics:nrjavaserial", version.ref = "comNeuronroboticsVersion" }
+comFazecast = { module = "com.fazecast:jSerialComm", version.ref = "comFazecastVersion" }
+commonsCli = { module = "commons-cli:commons-cli", version.ref = "commonsCliVersion" }
+orgJLineBundle = { module = "org.jline:jline", version.ref = "orgJLineBundleVersion" }
+orgReflections = { module = "org.reflections:reflections", version.ref = "orgReflectionsVersion" }
+orgSlf4j = { module = "org.slf4j:slf4j-api", version.ref = "orgSlf4jVersion" }
+
+orgJunitJupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "orgJunitJupiterVersion" }
+orgJunitLauncher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "orgJunitLauncherVersion" }
+orgMockitoMockitoCore = { module = "org.mockito:mockito-core", version.ref = "orgMockitoMockitoCoreVersion" }
+orgMockitoMockitoJupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "orgMockitoMockitoJupiterVersion" }
+
+orgSpringBootStarter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "springBootVersion" }
+orgSpringBootStarterTest = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBootVersion" }
+orgSpringBootJackson = { module = "org.springframework.boot:spring-boot-jackson2", version.ref = "springBootVersion" }
+orgSpringShellStarter = { module = "org.springframework.shell:spring-shell-starter", version.ref = "springShellVersion" }
+orgSpringShellJLine = { module = "org.springframework.shell:spring-shell-jline", version.ref = "springShellVersion" }
 
 [plugins]
 application = { id = "application" }
@@ -27,16 +40,3 @@ javaLibrary = { id = "java-library" }
 mavenPublish = { id = "maven-publish" }
 springBoot = { id = "org.springframework.boot", version.ref = "springBootVersion" }
 lombok = { id = "io.freefair.lombok", version.ref = "lombokPluginVersion" }
-
-[libraries]
-orgReflections = "org.reflections:reflections:0.9.11"
-orgJunitJupiter = "org.junit.jupiter:junit-jupiter:6.0.3"
-orgJunitLauncher = "org.junit.platform:junit-platform-launcher:6.0.3"
-orgMockitoMockitoCore = "org.mockito:mockito-core:2.+"
-orgMockitoMockitoJupiter = "org.mockito:mockito-junit-jupiter:2.+"
-orgProjectLombok = "org.projectlombok:lombok:1.18.32"
-orgSlf4j = "org.slf4j:slf4j-api:1.7.30"
-comNeuronrobotics = "com.neuronrobotics:nrjavaserial:5.2.1"
-comFazecast = "com.fazecast:jSerialComm:2.10.3"
-commonsCli = "commons-cli:commons-cli:1.4"
-orgJLineBundle = "org.jline:jline:4.1.0"

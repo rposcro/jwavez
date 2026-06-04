@@ -31,12 +31,7 @@ tasks.withType(Test::class) {
 dependencies {
     implementation(project(":jwavez-core"))
     implementation(project(":jwavez-serial"))
-    implementation(libs.versions.orgSlf4j)
+    implementation(libs.orgSlf4j)
 
-//    compileOnly(libs.versions.orgProjectLombok)
-//    annotationProcessor(libs.versions.orgProjectLombok)
-
-    testRuntimeOnly(libs.versions.orgJunitLauncher)
-//    testCompileOnly(libs.versions.orgProjectLombok)
-//    testAnnotationProcessor(libs.versions.orgProjectLombok)
+    testRuntimeOnly(libs.orgJunitLauncher)
 }
