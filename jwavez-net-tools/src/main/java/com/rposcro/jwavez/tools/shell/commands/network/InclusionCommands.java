@@ -38,7 +38,7 @@ public class InclusionCommands {
         }
 
         console.flushLine("Entering node inclusion mode, cancel is not possible unless time is out: " + timeout + "[s]");
-        Integer addedNodeId = networkManagementService.runInclusionMode(timeout * 1000);
+        Integer addedNodeId = networkManagementService.runInclusionMode(timeout * 1000L);
 
         if (addedNodeId != null) {
             console.flushLine("Added new node into network: " + addedNodeId + "\n");
@@ -47,7 +47,7 @@ public class InclusionCommands {
             nodeInformationCache.cacheNodeInformation(nodeInformation);
             return "\nNode information:\n" + nodeInformationFormatter.formatVerboseNodeInfo(nodeInformation);
         } else {
-            return String.format("No node detected to include");
+            return "No node detected to include";
         }
     }
 

@@ -1,6 +1,5 @@
 package com.rposcro.jwavez.tools.shell.configuration;
 
-import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.scopes.ScopeContext;
 import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
@@ -44,7 +43,7 @@ public class JwzShellConfiguration {
 
     @Bean
     @Scope(SCOPE_SINGLETON)
-    public JWaveZShellContext jWaveZShellContext(TopScopeContext topScope) throws SerialException {
+    public JWaveZShellContext jWaveZShellContext(TopScopeContext topScope) {
         JWaveZShellContext shellContext = JWaveZShellContext.builder()
                 .workspaceDir(ensureWorkspaceDir())
                 .scopeContext(topScope)

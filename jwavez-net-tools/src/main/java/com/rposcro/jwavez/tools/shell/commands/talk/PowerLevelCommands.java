@@ -12,7 +12,7 @@ import org.springframework.shell.core.command.annotation.Argument;
 import org.springframework.shell.core.command.annotation.Command;
 import org.springframework.shell.core.command.annotation.Option;
 
-@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.GENERIC)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.TALK)
 public class PowerLevelCommands {
 
     @Autowired
@@ -21,7 +21,7 @@ public class PowerLevelCommands {
     @Autowired
     private PowerLevelCommandBuilder powerLevelCommandBuilder;
 
-    @Command(name = {"power-level report", "pl report"}, description = "Request power level report",
+    @Command(name = "power-level report", alias = "pl report", description = "Request power level report",
         availabilityProvider = "dongleAvailability")
     public String executePowerLevelReport(
             @Argument(index = 0, description = "Node id to send the power level report request to") int nodeId)
@@ -31,7 +31,7 @@ public class PowerLevelCommands {
         return String.format("Power level reported: 0x%02X, timeout is: %s[s]\n", powerLevelReport.getPowerLevel(), powerLevelReport.getTimeout());
     }
 
-    @Command(name = {"power-level set", "pl set"}, description = "Power level set request",
+    @Command(name = "power-level set", alias = "pl set", description = "Power level set request",
         availabilityProvider = "dongleAvailability")
     public String executePowerLevelSet(
             @Argument(index = 0, description = "Node id where the power level should be set") int nodeId,

@@ -7,7 +7,6 @@ import com.rposcro.jwavez.tools.shell.services.ScopeSwitchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.shell.core.command.annotation.Argument;
 import org.springframework.shell.core.command.annotation.Command;
-import org.springframework.shell.core.command.annotation.Option;
 
 @org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.GENERIC)
 public class GenericScopeCommands {

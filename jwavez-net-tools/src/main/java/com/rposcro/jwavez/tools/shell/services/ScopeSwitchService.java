@@ -1,15 +1,20 @@
 package com.rposcro.jwavez.tools.shell.services;
 
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
+import com.rposcro.jwavez.tools.shell.events.ScopeChangedEvent;
 import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.scopes.ScopeContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
 @Service
 public class ScopeSwitchService {
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     private JWaveZShellContext shellContext;
@@ -22,6 +27,10 @@ public class ScopeSwitchService {
 
         try {
             shellContext.setScopeContext(scopeContextMap.get(requiredScope));
+            eventPublisher.publishEvent(ScopeChangedEvent.builder()
+                    .scopeBefore(currentScope.getScope())
+                    .scopeAfter(requiredScope)
+                    .build());
         } catch (Exception e) {
             shellContext.setScopeContext(currentScope);
             throw new RuntimeException("Failed to switch to expected scope!", e);

@@ -37,7 +37,7 @@ public class NvmCommands {
     public String nvmBackup()
     throws SerialException {
         byte[] dongleNvm = dongleNvmService.pullNvmDataFromDevice();
-        consoleAccessor.flushLine(format("NVM content of size %s successfully read from dongle\n", dongleNvm.length));
+        consoleAccessor.flushLine(format("NVM content of size %s successfully read from dongle%n", dongleNvm.length));
         File filePath = backupFilePath();
 
         try(FileWriter fileWriter = new FileWriter(filePath)) {

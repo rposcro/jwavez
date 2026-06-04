@@ -29,8 +29,7 @@ public class ApplicationStartedListener implements ApplicationListener<Applicati
             log.info("Application started event caught ...");
             String devicePath = determineDevice();
             if (devicePath != null) {
-                log.info("Collecting dongle information from " + devicePath);
-                System.out.println("Collecting dongle information from " + devicePath);
+                log.info("Collecting dongle information from {}", devicePath);
                 shellContext.setDongleDevicePath(devicePath);
                 shellContext.setDongleInformation(dongleInformationService.collectDongleInformation());
             }
