@@ -10,16 +10,16 @@ import com.rposcro.jwavez.core.commands.types.BasicCommandType;
 import com.rposcro.jwavez.core.commands.types.ConfigurationCommandType;
 import com.rposcro.jwavez.core.model.NodeId;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SupportedCommandDispatcherTest {
 
     @Test
@@ -29,7 +29,7 @@ public class SupportedCommandDispatcherTest {
         final SupportedCommandDispatcher dispatcher = new SupportedCommandDispatcher();
         final ArgumentCaptor<BasicSet> commandCaptor = ArgumentCaptor.forClass(BasicSet.class);
 
-        dispatcher.registerHandler(BasicCommandType.BASIC_SET, commandListener);
+        dispatcher.registerListener(BasicCommandType.BASIC_SET, commandListener);
         dispatcher.dispatchCommand(basicSet);
 
         verify(commandListener).handleCommand(commandCaptor.capture());
@@ -44,7 +44,7 @@ public class SupportedCommandDispatcherTest {
         final SupportedCommandListener<ZWaveSupportedCommand> commandListener = Mockito.mock(SupportedCommandListener.class);
         final SupportedCommandDispatcher dispatcher = new SupportedCommandDispatcher();
 
-        dispatcher.registerHandler(BasicCommandType.BASIC_SET, commandListener);
+        dispatcher.registerListener(BasicCommandType.BASIC_SET, commandListener);
         dispatcher.dispatchCommand(configurationReport);
 
         verify(commandListener, never()).handleCommand(Mockito.any(ZWaveSupportedCommand.class));
@@ -57,7 +57,7 @@ public class SupportedCommandDispatcherTest {
         final SupportedCommandDispatcher dispatcher = new SupportedCommandDispatcher();
         final ArgumentCaptor<? extends ZWaveSupportedCommand> commandCaptor = ArgumentCaptor.forClass(ZWaveSupportedCommand.class);
 
-        dispatcher.registerAllCommandsHandler(commandListener);
+        dispatcher.registerCommandsListener(commandListener);
         dispatcher.dispatchCommand(configurationReport);
 
         verify(commandListener).handleCommand(commandCaptor.capture());

@@ -53,7 +53,7 @@ public class MultiChannelCapabilityReport extends ZWaveSupportedCommand<MultiCha
         CommandClass[] classes = (CommandClass[]) IntStream.range(0, commandClasses.length)
                 .mapToObj(idx -> CommandClass.optionalOfCode(commandClasses[idx]))
                 .map(opt -> opt.orElse(CommandClass.CMD_CLASS_UNKNOWN))
-                .toArray();
+                .toArray(CommandClass[]::new);
         return classes;
     }
 }

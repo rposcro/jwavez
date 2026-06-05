@@ -1,6 +1,7 @@
 package com.rposcro.jwavez.tools.cli.commands.network;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
+import com.rposcro.jwavez.serial.controllers.builders.AddNodeToNetworkControllerBuilder;
 import com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.cli.commands.Command;
@@ -34,7 +35,7 @@ public class IncludeNodeCommand implements Command {
 
     public void runInclusion() throws SerialException {
         try (
-                AddNodeToNetworkController controller = AddNodeToNetworkController.builder()
+                AddNodeToNetworkController controller = new AddNodeToNetworkControllerBuilder()
                         .dongleDevice(options.getDevice())
                         .build()
         ) {

@@ -7,60 +7,67 @@ import com.rposcro.jwavez.core.commands.supported.switchcolor.SwitchColorSupport
 import com.rposcro.jwavez.core.commands.types.SwitchColorCommandType;
 import com.rposcro.jwavez.core.model.ColorComponent;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
-import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
+import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.shell.services.TalkCommunicationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Availability;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellMethodAvailability;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.context.annotation.Bean;
+import org.springframework.shell.core.command.annotation.Argument;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
+import org.springframework.shell.core.command.availability.Availability;
+import org.springframework.shell.core.command.availability.AvailabilityProvider;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-@ShellComponent
-@ShellCommandGroup(CommandGroup.TALK)
+import static java.lang.String.format;
+
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.TALK)
 public class SwitchColorCommands {
 
     private final static Pattern COLOR_PATTERN = Pattern.compile("(?:[a-fA-F0-9]{2})+");
 
     @Autowired
-    private TalkCommunicationService talkCommunicationService;
+    private ConsoleAccessor console;
 
     @Autowired
-    private JWaveZShellContext shellContext;
+    private TalkCommunicationService talkCommunicationService;
 
     @Autowired
     private SwitchColorCommandBuilder switchColorCommandBuilder;
 
-    @ShellMethod(value = "Request color report", key = {"switchcolor report", "sc report"})
-    public String executeColorReport(@ShellOption(value = {"--node-id", "-id"}) int nodeId) throws SerialException {
+    @Command(name = "switch-color report", alias = "sc report", description = "Request color report",
+        availabilityProvider = "dongleAvailability")
+    public String executeColorReport(
+            @Argument(index = 0, description = "Node id where the switch color report request should be sent to") int nodeId)
+            throws SerialException {
         ZWaveControlledCommand command = switchColorCommandBuilder.v1().buildSupportedGetCommand();
         SwitchColorSupportedReport supportedReport = talkCommunicationService.requestTalk(nodeId, command, SwitchColorCommandType.SWITCH_COLOR_SUPPORTED_REPORT);
 
         List<ColorComponent> colorComponents = supportedReport.getColorComponents();
+        console.flushLine("Color components found for node %s: %s".formatted(nodeId,
+            colorComponents.stream().map(ColorComponent::toString).collect(Collectors.joining(", "))));
+
         StringBuffer message = new StringBuffer("Color components report for node " + nodeId);
 
         for (ColorComponent colorComponent : colorComponents) {
             command = switchColorCommandBuilder.v1().buildGetCommand(colorComponent.getCode());
             SwitchColorReport colorReport = talkCommunicationService.requestTalk(nodeId, command, SwitchColorCommandType.SWITCH_COLOR_REPORT);
-            message.append(String.format("\n  %s (%s): 0x%02X", colorComponent.name(), colorComponent.getCode(), colorReport.getCurrentValue()));
+            message.append(format("\n  %s (%s): 0x%02X", colorComponent.name(), colorComponent.getCode(), colorReport.getCurrentValue()));
         }
 
         return message.toString() + "\n";
     }
 
-    @ShellMethod(value = "Send color set request", key = {"switchcolor set", "sc set"})
+    @Command(name = "switch-color set", alias = "sc set", description = "Send color set request",
+        availabilityProvider = "dongleAvailability")
     public String executeColorSet(
-            @ShellOption(value = {"--node-id", "-id"}) int nodeId,
-            @ShellOption(value = {"--color-mode", "-mode"}) String colorMode,
-            @ShellOption(value = {"--color-value", "-color"}) String colorValue
+            @Argument(index = 0, description = "Node id where the color should be set") int nodeId,
+            @Argument(index = 1, description = "Color mode to be used { RGB, RGBWW, RGBWC }") String colorMode,
+            @Argument(index = 2, description = "Color value to be sent") String colorValue
     ) throws SerialException {
         String errorMessage = validateArguments(colorMode, colorValue);
         if (errorMessage != null) {
@@ -69,10 +76,10 @@ public class SwitchColorCommands {
 
         ColorMode mode = ColorMode.valueOf(colorMode.toUpperCase());
         byte[] componentsFrame = constructComponentsFrame(mode, colorValue);
-        ZWaveControlledCommand command = switchColorCommandBuilder.v1().buildSetCommand((byte) 0, componentsFrame);
+        ZWaveControlledCommand command = switchColorCommandBuilder.v2().buildSetCommand((byte) 0, componentsFrame);
         talkCommunicationService.sendCommand(nodeId, command);
 
-        return String.format("Command %s successfully sent to node %s", SwitchColorCommandType.SWITCH_COLOR_SET, nodeId);
+        return format("Command %s successfully sent to node %s", SwitchColorCommandType.SWITCH_COLOR_SET, nodeId);
     }
 
     private byte[] constructComponentsFrame(ColorMode mode, String colorValue) {
@@ -102,18 +109,6 @@ public class SwitchColorCommands {
             return "Unknown color mode " + colorMode + ", available modes: "
                     + Arrays.stream(ColorMode.values()).map(ColorMode::name).collect(Collectors.joining(", "));
         }
-    }
-
-    @ShellMethodAvailability
-    public Availability checkAvailability() {
-
-        if (ShellScope.TALK != shellContext.getScopeContext().getScope()) {
-            return Availability.unavailable("Command not available in current scope");
-        }
-
-        return shellContext.getDongleDevicePath() != null ?
-                Availability.available() :
-                Availability.unavailable("ZWave dongle device is not specified");
     }
 
     private final static byte WARM_WHITE = 0;

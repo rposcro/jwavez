@@ -27,7 +27,7 @@ public abstract class ZWaveSupportedCommand<C extends CommandType> {
     }
 
     public String asNiceString() {
-        return String.format("%s(%02x) %s(%02x) commandVersion(%02x)",
+        return String.format("%s(%02x) %s(%02x) <commandVersion(%02x)>",
                 commandType.getCommandClass(),
                 commandType.getCommandClass().getCode(),
                 commandType.name(),

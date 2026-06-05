@@ -1,12 +1,12 @@
 package com.rposcro.jwavez.tools.shell.configuration;
 
-import com.rposcro.jwavez.serial.exceptions.SerialException;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.scopes.ScopeContext;
 import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.scopes.TopScopeContext;
 import com.rposcro.jwavez.tools.shell.spring.ScopedPromptProvider;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
@@ -24,7 +24,8 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 @Configuration
 public class JwzShellConfiguration {
 
-    private final static String WORKSPACE_PATH = ".config/jwavez/shell/repo";
+    @Value("${jwz-shell.repo.location}")
+    private String repoPath;
 
     @Bean
     public PromptProvider promptProvider(JWaveZShellContext shellContext) {
@@ -42,7 +43,7 @@ public class JwzShellConfiguration {
 
     @Bean
     @Scope(SCOPE_SINGLETON)
-    public JWaveZShellContext shellContext(TopScopeContext topScope) throws SerialException {
+    public JWaveZShellContext jWaveZShellContext(TopScopeContext topScope) {
         JWaveZShellContext shellContext = JWaveZShellContext.builder()
                 .workspaceDir(ensureWorkspaceDir())
                 .scopeContext(topScope)
@@ -51,8 +52,7 @@ public class JwzShellConfiguration {
     }
 
     private File ensureWorkspaceDir() {
-        File homeDir = new File(System.getProperty("user.home"));
-        File workspaceDir = new File(homeDir, WORKSPACE_PATH);
+        File workspaceDir = new File(repoPath);
         if (!workspaceDir.exists()) {
             workspaceDir.mkdirs();
         } else if (workspaceDir.exists() && !workspaceDir.isDirectory()) {

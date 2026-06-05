@@ -1,21 +1,14 @@
 package com.rposcro.jwavez.tools.shell.commands.network;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
-import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.models.DongleNetworkInformation;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
-import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
-import com.rposcro.jwavez.tools.shell.services.DongleInformationService;
+import com.rposcro.jwavez.tools.shell.services.dongle.DongleInformationService;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Availability;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellMethodAvailability;
+import org.springframework.shell.core.command.annotation.Command;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,12 +18,10 @@ import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-@ShellComponent
-@ShellCommandGroup(CommandGroup.NETWORK)
-public class NodesCommands {
+import static com.rposcro.jwavez.tools.shell.commands.CommandGroup.NETWORK;
 
-    @Autowired
-    private JWaveZShellContext shellContext;
+@org.springframework.shell.core.command.annotation.CommandGroup(name = NETWORK)
+public class NodesCommands {
 
     @Autowired
     private DongleInformationService dongleInformationService;
@@ -44,7 +35,8 @@ public class NodesCommands {
     @Autowired
     private ConsoleAccessor console;
 
-    @ShellMethod(value = "Check consistency of nodes on the network", key = {"check nodes"})
+    @Command(name = "check nodes", description = "Check consistency of nodes on the network",
+        availabilityProvider = "dongleAvailability")
     public String checkNodes() throws SerialException {
         List<NodeInformation> cachedNodes = nodeInformationCache.getOrderedNodeList();
         console.flushLine(String.format("Cache holds information about %s node(s)", cachedNodes.size()));
@@ -92,18 +84,6 @@ public class NodesCommands {
                 .append("\n");
 
         return "\n" + summary.toString();
-    }
-
-    @ShellMethodAvailability
-    public Availability checkAvailability() {
-
-        if (ShellScope.NETWORK != shellContext.getScopeContext().getScope()) {
-            return Availability.unavailable("Command not available in current scope");
-        }
-
-        return shellContext.getDongleDevicePath() != null ?
-                Availability.available() :
-                Availability.unavailable("ZWave dongle device is not specified");
     }
 
     private class NodeReport {

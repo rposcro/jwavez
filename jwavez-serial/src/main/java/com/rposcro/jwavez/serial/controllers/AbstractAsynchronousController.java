@@ -4,6 +4,7 @@ import static com.rposcro.jwavez.core.utils.ObjectsUtil.orDefault;
 
 import com.rposcro.jwavez.core.buffer.ImmutableBuffer;
 import com.rposcro.jwavez.core.utils.BuffersUtil;
+import com.rposcro.jwavez.serial.controllers.builders.AbstractAsynchronousControllerBuilder;
 import com.rposcro.jwavez.serial.controllers.helpers.CallbackFlowIdDispatcher;
 import com.rposcro.jwavez.serial.exceptions.SerialPortException;
 import com.rposcro.jwavez.serial.rxtx.CallbackHandler;
@@ -11,17 +12,18 @@ import com.rposcro.jwavez.serial.rxtx.ResponseHandler;
 import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 import com.rposcro.jwavez.serial.rxtx.RxTxRouterProcess;
 import com.rposcro.jwavez.serial.rxtx.port.JSerialComPort;
-import com.rposcro.jwavez.serial.rxtx.port.NeuronRoboticsSerialPort;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import com.rposcro.jwavez.serial.utils.FramesUtil;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
+@NoArgsConstructor
 public abstract class AbstractAsynchronousController<T extends AbstractAsynchronousController> extends AbstractClosableController<T> {
 
     protected RxTxRouterProcess rxTxRouterProcess;
@@ -29,6 +31,14 @@ public abstract class AbstractAsynchronousController<T extends AbstractAsynchron
     protected ExecutorService executorService;
 
     protected boolean selfExecutor;
+
+    protected AbstractAsynchronousController(AbstractAsynchronousControllerBuilder builder) {
+        super(builder);
+        this.rxTxRouterProcess = builder.getRxTxRouterProcess();
+        this.callbackFlowIdDispatcher = builder.getCallbackFlowIdDispatcher();
+        this.executorService = builder.getExecutorService();
+        this.selfExecutor = builder.isSelfExecutor();
+    }
 
     @Override
     public T connect() throws SerialPortException {

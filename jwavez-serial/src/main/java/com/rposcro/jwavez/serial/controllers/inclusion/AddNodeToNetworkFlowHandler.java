@@ -38,7 +38,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
+public class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
 
     private final TransactionKeeper<AddNodeToNetworkFlowState> transactionKeeper;
     private final AddNodeToNetworkRequestBuilder addNodeToNetworkRequestBuilder;
@@ -47,7 +47,7 @@ class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
     private NodeInfo nodeInfo;
     private byte callbackFlowId;
 
-    AddNodeToNetworkFlowHandler(TransactionKeeper<AddNodeToNetworkFlowState> transactionKeeper,
+    public AddNodeToNetworkFlowHandler(TransactionKeeper<AddNodeToNetworkFlowState> transactionKeeper,
                                 AddNodeToNetworkRequestBuilder addNodeToNetworkRequestBuilder) {
         this.transactionKeeper = transactionKeeper;
         this.addNodeToNetworkRequestBuilder = addNodeToNetworkRequestBuilder;
@@ -60,6 +60,7 @@ class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
 
     @Override
     void startOver(byte callbackFlowId) {
+        log.debug("AddNodeToNetworkFlowHandler startOver requested");
         this.nodeInfo = null;
         this.callbackFlowId = callbackFlowId;
         this.transactionKeeper.transitAndSchedule(
@@ -69,6 +70,7 @@ class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
 
     @Override
     void stopTransaction() {
+        log.debug("AddNodeToNetworkFlowHandler stop transaction requested");
         this.transactionKeeper.transitAndSchedule(
                 AddNodeToNetworkFlowState.CANCELLATION_STOP_SENT,
                 finalStopFrame());
@@ -76,13 +78,14 @@ class AddNodeToNetworkFlowHandler extends AbstractFlowHandler {
 
     @Override
     void killTransaction() {
+        log.debug("AddNodeToNetworkFlowHandler kill transaction requested");
         this.transactionKeeper.transitAndSchedule(
                 AddNodeToNetworkFlowState.FAILURE_STOP_SENT,
                 finalStopFrame());
     }
 
     @Override
-    void handleCallback(ZWaveCallback zWaveCallback) {
+    public void handleCallback(ZWaveCallback zWaveCallback) {
         AddNodeToNetworkCallback callback = verifyAndConvertCallback(zWaveCallback);
         AddNodeToNetworkFlowState state = transactionKeeper.getState();
         AddNodeToNeworkStatus status = callback.getStatus();

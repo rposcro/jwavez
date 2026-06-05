@@ -76,16 +76,16 @@ public class NetworkLearnCommand implements Command {
             controller.connect();
 
             MemoryGetIdResponse memoryGetIdResponse = controller.requestResponseFlow(
-                    JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder().createMemoryGetIdRequest());
+                    JwzSerialSupport.defaultSupport().serialRequestFactory().deviceCapabilityRequestBuilder().createMemoryGetIdRequest());
             System.out.println(String.format("  HomeId: %02x", memoryGetIdResponse.getHomeId()));
             System.out.println(String.format("  Dongle NodeId: %02x", memoryGetIdResponse.getNodeId().getId()));
 
             GetInitDataResponse getInitDataResponse = controller.requestResponseFlow(
-                    JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder().createGetInitDataRequest());
+                    JwzSerialSupport.defaultSupport().serialRequestFactory().deviceCapabilityRequestBuilder().createGetInitDataRequest());
             System.out.println(String.format("  Nodes: %s", getInitDataResponse.getNodes().stream().map(NodeId::getId).collect(Collectors.toList())));
 
             GetControllerCapabilitiesResponse ccap = controller.requestResponseFlow(
-                    JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder().createGetControllerCapabilitiesRequest());
+                    JwzSerialSupport.defaultSupport().serialRequestFactory().deviceCapabilityRequestBuilder().createGetControllerCapabilitiesRequest());
             System.out.println(String.format("  Is real primary: %s", ccap.isRealPrimary()));
             System.out.println(String.format("  Is secondary: %s", ccap.isSecondary()));
             System.out.println(String.format("  Is SUC: %s", ccap.isSUC()));

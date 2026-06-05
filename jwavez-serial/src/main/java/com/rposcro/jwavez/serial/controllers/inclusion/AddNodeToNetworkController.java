@@ -6,22 +6,14 @@ import static com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkFl
 import static com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkFlowState.WAITING_FOR_NODE;
 
 import com.rposcro.jwavez.core.model.NodeInfo;
-import com.rposcro.jwavez.serial.JwzSerialSupport;
-import com.rposcro.jwavez.serial.SerialRequestFactory;
-import com.rposcro.jwavez.serial.controllers.helpers.TransactionKeeper;
+import com.rposcro.jwavez.serial.controllers.builders.AddNodeToNetworkControllerBuilder;
 import com.rposcro.jwavez.serial.exceptions.FlowException;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.serial.frames.requests.AddNodeToNetworkRequestBuilder;
-import com.rposcro.jwavez.serial.handlers.InterceptableCallbackHandler;
-import com.rposcro.jwavez.serial.rxtx.RxTxConfiguration;
 
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
 
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -33,6 +25,10 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class AddNodeToNetworkController extends AbstractInclusionController<AddNodeToNetworkFlowState, AddNodeToNetworkController> {
+
+    public AddNodeToNetworkController(AddNodeToNetworkControllerBuilder builder) {
+        super(builder);
+    }
 
     public Optional<NodeInfo> listenForNodeToAdd() throws FlowException {
         runTransaction("add");
@@ -51,6 +47,7 @@ public class AddNodeToNetworkController extends AbstractInclusionController<AddN
 
     @Override
     protected void finalizeTransaction(AddNodeToNetworkFlowState state) {
+        log.debug("AddNodeToNetworkController finalize transaction requested at state {}", state);
         switch (state) {
             case CANCELLATION_STOP_SENT:
                 transactionKeeper.cancel();
@@ -65,6 +62,7 @@ public class AddNodeToNetworkController extends AbstractInclusionController<AddN
 
     @Override
     protected void timeoutTransaction(AddNodeToNetworkFlowState state) {
+        log.debug("AddNodeToNetworkController timeout transaction requested at state {}", state);
         if (WAITING_FOR_NODE == state) {
             flowHandler.stopTransaction();
         } else {
@@ -72,36 +70,11 @@ public class AddNodeToNetworkController extends AbstractInclusionController<AddN
         }
     }
 
-    @Builder
-    public static AddNodeToNetworkController build(
-            @NonNull String dongleDevice,
-            RxTxConfiguration rxTxConfiguration,
-            ExecutorService executorService,
-            SerialRequestFactory serialRequestFactory,
-            long waitForTouchTimeout,
-            long waitForProgressTimeout) {
-        AddNodeToNetworkRequestBuilder requestBuilder = serialRequestFactory == null ?
-                JwzSerialSupport.defaultSupport().serialRequestFactory().addNodeToNetworkRequestsBuilder()
-                : serialRequestFactory.addNodeToNetworkRequestsBuilder();
-        AddNodeToNetworkController controller = new AddNodeToNetworkController();
-        controller.transactionKeeper = new TransactionKeeper<>(controller::transactionStateChanged);
-        controller.flowHandler = new AddNodeToNetworkFlowHandler(controller.transactionKeeper, requestBuilder);
-
-        InterceptableCallbackHandler callbackHandler = new InterceptableCallbackHandler();
-        controller.helpWithBuild(dongleDevice, rxTxConfiguration, null, callbackHandler, executorService);
-
-        controller.waitForTouchTimeout = waitForTouchTimeout;
-        controller.waitForProgressTimeout = waitForProgressTimeout;
-
-        callbackHandler.addCallbackInterceptor(controller.flowHandler::handleCallback);
-        return controller;
-    }
-
     public static void main(String... args) throws SerialException {
         try (
-                AddNodeToNetworkController controller = AddNodeToNetworkController.builder()
-                        .dongleDevice("/dev/tty.usbmodem1411")
-                        .build()
+            AddNodeToNetworkController controller = new AddNodeToNetworkControllerBuilder()
+                .dongleDevice("/dev/cu.usbmodem1201")
+                .build();
         ) {
             controller.connect();
             Optional<NodeInfo> nodeInfoWrap = controller.listenForNodeToAdd();

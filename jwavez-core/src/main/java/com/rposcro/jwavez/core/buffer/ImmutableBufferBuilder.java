@@ -22,6 +22,12 @@ public class ImmutableBufferBuilder {
         return this;
     }
 
+    public ImmutableBufferBuilder addWord(short value) {
+        byteBuffer.add((byte) (value >> 8));
+        byteBuffer.add((byte) value);
+        return this;
+    }
+
     public ImmutableBuffer build() {
         ImmutableBuffer immutableBuffer = new ImmutableByteBuffer(byteBuffer, bufferSize);
         this.byteBuffer = null;

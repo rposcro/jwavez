@@ -13,7 +13,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 public class DongleCheckOut extends AbstractExample {
 
     private void checkDongleIds(BasicSynchronousController controller) throws SerialException {
-        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder()
+        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().deviceCapabilityRequestBuilder()
                 .createMemoryGetIdRequest();
         MemoryGetIdResponse response = controller.requestResponseFlow(request);
 
@@ -22,7 +22,7 @@ public class DongleCheckOut extends AbstractExample {
     }
 
     private void checkNodesIds(BasicSynchronousController controller) throws SerialException {
-        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder()
+        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().deviceCapabilityRequestBuilder()
                 .createGetInitDataRequest();
         GetInitDataResponse response = controller.requestResponseFlow(request);
 
@@ -43,7 +43,7 @@ public class DongleCheckOut extends AbstractExample {
     }
 
     private void controllerCapabilities(BasicSynchronousController controller) throws SerialException {
-        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder()
+        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().deviceCapabilityRequestBuilder()
                 .createGetControllerCapabilitiesRequest();
         GetControllerCapabilitiesResponse response = controller.requestResponseFlow(request);
 
@@ -56,7 +56,7 @@ public class DongleCheckOut extends AbstractExample {
     }
 
     private void capabilties(BasicSynchronousController controller) throws SerialException {
-        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder()
+        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().deviceCapabilityRequestBuilder()
                 .createGetCapabilitiesRequest();
         GetCapabilitiesResponse response = controller.requestResponseFlow(request);
 

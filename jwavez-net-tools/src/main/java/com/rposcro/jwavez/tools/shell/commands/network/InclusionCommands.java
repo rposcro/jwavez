@@ -1,29 +1,19 @@
 package com.rposcro.jwavez.tools.shell.commands.network;
 
 import com.rposcro.jwavez.serial.exceptions.SerialException;
-import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.commands.CommandGroup;
 import com.rposcro.jwavez.tools.shell.formatters.NodeInformationFormatter;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
-import com.rposcro.jwavez.tools.shell.scopes.ShellScope;
 import com.rposcro.jwavez.tools.shell.services.ConsoleAccessor;
 import com.rposcro.jwavez.tools.shell.services.NetworkManagementService;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationCache;
 import com.rposcro.jwavez.tools.shell.services.NodeInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.shell.Availability;
-import org.springframework.shell.standard.ShellCommandGroup;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellMethodAvailability;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.core.command.annotation.Command;
+import org.springframework.shell.core.command.annotation.Option;
 
-@ShellComponent
-@ShellCommandGroup(CommandGroup.NETWORK)
+@org.springframework.shell.core.command.annotation.CommandGroup(name = CommandGroup.NETWORK)
 public class InclusionCommands {
-
-    @Autowired
-    private JWaveZShellContext shellContext;
 
     @Autowired
     private NetworkManagementService networkManagementService;
@@ -40,14 +30,15 @@ public class InclusionCommands {
     @Autowired
     private ConsoleAccessor console;
 
-    @ShellMethod(value = "Include new node into network", key = "include")
-    public String includeNode(@ShellOption(value = {"--timeout", "-to"}, defaultValue = "60") int timeout) throws SerialException {
+    @Command(name = "include", description = "Include new node into network",
+        availabilityProvider = "dongleAvailability")
+    public String includeNode(@Option(shortName = 't', longName = "timeout", defaultValue = "60") int timeout) throws SerialException {
         if (timeout > 60) {
             return "Maximum timeout value is 60 seconds";
         }
 
         console.flushLine("Entering node inclusion mode, cancel is not possible unless time is out: " + timeout + "[s]");
-        Integer addedNodeId = networkManagementService.runInclusionMode(timeout * 1000);
+        Integer addedNodeId = networkManagementService.runInclusionMode(timeout * 1000L);
 
         if (addedNodeId != null) {
             console.flushLine("Added new node into network: " + addedNodeId + "\n");
@@ -56,12 +47,13 @@ public class InclusionCommands {
             nodeInformationCache.cacheNodeInformation(nodeInformation);
             return "\nNode information:\n" + nodeInformationFormatter.formatVerboseNodeInfo(nodeInformation);
         } else {
-            return String.format("No node detected to include");
+            return "No node detected to include";
         }
     }
 
-    @ShellMethod(value = "Exclude node from network", key = "exclude")
-    public String excludeNode(@ShellOption(value = {"--timeout", "-to"}, defaultValue = "60") int timeout) throws SerialException {
+    @Command(name = "exclude", description = "Exclude node from network",
+        availabilityProvider = "dongleAvailability")
+    public String excludeNode(@Option(shortName = 't', longName = "timeout", defaultValue = "60") int timeout) throws SerialException {
         if (timeout > 60) {
             return "Maximum timeout value is 60 seconds";
         }
@@ -75,17 +67,5 @@ public class InclusionCommands {
         } else {
             return String.format("No node detected to exclude");
         }
-    }
-
-    @ShellMethodAvailability
-    public Availability checkAvailability() {
-
-        if (ShellScope.NETWORK != shellContext.getScopeContext().getScope()) {
-            return Availability.unavailable("Command not available in current scope");
-        }
-
-        return shellContext.getDongleDevicePath() != null ?
-                Availability.available() :
-                Availability.unavailable("ZWave dongle device is not specified");
     }
 }

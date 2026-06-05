@@ -12,6 +12,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,6 +21,7 @@ public class RxTxRouterProcess implements Runnable {
 
     private final static int DEFAULT_REQUEST_QUEUE_SIZE = 10;
 
+    @Getter
     private RxTxConfiguration configuration;
     private RxTxRouter rxTxRouter;
     private boolean stopRequested;

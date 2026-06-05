@@ -10,7 +10,7 @@ import com.rposcro.jwavez.serial.rxtx.SerialRequest;
 public class CheckNodesInNetwork extends AbstractExample {
 
     private void checkDongleIds(BasicSynchronousController controller) throws SerialException {
-        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder()
+        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().deviceCapabilityRequestBuilder()
                 .createMemoryGetIdRequest();
         MemoryGetIdResponse response = controller.requestResponseFlow(request);
 
@@ -19,7 +19,7 @@ public class CheckNodesInNetwork extends AbstractExample {
     }
 
     private void checkNodesIds(BasicSynchronousController controller) throws SerialException {
-        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().dongleFactsRequestBuilder()
+        SerialRequest request = JwzSerialSupport.defaultSupport().serialRequestFactory().deviceCapabilityRequestBuilder()
                 .createGetInitDataRequest();
         GetInitDataResponse response = controller.requestResponseFlow(request);
 

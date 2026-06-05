@@ -1,0 +1,18 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  shell:
+    interactive:
+      enabled: true
+    history:
+      enabled: true
+      name: "jwz-shell-history"
+    config:
+      location: "${user.home}/.config/jwavez/shell"
+
+jwz-shell:
+  products:
+    path: "${user.home}/.config/jwavez/shell/products.json"
+  repo:
+    location: "${user.home}/.config/jwavez/shell/repo"
+

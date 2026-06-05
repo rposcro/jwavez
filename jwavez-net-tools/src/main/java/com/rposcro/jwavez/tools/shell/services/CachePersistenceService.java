@@ -5,11 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.models.NodeInformation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
@@ -21,7 +21,7 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 @Slf4j
 @Service
 @Scope(SCOPE_SINGLETON)
-public class CachePersistenceService {
+public class CachePersistenceService implements InitializingBean {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -32,8 +32,8 @@ public class CachePersistenceService {
     private String baseDir;
     private File nodeDetailsFile;
 
-    @PostConstruct
-    public void setupService() {
+    @Override
+    public void afterPropertiesSet() {
         try {
             this.baseDir = System.getProperty("user.home");
             if (baseDir == null) {

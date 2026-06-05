@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import java.util.stream.Stream;
 
 import static java.lang.String.format;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ChecksumUtilTest {
 
@@ -17,7 +17,7 @@ public class ChecksumUtilTest {
     @MethodSource("testCases")
     public void frameCrcBasedOnByteArray(byte[] bytes, int expectedCrc) {
         byte crc = ChecksumUtil.frameCrc(bytes);
-        assertEquals(format("expected:<%02x> but was:<%02x>\n", (byte) expectedCrc, crc), (byte) expectedCrc, crc);
+        assertEquals((byte) expectedCrc, crc, format("expected:<%02x> but was:<%02x>\n", (byte) expectedCrc, crc));
     }
 
     @ParameterizedTest(name = "{0}, {1}")
@@ -26,7 +26,7 @@ public class ChecksumUtilTest {
         ImmutableBuffer buffer = ImmutableBuffer.overBuffer(bytes);
 
         byte crc = ChecksumUtil.frameCrc(buffer);
-        assertEquals(format("expected:<%02x> but was:<%02x>\n", (byte) expectedCrc, crc), (byte) expectedCrc, crc);
+        assertEquals((byte) expectedCrc, crc, format("expected:<%02x> but was:<%02x>\n", (byte) expectedCrc, crc));
     }
 
     @ParameterizedTest(name = "{0}, {1}")
@@ -38,7 +38,7 @@ public class ChecksumUtilTest {
         }
 
         byte crc = ChecksumUtil.crc(buffer, 1, bytes.length - 2);
-        assertEquals(format("expected:<%02x> but was:<%02x>\n", (byte) expectedCrc, crc), (byte) expectedCrc, crc);
+        assertEquals((byte) expectedCrc, crc, format("expected:<%02x> but was:<%02x>\n", (byte) expectedCrc, crc));
     }
 
     private static Stream<Arguments> testCases() {

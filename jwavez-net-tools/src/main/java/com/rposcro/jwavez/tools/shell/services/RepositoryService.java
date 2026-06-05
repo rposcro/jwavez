@@ -3,6 +3,7 @@ package com.rposcro.jwavez.tools.shell.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rposcro.jwavez.tools.shell.JWaveZShellContext;
 import com.rposcro.jwavez.tools.shell.models.RepositoryFile;
+import com.rposcro.jwavez.tools.shell.services.dongle.DongleInformationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;

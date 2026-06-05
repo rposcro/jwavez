@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -24,16 +25,15 @@ public class TransactionKeeper<T extends TransactionState> {
     private Throwable nextException;
     private Semaphore lock = new Semaphore(1);
 
+    @Setter
     private Consumer<T> stateChangeListener;
-
-    public TransactionKeeper(@NonNull Consumer<T> stateChangeListener) {
-        this.stateChangeListener = stateChangeListener;
-    }
 
     public void reset() {
         this.nextRequest = null;
+        this.nextException = null;
         this.successful = false;
         this.failed = false;
+        this.cancelled = false;
     }
 
     public void transitAndSchedule(T state, SerialRequest transitRequest) {
@@ -70,22 +70,24 @@ public class TransactionKeeper<T extends TransactionState> {
 
     public void complete() {
         executeSynchronous(() -> {
+            log.debug("TransactionKeeper complete requested");
             this.successful = true;
         });
     }
 
     public void cancel() {
         executeSynchronous(() -> {
+            log.debug("TransactionKeeper cancel requested");
             this.cancelled = true;
         });
     }
 
     public void fail() {
         executeSynchronous(() -> {
+            log.debug("TransactionKeeper fail requested");
             this.failed = true;
         });
     }
-
 
     public T getState() {
         return getSynchronous(() -> this.state);
@@ -110,6 +112,7 @@ public class TransactionKeeper<T extends TransactionState> {
 
     private void doTransit(T newState, SerialRequest nextRequest) {
         if (!transitAllowed()) {
+            log.debug("TransactionKeeper transition forbidden");
             nextException = new FlowException("Cannot transit when prior transition hasn't been consumed yet");
         } else {
             log.info("Transiting from {} to {} state, {}", this.state, newState, nextRequest != null ? "flow id " + nextRequest.getCallbackFlowId() : "no request");

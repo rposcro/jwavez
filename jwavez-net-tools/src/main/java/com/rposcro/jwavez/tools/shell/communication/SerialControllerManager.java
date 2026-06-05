@@ -3,6 +3,8 @@ package com.rposcro.jwavez.tools.shell.communication;
 import com.rposcro.jwavez.serial.SerialRequestFactory;
 import com.rposcro.jwavez.serial.controllers.BasicSynchronousController;
 import com.rposcro.jwavez.serial.controllers.GeneralAsynchronousController;
+import com.rposcro.jwavez.serial.controllers.builders.AddNodeToNetworkControllerBuilder;
+import com.rposcro.jwavez.serial.controllers.builders.RemoveNodeFromNetworkControllerBuilder;
 import com.rposcro.jwavez.serial.controllers.inclusion.AddNodeToNetworkController;
 import com.rposcro.jwavez.serial.controllers.inclusion.RemoveNodeFromNetworkController;
 import com.rposcro.jwavez.serial.exceptions.SerialException;
@@ -82,7 +84,7 @@ public class SerialControllerManager {
     public AddNodeToNetworkController acquireAddNodeToNetworkController(long timeoutInMilliseconds) throws SerialPortException {
         if (addNodeToNetworkController == null) {
             closeControllers();
-            this.addNodeToNetworkController = AddNodeToNetworkController.builder()
+            this.addNodeToNetworkController = new AddNodeToNetworkControllerBuilder()
                     .dongleDevice(shellContext.getDongleDevicePath())
                     .waitForTouchTimeout(timeoutInMilliseconds)
                     .build()
@@ -94,7 +96,7 @@ public class SerialControllerManager {
     public RemoveNodeFromNetworkController acquireRemoveNodeToNetworkController(long timeoutInMilliseconds) throws SerialPortException {
         if (removeNodeFromNetworkController == null) {
             closeControllers();
-            this.removeNodeFromNetworkController = RemoveNodeFromNetworkController.builder()
+            this.removeNodeFromNetworkController = new RemoveNodeFromNetworkControllerBuilder()
                     .dongleDevice(shellContext.getDongleDevicePath())
                     .waitForTouchTimeout(timeoutInMilliseconds)
                     .build()

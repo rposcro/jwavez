@@ -18,34 +18,34 @@ public class NodeInformationFormatter {
 
     public String formatVerboseNodeInfo(NodeInformation nodeInformation) {
         NodeProductInformation productInformation = nodeInformation.getProductInformation();
-        return String.format("Node id: %s\n"
+        return String.format("Node id: %s (0x%02X)\n"
                         + "Memo: %s\n"
                         + "\n"
-                        + "Manufacturer id: 0x%04X\n"
-                        + "Product type id: 0x%04X\n"
-                        + "Product id: 0x%04X\n"
+                        + "Manufacturer id: %s (0x%04X)\n"
+                        + "Product type id: %s (0x%04X)\n"
+                        + "Product id: %s (0x%04X)\n"
                         + "\n"
-                        + "ZWave library type: 0x%02X\n"
-                        + "ZWave protocol version: 0x%02X\n"
-                        + "ZWave protocol sub version: 0x%02X\n"
-                        + "Application version: 0x%02X\n"
-                        + "Application sub version: 0x%02X\n"
+                        + "ZWave library type: %s (0x%02X)\n"
+                        + "ZWave protocol version: %s (0x%02X)\n"
+                        + "ZWave protocol sub version: %s (0x%02X)\n"
+                        + "Application version: %s (0x%02X)\n"
+                        + "Application sub version: %s (0x%02X)\n"
                         + "\n"
                         + "Basic device class: %s\n"
                         + "Generic device class: %s\n"
                         + "Specific device class: %s\n"
                         + "\n"
                         + "Supported command classes: %s\n"
-                , nodeInformation.getNodeId()
+                , nodeInformation.getNodeId(), nodeInformation.getNodeId()
                 , nodeInformation.getNodeMemo()
-                , productInformation.getManufacturerId()
-                , productInformation.getProductTypeId()
-                , productInformation.getProductId()
-                , productInformation.getZWaveLibraryType()
-                , productInformation.getZWaveProtocolVersion()
-                , productInformation.getZWaveProtocolSubVersion()
-                , productInformation.getApplicationVersion()
-                , productInformation.getApplicationSubVersion()
+                , productInformation.getManufacturerId(), productInformation.getManufacturerId()
+                , productInformation.getProductTypeId(), productInformation.getProductTypeId()
+                , productInformation.getProductId(), productInformation.getProductId()
+                , productInformation.getZWaveLibraryType(), productInformation.getZWaveLibraryType()
+                , productInformation.getZWaveProtocolVersion(), productInformation.getZWaveProtocolVersion()
+                , productInformation.getZWaveProtocolSubVersion(), productInformation.getZWaveProtocolSubVersion()
+                , productInformation.getApplicationVersion(), productInformation.getApplicationVersion()
+                , productInformation.getApplicationSubVersion(), productInformation.getApplicationSubVersion()
                 , productInformation.getBasicDeviceClass()
                 , productInformation.getGenericDeviceClass()
                 , productInformation.getSpecificDeviceClass()

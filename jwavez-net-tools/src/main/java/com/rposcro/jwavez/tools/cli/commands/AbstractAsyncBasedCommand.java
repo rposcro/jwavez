@@ -46,7 +46,7 @@ public abstract class AbstractAsyncBasedCommand extends AbstractCommand {
         this.transportRequestBuilder = JwzSerialSupport.defaultSupport().serialRequestFactory().networkTransportRequestBuilder();
         addCallbackInterceptor(this::handleSerialCommand);
         addCallbackInterceptor(new ApplicationCommandInterceptor()
-                .registerAllCommandsHandler(this::handleApplicationCommand));
+                .registerCommandsListener(this::handleApplicationCommand));
         return this;
     }
 

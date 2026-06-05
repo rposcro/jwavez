@@ -31,4 +31,18 @@ public enum BitLength {
                 throw new IllegalArgumentException("Unsupported number of bytes: " + bytesNumber);
         }
     }
+
+    public static BitLength ofBitsNumber(int bitsNumber) {
+        switch (bitsNumber) {
+            case 8:
+                return BIT_LENGTH_8;
+            case 16:
+                return BIT_LENGTH_16;
+            case 32:
+                return BIT_LENGTH_32;
+            default:
+                throw new IllegalArgumentException("Unsupported number of bits: " + bitsNumber);
+
+        }
+    }
 }

@@ -36,7 +36,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-class RemoveNodeFromNetworkFlowHandler extends AbstractFlowHandler {
+public class RemoveNodeFromNetworkFlowHandler extends AbstractFlowHandler {
 
     private final TransactionKeeper<RemoveNodeFromNetworkFlowState> transactionKeeper;
     private final RemoveNodeFromNetworkRequestBuilder removeNodeFromNetworkRequestBuilder;
@@ -45,7 +45,7 @@ class RemoveNodeFromNetworkFlowHandler extends AbstractFlowHandler {
     private NodeInfo nodeInfo;
     private byte callbackFlowId;
 
-    RemoveNodeFromNetworkFlowHandler(TransactionKeeper<RemoveNodeFromNetworkFlowState> transactionKeeper,
+    public RemoveNodeFromNetworkFlowHandler(TransactionKeeper<RemoveNodeFromNetworkFlowState> transactionKeeper,
                                      RemoveNodeFromNetworkRequestBuilder removeNodeFromNetworkRequestBuilder) {
         this.transactionKeeper = transactionKeeper;
         this.removeNodeFromNetworkRequestBuilder = removeNodeFromNetworkRequestBuilder;
@@ -57,7 +57,7 @@ class RemoveNodeFromNetworkFlowHandler extends AbstractFlowHandler {
     }
 
     @Override
-    void handleCallback(ZWaveCallback zWaveCallback) {
+    public void handleCallback(ZWaveCallback zWaveCallback) {
         RemoveNodeFromNetworkCallback callback = verifyAndConvertCallback(zWaveCallback);
         RemoveNodeFromNetworkFlowState state = transactionKeeper.getState();
         RemoveNodeFromNeworkStatus status = callback.getStatus();

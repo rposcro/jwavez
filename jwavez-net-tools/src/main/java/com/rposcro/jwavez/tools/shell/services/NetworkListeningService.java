@@ -13,13 +13,14 @@ import com.rposcro.jwavez.serial.frames.callbacks.ApplicationCommandHandlerCallb
 import com.rposcro.jwavez.serial.frames.callbacks.ZWaveCallback;
 import com.rposcro.jwavez.serial.utils.FramesUtil;
 import com.rposcro.jwavez.tools.shell.communication.SerialCommunicationService;
-import com.rposcro.jwavez.tools.utils.BeanPropertiesFormatter;
+import com.rposcro.jwavez.tools.utils.text.BeanPropertiesFormatter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.concurrent.Semaphore;
 
 import static com.rposcro.jwavez.core.classes.CommandClass.CMD_CLASS_MULTI_CHANNEL;
@@ -66,7 +67,7 @@ public class NetworkListeningService {
     }
 
     private void treatSerialCallback(ImmutableBuffer frameBuffer) {
-        console.flushLine("\nCallback frame received");
+        console.flushLine("\nCallback frame received @" + new Date());
         console.flushLine(FramesUtil.asFineString(frameBuffer));
 
         try {

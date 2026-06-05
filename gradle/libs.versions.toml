@@ -1,0 +1,42 @@
+[versions]
+orgReflectionsVersion = "0.9.11"
+orgJunitJupiterVersion = "6.0.3"
+orgJunitLauncherVersion = "6.0.3"
+orgMockitoMockitoCoreVersion = "2.+"
+orgMockitoMockitoJupiterVersion = "2.+"
+orgSlf4jVersion = "1.7.30"
+comNeuronroboticsVersion = "5.2.1"
+comFazecastVersion = "2.10.3"
+commonsCliVersion = "1.4"
+orgJLineBundleVersion = "4.1.0"
+springBootVersion = "4.0.6"
+springShellVersion = "4.0.2"
+
+lombokPluginVersion = "8.14.2"
+
+[libraries]
+comNeuronrobotics = { module = "com.neuronrobotics:nrjavaserial", version.ref = "comNeuronroboticsVersion" }
+comFazecast = { module = "com.fazecast:jSerialComm", version.ref = "comFazecastVersion" }
+commonsCli = { module = "commons-cli:commons-cli", version.ref = "commonsCliVersion" }
+orgJLineBundle = { module = "org.jline:jline", version.ref = "orgJLineBundleVersion" }
+orgReflections = { module = "org.reflections:reflections", version.ref = "orgReflectionsVersion" }
+orgSlf4j = { module = "org.slf4j:slf4j-api", version.ref = "orgSlf4jVersion" }
+
+orgJunitJupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "orgJunitJupiterVersion" }
+orgJunitLauncher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "orgJunitLauncherVersion" }
+orgMockitoMockitoCore = { module = "org.mockito:mockito-core", version.ref = "orgMockitoMockitoCoreVersion" }
+orgMockitoMockitoJupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "orgMockitoMockitoJupiterVersion" }
+
+orgSpringBootStarter = { module = "org.springframework.boot:spring-boot-starter", version.ref = "springBootVersion" }
+orgSpringBootStarterTest = { module = "org.springframework.boot:spring-boot-starter-test", version.ref = "springBootVersion" }
+orgSpringBootJackson = { module = "org.springframework.boot:spring-boot-jackson2", version.ref = "springBootVersion" }
+orgSpringShellStarter = { module = "org.springframework.shell:spring-shell-starter", version.ref = "springShellVersion" }
+orgSpringShellJLine = { module = "org.springframework.shell:spring-shell-jline", version.ref = "springShellVersion" }
+
+[plugins]
+application = { id = "application" }
+java = { id = "java" }
+javaLibrary = { id = "java-library" }
+mavenPublish = { id = "maven-publish" }
+springBoot = { id = "org.springframework.boot", version.ref = "springBootVersion" }
+lombok = { id = "io.freefair.lombok", version.ref = "lombokPluginVersion" }
